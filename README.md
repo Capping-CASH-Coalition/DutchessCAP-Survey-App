@@ -1,2 +1,1 @@
-# Cash-UI
-User interface
+# Admin panel proposal for Ca$h Coalition

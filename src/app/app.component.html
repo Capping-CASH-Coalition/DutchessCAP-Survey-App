@@ -1,0 +1,16 @@
+<div id="wrapper">
+  <navigation [loginInfo]="loginInfo" *ngIf="loginInfo"></navigation>
+
+  <div id="page-wrapper" class="gray-bg">
+
+    <topnavbar></topnavbar>
+
+    <router-outlet></router-outlet>
+
+    <div class="footer">
+      <div>
+        <strong>Copyright</strong> Marist College Capping &copy; 2018
+      </div>
+    </div>
+  </div>
+</div>

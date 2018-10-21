@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import {Login} from "./models/login";
+import { Login } from "./models/login";
+import { Chart } from "../../node_modules/@types/chart.js";
 
 @Component({
   selector: 'app-root',

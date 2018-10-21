@@ -2,17 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
-import {ArchiveComponent} from "./archive.component";
-import {archiveRoutes} from "./archive.routes";
+import { Chart } from "../../../../node_modules/@types/chart.js";
+
+import {GraphsComponent} from "./graphs.component";
+import {graphsRoutes} from "./graphs.routes";
 
 @NgModule({
   imports: [
       CommonModule,
       FormsModule,
-      RouterModule.forChild(archiveRoutes)
+      RouterModule.forChild(graphsRoutes)
   ],
   declarations: [
-    ArchiveComponent
+    GraphsComponent
   ],
 })
-export class ArchiveModule { }
+export class GraphsModule { }

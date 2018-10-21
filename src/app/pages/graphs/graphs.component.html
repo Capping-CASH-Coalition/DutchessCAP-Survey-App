@@ -1,12 +1,65 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-12">
-        <h2>{{ title }}</h2>
-        <h4>{{ count }}</h4>
-        <button (click)="addCount()">Add</button>
-    </div>
+    
+ 
+   <div class="row">
 
-    <div class="col-lg-12">
-      <canvas id="graphCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
-    </div>
+      <div class="col-lg-3">
+            <br>
+            <form [formGroup]="myForm">
+               <div class="form-group">
+
+                  <div class="filterBlock">
+                     <label for="graphType">Graph Type</label>
+                     <select  class="form-control" 
+                              formControlName="graphType"
+                              id="graphType"
+                              required>
+                     <option *ngFor="let t of graphTypes" [value]="t">{{t}}</option>
+                     </select>
+                  </div>
+
+                  <div class="filterBlock">
+                     <fieldset id="filterTopLevel">
+                     <label for="graphFilterTopLevel">Top Level Filter</label>
+                     <table id="graphFilterTopLevel" class="radioBtnFilterTable">
+                        <tbody>
+                        <tr *ngFor="let filter of graphDataFilters">
+                           <td width="30px">
+                              <input type="radio" 
+                                     name="filterTopLevel">
+                           </td>
+                           <td>{{ filter }}</td>
+                        </tr>
+                        </tbody>
+                     </table>
+                     </fieldset>
+                  </div>
+
+                  <div class="filterBlock">
+                     <fieldset id="filterSubLevel">
+                     <label for="graphFilterSubLevel">Sub Level Filter</label>
+                     <table id="graphFilterSubLevel">
+                        <tbody>
+                        <tr *ngFor="let filter of graphDataFilters">
+                           <td width="30px">
+                              <input type="radio" name="filtelSubLevel">
+                           </td>
+                           <td>{{ filter }}</td>
+                        </tr>
+                        </tbody>
+                     </table>
+                     </fieldset>
+                  </div>
+
+               </div>
+            </form>
+      </div>
+
+      <div class="col-lg-9">
+            <canvas id="graphCanvas" width="600" height="600"></canvas>
+      </div>
+
+   </div>
+
     
 </div>

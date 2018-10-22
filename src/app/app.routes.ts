@@ -23,7 +23,7 @@ export const appRoutes=[
         loadChildren:'./pages/exportRaw/exportRaw.module#ExportRawModule',
     },
     {
-        path: 'archive',
-        loadChildren:'./pages/archive/archive.module#ArchiveModule',
+        path: 'graphs',
+        loadChildren:'./pages/graphs/graphs.module#GraphsModule',
     },
 ];

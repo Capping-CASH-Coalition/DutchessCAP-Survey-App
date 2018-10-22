@@ -26,7 +26,8 @@
                         <tr *ngFor="let filter of graphDataFilters">
                            <td width="30px">
                               <input type="radio" 
-                                     name="filterTopLevel">
+                                     name="filterTopLevel"
+                                     (click)="updateTopFilter(filter)">
                            </td>
                            <td>{{ filter }}</td>
                         </tr>
@@ -42,7 +43,9 @@
                         <tbody>
                         <tr *ngFor="let filter of graphDataFilters">
                            <td width="30px">
-                              <input type="radio" name="filtelSubLevel">
+                              <input   type="radio" 
+                                       name="filtelSubLevel"
+                                       (click)="updateSubFilter(filter)">
                            </td>
                            <td>{{ filter }}</td>
                         </tr>

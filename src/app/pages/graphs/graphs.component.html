@@ -13,8 +13,9 @@
                      <select  class="form-control" 
                               formControlName="graphType"
                               id="graphType"
+                              (change)="updateChartType($event.target.value)"
                               required>
-                     <option *ngFor="let t of graphTypes" [value]="t">{{t}}</option>
+                     <option *ngFor="let t of chartTypes" [value]="t">{{t}}</option>
                      </select>
                   </div>
 
@@ -23,11 +24,12 @@
                      <label for="graphFilterTopLevel">Top Level Filter</label>
                      <table id="graphFilterTopLevel" class="radioBtnFilterTable">
                         <tbody>
-                        <tr *ngFor="let filter of graphDataFilters">
+                        <tr *ngFor="let filter of chartDataFilters; let idx = index">
                            <td width="30px">
                               <input type="radio" 
                                      name="filterTopLevel"
-                                     (click)="updateTopFilter(filter)">
+                                     (click)="updateTopFilter(filter)"
+                                     [checked]="idx === 0">
                            </td>
                            <td>{{ filter }}</td>
                         </tr>
@@ -41,7 +43,7 @@
                      <label for="graphFilterSubLevel">Sub Level Filter</label>
                      <table id="graphFilterSubLevel">
                         <tbody>
-                        <tr *ngFor="let filter of graphDataFilters">
+                        <tr *ngFor="let filter of chartDataFilters">
                            <td width="30px">
                               <input   type="radio" 
                                        name="filtelSubLevel"

@@ -22,11 +22,13 @@
     "@angular/router": "^4.0.0",
     "@types/chart.js": "^2.7.40",
     "@types/downloadjs": "^1.4.0",
+    "@types/wordcloud": "^1.1.0",
     "angular-chart.js": "^1.1.1",
     "core-js": "^2.4.1",
     "downloadjs": "^1.4.7",
     "jquery": "^3.2.1",
     "rxjs": "^5.1.0",
+    "wordcloud": "^1.1.0",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

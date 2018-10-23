@@ -18,3 +18,9 @@
    border:0;
    background:transparent;
 }
+
+.divTableResponses {
+   display: block;
+   height: 480px;
+   overflow-y: scroll;
+}

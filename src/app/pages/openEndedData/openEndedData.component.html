@@ -11,7 +11,10 @@
    <div class="row divSearchRow">
       <div class="col-lg-6">
          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Filter Data Feed">
+            <input   type="text" 
+                     class="form-control"
+                     [(ngModel)]="searchText" 
+                     placeholder="Filter Data Feed">
             <div class="input-group-btn">
                <button class="btn btn-default" type="submit">
                   <i class="glyphicon glyphicon-search"></i>
@@ -26,19 +29,39 @@
          <button type="button" class="btn btn-info">Export Word Cloud</button>
       </div>
    </div>
+
    <div class="row divVisuals">
-      <div class="col-lg-6">
+      <div class="col-lg-6 divTableResponses"> 
+
+         <table id="tableResponses" class="table table-hover">
+            <thead>
+               <tr>
+                  <th>Responses</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let r of responseData | filter : searchText">
+                  <td>{{r}}</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+
+
+         <!--
+
+            ///////
+          <tr>
+               <div>The standard chunk of Lorem Ipsum used </div>
+               <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+            </tr>
+
+            ////
+
          <div class="ibox float-e-margins">
             <div class="ibox-title">
                <h4>Data Feed</h4>
-               <div class="ibox-tools">
-                  <a class="collapse-link">
-                     <i class="fa fa-chevron-up"></i>
-                  </a>
-                  <a class="close-link">
-                     <i class="fa fa-times"></i>
-                  </a>
-               </div>
             </div>
             <div class="ibox-content">
                <div class="feed-activity-list">
@@ -77,9 +100,10 @@
                </div>
             </div>
          </div>
+      -->
       </div>
       <div class="col-lg-6">
-         WordCloud Here
+            <canvas id="wordcloudCanvas" width="480" height="480"></canvas>
       </div>
    </div>
 </div>

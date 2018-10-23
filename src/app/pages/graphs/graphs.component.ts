@@ -80,6 +80,12 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       ct =  new ChartType("polarArea", "Polar Area");
       this.chartTypesObj[3] = ct;
 
+      ct =  new ChartType("line", "Line");
+      this.chartTypesObj[4] = ct;
+
+      ct =  new ChartType("radar", "Radar");
+      this.chartTypesObj[5] = ct;
+
       this.chartTypes = this.getAllFormatedChartTypes();
       
    } 
@@ -160,11 +166,11 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          data: {
             labels: this.currDataLabels,
             datasets: [{
-                label: 'Totals',
+                label: 'Total Distribution',
                 data: this.currDataSetData,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255,1)',

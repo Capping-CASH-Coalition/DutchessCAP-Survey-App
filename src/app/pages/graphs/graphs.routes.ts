@@ -1,5 +1,6 @@
 import {GraphsComponent} from "./graphs.component";
 
+
 export const graphsRoutes=[
     {
         path:'',

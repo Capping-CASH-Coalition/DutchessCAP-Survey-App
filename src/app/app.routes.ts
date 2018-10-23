@@ -26,4 +26,8 @@ export const appRoutes=[
         path: 'graphs',
         loadChildren:'./pages/graphs/graphs.module#GraphsModule',
     },
+    {
+      path: 'openEndedData',
+      loadChildren:'./pages/openEndedData/openEndedData.module#OpenEndedDataModule',
+  },
 ];

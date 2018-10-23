@@ -1,73 +1,188 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { Chart, ChartDataSets } from "chart.js";
+import { Chart} from "chart.js";
 import { FormGroup, FormControl } from '@angular/forms';
 import { GraphData } from './graphData.component';
-
+import { ChartType } from './chartType.component';
 
 @Component({
     selector: 'app-graphs',
     templateUrl: './graphs.component.html',
     styleUrls: ['./graphs.component.css']
 })
+
+
 export class GraphsComponent implements AfterViewInit, OnInit {
 
-   myForm: FormGroup;
+   ngOnInit() {
+      this.chartFiltersForm = new FormGroup({
+         graphType : new FormControl(this.chartTypes[0]),
+         filterTopLevel : new FormControl(), 
+         filterSubLevel : new FormControl()
+      });
+      this.chartDataFilters = this.getDataFilters();
+      this.chartDataArr.pop();
+      this.addToDataArray( "Language", ["english", "spanish", "chineese"],[59, 62, 12]);
+      this.addToDataArray( "Age", ["18-21", "22-29", "30-39","40-49","50-59","60+"], [18, 22, 48, 21, 30, 4]);
+      this.addToDataArray( "Gender", ["male", "female"], [37, 49]);
+      this.addToDataArray( "Location", ["Poughkeepsie", "Rhineback", "Pleasant Valley", "Hyde Park"], [37, 49, 50, 45]);
+      this.addToDataArray( "Experience", ["Great", "Good", "Content", "Not Great", "Not Pleased", "Not Coming Back Again"], [37, 49, 39, 28, 20, 13]);
+      this.initChartTypes();
+      this.initChartGlobals(this.chartDataArr[1]);
+   }
+
+   ngAfterViewInit() {
+      this.canvas = document.getElementById('graphCanvas');
+      this.ctx = this.canvas.getContext('2d');  
+      this.initChart();
+   };
+
+   // Data Filters/Form Group
+   chartFiltersForm: FormGroup;
+   chartDataFilters: string[] = [];
+   chartTypes: string[] = [];
+   
+   chartTypesObj: ChartType[] = [];
+
+   //Canvas
    canvas: any;
    ctx: any;
-   chart: Chart;
+   canvasB64: any;
 
-   chartTypes: Array<string> = ['pie', 'bar', 'doughnut', 'polarArea'];
-   currChartType: string = this.chartTypes[0];
+   //Chart Object
+   chart: Chart = null;
 
-   chartDataFilters: Array<string> = ['age', 'language', 'gender', 'location', 'experience'];
+   //Chart Data (Initialize it here with a length of 1 so don't get undefined error)
+   chartDataArr: Array<GraphData> = new Array(1);
+
+   //Chart Globals
+   currChartType: string;
+   currDataLabels: string[];
+   currDataSetData: number[];
    currDataFilterTopLevel: string;
    currDataFilterSubLevel: string;
-
-   chartDataArr: Array<GraphData>;
-   currChartData: GraphData;
-
-   chartData;
-
+   
    chartOptions = {
-      responsive: false,
-    }
-
-   private getChartLabels(): string[] {
-      return this.currChartData.labels;
+      responsive: false
    }
 
-   private getChartDataSetsData(): number[] {
-      return this.currChartData.data;
+   private initChartTypes(): void {
+      let ct;
+
+      ct =  new ChartType("pie", "Pie");
+      this.chartTypesObj[0] = ct;
+
+      ct =  new ChartType("bar", "Bar");
+      this.chartTypesObj[1] = ct;
+
+      ct =  new ChartType("doughnut", "Doughnut");
+      this.chartTypesObj[2] = ct;
+
+      ct =  new ChartType("polarArea", "Polar Area");
+      this.chartTypesObj[3] = ct;
+
+      this.chartTypes = this.getAllFormatedChartTypes();
+      
+   } 
+
+   private getAllFormatedChartTypes(): string[] {
+      let res: string[] = [];
+      this.chartTypesObj.forEach((obj) => {
+         res.push(obj.displayFormat);
+     });
+     return res;
    }
 
-   private getChartDataSetsLabel(): string {
-      return this.currChartData.key.toUpperCase();
-   }
-
-   private setChartDataSetsLabels(s: string[]): void {
-      this.currChartData.labels = s;
-   }
-
-   private setChartDataSetsData(d: number[]): void {
-      this.currChartData.data = d;
+   private getChartJSChartType(ct: string): string {
+      for (let i = 0; i < this.chartTypesObj.length; i++) {
+         if (this.chartTypesObj[i].displayFormat === ct) {
+            return this.chartTypesObj[i].chartFormat;
+         }
+      }
    }
 
    updateTopFilter(filter: string) {
-      this.currDataFilterTopLevel = filter;
-      this.updateChart();
+      if (this.currDataFilterTopLevel != filter) {
+         this.currDataFilterTopLevel = filter;
+         this.updateCurrCharDataLabels(filter);
+         this.generateChart();
+      }
    }
 
    updateSubFilter(filter: string) {
-     this.currDataFilterSubLevel = filter;
-     this.updateChart();
-  }
+      if (this.currDataFilterSubLevel != filter) {
+         this.currDataFilterSubLevel = filter;
+      }
+   }
 
-  updateChartType(chartType: string) {
-     this.currChartType = chartType;
-     this.updateChart();
-  }
+   updateChartType(chartType: string) {
+      if (this.currChartType != chartType) {
+         this.currChartType = this.getChartJSChartType(chartType);
+         this.generateChart();
+      }
+   }
 
-   private getGraphDataFromKey(key: string): GraphData {
+   downloadCanvas(): void {
+      this.canvasB64 = this.chart.toBase64Image();
+      console.log(this.canvasB64);
+   }
+
+   private updateCurrCharDataLabels(filter: string): void {
+      let gd = this.getGraphDataFromDataArray(filter);
+      this.currDataSetData = gd.data;
+      this.currDataLabels = gd.labels;
+   }
+
+   private generateChart(): void {
+      this.chart.destroy();
+      this.chart = this.getCurrChartGlobals();
+      this.chart.update();
+   }
+
+   private initChart(): void {
+      this.chart = this.getCurrChartGlobals();
+      this.chart.update();
+   }
+
+   
+   private getDataFilters(): string[] {
+      return ['Age', 'Language', 'Gender', 'Location', 'Experience'];
+   }
+
+   private initChartGlobals(gd: GraphData): void {
+      this.currChartType = 'pie';
+      this.currDataLabels = gd.labels;
+      this.currDataSetData = gd.data;
+   }
+
+   private getCurrChartGlobals(): Chart {
+      let c = new Chart(this.ctx, {
+         type: this.currChartType,
+         data: {
+            labels: this.currDataLabels,
+            datasets: [{
+                label: 'Totals',
+                data: this.currDataSetData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255,1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+         options: this.chartOptions
+      })
+      return c;
+   }
+
+   private addToDataArray(key:string, labels:Array<string>, data:Array<number>): void {
+      let gd = new GraphData(key, labels, data);
+      this.chartDataArr.push(gd);
+   }
+
+   private getGraphDataFromDataArray(key: string): GraphData {
       for (let i = 0; i < this.chartDataArr.length; i++) {
          if (this.chartDataArr[i].key === key) {
             return this.chartDataArr[i];
@@ -75,69 +190,5 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       }
    }
 
-   private updateChart(): void {
-      let gd: GraphData = this.getGraphDataFromKey(this.currDataFilterTopLevel);
-      console.log(gd);
-      this.setChartDataSetsLabels(gd.labels);
-      this.setChartDataSetsData(gd.data);
-      this.chart.destroy();
-      this.generateChart();
-   }
-
-   private generateChart(): void {
-      this.chart = new Chart(this.ctx, {
-         type: this.currChartType,
-         data: this.chartData,
-         options: this.chartOptions
-      });
-   }
-
-
-   private addToDataArray(key:string, labels:Array<string>, data:Array<number>): void {
-      let gd = new GraphData(key, labels, data);
-      this.chartDataArr.push(gd);
-   }
-
-   ngOnInit() {
-      this.myForm = new FormGroup({
-         graphType : new FormControl(this.chartTypes[0]),
-         filterTopLevel : new FormControl(this.chartDataFilters[0]),
-         filterSubLevel : new FormControl(this.chartDataFilters[1])
-      });
-   }
-/*
-    ngAfterViewInit() {
-      this.canvas = document.getElementById('graphCanvas');
-      this.ctx = this.canvas.getContext('2d');  
-      this.addToDataArray("language", ["english", "spanish", "chineese"],[59, 62, 12]);
-      this.addToDataArray( "age", ["18-21", "22-29", "30-39","40-49","50-59","60+"], [18, 22, 48, 21, 30, 4]);
-      this.addToDataArray( "gender", ["male", "female"], [37, 49]);
-      console.log(this.chartData);
-      this.currChartData = this.chartDataArr[0];
-      console.log("----------------------");
-      console.log(this.currChartData);
-      console.log("----------------------");
-      this.chartData = {
-         labels: this.getChartLabels(),
-         datasets: [{
-             label: this.getChartDataSetsLabel() + ' Distribution',
-             data: this.getChartDataSetsData(),
-             backgroundColor: [
-                 'rgba(255, 99, 132, 1)',
-                 'rgba(54, 162, 235, 1)',
-                 'rgba(255, 206, 86, 1)',
-                 'rgba(54, 120, 235, 1)',
-                 'rgba(205, 99, 132, 1)',
-                 'rgba(200, 162, 235, 1)',
-                 'rgba(55, 206, 86, 1)',
-                 'rgba(54, 120, 105, 1)'
-             ],
-             borderWidth: 1
-         }]
-      }
-      this.generateChart();
-    } 
-
-    */
-   ngAfterViewInit() {};
+   
 }

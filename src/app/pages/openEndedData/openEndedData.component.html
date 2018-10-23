@@ -1,14 +1,85 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-        <h2>Purpose</h2>
-        <h4>Be able to vizualize open ended data</h4>
-    </div>
-    <div class="col-lg-10">
-        <h2>Design Proposal</h2>
-        <ul>
-            <li><h4>2 Form groups: Question, Search bar, export btns. Message feeed left of div. WordCloud right.</h4></li>
-        </ul>
-    </div>
-    <div class="col-lg-2">
-    </div>
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="form-group">
+            <label for="exampleFormControlSelect1">Select Question to Get Responses From</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+            </select>
+         </div>
+      </div>
+   </div>
+   <div class="row divSearchRow">
+      <div class="col-lg-6">
+         <div class="input-group">
+            <input type="text" class="form-control" placeholder="Filter Data Feed">
+            <div class="input-group-btn">
+               <button class="btn btn-default" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-3">
+         <button type="button" class="btn btn-primary">Export Current Data Feed</button>
+      </div>
+      <div class="col-lg-3">
+         <button type="button" class="btn btn-info">Export Word Cloud</button>
+      </div>
+   </div>
+   <div class="row divVisuals">
+      <div class="col-lg-6">
+         <div class="ibox float-e-margins">
+            <div class="ibox-title">
+               <h4>Data Feed</h4>
+               <div class="ibox-tools">
+                  <a class="collapse-link">
+                     <i class="fa fa-chevron-up"></i>
+                  </a>
+                  <a class="close-link">
+                     <i class="fa fa-times"></i>
+                  </a>
+               </div>
+            </div>
+            <div class="ibox-content">
+               <div class="feed-activity-list">
+
+                  <div class="feed-element">
+                     <div>
+                        <div>All the Lorem Ipsum generators on the Internet tend to repeat </div>
+                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+                     </div>
+                  </div>
+                  <div class="feed-element">
+                     <div>
+                        <div>The standard chunk of Lorem Ipsum used </div>
+                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+                     </div>
+                  </div>
+                  <div class="feed-element">
+                     <div>
+                        <div>200 Latin words, combined with a handful</div>
+                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+                     </div>
+                  </div>
+                  <div class="feed-element">
+                     <div>
+                        <div>200 Latin words, combined with a handful</div>
+                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+                     </div>
+                  </div>
+                  <div class="feed-element">
+                     <div>
+                        <div>200 Latin words, combined with a handful</div>
+                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-6">
+         WordCloud Here
+      </div>
+   </div>
 </div>

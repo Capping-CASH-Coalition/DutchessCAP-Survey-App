@@ -5,7 +5,7 @@
 
       <div class="col-lg-3">
             <br>
-            <form [formGroup]="myForm">
+            <form [formGroup]="chartFiltersForm">
                <div class="form-group">
 
                   <div class="filterBlock">
@@ -47,6 +47,8 @@
                            <td width="30px">
                               <input   type="radio" 
                                        name="filtelSubLevel"
+                                       id="{{filter}}SubLevelID"
+                                       [disabled]=false
                                        (click)="updateSubFilter(filter)">
                            </td>
                            <td>{{ filter }}</td>
@@ -54,6 +56,14 @@
                         </tbody>
                      </table>
                      </fieldset>
+                  </div>
+
+                  <div class="filterBlock">
+                        <button  type="button" 
+                                 class="btn btn-primary btn-block btn-sm"
+                                 disabled= "true"
+                                 (click)="updateSubFilter(filter)">
+                                 Export Graph</button>
                   </div>
 
                </div>

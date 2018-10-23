@@ -15,7 +15,11 @@
                               id="graphType"
                               (change)="updateChartType($event.target.value)"
                               required>
-                     <option *ngFor="let t of chartTypes" [value]="t">{{t}}</option>
+                     <option *ngFor="let t of chartTypes; let idx = index" 
+                              [value]="t"
+                              [selected]="idx === 0">
+                              {{t}}
+                           </option>
                      </select>
                   </div>
 
@@ -40,7 +44,7 @@
 
                   <div class="filterBlock">
                      <fieldset id="filterSubLevel">
-                     <label for="graphFilterSubLevel">Sub Level Filter</label>
+                     <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scop</label>
                      <table id="graphFilterSubLevel">
                         <tbody>
                         <tr *ngFor="let filter of chartDataFilters">
@@ -48,7 +52,7 @@
                               <input   type="radio" 
                                        name="filtelSubLevel"
                                        id="{{filter}}SubLevelID"
-                                       [disabled]=false
+                                       [disabled]=true
                                        (click)="updateSubFilter(filter)">
                            </td>
                            <td>{{ filter }}</td>
@@ -61,8 +65,7 @@
                   <div class="filterBlock">
                         <button  type="button" 
                                  class="btn btn-primary btn-block btn-sm"
-                                 disabled= "true"
-                                 (click)="updateSubFilter(filter)">
+                                 (click)="downloadCanvas(this)">
                                  Export Graph</button>
                   </div>
 

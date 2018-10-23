@@ -1,26 +1,32 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { Chart, ChartDataSets } from "chart.js";
+import { Chart} from "chart.js";
 import { FormGroup, FormControl } from '@angular/forms';
 import { GraphData } from './graphData.component';
+import { ChartType } from './chartType.component';
 
 @Component({
     selector: 'app-graphs',
     templateUrl: './graphs.component.html',
     styleUrls: ['./graphs.component.css']
 })
+
+
 export class GraphsComponent implements AfterViewInit, OnInit {
 
    ngOnInit() {
       this.chartFiltersForm = new FormGroup({
          graphType : new FormControl(this.chartTypes[0]),
-         filterTopLevel : new FormControl(), //new FormControl(this.chartDataFilters[0]),
-         filterSubLevel : new FormControl()//new FormControl(this.chartDataFilters[1])
+         filterTopLevel : new FormControl(), 
+         filterSubLevel : new FormControl()
       });
       this.chartDataFilters = this.getDataFilters();
       this.chartDataArr.pop();
-      this.addToDataArray("language", ["english", "spanish", "chineese"],[59, 62, 12]);
-      this.addToDataArray( "age", ["18-21", "22-29", "30-39","40-49","50-59","60+"], [18, 22, 48, 21, 30, 4]);
-      this.addToDataArray( "gender", ["male", "female"], [37, 49]);
+      this.addToDataArray( "Language", ["english", "spanish", "chineese"],[59, 62, 12]);
+      this.addToDataArray( "Age", ["18-21", "22-29", "30-39","40-49","50-59","60+"], [18, 22, 48, 21, 30, 4]);
+      this.addToDataArray( "Gender", ["male", "female"], [37, 49]);
+      this.addToDataArray( "Location", ["Poughkeepsie", "Rhineback", "Pleasant Valley", "Hyde Park"], [37, 49, 50, 45]);
+      this.addToDataArray( "Experience", ["Great", "Good", "Content", "Not Great", "Not Pleased", "Not Coming Back Again"], [37, 49, 39, 28, 20, 13]);
+      this.initChartTypes();
       this.initChartGlobals(this.chartDataArr[1]);
    }
 
@@ -28,18 +34,19 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');  
       this.initChart();
-      //this.generateChart();
-
    };
 
    // Data Filters/Form Group
    chartFiltersForm: FormGroup;
-   chartDataFilters: string[];
-   chartTypes: Array<string> = ['pie', 'bar', 'doughnut', 'polarArea'];
+   chartDataFilters: string[] = [];
+   chartTypes: string[] = [];
+   
+   chartTypesObj: ChartType[] = [];
 
    //Canvas
    canvas: any;
    ctx: any;
+   canvasB64: any;
 
    //Chart Object
    chart: Chart = null;
@@ -47,7 +54,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    //Chart Data (Initialize it here with a length of 1 so don't get undefined error)
    chartDataArr: Array<GraphData> = new Array(1);
 
-   //Current Chart Settings
+   //Chart Globals
    currChartType: string;
    currDataLabels: string[];
    currDataSetData: number[];
@@ -55,7 +62,42 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    currDataFilterSubLevel: string;
    
    chartOptions = {
-      responsive: false,
+      responsive: false
+   }
+
+   private initChartTypes(): void {
+      let ct;
+
+      ct =  new ChartType("pie", "Pie");
+      this.chartTypesObj[0] = ct;
+
+      ct =  new ChartType("bar", "Bar");
+      this.chartTypesObj[1] = ct;
+
+      ct =  new ChartType("doughnut", "Doughnut");
+      this.chartTypesObj[2] = ct;
+
+      ct =  new ChartType("polarArea", "Polar Area");
+      this.chartTypesObj[3] = ct;
+
+      this.chartTypes = this.getAllFormatedChartTypes();
+      
+   } 
+
+   private getAllFormatedChartTypes(): string[] {
+      let res: string[] = [];
+      this.chartTypesObj.forEach((obj) => {
+         res.push(obj.displayFormat);
+     });
+     return res;
+   }
+
+   private getChartJSChartType(ct: string): string {
+      for (let i = 0; i < this.chartTypesObj.length; i++) {
+         if (this.chartTypesObj[i].displayFormat === ct) {
+            return this.chartTypesObj[i].chartFormat;
+         }
+      }
    }
 
    updateTopFilter(filter: string) {
@@ -74,9 +116,14 @@ export class GraphsComponent implements AfterViewInit, OnInit {
 
    updateChartType(chartType: string) {
       if (this.currChartType != chartType) {
-         this.currChartType = chartType;
+         this.currChartType = this.getChartJSChartType(chartType);
          this.generateChart();
       }
+   }
+
+   downloadCanvas(): void {
+      this.canvasB64 = this.chart.toBase64Image();
+      console.log(this.canvasB64);
    }
 
    private updateCurrCharDataLabels(filter: string): void {
@@ -92,14 +139,13 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    }
 
    private initChart(): void {
-      
       this.chart = this.getCurrChartGlobals();
       this.chart.update();
    }
 
    
    private getDataFilters(): string[] {
-      return ['age', 'language', 'gender', 'location', 'experience'];
+      return ['Age', 'Language', 'Gender', 'Location', 'Experience'];
    }
 
    private initChartGlobals(gd: GraphData): void {
@@ -107,7 +153,6 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       this.currDataLabels = gd.labels;
       this.currDataSetData = gd.data;
    }
-
 
    private getCurrChartGlobals(): Chart {
       let c = new Chart(this.ctx, {
@@ -131,7 +176,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       })
       return c;
    }
-   
+
    private addToDataArray(key:string, labels:Array<string>, data:Array<number>): void {
       let gd = new GraphData(key, labels, data);
       this.chartDataArr.push(gd);

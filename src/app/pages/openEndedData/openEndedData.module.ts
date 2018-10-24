@@ -2,8 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+
 import { OpenEndedDataComponent } from "./openEndedData.component";
-import {openEndedDataRoutes} from "./openEndedData.routes";
+import { openEndedDataRoutes } from "./openEndedData.routes";
+import { FilterPipe} from './filter.pipe';
 
 @NgModule({
   imports: [
@@ -12,7 +14,8 @@ import {openEndedDataRoutes} from "./openEndedData.routes";
       RouterModule.forChild(openEndedDataRoutes)
   ],
   declarations: [
-    OpenEndedDataComponent
+    OpenEndedDataComponent,
+    FilterPipe
   ],
 })
 export class OpenEndedDataModule { }

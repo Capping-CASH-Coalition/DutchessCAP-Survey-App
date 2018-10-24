@@ -24,7 +24,8 @@
           "./assets/styles/style.css"
         ],
         "scripts": [
-          "../node_modules/jquery"
+          "../node_modules/jquery",
+          "../node_modules/wordcloud/src/wordcloud2.js"
         ],
         "environmentSource": "environments/environment.ts",
         "environments": {

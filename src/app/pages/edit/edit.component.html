@@ -1,70 +1,16 @@
-<!--
 <div class="row wrapper border-bottom white-bg page-heading">
-
-   <div class="col-lg-1">
-   </div>
-
-   <div class="col-lg-10">
-      <table class="table">
-         <tbody>
-
-            <div formArrayName="items" *ngFor="let item of orderForm.get('items').controls; let i = index;">
-               <div [formGroupName]="i">
-                  <tr>
-                     <td>
-                        <div>
-
-                           <div class="dropdown">
-                              <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dropdown button
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                              </div>
-                            </div>
-
-                        </div>
-                     </td>
-                  </tr>
-               </div>
-            </div>
-
-         </tbody>
-      </table>
-
-      <button type="button" (click)="addItem()" class="btn btn-warning">Add Question</button>
-      <button type="button" (click)="printItems()" class="btn btn-success">Add Question</button>
-
-
-   </div>
-
-   <div class="col-lg-1">
-   </div>
-
+    <div class="col-lg-10">
+        <h2>Purpose</h2>
+        <h4>Give admins ability to edit questions/surveys, create new questions/surveys</h4>
+    </div>
+    <div class="col-lg-10">
+        <h2>Design Proposal</h2>
+        <ul>
+            <li><h4>Display currently used questions (current survey) with edit/remove buttons</h4></li>
+            <li><h4>Show old questions below? or just delete them</h4></li>
+            <li><h4>Save old surveys in different versions? or just have "one"</h4></li>
+        </ul>
+    </div>
+    <div class="col-lg-2">
+    </div>
 </div>
-
-
-
-
-<!--
-   <div class="row">
-      <div class="col-lg-2">
-      </div>
-
-      <div class="col-lg-8">
-
-         <div formArrayName="items" *ngFor="let item of orderForm.get('items').controls; let i = index;">
-            <div [formGroupName]="i">
-               <input formControlName="name" placeholder="Item name">
-               <input formControlName="description" placeholder="Item description">
-               <input formControlName="price" placeholder="Item price">
-            </div>
-            Chosen name: {{ orderForm.controls.items.controls[i].controls.name.value }}
-         </div>
-         <button (click)="addItem()"></button>
-
-      </div>
-   </div>
--->

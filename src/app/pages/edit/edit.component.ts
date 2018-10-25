@@ -9,17 +9,17 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 export class EditComponent implements OnInit {
 
-   orderForm: FormGroup;
-   items: FormArray;
+   surveyForm: FormGroup;
+   questions: FormArray;
    formControlName="name"
 
    constructor(private formBuilder: FormBuilder) { }
 
    ngOnInit() {
-      this.orderForm = this.formBuilder.group({
+      this.surveyForm = this.formBuilder.group({
          customerName: '',
          email: '',
-         items: this.formBuilder.array([this.createItem()])
+         questions: this.formBuilder.array([this.createItem()])
       });
    }
 
@@ -32,8 +32,20 @@ export class EditComponent implements OnInit {
     }
 
     addItem(): void {
-      this.items = this.orderForm.get('items') as FormArray;
-      this.items.push(this.createItem());
+      this.questions = this.surveyForm.get('questions') as FormArray;
+      this.questions.push(this.createItem());
+    }
+
+    removeQuestion(idx: number): void {
+      if ( this.questions.length > 1 ) {
+         this.questions = this.surveyForm.get('questions') as FormArray;
+         this.questions.removeAt(idx);
+      }
+    }
+
+    addQuestion(idx: number): void {
+      this.questions = this.surveyForm.get('questions') as FormArray;
+      this.questions.insert(idx + 1, this.createItem());
     }
 
 

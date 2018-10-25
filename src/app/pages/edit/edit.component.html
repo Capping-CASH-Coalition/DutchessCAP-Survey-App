@@ -1,16 +1,38 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-        <h2>Purpose</h2>
-        <h4>Give admins ability to edit questions/surveys, create new questions/surveys</h4>
+    <div class="col-lg-1">
     </div>
+
+
+
     <div class="col-lg-10">
-        <h2>Design Proposal</h2>
-        <ul>
-            <li><h4>Display currently used questions (current survey) with edit/remove buttons</h4></li>
-            <li><h4>Show old questions below? or just delete them</h4></li>
-            <li><h4>Save old surveys in different versions? or just have "one"</h4></li>
-        </ul>
+       
+      <div class="ibox-content">
+         <div class="feed-activity-list">
+            <div formArrayName="items" *ngFor="let item of orderForm.get('items').controls; let i = index;">
+               <div [formGroupName]="i">
+
+                  <div class="feed-element">
+                     <div>
+                        <button class=' pull-right btn btn-lg ' style='background-color:transparent;'> <div><i class="fa fa-times"></i></div></button>
+                        <strong>Monica Smith</strong>
+                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum</div>
+                        <small class="text-muted">Today 5:60 pm - 12.06.2014</small>
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+
+         </div>
+      </div>
+
+      <button (click)="addItem()">fefefefefe</button>
+
+
     </div>
-    <div class="col-lg-2">
+
+
+
+    <div class="col-lg-1">
     </div>
 </div>

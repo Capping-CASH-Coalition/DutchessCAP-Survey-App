@@ -11,7 +11,7 @@ import { constructDependencies } from '@angular/core/src/di/reflective_provider'
 
 export class EditComponent implements OnInit {
 
-   survey: FormGroup; 
+   survey: FormGroup;
 
    constructor(private _fb: FormBuilder) { }
 
@@ -58,6 +58,34 @@ export class EditComponent implements OnInit {
    removeOption(question, j : number) {
       const control = <FormArray>question.controls.questionOptions;
       control.removeAt(j);
+   }
+
+   showOptionsDiv(question): boolean {
+      const questionType = <FormArray>question.controls.questionType.value;
+      let ret: boolean;
+      switch(questionType.toString()) {
+         case "Dropdown":
+            ret =  true;
+            break;
+         case "Checkboxes":
+            ret =  true;
+            break;
+         case "Multiple Choice":
+            ret =  true;
+            break;
+         case "Short Answer":
+            ret =  false;
+            break;
+         case "Paragraph":
+            ret =  false;
+            break;
+         case "5 Star Rating":
+            ret =  false;
+            break;
+         default:
+            ret =  true;
+      }
+      return ret;
    }
 
    save(formData) {

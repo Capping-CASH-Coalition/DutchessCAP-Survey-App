@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { constructDependencies } from '@angular/core/src/di/reflective_provider';
 
 
 @Component({
@@ -10,13 +11,74 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 export class EditComponent implements OnInit {
 
-   surveyForm: FormGroup;
+   public survey: FormGroup; 
+
+   constructor(private _fb: FormBuilder) { }
+
+   ngOnInit() {
+      this.survey = this._fb.group({
+         surveyName: [''], //new FormControl(''),
+         questions: this._fb.array([
+            this.initQuestion(),
+         ])
+      });
+   }
+
+   initQuestion() {
+      return this._fb.group({
+         questionText: [''],
+         questionType: [''],
+         questionOptions: this._fb.array([
+            this.initOption()
+         ])
+      });
+   }
+
+   initOption() {
+      return this._fb.group({
+         option: ['']
+      })
+   }
+
+   addQuestion(idx: number) {
+      const control = <FormArray>this.survey.controls['questions'];
+      control.insert(idx+1, this.initQuestion());
+   }
+   
+   removeQuestion(idx: number) {
+      const control = <FormArray>this.survey.controls['questions'];
+      control.removeAt(idx);
+   }
+
+   addOption(question): void {
+      const control = <FormArray>question.controls.questionOptions;
+      control.push(this.initOption());
+   }
+
+   removeOption(question, j : number) {
+      const control = <FormArray>question.controls.questionOptions;
+      control.removeAt(j);
+   }
+
+   save(formData) {
+      console.log(formData.value);
+   }
+
+}  
+
+
+
+ 
+ 
+ 
+ 
+/*
+
+     surveyForm: FormGroup;
    questions: FormArray;
    formControlName="Questions"
    textResponse = true;
 
-   
-   constructor(private formBuilder: FormBuilder) { }
 
    ngOnInit() {
       this.surveyForm = new FormGroup({
@@ -58,7 +120,4 @@ export class EditComponent implements OnInit {
 
     }
   
-
-
-
-}
+*/

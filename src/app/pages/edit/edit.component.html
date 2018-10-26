@@ -57,20 +57,21 @@
                         </div>
 
                         <div class="row">
+                       
                            <div class="col-lg-1">
                            </div>
-                           <div class="col-lg-8">
+                           <div class="col-lg-8"> 
                               <!--OPTIONS GO HERE--> 
                               <div> <!-- SHOWING OPTIONS-->
-                                 <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].questionOptions.controls; let j=index">
+                                 <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index">
                                     <div [formGroupName]="j">
                                        <div class="form-group">
                                           <label>Options</label>
                                           <input type="text" class="form-control" placeholder="Enter Option" formControlName="option">
-                                          <a *ngIf="questions.controls.questionOptions.length > 1" (click)="removeOption(question, j)">X</a>
+                                          <a *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)">X</a>
                                        </div>
                                     </div>
-                                    <a class="pull-right" *ngIf="j === question.controls.length-1" (click)="addOption(question)" style="float: right">Add Option +</a>
+                                    <a class="pull-right" *ngIf="j == question.controls.questionOptions.length-1" (click)="addOption(question)" style="float: right">Add Option +</a>
                                  </div>
                               </div>
                               
@@ -84,6 +85,7 @@
                                  </div>
                               </button>
                            </div>
+
                         </div>
                      
                      
@@ -98,7 +100,16 @@
 
          </div>
       </div>
-    </div>
+
+      <pre>Form Value: <br>{{survey.value | json}}</pre> 
+
+   </div>
+
+   <div class="col-lg-1">
+   </div>
+
+</div>
+
 
 
 
@@ -206,13 +217,6 @@
 
     </div>
    -->
-
-
-    <div class="col-lg-1">
-    </div>
-</div>
-
-
 
 <!--
 

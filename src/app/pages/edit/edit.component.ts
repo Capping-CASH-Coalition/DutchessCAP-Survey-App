@@ -11,13 +11,13 @@ import { constructDependencies } from '@angular/core/src/di/reflective_provider'
 
 export class EditComponent implements OnInit {
 
-   public survey: FormGroup; 
+   survey: FormGroup; 
 
    constructor(private _fb: FormBuilder) { }
 
    ngOnInit() {
       this.survey = this._fb.group({
-         surveyName: [''], //new FormControl(''),
+         surveyName: new FormControl(''),
          questions: this._fb.array([
             this.initQuestion(),
          ])
@@ -26,8 +26,8 @@ export class EditComponent implements OnInit {
 
    initQuestion() {
       return this._fb.group({
-         questionText: [''],
-         questionType: [''],
+         questionText: new FormControl(''),
+         questionType: new FormControl(''),
          questionOptions: this._fb.array([
             this.initOption()
          ])
@@ -36,7 +36,7 @@ export class EditComponent implements OnInit {
 
    initOption() {
       return this._fb.group({
-         option: ['']
+         option: new FormControl('')
       })
    }
 

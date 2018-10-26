@@ -5,35 +5,35 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 @Component({
     selector: 'app-edit',
     templateUrl: './edit.component.html',
+    styleUrls: ['./edit.component.css']
 })
 
 export class EditComponent implements OnInit {
 
    surveyForm: FormGroup;
    questions: FormArray;
-   formControlName="name"
+   formControlName="Questions"
+   textResponse = true;
 
+   
    constructor(private formBuilder: FormBuilder) { }
 
    ngOnInit() {
-      this.surveyForm = this.formBuilder.group({
-         customerName: '',
-         email: '',
-         questions: this.formBuilder.array([this.createItem()])
+      this.surveyForm = new FormGroup({
       });
+
+      this.surveyForm = this.formBuilder.group({
+         questions: this.formBuilder.array([this.createQuestion()])
+      });
+   
    }
 
-   createItem(): FormGroup {
+   createQuestion(): FormGroup {
       return this.formBuilder.group({
-        name: '',
-        description: '',
-        price: ''
+        promptText: [],
+        promptType: [],
+        options: []
       });
-    }
-
-    addItem(): void {
-      this.questions = this.surveyForm.get('questions') as FormArray;
-      this.questions.push(this.createItem());
     }
 
     removeQuestion(idx: number): void {
@@ -45,8 +45,19 @@ export class EditComponent implements OnInit {
 
     addQuestion(idx: number): void {
       this.questions = this.surveyForm.get('questions') as FormArray;
-      this.questions.insert(idx + 1, this.createItem());
+      this.questions.insert(idx + 1, this.createQuestion());
     }
+
+    logDropdown(st: string): void {
+       console.log(st);
+    }
+
+    logFormValue(): void {
+       const formValue = this.surveyForm.value;
+       console.log(formValue);
+
+    }
+  
 
 
 

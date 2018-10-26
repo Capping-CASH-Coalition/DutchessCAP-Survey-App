@@ -7,8 +7,8 @@
     <div class="col-lg-10">
        
       <div class="ibox-content">
-         <div class="feed-activity-list">
-            <div formArrayName="items" *ngFor="let question of surveyForm.get('questions').controls; let i = index;">
+         <div [formGroup]="surveyForm" class="feed-activity-list">
+            <div formArrayName="questions" *ngFor="let question of surveyForm.get('questions').controls; let i = index;">
                
                <div [formGroupName]="i">
                   <div class="feed-element" style="margin-bottom:10px">
@@ -22,7 +22,7 @@
                            </div>
                            <div class="row">
                               <div class="col-lg-12">
-                                 <select class="form-control form-control-sm" required>
+                                 <select class="form-control form-control-sm" selected="selectedType" (change)="logDropdown($event.target.value)" required>
                                     <option>Dropdown</option>
                                     <option>Radio Button</option>
                                     <option>Multi Select</option>
@@ -36,7 +36,7 @@
                                     (click)='removeQuestion(i)'
                                     style='background-color:transparent;'> 
                               <div>
-                                 <i class="fa fa-times"></i>
+                                 <i id="btnQuestionRemove" class="fa fa-times"></i>
                               </div>
                            </button>
                         </div>
@@ -45,25 +45,57 @@
                      <div class="row" style="margin-top:10px">
                         <div class="col-lg-12">
                            <div class="form-group">
-                                 <textarea class="form-control" id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here..." ></textarea>
+                                 <textarea   class="form-control" 
+                                             id="exampleTextarea" 
+                                             rows="2" 
+                                             placeholder="Enter Question Prompt Here...">
+                                 </textarea>
                            </div>
                         </div>
                      </div>
-                     <button  class=' pull-right btn btn-lg'
-                                    (click)='addQuestion(i)'
-                                    style='background-color:transparent;'> 
-                              <div>
-                                 <i class="fa fa-plus"></i>
+
+                     <div class="row">
+                        <div class="col-lg-1">
+                        </div>
+<!--
+                        <div class="col-lg-8">
+                           <div *ngIf="textResponse === true">
+                              <p class="font-italic">Text Input Response</p>
+                           </div>
+                           <div *ngIf="textResponse === false">
+                              <div class="form-group" data-ng-repeat="option in options">
+
+
                               </div>
-                           </button>                     
+                           </div>
+                        </div>
+-->
+
+                        <div class="col-lg-3">
+                           <button  class='pull-right btn btn-lg' 
+                                    (click)='addQuestion(i)' 
+                                    style='background-color:transparent;'>
+                              <div>
+                                 <i id="btnQuestionAdd" class="fa fa-plus"></i>
+                              </div>
+                           </button>
+                        </div>
+                     </div>        
                      
                   </div>
                </div>
 
-
             </div>
          </div>
       </div>
+
+      <button  class='pull-right btn btn-lg' 
+                                    (click)='logFormValue()' 
+                                    style='background-color:transparent;'>
+                              <div>
+                                 <i class="fa fa-stop"></i>
+                              </div>
+                           </button>
 
     </div>
 

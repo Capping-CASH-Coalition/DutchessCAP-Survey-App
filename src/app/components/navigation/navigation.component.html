@@ -10,9 +10,9 @@
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                       <span class="clear">
                           <span class="block m-t-xs">
-                          <strong class="font-bold">Admin</strong>
+                          <strong class="font-bold">{{loginInfo.first_name}} {{loginInfo.last_name}}</strong>
                       </span>
-                          <span class="text-muted text-xs block"> </span>
+                          <span class="text-muted text-xs block">{{loginInfo.title}}</span>
                       </span>
                     </a>
                 </div>
@@ -21,22 +21,22 @@
                 </div>
             </li>
             <li [ngClass]="{active: activeRoute('home')}">
-                <a [routerLink]="['./home']"><i class="fa fa-dashboard"></i> <span class="nav-label">Home</span></a>
+                <a [routerLink]="['./home']"><i class="fas fa-home"></i> <span class="nav-label">Home</span></a>
             </li>
             <li [ngClass]="{active: activeRoute('graphs')}">
-               <a [routerLink]="['./graphs']"><i class="far fa-database"></i> <span class="nav-label">Graphs</span></a>
+               <a [routerLink]="['./graphs']"><i class="fas fa-chart-line"></i> <span class="nav-label">Graphs</span></a>
            </li>
            <li [ngClass]="{active: activeRoute('openEndedData')}">
-              <a [routerLink]="['./openEndedData']"><i class="far fa-database"></i> <span class="nav-label">Open Ended Data</span></a>
+              <a [routerLink]="['./openEndedData']"><i class="fas fa-search-plus"></i> <span class="nav-label">Open Ended Data</span></a>
           </li>
             <li [ngClass]="{active: activeRoute('input')}">
-                <a [routerLink]="['./input']"><i class="far fa-database"></i> <span class="nav-label">Manual Input</span></a>
+                <a [routerLink]="['./input']"><i class="fas fa-user-edit"></i> <span class="nav-label">Manual Input</span></a>
             </li>
             <li [ngClass]="{active: activeRoute('edit')}">
-                <a [routerLink]="['./edit']"><i class="far fa-database"></i> <span class="nav-label">Edit Survey</span></a>
+                <a [routerLink]="['./edit']"><i class="fas fa-edit"></i> <span class="nav-label">Edit Survey</span></a>
             </li>
             <li [ngClass]="{active: activeRoute('exportRaw')}">
-                <a [routerLink]="['./exportRaw']"><i class="far fa-database"></i> <span class="nav-label">View Raw Data</span></a>
+                <a [routerLink]="['./exportRaw']"><i class="fas fa-table"></i> <span class="nav-label">View Raw Data</span></a>
             </li>
         </ul>
 

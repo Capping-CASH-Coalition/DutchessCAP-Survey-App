@@ -44,7 +44,7 @@
 
                   <div class="filterBlock">
                      <fieldset id="filterSubLevel">
-                     <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scope)</label>
+                     <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scop</label>
                      <table id="graphFilterSubLevel">
                         <tbody>
                         <tr *ngFor="let filter of chartDataFilters">
@@ -64,9 +64,11 @@
 
                   <div class="filterBlock">
                         <button  type="button" 
-                                 class="btn btn-primary btn-block btn-sm"
-                                 (click)="downloadCanvas(this)">
-                                 Export Graph
+                                 class="btn btn-primary btn-block btn-sm">
+                                 <a href="graphs" (click)="download($event)">
+                                    <i class="fas fa-download"></i>
+                                    Export Graph
+                                 </a>
                         </button>
                   </div>
 
@@ -75,13 +77,7 @@
       </div>
 
       <div class="col-lg-9">
-         <button class='pull-right btn btn-lg' (click)='editQuestion()' style='background-color:transparent;'>
-            <div>
-               <i id="btnQuestionAdd" class="fa fa-cog"></i>
-            </div>
-         </button>
-         <canvas id="graphCanvas" width="600" height="600"></canvas>
-
+            <canvas id="graphCanvas" width="600" height="600"></canvas>
       </div>
 
    </div>

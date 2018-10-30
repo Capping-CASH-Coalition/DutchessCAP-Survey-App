@@ -196,5 +196,11 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       }
    }
 
+   download(event) {
+    var anchor = event.target;
+    var can =document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+    anchor.href = can.toDataURL("image/png");
+    anchor.download = "graph.png";
+}
    
 }

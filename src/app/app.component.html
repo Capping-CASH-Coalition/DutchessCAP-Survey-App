@@ -4,6 +4,13 @@
   <div id="page-wrapper" class="gray-bg">
 
     <topnavbar></topnavbar>
+    <p>{{version}}</p>
+    <li *ngFor="let q of questions">
+      {{ q }}
+    <li>
+        <li *ngFor="let o of options">
+            {{ o }}
+          <li>
 
     <router-outlet></router-outlet>
 

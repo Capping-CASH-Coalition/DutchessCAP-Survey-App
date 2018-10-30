@@ -5,7 +5,7 @@ webpackJsonp([7,10],{
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_survey_service__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_survey_service__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13,10 +13,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 
 
 var AppComponent = (function () {
-    function AppComponent() {
+    function AppComponent(surveyService) {
+        this.surveyService = surveyService;
         this.loginInfo = {
             first_name: 'Linda',
             last_name: 'Eddy',
@@ -24,6 +28,47 @@ var AppComponent = (function () {
             title: 'Admin'
         };
     }
+    AppComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.surveyService.getQuestions().subscribe(function (response) {
+            _this.questions = [];
+            console.log('response is ', response);
+            for (var i = 0; i < response.length; i++) {
+                if (response[i].survey_version == 1) {
+                    _this.version = 1;
+                    var qArray = [
+                        { "question_num": response[i].question_num,
+                            "question_id": response[i].question_id,
+                            "question_text": response[i].question_text,
+                            "question_type": response[i].question_type }
+                    ];
+                    _this.questions.push(qArray);
+                }
+            }
+            _this.surveyService.getOptions().subscribe(function (response) {
+                _this.options = [];
+                console.log('response is ', response);
+                for (var i = 0; i < _this.questions.length; i++) {
+                    console.log(response[i]);
+                    for (var j = 0; j < response.length; j++) {
+                        if (response[j].question_id == _this.questions[i][0].question_id) {
+                            var rArray = [
+                                { "option_id": response[i].option_id,
+                                    "option_num": response[i].option_num,
+                                    "option_text": response[i].option_text }
+                            ];
+                            _this.options.push(rArray);
+                        }
+                    }
+                }
+                console.log(_this.options);
+            }, function (error) {
+                console.log('error is ', error);
+            });
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
     return AppComponent;
 }());
 AppComponent = __decorate([
@@ -32,9 +77,11 @@ AppComponent = __decorate([
         template: __webpack_require__(179),
         styles: [__webpack_require__(171)],
         providers: [__WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */]]
-    })
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */]) === "function" && _a || Object])
 ], AppComponent);
 
+var _a;
 //# sourceMappingURL=app.component.js.map
 
 /***/ }),
@@ -126,7 +173,7 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__app_routes__ = __webpack_require__(111);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_home_home_component__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__root_root_component__ = __webpack_require__(115);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__survey_service__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__survey_service__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -226,7 +273,7 @@ var appRoutes = [
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_login__ = __webpack_require__(114);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__survey_service__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__survey_service__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Navigation; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -413,7 +460,7 @@ module.exports = module.exports.toString();
 /***/ 179:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\n  <navigation [loginInfo]=\"loginInfo\" *ngIf=\"loginInfo\"></navigation>\n\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n\n    <topnavbar></topnavbar>\n\n    <router-outlet></router-outlet>\n\n    <div class=\"footer\">\n      <div>\n        <strong>Copyright</strong> Marist College Capping &copy; 2018\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div id=\"wrapper\">\n  <navigation [loginInfo]=\"loginInfo\" *ngIf=\"loginInfo\"></navigation>\n\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n\n    <topnavbar></topnavbar>\n    <p>{{version}}</p>\n    <li *ngFor=\"let q of questions\">\n      {{ q }}\n    <li>\n        <li *ngFor=\"let o of options\">\n            {{ o }}\n          <li>\n\n    <router-outlet></router-outlet>\n\n    <div class=\"footer\">\n      <div>\n        <strong>Copyright</strong> Marist College Capping &copy; 2018\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -453,7 +500,7 @@ module.exports = __webpack_require__(97);
 
 /***/ }),
 
-/***/ 26:
+/***/ 34:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -481,8 +528,8 @@ var SurveyService = (function () {
     SurveyService.prototype.getQuestions = function () {
         return this.http.get('http://localhost:3000/api/question');
     };
-    SurveyService.prototype.getResponses = function () {
-        return this.http.get('http://localhost:3000/api/response');
+    SurveyService.prototype.getOptions = function () {
+        return this.http.get('http://localhost:3000/api/option');
     };
     return SurveyService;
 }());
@@ -492,24 +539,6 @@ SurveyService = __decorate([
 ], SurveyService);
 
 var _a;
-/*
-  getCat(name: string): Observable<Cat> {
-    return this.http.get<Cat>('http://localhost:8000/api/cats/' + name);
-  }
-
-  insertCat(cat: Cat): Observable<Cat> {
-    return this.http.post<Cat>('http://localhost:8000/api/cats/', cat);
-  }
-
-  updateCat(cat: Cat): Observable<void> {
-    return this.http.put<void>('http://localhost:8000/api/cats/' + cat.name, cat);
-  }
-
-  deleteCat(name: string) {
-    return this.http.delete('http://localhost:8000/api/cats/' + name);
-  }
-}
-*/ 
 //# sourceMappingURL=survey.service.js.map
 
 /***/ }),
@@ -519,7 +548,6 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__survey_service__ = __webpack_require__(26);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -531,30 +559,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-
 var HomeComponent = (function () {
-    function HomeComponent(surveyService) {
-        this.surveyService = surveyService;
+    function HomeComponent() {
     }
     HomeComponent.prototype.ngOnInit = function () {
-        this.surveyService.getQuestions().subscribe(function (response) {
-            console.log('response is ', response);
-        }, function (error) {
-            console.log('error is ', error);
-        });
     };
     return HomeComponent;
 }());
 HomeComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* Component */])({
         selector: 'home',
-        template: __webpack_require__(182),
-        providers: [__WEBPACK_IMPORTED_MODULE_1__survey_service__["a" /* SurveyService */]]
+        template: __webpack_require__(182)
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__survey_service__["a" /* SurveyService */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [])
 ], HomeComponent);
 
-var _a;
 //# sourceMappingURL=home.component.js.map
 
 /***/ }),

@@ -15,8 +15,8 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/question');
   }
 
-  getResponses() {
-    return this.http.get<any>('http://localhost:3000/api/response');
+  getOptions() {
+    return this.http.get<any>('http://localhost:3000/api/option');
   }
 
 }

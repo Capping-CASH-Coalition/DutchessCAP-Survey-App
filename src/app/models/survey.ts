@@ -3,6 +3,7 @@ export class Survey {
     yearCreated: Date;
     id: number;
     type: string;
+    questions: string[];
     options: string[];
     responses: string[];
     personId: number;

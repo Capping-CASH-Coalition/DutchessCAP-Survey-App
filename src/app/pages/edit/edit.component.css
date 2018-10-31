@@ -3,5 +3,9 @@
 }
 
 #btnQuestionRemove {
-   color: brown;
+   color: #eb494e
+}
+
+a:hover { 
+   background-color: yellow;
 }

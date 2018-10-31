@@ -19,6 +19,8 @@
                         
                      <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
 
+                        <h3>Question {{ i+1}}</h3>
+
                         <div class="row">
                            <div class="col-lg-3">
                               <div class="row">
@@ -43,7 +45,7 @@
                            <div class="col-lg-9">
                               <button *ngIf="survey.controls.questions.length > 1"  class='pull-right btn btn-lg' (click)='removeQuestion(i)' style='background-color:transparent;'> 
                                  <div>
-                                    <i id="btnQuestionRemove" class="fas fa-times"></i>
+                                    <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
                                  </div>
                               </button>
                            </div>
@@ -51,6 +53,7 @@
 
                         <div class="row" style="margin-top:10px">
                            <div class="col-lg-12">
+                              <small class="text-muted">Question Prompt</small>
                               <!--TEXT BOX GOES HERE-->      
                               <div class="form-group">
                                  <textarea formControlName="questionText" class="form-control" id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here..."></textarea>
@@ -61,24 +64,24 @@
                         <div class="row" *ngIf="showOptionsDiv(question)"> 
                            <div class="col-lg-1">
                            </div>
-                           <div class="col-lg-4"> 
+                           <div class="col-lg-5" > 
                               <!--OPTIONS GO HERE--> 
                               <div> <!-- SHOWING OPTIONS-->
                                  <label>Options</label>
                                  <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index">
-                                    <div [formGroupName]="j">
-                                       <div class="form-group">
-                                          <div class="row">
-                                             <div class="col">
+                                    <div class="row">
+                                       <div class="col-lg-10">
+                                          <div [formGroupName]="j">
+                                             <div class="form-group">
                                                 <input type="text" class="form-control" placeholder="Enter Option" formControlName="option">
-                                             </div>
-                                             <div class="col">
-                                                <small *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)"><i class="fas fa-trash-alt"></i> Remove Option</small>
-                                             </div>
+                                             </div>   
                                           </div>
                                        </div>
+                                       <div class="col-lg-2">
+                                          <span *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)"><i class="fas fa-trash-alt"></i></span>
+                                       </div>
                                     </div>
-                                    <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.questionOptions.length-1" (click)="addOption(question)" style="float: right"><i class="fas fa-plus"></i> Add Option</button>
+                                    <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.questionOptions.length-1" (click)="addOption(question)" style="float: right"><i class="fa fa-plus-circle"></i> Add Option</button>
                                  </div>
                               </div>
                            </div>
@@ -90,14 +93,14 @@
                                        (click)='addQuestion(i)' 
                                        style='background-color:transparent;'>
                                  <div>
-                                    <i id="btnQuestionAdd" class="fa fa-plus"></i>
+                                    <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
                                  </div>
                               </button>
                            </div>
                         </div>
                      
                      
-                     </div> <!--END OF FEED ELEMENT DIV-->
+                     </div> <!--END OF FEED ELEMENT DIV-  -->
 
 
                   </div> <!--END OF nfFor DIV-->
@@ -107,6 +110,7 @@
             </form>
 
          </div>
+         <button type="button" class="btn btn-primary btn-lg btn-block">Save Survey</button>
       </div>
 
       <pre>Form Value: <br>{{survey.value | json}}</pre> 

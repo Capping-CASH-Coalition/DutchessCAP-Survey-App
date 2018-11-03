@@ -1,17 +1,19 @@
 {
-  "name": "cash-ui",
-  "version": "0.0.1",
-  "license": "MIT",
+  "name": "node-postgress-todo",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "supervisor ./bin/www"
   },
-  "private": false,
   "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "pg": "^6.1.0",
+    "supervisor": "^0.12.0",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
     "@angular/core": "^4.0.0",
@@ -50,7 +52,6 @@
     "tslint": "~4.5.0",
     "typescript": "~2.2.0"
   },
-  "description": "### Installation Install the dependencies and devDependencies and start the server.",
   "main": "karma.conf.js",
   "repository": {
     "type": "git",

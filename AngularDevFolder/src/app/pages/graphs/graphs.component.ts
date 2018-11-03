@@ -3,7 +3,6 @@ import { Chart} from "chart.js";
 import { FormGroup, FormControl } from '@angular/forms';
 import { GraphData } from './graphData.component';
 import { ChartType } from './chartType.component';
-import { Globals } from '../../globals';
 
 @Component({
     selector: 'app-graphs',
@@ -13,10 +12,8 @@ import { Globals } from '../../globals';
 
 
 export class GraphsComponent implements AfterViewInit, OnInit {
-    constructor(private globals: Globals) {}
+
    ngOnInit() {
-    console.log(this.globals);
-    console.log(this.globals.questions)
       this.chartFiltersForm = new FormGroup({
          graphType : new FormControl(this.chartTypes[0]),
          filterTopLevel : new FormControl(), 
@@ -199,5 +196,11 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       }
    }
 
+   download(event) {
+    var anchor = event.target;
+    var can =document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+    anchor.href = can.toDataURL("image/png");
+    anchor.download = "graph.png";
+}
    
 }

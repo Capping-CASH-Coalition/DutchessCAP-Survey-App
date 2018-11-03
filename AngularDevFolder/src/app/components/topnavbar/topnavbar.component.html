@@ -1,11 +1,25 @@
 <div class="row border-bottom">
-    <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
-        <ul class="nav navbar-top-links navbar-right">
+   <div id="topNavBar">
+      <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+         <ul class="nav navbar-top-links navbar-right">
             <li>
-                <a (click)="logout()">
-                    <i class="fa fa-sign-out"></i> Log out
-                </a>
+               <a (click)="returnToSite()" style="font-size:12px">
+                  <i class="fas fa-lock"></i>Change Password
+               </a>
             </li>
-        </ul>
-    </nav>
+            <b style="font-size:16px">/</b>
+            <li>
+               <a (click)="returnToSite()" style="font-size:12px">
+                  <i class="fas fa-globe-americas"></i> Return To Survey Site
+               </a>
+            </li>
+            <b style="font-size:16px">/</b>
+            <li>
+               <a (click)="logout()" style="font-size:12px">
+                  <i class="fas fa-sign-out-alt"></i> Log out
+               </a>
+            </li>
+         </ul>
+      </nav>
+   </div>   
 </div>

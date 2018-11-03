@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Login } from "./models/login";
-import { Survey } from "./models/survey";
 import { SurveyService } from '../app/survey.service';
 
 @Component({

@@ -127,11 +127,6 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       }
    }
 
-   downloadCanvas(): void {
-      this.canvasB64 = this.chart.toBase64Image();
-      console.log(this.canvasB64);
-   }
-
    private updateCurrCharDataLabels(filter: string): void {
       let gd = this.getGraphDataFromDataArray(filter);
       this.currDataSetData = gd.data;

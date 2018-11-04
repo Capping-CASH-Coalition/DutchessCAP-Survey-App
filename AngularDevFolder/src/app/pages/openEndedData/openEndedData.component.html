@@ -3,7 +3,11 @@
       <div class="col-lg-12">
          <div class="form-group">
             <label for="exampleFormControlSelect1">Select Question to Get Responses From</label>
-            <select class="form-control" id="exampleFormControlSelect1">
+            <select class="form-control" id="exampleFormControlSelect1" (change)="updateDataFeed($event.target.value)">
+               <option *ngFor="let data of globals.questionResponseData | filterByQuestionType: 'text' ">
+                  {{ data.question_text }}   
+               </option>
+                  
             </select>
          </div>
       </div>
@@ -40,67 +44,11 @@
                </tr>
             </thead>
             <tbody>
-               <tr *ngFor="let r of responseData | filter : searchText">
-                  <td>{{r}}</td>
+               <tr *ngFor="let response of dataFeed | filter : searchText">
+                  <td>{{ response }}</td>
                </tr>
             </tbody>
          </table>
-
-
-
-
-         <!--
-
-            ///////
-          <tr>
-               <div>The standard chunk of Lorem Ipsum used </div>
-               <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-            </tr>
-
-            ////
-
-         <div class="ibox float-e-margins">
-            <div class="ibox-title">
-               <h4>Data Feed</h4>
-            </div>
-            <div class="ibox-content">
-               <div class="feed-activity-list">
-
-                  <div class="feed-element">
-                     <div>
-                        <div>All the Lorem Ipsum generators on the Internet tend to repeat </div>
-                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-                     </div>
-                  </div>
-                  <div class="feed-element">
-                     <div>
-                        <div>The standard chunk of Lorem Ipsum used </div>
-                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-                     </div>
-                  </div>
-                  <div class="feed-element">
-                     <div>
-                        <div>200 Latin words, combined with a handful</div>
-                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-                     </div>
-                  </div>
-                  <div class="feed-element">
-                     <div>
-                        <div>200 Latin words, combined with a handful</div>
-                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-                     </div>
-                  </div>
-                  <div class="feed-element">
-                     <div>
-                        <div>200 Latin words, combined with a handful</div>
-                        <small class="text-muted">Yesterday 8:48 pm - 10.06.2014</small>
-                     </div>
-                  </div>
-
-               </div>
-            </div>
-         </div>
-      -->
       </div>
       <div class="col-lg-6">
             <canvas id="wordcloudCanvas" width="480" height="480"></canvas>

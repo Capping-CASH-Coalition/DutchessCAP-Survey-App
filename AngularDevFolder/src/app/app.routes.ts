@@ -27,6 +27,10 @@ export const appRoutes=[
         loadChildren:'./pages/graphs/graphs.module#GraphsModule',
     },
     {
+        path: 'survey',
+        loadChildren:'./pages/survey/survey.module#SurveyModule',
+    },
+    {
       path: 'openEndedData',
       loadChildren:'./pages/openEndedData/openEndedData.module#OpenEndedDataModule',
   },

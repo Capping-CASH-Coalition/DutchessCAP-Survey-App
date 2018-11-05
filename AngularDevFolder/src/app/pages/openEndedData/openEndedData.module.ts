@@ -5,7 +5,9 @@ import { FormsModule } from "@angular/forms";
 
 import { OpenEndedDataComponent } from "./openEndedData.component";
 import { openEndedDataRoutes } from "./openEndedData.routes";
-import { FilterPipe} from './filter.pipe';
+import { FilterPipe } from './filter.pipe';
+import { FilterByQuestionTypePipe } from './filterQuestionType.pipe'
+import { Globals } from '../../globals';
 
 @NgModule({
   imports: [
@@ -15,7 +17,11 @@ import { FilterPipe} from './filter.pipe';
   ],
   declarations: [
     OpenEndedDataComponent,
-    FilterPipe
+    FilterPipe,
+    FilterByQuestionTypePipe
   ],
+  providers: [
+   Globals
+ ]
 })
 export class OpenEndedDataModule { }

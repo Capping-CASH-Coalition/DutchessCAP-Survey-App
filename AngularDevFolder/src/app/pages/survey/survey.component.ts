@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
-  styleUrls: ['./survey.component.css']
+  styleUrls: ['./survey.component.css'],
 })
 
 export class SurveyComponent {

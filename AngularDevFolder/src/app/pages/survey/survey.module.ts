@@ -5,15 +5,21 @@ import { FormsModule } from "@angular/forms";
 
 import { SurveyComponent } from "./survey.component";
 import { surveyRoutes } from "./survey.routes";
+import { FilterByQuestionIDPipe } from "./filterQuestionId.pipe"
+import { Globals } from './../../globals';
 
 @NgModule({
   imports: [
       CommonModule,
       FormsModule,
-      RouterModule.forChild(surveyRoutes)
+      RouterModule.forChild(surveyRoutes),
   ],
   declarations: [
-    SurveyComponent
+    SurveyComponent,
+    FilterByQuestionIDPipe
   ],
+  providers:[
+    Globals
+  ]
 })
 export class SurveyModule { }

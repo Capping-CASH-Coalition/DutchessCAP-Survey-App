@@ -7,6 +7,18 @@ export class Globals {
     public yearCreated: Date = new Date(2018);
     public surveyTakenId: number;
     public name: string = "Questionnaire_Test";
+
+    public questions: Array<any> = [{question_id: 1, question_num: 1, question_text: "What services do you need?", question_type: "checkbox"},
+                                    {question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select"},
+                                    {question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text"}];
+    public options: Array<any> = [{question_id: 1, option_num: 1, option_text: "CASH", option_id: 1},
+                                  {question_id: 1, option_num: 2, option_text: "Dress for success", option_id: 2},
+                                  {question_id: 1, option_num: 3, option_text: "Food Pantry", option_id: 3},
+                                  {question_id: 2, option_num: 1, option_text: "Hyde Park", option_id: 4},
+                                  {question_id: 2, option_num: 2, option_text: "Poughkeepsie", option_id: 5},
+                                  {question_id: 2, option_num: 3, option_text: "Wappingers", option_id: 6},
+                                  {question_id: 3, option_num: 1, option_text: "Response:", option_id: 7}];
+
     public questions: Array<any> = [ {question_id: 1, question_num: 1, question_text: "What services do you need?", question_type: "checkbox"},
                                      {question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select"},
                                      {question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text"},

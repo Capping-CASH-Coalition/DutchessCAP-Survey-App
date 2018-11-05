@@ -1,56 +1,9 @@
-<form>
-  <div class="form-group" *ngFor = "let answer of answers">
-    {{ answer.id }}.
-    <label for="current">{{ answer.question }}</label>
+<form>  
+  <div class="form-group" *ngFor = "let question of globals.questions">
+    <label for="questions_id">{{ question.question_id }} {{ question.question_text }}</label>
     <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-        <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
+      <option *ngFor = "let option of globals.options">{{ option.option_text }}</option>
     </select>
-  </div>
-  
-  
-  
-  
-  
-  
-  
-  
-  <div class="form-group">
-    <label for="currentUse">1. What are you currently using CAP DC for today?</label>
-    <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-      <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
-    </select>
-  </div>
-  <div class="form-group">
-      <label for="firstName">First Name</label>
-      <input 
-        required
-        minlength="3"
-        maxlength="20"
-        pattern="banana"
-        ngModel 
-        name="firstName"
-        #firstName="ngModel"
-        (change)="log(firstName)"
-        id="firstName" 
-        type="text"
-        class="form-control"/>    
-      <div 
-        class="alert alert-danger" 
-        *ngIf="firstName.touched && !firstName.valid">
-        <div *ngIf="firstName.errors.required">
-          First name is required
-        </div>
-        <div *ngIf="firstName.errors.minlength">
-          First Name should be minimum {{ firstName.errors.minlength.requiredLength }} letters
-        </div>
-        <div *ngIf="firstName.errors.pattern">
-          First Name doesn't match the pattern
-        </div>
-      </div>
-    </div>
-  <div class="form-group">
-    <label for="comment">Comment</label>
-    <textarea ngModel name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
   </div>
   <button class="btn btn-primary">Submit</button>
 </form>

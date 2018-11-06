@@ -99,7 +99,7 @@ router.get('/api/surveyforms', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_form ORDER BY survey_version ASC');
+    const query = client.query('SELECT * FROM form ORDER BY survey_version ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -153,7 +153,7 @@ router.get('/api/user/:account_username', (req, res, next) => {
     client.query('SELECT account_password FROM admin WHERE account_username=($1)',
     [username]);
     // SQL Query > Select Data
-    const query = client.query("SELECT * FROM admin ORDER BY account_password ASC");
+    const query = client.query("SELECT * FROM admins ORDER BY account_password ASC");
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

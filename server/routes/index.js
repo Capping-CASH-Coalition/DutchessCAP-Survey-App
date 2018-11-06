@@ -24,7 +24,7 @@ router.get('/api/questions', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM question ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM questions ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -49,7 +49,7 @@ router.get('/api/options', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM option ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM options ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -74,7 +74,7 @@ router.get('/api/responses', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM response ORDER BY survey_id ASC');
+    const query = client.query('SELECT * FROM responses ORDER BY survey_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -88,7 +88,7 @@ router.get('/api/responses', (req, res, next) => {
 });
 
 // Get Survey Form
-router.get('/api/surveyforms', (req, res, next) => {
+router.get('/api/forms', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
@@ -99,7 +99,7 @@ router.get('/api/surveyforms', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM form ORDER BY survey_version ASC');
+    const query = client.query('SELECT * FROM forms ORDER BY survey_version ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -150,7 +150,7 @@ router.get('/api/user/:account_username', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Update Data
-    client.query('SELECT account_password FROM admin WHERE account_username=($1)',
+    client.query('SELECT account_password FROM admins WHERE account_username=($1)',
     [username]);
     // SQL Query > Select Data
     const query = client.query("SELECT * FROM admins ORDER BY account_password ASC");

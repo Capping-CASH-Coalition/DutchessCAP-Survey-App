@@ -208,7 +208,7 @@ router.post('/api/questions', (req, res, next) => {
 router.post('/api/options', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {question_id: req.body.question_id, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text};
+  const data = {survey_name: req.body.survey_name, question_id: req.body.question_id, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -218,10 +218,10 @@ router.post('/api/options', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO survey_option(question_id, option_id, option_num, option_text) values($1, $2, $3, $4)',
-    [data.question_id, data.option_id, data.option_num, data.option_text]);
+    client.query('INSERT INTO options(survey_name, question_id, option_id, option_num, option_text) values($1, $2, $3, $4, $5)',
+    [data.survey_name, data.question_id, data.option_id, data.option_num, data.option_text]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_option ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM options ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

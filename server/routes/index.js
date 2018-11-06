@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
 });
 
 // Get Questions
-router.get('/api/question', (req, res, next) => {
+router.get('/api/questions', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
@@ -24,7 +24,7 @@ router.get('/api/question', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_question ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM question ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -38,7 +38,7 @@ router.get('/api/question', (req, res, next) => {
 });
 
 // Get options
-router.get('/api/option', (req, res, next) => {
+router.get('/api/options', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
@@ -63,7 +63,7 @@ router.get('/api/option', (req, res, next) => {
 });
 
 // Get Responses
-router.get('/api/response', (req, res, next) => {
+router.get('/api/responses', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
@@ -88,7 +88,7 @@ router.get('/api/response', (req, res, next) => {
 });
 
 // Get Survey Form
-router.get('/api/surveyform', (req, res, next) => {
+router.get('/api/surveyforms', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
@@ -172,10 +172,10 @@ router.get('/api/user/:account_username', (req, res, next) => {
   Test this by using curl --data "survey_version=1&question_id=20&question_num=20&question_text=testitsucka&question_type=radio" http://127.0.0.1:3000/api/question
 */
 
-router.post('/api/question', (req, res, next) => {
+router.post('/api/questions', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {survey_version: req.body.survey_version, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_type: req.body.question_type};
+  const data = {survey_name: req.survey_name, survey_version: req.body.survey_version, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_type: req.body.question_type};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -185,7 +185,7 @@ router.post('/api/question', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO survey_question(survey_version, question_id, question_num, question_text, question_type) values($1, $2, $3, $4, $5)',
+    client.query('INSERT INTO questions(survey_name, survey_version, question_id, question_num, question_text, question_type) values($1, $2, $3, $4, $5)',
     [data.survey_version, data.question_id, data.question_num, data.question_text, data.question_type]);
     // SQL Query > Select Data
     const query = client.query('SELECT * FROM survey_question ORDER BY question_id ASC');
@@ -205,7 +205,7 @@ router.post('/api/question', (req, res, next) => {
   Test this by using curl --data "survey_version=1&question_id=20&question_num=20&question_text=testitsucka&question_type=radio" http://127.0.0.1:3000/api/question
 */
 
-router.post('/api/option', (req, res, next) => {
+router.post('/api/options', (req, res, next) => {
   const results = [];
   // Grab data from http request
   const data = {question_id: req.body.question_id, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text};
@@ -238,7 +238,7 @@ router.post('/api/option', (req, res, next) => {
   Test this by using curl --data "survey_version=1&question_id=20&question_num=20&question_text=testitsucka&question_type=radio" http://127.0.0.1:3000/api/question
 */
 
-router.post('/api/survey', (req, res, next) => {
+router.post('/api/surveys', (req, res, next) => {
   const results = [];
   // Grab data from http request
   const data = {survey_version: req.body.survey_version};

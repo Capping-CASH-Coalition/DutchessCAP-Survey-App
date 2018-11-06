@@ -18,4 +18,13 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/option');
   }
 
+ addResponses(responses: responses): Observable<responses>{
+  return this.http.post<responses>(this.heroesUrl, responses, httpOptions)
+    .pipe(
+      catchError(this.handleError('addHero', hero))
+    );
+}
+}
+
+
 }

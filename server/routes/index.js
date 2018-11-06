@@ -185,10 +185,10 @@ router.post('/api/questions', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO questions(survey_name, survey_version, question_id, question_num, question_text, question_type) values($1, $2, $3, $4, $5)',
-    [data.survey_version, data.question_id, data.question_num, data.question_text, data.question_type]);
+    client.query('INSERT INTO questions(survey_name, survey_version, question_id, question_num, question_text, question_type) values($1, $2, $3, $4, $5, $6)',
+    [data.survey_name, data.survey_version, data.question_id, data.question_num, data.question_text, data.question_type]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_question ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM questions ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

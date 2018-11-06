@@ -175,7 +175,7 @@ router.get('/api/user/:account_username', (req, res, next) => {
 router.post('/api/questions', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {survey_name: req.survey_name, survey_version: req.body.survey_version, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_type: req.body.question_type};
+  const data = {survey_name: req.body.survey_name, survey_version: req.body.survey_version, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_type: req.body.question_type};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors

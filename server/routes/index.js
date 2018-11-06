@@ -49,7 +49,7 @@ router.get('/api/options', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_option ORDER BY question_id ASC');
+    const query = client.query('SELECT * FROM option ORDER BY question_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -74,7 +74,7 @@ router.get('/api/responses', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_response ORDER BY survey_id ASC');
+    const query = client.query('SELECT * FROM response ORDER BY survey_id ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

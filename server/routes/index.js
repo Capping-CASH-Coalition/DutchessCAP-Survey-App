@@ -266,10 +266,10 @@ router.post('/api/surveys', (req, res, next) => {
   });
 });
 
-router.post('/api/surveys', (req, res, next) => {
+router.post('/api/versions', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {survey_version: req.body.survey_version};
+  const data = {survey_name: req.body.survey_name, survey_version: req.body.survey_version, date_created: req.body.date_created};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -279,10 +279,10 @@ router.post('/api/surveys', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO survey(survey_version) values($1)',
-    [data.survey_version]);
+    client.query('INSERT INTO versions(survey_name, survey_version, date_created) values($1, $2, $3)',
+    [data.survey_name, data.survey_version, data.date_created]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey ORDER BY survey_version ASC');
+    const query = client.query('SELECT * FROM versions ORDER BY survey_name, survey_version  ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

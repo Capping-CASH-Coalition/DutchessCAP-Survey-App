@@ -22,19 +22,21 @@
 
       <div *ngSwitchCase="'text'">
         <label class="form-check-label"></label>
-        <textarea class="form-control" id="textArea" rows="3"></textarea>
+        <textarea class="form-control" id="textAreaQuestion" rows="3"></textarea>
       </div>
 
-      <div *ngSwitchCase="radio">
-        <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
-          <label class="check-label">
-            <input type"radio" class="form-check-input" name="optionsRadios" id="optionRadios{{option.option_num}}" value="option{{option.option_num}}">
-          </label>
-        </div>
+      <div *ngSwitchCase="'radio'">
+          <div  *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
+            <label class="check-label">
+              <input type="radio" class="form-check-input" name="radio{{option.question_id}}" id="optionRadios{{option.option_num}}" value="option{{option.option_num}}">
+              {{ option.option_text }}
+            </label>
+          </div>
       </div>
 
       <label class="form-control" id="unknownType" *ngSwitchDefault>Unknown Type</label>
+
     </div>
   </div>
-  <button class="btn btn-primary">Submit</button>
+  <button class="btn btn-upload" (click)="uploadData()">Submit</button>
 </form>

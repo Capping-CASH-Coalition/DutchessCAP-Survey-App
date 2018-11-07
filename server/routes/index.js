@@ -413,10 +413,10 @@ router.put('/api/user/:account_username', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Update Data
-    client.query('UPDATE admin SET account_password=($1) WHERE account_username=($2)',
+    client.query('UPDATE admins SET account_password=($1) WHERE account_username=($2)',
     [data.account_password, username]);
     // SQL Query > Select Data
-    const query = client.query("SELECT * FROM admin ORDER BY account_password ASC");
+    const query = client.query("SELECT * FROM admins ORDER BY account_username ASC");
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

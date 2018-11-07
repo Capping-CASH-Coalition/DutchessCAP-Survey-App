@@ -368,7 +368,7 @@ router.post('/api/user', (req, res, next) => {
 router.post('/api/respondant', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {survey_version: req.body.survey_version, year: req.body.year, survey_id: req.body.survey_id};
+  const data = {survey_name: req.body.survey_name, survey_version: req.body.survey_version, survey_taken_id: req.body.survey_taken_id};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -378,10 +378,10 @@ router.post('/api/respondant', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO survey_form(survey_version, year, survey_id) values($1, $2, $3)',
-    [data.survey_version, data.year, data.survey_id]);
+    client.query('INSERT INTO forms(survey_name, survey_version, survey_taken_id) values($1, $2, $3)',
+    [data.survey_name, data.survey_version, data.survey_taken_id]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM survey_form ORDER BY survey_version ASC');
+    const query = client.query('SELECT * FROM forms ORDER BY survey_version ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

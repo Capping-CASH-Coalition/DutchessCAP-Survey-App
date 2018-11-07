@@ -237,6 +237,34 @@ router.post('/api/options', (req, res, next) => {
 /* Add Survey AKA new Survey Version
   Test this by using curl --data "survey_version=1&question_id=20&question_num=20&question_text=testitsucka&question_type=radio" http://127.0.0.1:3000/api/question
 */
+router.post('/api/surveys', (req, res, next) => {
+  const results = [];
+  // Grab data from http request
+  const data = {survey_name: req.body.survey_name, survey_id: req.body.survey_id};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > Insert Data
+    client.query('INSERT INTO surveys(survey_name, survey_id) values($1, $2)',
+    [data.survey_name, data.survey_id]);
+    // SQL Query > Select Data
+    const query = client.query('SELECT * FROM surveys ORDER BY survey_id ASC');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
 
 router.post('/api/surveys', (req, res, next) => {
   const results = [];

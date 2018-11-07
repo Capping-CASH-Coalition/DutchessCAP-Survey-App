@@ -302,7 +302,7 @@ router.post('/api/versions', (req, res, next) => {
 router.post('/api/person', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {survey_version: req.body.survey_version, personal_id: req.body.personal_id, survey_id: req.body.survey_id, first_name: req.body.first_name, last_name: req.body.last_name, email_address: req.body.email_address, phone_number: req.body.phone_number};
+  const data = {survey_name: req.body.survey_name, survey_version: req.body.survey_version, personal_id: req.body.personal_id, survey_taken_id: req.body.survey_taken_id, first_name: req.body.first_name, last_name: req.body.last_name, email_address: req.body.email_address, phone_number: req.body.phone_number};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -312,8 +312,8 @@ router.post('/api/person', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO identification(survey_version, personal_id, survey_id, first_name, last_name, email_address, phone_number) values($1, $2, $3, $4, $5, $6, $7)',
-    [data.survey_version, data.personal_id, data.survey_id, data.first_name, data.last_name, data.email_address, data.phone_number]);
+    client.query('INSERT INTO identification(survey_name, survey_version, personal_id, survey_taken_id, first_name, last_name, email_address, phone_number) values($1, $2, $3, $4, $5, $6, $7, $8)',
+    [data.survey_name, data.survey_version, data.personal_id, data.survey_taken_id, data.first_name, data.last_name, data.email_address, data.phone_number]);
     // SQL Query > Select Data
     const query = client.query('SELECT * FROM identification ORDER BY personal_id ASC');
     // Stream results back one row at a time

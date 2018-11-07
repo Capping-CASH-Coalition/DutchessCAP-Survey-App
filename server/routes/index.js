@@ -381,7 +381,7 @@ router.post('/api/respondant', (req, res, next) => {
     client.query('INSERT INTO forms(survey_name, survey_version, survey_taken_id) values($1, $2, $3)',
     [data.survey_name, data.survey_version, data.survey_taken_id]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM forms ORDER BY survey_version ASC');
+    const query = client.query('SELECT * FROM forms ORDER BY survey_name, survey_version ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

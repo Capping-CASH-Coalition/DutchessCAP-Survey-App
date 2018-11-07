@@ -335,7 +335,7 @@ router.post('/api/person', (req, res, next) => {
 router.post('/api/user', (req, res, next) => {
   const results = [];
   // Grab data from http request
-  const data = {account_username: req.body.account_username, account_password: req.body.account_password, survey_id: req.body.survey_id, first_name: req.body.first_name, last_name: req.body.last_name, email_address: req.body.email_address, phone_number: req.body.phone_number};
+  const data = {account_username: req.body.account_username, account_password: req.body.account_password};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -345,10 +345,10 @@ router.post('/api/user', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Insert Data
-    client.query('INSERT INTO admin(account_username, account_password) values($1, $2)',
+    client.query('INSERT INTO admins(account_username, account_password) values($1, $2)',
     [data.account_username, data.account_password]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM admin ORDER BY account_username ASC');
+    const query = client.query('SELECT * FROM admins ORDER BY account_username ASC');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);

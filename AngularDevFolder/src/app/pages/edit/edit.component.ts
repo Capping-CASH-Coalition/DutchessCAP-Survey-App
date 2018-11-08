@@ -73,13 +73,7 @@ export class EditComponent implements OnInit {
          case "Multiple Choice":
             ret =  true;
             break;
-         case "Short Answer":
-            ret =  false;
-            break;
-         case "Paragraph":
-            ret =  false;
-            break;
-         case "5 Star Rating":
+         case "Textbox":
             ret =  false;
             break;
          default:

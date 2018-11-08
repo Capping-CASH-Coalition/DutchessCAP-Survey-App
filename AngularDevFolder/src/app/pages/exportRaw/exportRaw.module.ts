@@ -4,6 +4,7 @@ import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {ExportRawComponent} from "./exportRaw.component";
 import {exportRawRoutes} from "./exportRaw.routes";
+import { Globals } from '../../globals';
 
 @NgModule({
   imports: [
@@ -14,5 +15,8 @@ import {exportRawRoutes} from "./exportRaw.routes";
   declarations: [
     ExportRawComponent
   ],
+  providers: [
+   Globals
+ ]
 })
 export class ExportRawModule { }

@@ -3,15 +3,17 @@ import { SurveyService } from '../app/survey.service';
 
 @Injectable()
 export class Globals {
-   public version: number = 1;
-   public yearCreated: Date = new Date(2018);
-   public surveyTakenId: number;
-   public name: string = "Questionnaire_Test";
-   public questions: Array<any> = [ { question_id: 1, question_num: 1, question_text: "What services do you need?", question_type: "checkbox" },
-                                    { question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select" },
-                                    { question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text" },
-                                    { question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text" },
-                                    { question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text" }];
+
+    public version: number = 1;
+    public yearCreated: Date = new Date(2018);
+    public surveyTakenId: number;
+    public name: string = "Questionnaire_Test";
+    
+    public questions: Array<any> = [ {question_id: 1, question_num: 1, question_text: "What services do you need?", question_type: "checkbox"},
+                                     {question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select"},
+                                     {question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text"},
+                                     {question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text"},
+                                     {question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text"}];
 
    public options: Array<any> = [{ question_id: 1, option_num: 1, option_text: "CASH", option_id: 1 },
                                  { question_id: 1, option_num: 2, option_text: "Dress for success", option_id: 2 },

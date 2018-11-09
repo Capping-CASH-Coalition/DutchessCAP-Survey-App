@@ -13,7 +13,9 @@ export class Globals {
                                      {question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text"},
                                      {question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text"},
                                      {question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text"},
-                                     {question_id: 6, question_num: 6, question_text: "whats your favorite color?", question_type: "radio"}];
+                                     {question_id: 6, question_num: 6, question_text: "whats your favorite color?", question_type: "radio"},
+                                     {question_id: 7, question_num: 7, question_text: "What is your Gender?", question_type: "select"},
+                                     {question_id: 8, question_num: 8, question_text: "What allergies do you have?", question_type: "checkbox"}];
 
     public options: Array<any> = [  {question_id: 1, option_num: 1, option_text: "CASH", option_id: 1},
                                     {question_id: 1, option_num: 2, option_text: "Dress for success", option_id: 2},
@@ -24,7 +26,13 @@ export class Globals {
                                     {question_id: 3, option_num: 1, option_text: "Response:", option_id: 7},
                                     {question_id: 6, option_num: 1, option_text: "Blue", option_id: 8},
                                     {question_id: 6, option_num: 2, option_text: "Green", option_id: 9},
-                                    {question_id: 6, option_num: 3, option_text: "Red", option_id: 10},];
+                                    {question_id: 6, option_num: 3, option_text: "Red", option_id: 10},
+                                    {question_id: 7, option_num: 1, option_text: "Male", option_id: 11},
+                                    {question_id: 7, option_num: 2, option_text: "Female", option_id: 12},
+                                    {question_id: 7, option_num: 3, option_text: "Other", osption_id: 13},
+                                    {question_id: 8, option_num: 1, option_text: "Cats", option_id: 14},
+                                    {question_id: 8, option_num: 2, option_text: "Dogs", option_id: 15},
+                                    {question_id: 8, option_num: 3, option_text: "Bees", option_id: 16},];
     
     public responses: Array<any> = [ {version: 1, surveyTakenId: 1, question_id: 1, response_id: 1, response_text: "Dress for success"},
                                      {version: 1, surveyTakenId: 1, question_id: 1, response_id: 2, response_text: "CASH"},

@@ -13,11 +13,16 @@ import { global } from '@angular/core/src/util';
 export class SurveyComponent {
   constructor(private globals: Globals) {}
 
-  Data = [1, 1, 6, 9, "hello"];
+  Data: Array<any> = [];
 
   uploadData(){
     this.globals.responses.push(this.Data);
-    console.log(this.globals.responses[9])
+    console.log(this.globals.responses[9]);
+  }
+
+  changeData(event, r: string){
+    this.Data.push([this.globals.version,1,1,1,r]);
+    console.log(this.Data[2]);
   }
 }
 

@@ -6,8 +6,7 @@ import { FormsModule } from "@angular/forms";
 import { SurveyComponent } from "./survey.component";
 import { surveyRoutes } from "./survey.routes";
 import { FilterByQuestionIDPipe } from "./filterQuestionId.pipe"
-import { FilterBySurveyIdPipe } from "./filterSurvey.pipe"
-import { Globals } from './../../globals';
+import { Globals } from '../app/globals';
 
 @NgModule({
   imports: [
@@ -17,8 +16,7 @@ import { Globals } from './../../globals';
   ],
   declarations: [
     SurveyComponent,
-    FilterByQuestionIDPipe,
-    FilterBySurveyIdPipe
+    FilterByQuestionIDPipe
   ],
   providers:[
     Globals

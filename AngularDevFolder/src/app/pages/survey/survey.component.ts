@@ -1,8 +1,5 @@
 import { Globals } from './../../globals';
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
-import { global } from '@angular/core/src/util';
 
 @Component({
   selector: 'app-survey',
@@ -14,6 +11,12 @@ export class SurveyComponent {
   constructor(private globals: Globals) {}
 
   Data: Array<any> = [];
+
+  currSurvey = this.globals.surveys[0].survey_id;
+
+  ngOnInit() {
+    console.log(this.globals.surveys)
+  }
 
   uploadData(){
     this.globals.responses.push(this.Data);

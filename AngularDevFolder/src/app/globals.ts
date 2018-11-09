@@ -79,7 +79,7 @@ export class Globals {
             {
                question_id: 1,
                question_text: "What is your favorite City?",
-               question_type: "multiple choice",
+               question_type: "mc",
                question_active: true,
                options: [
                   { option_id: 5, option_text: "New York City", option_active: true },
@@ -93,7 +93,7 @@ export class Globals {
                question_id: 2,
                question_text: "Select the services that you need: ",
                question_type: "checkboxes",
-               question_active: true,
+               question_active: false,
                options: [
                   { option_id: 10, option_text: "More Money", option_active: false },
                   { option_id: 11, option_text: "More Time", option_active: true },
@@ -125,18 +125,11 @@ export class Globals {
                question_text: "Please elaborate on the previous answer",
                question_type: "text",
                question_active: true,
-               options: []
+               options: [{ option_id: -1, option_text: "TEXT RESPONSE", option_active: false },]
             }
          ]
       }
    ]
-
-
-
-
-
-
-
 
 
    /*

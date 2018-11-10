@@ -1,0 +1,16 @@
+.colQuestions{
+   width: 35%
+}
+
+.colResponses{
+   width: 53%
+}
+
+.colDates{
+   width: 12%;
+   text-align: right;
+}
+
+.btnExport{
+   margin-top: 23px;
+}

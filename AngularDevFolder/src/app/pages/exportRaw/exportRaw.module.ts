@@ -5,6 +5,7 @@ import {FormsModule} from "@angular/forms";
 import {ExportRawComponent} from "./exportRaw.component";
 import {exportRawRoutes} from "./exportRaw.routes";
 import { Globals } from '../../globals';
+import {FilterByDatePipe} from './filterByDate.pipe';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { Globals } from '../../globals';
       RouterModule.forChild(exportRawRoutes)
   ],
   declarations: [
-    ExportRawComponent
+    ExportRawComponent,
+    FilterByDatePipe
   ],
   providers: [
    Globals

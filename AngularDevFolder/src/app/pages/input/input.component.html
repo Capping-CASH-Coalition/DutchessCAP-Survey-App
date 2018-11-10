@@ -1,16 +1,24 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-        <h2>Purpose</h2>
-        <h4>Give CA$H Coalition admins ability to maually import paper forms</h4>
-    </div>
-    <div class="col-lg-10">
-        <h2>Design Proposal</h2>
-        <ol>
-            <li><h4> Use number keys as hot keys to coordinate with answers for qustions. Incorporate auto jumping to next entry and submission.</h4></li>
-            <li><h4> Use rapid clickable presentation.</h4></li>
-            <li><h4> Consult with her?</h4></li>
-        </ol>
-    </div>
+
+  <div class="row" style="margin-top:30px">
+
     <div class="col-lg-2">
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Survey</label>
+        <select class="form-control" id="exampleFormControlSelect1" (change)="updateSurvey($event.target.value)">
+          <option *ngFor="let survey of globals.surveys" value="{{survey.survey_id}}">
+            {{ survey.survey_name }}
+          </option>
+        </select>
+      </div>
     </div>
+
+    <div class="col-lg-2">
+      <button type="button" class="btn btn-primary btn-block btn-sm btnExport"><i class="fas fa-database"></i> Add to
+        Database</button>
+    </div>
+
+  </div>
+
+
 </div>

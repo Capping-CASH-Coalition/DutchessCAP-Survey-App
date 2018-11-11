@@ -1,7 +1,6 @@
 <div class="row wrapper border-bottom white-bg page-heading">
 
   <div class="row" style="margin-top:30px">
-
     <div class="col-lg-2">
       <div class="form-group">
         <label for="exampleFormControlSelect1">Survey</label>
@@ -12,13 +11,106 @@
         </select>
       </div>
     </div>
+    <div class="col-lg-8">
 
-    <div class="col-lg-2">
-      <button type="button" class="btn btn-primary btn-block btn-sm btnExport"><i class="fas fa-database"></i> Add to
-        Database</button>
     </div>
-
+    <div class="col-lg-2">
+      <div class="form-group">
+        <button type="button" style="margin-top:25px;" class="btn btn-primary btn-block btn-sm btnExport"><i class="fas fa-database"></i> Add to
+          Database</button>
+      </div>
+    </div>
   </div>
 
+  <form>
+    <div class="row form-group" *ngFor="let question of survey.questions | ActiveQuestions; let i = index ">
+
+
+      <div class="col-lg-4" style="margin-left:40px">
+        <span class="spanQuestion"> {{ i+1 }} . <span class="spanQuestionText">{{ question.question_text }}</span></span>
+      </div>
+
+      <div class="col-lg-7">
+        
+        <div [ngSwitch]="question.question_type">
+
+          <div *ngSwitchCase="'dropdown'">
+            <select class="form-control" id="questionType">
+              <option *ngFor="let option of question.options">
+                {{ option.option_text }}
+              </option>
+            </select>
+          </div>
+
+          <div *ngSwitchCase="'checkboxes'">
+            <div *ngFor="let option of question.options" id="divCheckboxOptionText">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" value="option.option_text">
+                <span class="spanOption">{{ option.option_text }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="'text'">
+            <label class="form-check-label"></label>
+            <textarea class="form-control" id="textArea" rows="3"></textarea>
+          </div>
+
+          <div *ngSwitchCase="'mc'">
+            <div *ngFor="let option of question.options">
+              <label class="check-label">
+                <input type="radio" class="form-check-input" name="optionsRadios">
+                <span class="spanOption">{{ option.option_text }}</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    
+  </form>
 
 </div>
+
+
+
+<!----
+        <div [ngSwitch]="question.question_type">
+
+          <div *ngSwitchCase="'select'">
+            <select class="form-control" id="questionType">
+              <option *ngFor="let option of globals.options | filterByQuestionID: question.question_id ">
+                {{ option.option_text }}
+              </option>
+            </select>
+          </div>
+
+          <div *ngSwitchCase="'checkbox'">
+            <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id" id="divCheckboxOptionText">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" value="option.option_text">
+                {{ option.option_text }}
+              </label>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="'text'">
+            <label class="form-check-label"></label>
+            <textarea class="form-control" id="textArea" rows="3"></textarea>
+          </div>
+
+          <div *ngSwitchCase="radio">
+            <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
+              <label class="check-label">
+                <input type"radio" class="form-check-input" name="optionsRadios" id="optionRadios{{option.option_num}}"
+                  value="option{{option.option_num}}">
+              </label>
+            </div>
+          </div>
+
+          <label class="form-control" id="unknownType" *ngSwitchDefault>Unknown Type</label>
+        </div>
+      </div>
+      <button class="btn btn-primary">Submit</button> -->

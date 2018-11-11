@@ -1,56 +1,40 @@
 <form>
-  <div class="form-group" *ngFor = "let answer of answers">
-    {{ answer.id }}.
-    <label for="current">{{ answer.question }}</label>
-    <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-        <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
-    </select>
-  </div>
-  
-  
-  
-  
-  
-  
-  
-  
-  <div class="form-group">
-    <label for="currentUse">1. What are you currently using CAP DC for today?</label>
-    <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-      <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
-    </select>
-  </div>
-  <div class="form-group">
-      <label for="firstName">First Name</label>
-      <input 
-        required
-        minlength="3"
-        maxlength="20"
-        pattern="banana"
-        ngModel 
-        name="firstName"
-        #firstName="ngModel"
-        (change)="log(firstName)"
-        id="firstName" 
-        type="text"
-        class="form-control"/>    
-      <div 
-        class="alert alert-danger" 
-        *ngIf="firstName.touched && !firstName.valid">
-        <div *ngIf="firstName.errors.required">
-          First name is required
-        </div>
-        <div *ngIf="firstName.errors.minlength">
-          First Name should be minimum {{ firstName.errors.minlength.requiredLength }} letters
-        </div>
-        <div *ngIf="firstName.errors.pattern">
-          First Name doesn't match the pattern
-        </div>
-      </div>
-    </div>
-  <div class="form-group">
-    <label for="comment">Comment</label>
-    <textarea ngModel name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
-  </div>
-  <button class="btn btn-primary">Submit</button>
-</form>
+   <div class="form-group" *ngFor="let question of globals.questions">
+     <label for="question_label">{{ question.question_id }} . {{ question.question_text }}</label>
+     <div [ngSwitch]="question.question_type">
+ 
+       <div *ngSwitchCase="'select'">
+         <select class="form-control" id="questionType">
+           <option *ngFor="let option of globals.options | filterByQuestionID: question.question_id ">
+             {{ option.option_text }}
+           </option>
+         </select>
+       </div>
+ 
+       <div *ngSwitchCase="'checkbox'">
+         <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id" id="divCheckboxOptionText">
+           <label class="form-check-label">
+             <input class="form-check-input" type="checkbox" value="option.option_text">
+               {{ option.option_text }}
+           </label>
+         </div>
+       </div>
+ 
+       <div *ngSwitchCase="'text'">
+         <label class="form-check-label"></label>
+         <textarea class="form-control" id="textArea" rows="3"></textarea>
+       </div>
+ 
+       <div *ngSwitchCase="radio">
+         <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
+           <label class="check-label">
+             <input type"radio" class="form-check-input" name="optionsRadios" id="optionRadios{{option.option_num}}" value="option{{option.option_num}}">
+           </label>
+         </div>
+       </div>
+ 
+       <label class="form-control" id="unknownType" *ngSwitchDefault>Unknown Type</label>
+     </div>
+   </div>
+   <button class="btn btn-primary">Submit</button>
+ </form>

@@ -67,7 +67,7 @@ export class Globals {
                question_id: 0,
                question_text: "What is your favorite color?",
                question_type: "dropdown",
-               question_active: true,
+               question_active: false,
                options: [
                   { option_id: 0, option_text: "Red", option_active: true },
                   { option_id: 1, option_text: "White", option_active: true },
@@ -115,7 +115,7 @@ export class Globals {
                question_id: 2,
                question_text: "Select the services that you need: ",
                question_type: "checkboxes",
-               question_active: false,
+               question_active: true,
                options: [
                   { option_id: 10, option_text: "More Money", option_active: false },
                   { option_id: 11, option_text: "More Time", option_active: true },

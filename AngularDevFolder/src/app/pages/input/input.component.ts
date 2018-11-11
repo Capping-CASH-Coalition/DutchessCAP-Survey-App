@@ -10,12 +10,10 @@ import { FormBuilder, FormGroup, FormArray, FormControl, FormControlName } from 
 export class InputComponent implements OnInit {
    
    constructor(
-      private _fb: FormBuilder,
       private globals: Globals
    ) { };
 
    survey;
-   surveyForm: FormGroup;
 
 
    ngOnInit() {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Globals } from '../../globals';
-import { getQueryValue } from '@angular/core/src/view/query';
 
 @Component({
    selector: 'app-exportRaw',

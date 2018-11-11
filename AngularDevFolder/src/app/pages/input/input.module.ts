@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputComponent } from "./input.component";
 import { inputRoutes } from "./input.routes";
 import { Globals } from '../../globals';
-import { FilterByQuestionActivePipe } from './filterByQuestionActive.pipe'
+import { FilterByQuestionActivePipe } from '../../pipes/filterByQuestionActive.pipe'
 
 @NgModule({
    imports: [

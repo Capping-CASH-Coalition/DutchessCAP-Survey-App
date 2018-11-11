@@ -33,7 +33,6 @@ export class EditComponent implements OnInit {
       surveySelect.selectedIndex = 0;
    }  
 
-   ops: string[] = ["red", "green", "black"];
 
    updateSurveyFormData(survey_id) {
       let currSurvey;

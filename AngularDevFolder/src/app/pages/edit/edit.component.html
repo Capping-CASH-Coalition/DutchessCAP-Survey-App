@@ -36,7 +36,7 @@
 
                   <div class="form-group">
                      <h2 style="font-weight:bold">Survey Name</h2>
-                     <input type="text" class="form-control" formControlName="surveyName" placeholder="Enter Survey Name">
+                     <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="surveyName" placeholder="Enter Survey Name">
                   </div>
 
                   <!-- QUESTIONS -->
@@ -144,7 +144,5 @@
       </div>
 
    </div>
-
-   <pre>Form Value: <br>{{survey.value | json}}</pre> 
 
 </div>

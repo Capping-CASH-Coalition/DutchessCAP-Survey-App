@@ -1,52 +1,61 @@
-<form>
-<div class=row>
-<div class="col-lg-6">
+<ul>
 
-</div>
-
-<div class="col-lg-6">
   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">
-    <div *ngFor="let question of survey.questions; let i = index;">
-      {{ i+1 }}. {{ question.question_text}}
-    
-      <div [ngSwitch]="question.question_type">
-
-        <div *ngSwitchCase="'select'">
-            <select class="form-control" id="select">
-              <option *ngFor="let option of question.options" (click)="changeData($event, option.option_text)">
-                {{ option.option_text }}
-              </option>
-            </select>
-        </div>
-
-        <div *ngSwitchCase="'checkbox'">
-          <div *ngFor="let option of question.options" id="divCheckboxOptionText">
-            <input class="form-check-input" type="checkbox" value="option.option_text" (click)="changeData($event, option.option_text)">
-              {{ option.option_text }}
-          </div>
-        </div>
-
-        <div *ngSwitchCase="'text'">
-          <div class="form-check-label">
-            <textarea class="form-control" name="test" rows="2"></textarea>
-          </div>
-        </div>
-
-        <div *ngSwitchCase="'radio'">
-          <div *ngFor="let option of question.options" id="radioBoxOptionText">
-            <input type="radio" class="form-check-input" name="question.question_id" value="option.option_text" (click)="changeData($event, option.option_text)">
-              {{ option.option_text }}
+    <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
+      <form>
+        <div class=row>
+          <div class="col-lg-6">
 
           </div>
-        </div>
 
-      </div>
+          <div class="col-lg-6">
+            <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">
+              <div *ngFor="let question of survey.questions; let i = index;">
+                {{ i+1 }}. {{ question.question_text}}
+-->
+            <div [ngSwitch]="question.question_type">
+
+              <div *ngSwitchCase="'select'">
+                <select class="form-control" id="select">
+                  <option *ngFor="let option of question.options" (click)="changeData($event, option.option_text)">
+                    {{ option.option_text }}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngSwitchCase="'checkbox'">
+                <div *ngFor="let option of question.options" id="divCheckboxOptionText">
+                  <input class="form-check-input" type="checkbox" value="option.option_text" (click)="changeData($event, option.option_text)">
+                  {{ option.option_text }}
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'text'">
+                <div class="form-check-label">
+                  <textarea class="form-control" name="test" rows="2"></textarea>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'radio'">
+                <div *ngFor="let option of question.options" id="radioBoxOptionText">
+                  <input type="radio" class="form-check-input" name="question.question_id" value="option.option_text"
+                    (click)="changeData($event,option.option_text, option.option_id)">
+                  {{ option.option_text }}
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </form>
+    </li>
   </div>
-</div>
-</div>
+</ul>
 
-</div>
-</form>
+<pagination-controls (pageChange)="p =$event" (pageChange)="pageChanged($event)"></pagination-controls>
 
 <!--
 <form>

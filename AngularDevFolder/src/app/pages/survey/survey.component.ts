@@ -1,5 +1,5 @@
 import { Globals } from './../../globals';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-survey',
@@ -23,9 +23,13 @@ export class SurveyComponent {
     console.log(this.globals.responses[9]);
   }
 
-  changeData(event, r: string){
-    this.Data.push([this.globals.version,1,1,1,r]);
-    console.log(this.Data[2]);
+  changeData(event,responseId: number, surveyId: string, questionId: number){
+    this.Data.push([1,this.globals.surveys[0].survey_id,1,1,1,surveyId]);
+    console.log(this.Data[0]);
+  }
+
+  pageChanged(event){
+    console.log("pageChanged")
   }
 }
 

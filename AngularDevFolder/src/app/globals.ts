@@ -114,6 +114,13 @@ export class Globals {
                   { option_id: 13, option_text: "Less capping work", option_active: true },
                   { option_id: 14, option_text: "Less drinking", option_active: false }
                ]
+            },
+            {
+               question_id: 3,
+               question_text: "Select the services that you need: ",
+               question_type: "text",
+               question_active: false,
+               options: []
             }
          ]
       },

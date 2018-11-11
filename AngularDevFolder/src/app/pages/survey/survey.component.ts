@@ -1,5 +1,6 @@
 import { Globals } from './../../globals';
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { stringify } from 'querystring';
 
 @Component({
   selector: 'app-survey',
@@ -8,56 +9,44 @@ import { Component, OnInit} from '@angular/core';
 })
 
 export class SurveyComponent {
-  constructor(private globals: Globals) {}
+  constructor(private globals: Globals) { }
 
   currSurvey = this.globals.surveys[0].survey_id;
 
-  surveyData: Array<any> = [];
-  responses = [1, 1, 1, "test", 1-1-1999];
+  selectOption: number;
 
-  responseOption: string;
-  optionChoice: number;
-  responseTextArea: string = "";
+  surveyData: Array<any> = [];
+  responses = [-1, -1, -1, "", 1 - 1 - 1999];
 
   ngOnInit() {
     console.log(this.globals.surveys);
   }
-  
-  changeData(event,responseText: string, optionId: number){
-    this.responseOption = responseText;
-    this.optionChoice = optionId;
-    console.log(responseText, optionId);
+
+  updateResponses(event, textValue: string, questionId: number) {
+    console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
+    console.log(questionId);
+    for (let element in this.responses) {
+      this.responses["0"] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+      this.responses["1"] = questionId - 1; // Question id
+      this.responses["2"] = this.selectOption; // Still need option id what option they choose
+      this.responses["3"] = " test "; // Still need response text
+      this.responses["4"] = 13; // year of taken
+      console.log(element);
+    }
+
+    this.surveyData.push(this.responses);
+    
+    console.log(this.responses);
     console.log(this.surveyData);
   }
 
-  updateResponses(event, textValue: string, questionNum: number){
-    this.responseTextArea = textValue;
-    console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + this.responseOption + " " + this.responseTextArea);
+  onSubmit(form: any): void {
+    console.log('you submitted value:', form);
+  }
 
-    for (let element in this.responses){
-
-      switch(element){
-        case "0":{
-          this.responses[0] = this.globals.surveys[0].survey_id;
-        }
-        case "1":{
-          this.responses[1] = questionNum - 2;
-        }
-        case "2":{
-          this.responses[2] = this.optionChoice;
-        }
-        case "3":{
-          this.responses[3] = this.responseOption;
-        }
-        case "4":{
-          this.responses[4] = "1-1-199";
-        }
-      }
-    }
-
-    
-    this.surveyData.push(this.responses);
-    console.log(this.responses);
-    console.log(this.surveyData);
+  
+  public setSelectedOption(value): void {
+    console.log("Selected: " + value);
+    this.selectOption = value;
   }
 }

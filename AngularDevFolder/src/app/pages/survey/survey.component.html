@@ -1,7 +1,7 @@
 <ul>
 
   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
-    <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}; let i = index">
+    <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
       <form>
         <div class=row>
           <div class="col-lg-6">
@@ -10,15 +10,14 @@
 
           <div class="col-lg-6">
             <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
-            {{ i + 1 }}. {{ question.question_text}}
+            {{ question.question_id + 1 }}. {{ question.question_text}}
 
             <div [ngSwitch]="question.question_type">
 
               <div *ngSwitchCase="'select'">
-                <select class="form-control" id="select">
-                  <option>
-                    Please Choose an Option
-                  <option *ngFor="let option of question.options" (click)="changeData($event,option.option_text, option.option_id)">
+                <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event.target.value)">
+                  <option disabled selected>-Please Select an Option-</option>
+                  <option *ngFor="let option of question.options" value="{{option.option_id}}" >
                     {{ option.option_text }}
                   </option>
                 </select>
@@ -26,7 +25,7 @@
 
               <div *ngSwitchCase="'checkbox'">
                 <div *ngFor="let option of question.options" id="divCheckboxOptionText">
-                  <input class="form-check-input" type="checkbox" (click)="changeRadioData($event, option.option_text)">
+                  <input class="form-check-input" type="checkbox">
                   {{ option.option_text }}
                 </div>
               </div>
@@ -39,7 +38,7 @@
 
               <div *ngSwitchCase="'radio'">
                 <div *ngFor="let option of question.options" id="radioBoxOptionText">
-                  <input type="radio" class="form-check-input" name="question.question_id" (click)="changeData($event,option.option_text, option.option_id)">
+                  <input type="radio" class="form-check-input" name="question.question_id">
                   {{ option.option_text }}
                 </div>
               </div>
@@ -49,10 +48,10 @@
           </div>
 
         </div>
+        <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue ,p)"></pagination-controls>
       </form>
     </li>
     
-  <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event, textAreaValue, p)"></pagination-controls>
   </div>
 
 </ul>

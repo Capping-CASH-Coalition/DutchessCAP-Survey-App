@@ -37,8 +37,7 @@
 
                 <div *ngSwitchCase="'radio'">
                   <div *ngFor="let option of question.options" id="radioBoxOptionText">
-                    <input type="radio" class="form-check-input" name="question.question_id" value="option.option_text"
-                      (click)="changeData($event,option.option_text, option.option_id)">
+                    <input type="radio" class="form-check-input" name="question.question_id" value="option.option_text" (click)="changeData($event,option.option_text, option.option_id)">
                     {{ option.option_text }}
 
                   </div>
@@ -54,7 +53,7 @@
   </div>
 </ul>
 
-<pagination-controls (pageChange)="p =$event" (pageChange)="pageChanged($event)"></pagination-controls>
+<pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event)"></pagination-controls>
 
 <!--
 <form>

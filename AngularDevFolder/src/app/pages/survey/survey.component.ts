@@ -10,26 +10,22 @@ import { Component, OnInit} from '@angular/core';
 export class SurveyComponent {
   constructor(private globals: Globals) {}
 
-  Data: Array<any> = [];
-
+  responses: Array<any> = [];
   currSurvey = this.globals.surveys[0].survey_id;
+
+  r: number;
 
   ngOnInit() {
     console.log(this.globals.surveys)
   }
 
-  uploadData(){
-    this.globals.responses.push(this.Data);
-    console.log(this.globals.responses[9]);
-  }
-
   changeData(event,responseId: number, surveyId: string, questionId: number){
-    this.Data.push([1,this.globals.surveys[0].survey_id,1,1,1,surveyId]);
-    console.log(this.Data[0]);
+    this.r = responseId;
+    console.log(this.r);
   }
 
-  pageChanged(event){
-    console.log("pageChanged")
+  updateResponses(event){
+    console.log("pageChanged" + " " + this.r)
   }
 }
 

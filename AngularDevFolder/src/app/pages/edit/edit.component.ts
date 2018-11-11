@@ -12,6 +12,7 @@ import { Globals } from "../../globals" //path relative
 export class EditComponent implements OnInit {
 
    survey: FormGroup;
+   nameReadOnly: boolean;
 
    constructor(
       private _fb: FormBuilder,
@@ -21,6 +22,11 @@ export class EditComponent implements OnInit {
    ngOnInit() {
       this.newSurveyForm();
    }
+   
+
+   setReadOnly(): boolean {
+      return this.nameReadOnly;
+   }
 
    newSurveyForm() {
       this.survey = this._fb.group({
@@ -29,14 +35,13 @@ export class EditComponent implements OnInit {
             this.initQuestion(),
          ])
       });
-      const surveySelect  = <HTMLSelectElement> document.getElementById("exampleFormControlSelect");
-      surveySelect.selectedIndex = 0;
+      this.nameReadOnly = false;
    }  
 
-   ops: string[] = ["red", "green", "black"];
 
    updateSurveyFormData(survey_id) {
       let currSurvey;
+      this.nameReadOnly = true;
 
       this.globals.surveys.forEach(s => {
          currSurvey = s.survey_id == survey_id ? s : currSurvey;

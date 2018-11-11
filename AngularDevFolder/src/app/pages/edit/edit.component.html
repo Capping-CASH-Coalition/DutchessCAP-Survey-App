@@ -1,5 +1,4 @@
-
-<div class="row wrapper white-bg page-heading">
+<div class="row wrapper border-bottom white-bg page-heading">
    
    <div class="row" style="margin-top:10px; margin-bottom:10px">
    
@@ -37,7 +36,7 @@
 
                   <div class="form-group">
                      <h2 style="font-weight:bold">Survey Name</h2>
-                     <input type="text" class="form-control" formControlName="surveyName" placeholder="Enter Survey Name">
+                     <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="surveyName" placeholder="Enter Survey Name">
                   </div>
 
                   <!-- QUESTIONS -->
@@ -137,7 +136,7 @@
             <button type="button" class="btn btn-primary btn-lg btn-block">Save Survey</button>
          </div>
 
-       <!--<pre>Form Value: <br>{{survey.value | json}}</pre> -->
+       
 
       </div>
 

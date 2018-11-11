@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const pg = require('pg');
 const path = require('path');
-const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
 // Get Survey information functions
 
@@ -12,9 +12,10 @@ router.get('/', (req, res, next) => {
     __dirname, '..', '..', 'client', 'dist', 'index.html'));
 });
 
-// Get Questions
-router.get('/api/questions', (req, res, next) => {
+router.post('/api/surveyQuestions', (req, res, next) => {
   const results = [];
+
+  const data = {survey_name: req.body.survey_name};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -23,8 +24,305 @@ router.get('/api/questions', (req, res, next) => {
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }
+
+
+    const query = client.query('SELECT DISTINCT architectures.question_id, questions.question_num, questions.question_text, questions.question_is_active, questions.question_type, options.option_id, options.option_num, options.option_text, options.option_is_active FROM surveys, architectures, questions, options WHERE architectures.survey_id = surveys.survey_id And surveys.survey_name = ($1) AND options.question_id = architectures.question_id AND questions.question_id = architectures.question_id ORDER BY question_id  ASC', [data.survey_name]);
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+
+router.post('/api/surveyResponses', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_name: req.body.survey_name,};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+
+    const query = client.query('SELECT DISTINCT architectures.question_id, questions.question_num, questions.question_text, questions.question_is_active, questions.question_type, responses.response_id, responses.option_id, responses.response_text, responses.date_taken FROM surveys, architectures, questions, responses WHERE architectures.survey_id = surveys.survey_id And surveys.survey_name = ($1) AND responses.question_id = architectures.question_id AND questions.question_id = architectures.question_id ORDER BY question_id  ASC', [data.survey_name]);
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.post('/api/surveyResponses', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_name: req.body.survey_name};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+
+    const query = client.query('SELECT DISTINCT architectures.question_id, questions.question_num, questions.question_text, questions.question_is_active, questions.question_type, responses.response_id, responses.option_id, responses.response_text, responses.date_taken FROM surveys, architectures, questions, responses WHERE architectures.survey_id = surveys.survey_id And surveys.survey_name = ($1) AND responses.question_id = architectures.question_id AND questions.question_id = architectures.question_id ORDER BY question_id  ASC', [data.survey_name]);
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+
+
+router.post('/api/postSurveyResponse', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM questions ORDER BY question_id ASC');
+    client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text VALUES ($1, $2, $3, $4)',[data.survey_id, data.question_id, data.option_id, data.response_text] );
+
+    const query = client.query('SELECT * FROM responses')
+
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.post('/api/postSurvey', (req, res, next) => {
+  const results = [];
+
+  const data = { question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text VALUES ($1, $2, $3, $4)',[data.survey_id, data.question_id, data.option_id, data.response_text] );
+
+    const query = client.query('SELECT * FROM responses')
+
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.post('/api/postSurvey', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text VALUES ($1, $2, $3, $4)',[data.survey_id, data.question_id, data.option_id, data.response_text] );
+
+    const query = client.query('SELECT * FROM responses')
+
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.put('/api/updateSurveyQuestions', (req, res, next) => {
+  const results = [];
+
+  const data = {question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text, option_is_active: req.body.option_is_active};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('UPDATE questions set question_num = ($2), question_text = ($3), question_is_active = ($4), question_type = ($5) WHERE question_id = ($1)', [data.question_id, data.question_num, data.question_text, data.question_is_active, data.question_type] );
+
+    const query = client.query('SELECT * FROM questions');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.put('/api/insertSurveyQuestions', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: survey_id, question_num: req.body.question_num, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('INSERT INTO questions (question_num, question_text, question_is_active, question_type VALUES ($1, $2, $3, $4)', [data.question_num, data.question_text, data.question_is_active, data.question_type] );
+
+    const query = client.query('SELECT * FROM questions');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.put('/api/updateSurveyOptions', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: req.body.survey_id, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text, option_is_active: req.body.option_is_active};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('UPDATE questions set question_num = ($2), question_text = ($3), question_is_active = ($4), question_type = ($5)', [data.question_num, data.question_text, data.question_is_active, data.question_type] );
+
+    const query = client.query('SELECT * FROM questions');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.put('/api/newSurvey', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: req.body.survey_id, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text, option_is_active: req.body.option_is_active};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('INSERT INTO questions (question_id, question_num, question_text, question_type) VALUES ($1, $2, $3, $4)', [data.question_id, data.question_num, data.question_text, data.question_type] );
+
+    client.query('INSERT INTO options (option_num, option_text, option_is_active, question_id) VALUES ($1, $2, $3, $4)', [data.question_num, data.question_text, data.question_type, data.question_id]);
+
+    client.query('INSERT INTO architectures(survey_id, question_id, option_id) VALUES ($1, $2, $3)' [data.survey_id, data.question_id, data.option_id]);
+
+    const query = client.query('SELECT * FROM questions');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+router.put('/api/updateSurvey', (req, res, next) => {
+  const results = [];
+
+  const data = {survey_id: req.body.survey_id, question_id: req.body.question_id, question_num: req.body.question_num, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type, option_id: req.body.option_id, option_num: req.body.option_num, option_text: req.body.option_text, option_is_active: req.body.option_is_active};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    // SQL Query > Select Data
+    client.query('UPDATE questions set question_num = ($2), question_text = ($3), question_is_active = ($4), question_type = ($5)', [data.question_num, data.question_text, data.question_is_active, data.question_type] );
+
+    const query = client.query('SELECT * FROM questions');
     // Stream results back one row at a time
     query.on('row', (row) => {
       results.push(row);
@@ -38,58 +336,16 @@ router.get('/api/questions', (req, res, next) => {
 });
 
 // Get options
-router.get('/api/options', (req, res, next) => {
-  const results = [];
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-    // SQL Query > Select Data
-    const query = client.query('SELECT * FROM options ORDER BY question_id ASC');
-    // Stream results back one row at a time
-    query.on('row', (row) => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
-    });
-  });
-});
+
 
 // Get Responses
-router.get('/api/responses', (req, res, next) => {
-  const results = [];
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-    // SQL Query > Select Data
-    const query = client.query('SELECT * FROM responses ORDER BY survey_id ASC');
-    // Stream results back one row at a time
-    query.on('row', (row) => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
-    });
-  });
-});
+
 
 // Get Survey Form
-router.get('/api/forms', (req, res, next) => {
+router.post('/api/test', (req, res, next) => {
   const results = [];
+
+  const data = {survey_name: req.body.survey_name};
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -99,16 +355,9 @@ router.get('/api/forms', (req, res, next) => {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM forms ORDER BY survey_version ASC');
-    // Stream results back one row at a time
-    query.on('row', (row) => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
-    });
+    client.query('SELECT @id = surveys (survey_name) VALUES ($1)', [data.survey_name]);
+
+
   });
 });
 
@@ -394,12 +643,11 @@ router.post('/api/respondant', (req, res, next) => {
   });
 });
 
-/*
-  Update password
-*/
+
 
 router.put('/api/user/:account_username', (req, res, next) => {
   const results = [];
+
   // Grab data from the URL parameters
   const username = req.params.account_username;
   const data = {account_password: req.body.account_password};

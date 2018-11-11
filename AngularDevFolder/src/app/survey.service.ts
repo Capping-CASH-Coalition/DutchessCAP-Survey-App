@@ -6,25 +6,34 @@ export class SurveyService {
 
   constructor(private http: HttpClient) { }
 
-  getSurvey() {
-    return this.http.get<any>('http://localhost:3000/api/survey');
-  }
-
   getQuestions() {
-    return this.http.get<any>('http://localhost:3000/api/question');
+    return this.http.get<any>('http://localhost:3000/api/surveyQuestions');
   }
 
-  getOptions() {
-    return this.http.get<any>('http://localhost:3000/api/option');
+  getResponses() {
+    return this.http.get<any>('http://localhost:3000/api/surveyResponses');
   }
 
- addResponses(responses: responses): Observable<responses>{
-  return this.http.post<responses>(this.heroesUrl, responses, httpOptions)
+  getSurveyResponses()
+
+  getSurveyQuestions(String:survey_name){
+    return this.http.get<any>('http://localhost:300/api/surveyQuestions', survey_name);
+  }
+
+  getSurveyQuestions(String: survey_name){
+      return this.http.get<any>('http://localhost:300/api/surveyResponses', survey_name);
+  }
+
+ addResponse(responses: responses): Observable<any>{
+  return this.http.post<any>('http://localhost:300/api/postSurveyResponse', responses);
     .pipe(
-      catchError(this.handleError('addHero', hero))
+      catchError(this.handleError('addResponse', responses))
     );
 }
+ addSurvey(surveys: surveys) Observable<any>{
+  return this.http.post<any>('http://localhost:300/api/newSurvey', surveys);
+    .pipe(
+      catchError(this.handleError('addResponse', surveys))
+    );
 }
-
-
 }

@@ -17,6 +17,7 @@ export class SurveyComponent {
   radioChoices = [];
 
   surveyData: Array<any> = [];
+  radioResponses: Array<any> = [];
 
   ngOnInit() {
     console.log(this.globals.surveys);
@@ -24,14 +25,27 @@ export class SurveyComponent {
 
   updateResponses(event, textValue: string, questionId: number, page: number) {
     let responses = [-1, -1, -1, "", 1 - 1 - 1999];
+    if ( this.globals.surveys[0].questions[questionId].question_type == "dropdown" || this.globals.surveys[0].questions[questionId].question_type == "mc" ){
+      responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+      responses[1] = questionId; // Question id
+      responses[2] = this.selectOption; // Still need option id what option they choose
+      responses[3] = this.grabText(this.selectOption, questionId); // Still need response text
+      responses[4] = 11 - 12 - 2018; // year it was take      
+      
+      this.surveyData.push(responses);
+    } else if ( this.globals.surveys[0].questions[questionId].question_type == "checkboxes" ){
+      for( let option of this.radioChoices){
+        responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+        responses[1] = questionId;
+        responses[2] = option[1];
+        responses[3] = this.grabText(this.selectOption, questionId);
+        responses[4] = 11 - 12 - 2018;
 
-    responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-    responses[1] = questionId; // Question id
-    responses[2] = this.selectOption; // Still need option id what option they choose
-    responses[3] = this.grabText(this.selectOption, questionId); // Still need response text
-    responses[4] = 11 - 12 - 2018; // year it was take
+        console.log(option)
 
-    this.surveyData.push(responses);
+        this.surveyData.push(responses);
+      }
+    }
 
     console.log(responses);
     console.log(this.surveyData);

@@ -34,4 +34,8 @@ export const appRoutes=[
       path: 'openEndedData',
       loadChildren:'./pages/openEndedData/openEndedData.module#OpenEndedDataModule',
   },
+  {
+    path: 'surveyEnd',
+    loadChildren:'./pages/surveyEnd/surveyEnd.module#SurveyEndModule',
+},
 ];

@@ -30,7 +30,7 @@ export class SurveyComponent {
     responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
     responses[1] = questionId; // Question id
     responses[2] = this.selectOption; // Still need option id what option they choose
-    responses[3] = this.grabText(this.selectOption, questionId);; // Still need response text
+    responses[3] = this.grabText(this.selectOption, questionId); // Still need response text
     responses[4] = 11-12-2018; // year it was take
 
     this.surveyData.push(responses);

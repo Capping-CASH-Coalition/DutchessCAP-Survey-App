@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 export class SurveyService {
 
   constructor(private http: HttpClient) { }
-
+/*
   getQuestions() {
     return this.http.get<any>('http://localhost:3000/api/surveyQuestions');
   }
@@ -13,17 +13,16 @@ export class SurveyService {
   getResponses() {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses');
   }
+*/
 
-  getSurveyResponses()
-
-  getSurveyQuestions(String:survey_name){
+  getSurveyQuestions(survey_name: string){
     return this.http.get<any>('http://localhost:300/api/surveyQuestions', survey_name);
   }
 
-  getSurveyQuestions(String: survey_name){
-      return this.http.get<any>('http://localhost:300/api/surveyResponses', survey_name);
+  getSurveyResponses(survey_name: string){
+    return this.http.get<any>('http://localhost:300/api/surveyResponses', survey_name);
   }
-
+/*
  addResponse(responses: responses): Observable<any>{
   return this.http.post<any>('http://localhost:300/api/postSurveyResponse', responses);
     .pipe(
@@ -36,4 +35,5 @@ export class SurveyService {
       catchError(this.handleError('addResponse', surveys))
     );
 }
+*/
 }

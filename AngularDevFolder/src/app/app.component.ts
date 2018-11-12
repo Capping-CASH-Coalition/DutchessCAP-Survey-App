@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Login } from "./models/login";
-import { responseervice } from '../app/survey.service';
+import { SurveyService } from '../app/survey.service';
+import {Globals} from './globals';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,7 @@ import { responseervice } from '../app/survey.service';
   styleUrls: ['./app.component.css'],
   providers: [SurveyService]
 })
-
+/*
 public responses: Array<any> = [ {question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true"},
                                  {question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true"},
                                  {question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true"},
@@ -27,26 +28,15 @@ public updates: Array<any> =    [ {survey_id: 2, question_id: 1, question_num: 1
                                   {survey_id: 2, question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true"},
                                   {survey_id: 2, question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true"}];
 
-
+*/
 export class AppComponent {
-  public yearCreated: Date;
-  public id: number;
-  public type: string;
-  public questions: Array<any>;
-  public options: Array<any>;
-  responses: Array<any>;
-  personId: number;
-  yearTaken: Date;
-  email: string;
-  firstName: string;
-  lastName: string;
 
-  constructor(private surveyService: SurveyService) { }
+
+  constructor(private surveyService: SurveyService, public globals: Globals) { }
 
   ngOnInit() {
     this.surveyService.getSurveyQuestions('hi').subscribe((response)=>{
-        this.questions = [];
-        //console.log('response is ', response);
+                //console.log('response is ', response);
         for (let i = 0; i < response.length; i++) {
 
             let qArray =
@@ -61,13 +51,15 @@ export class AppComponent {
               "option_is_active": response[i].option_is_active
             }
               ;
-            this.questions.push(qArray);
+            this.globals.questions.push(qArray);
 
         }
-        console.log(this.questions);
+        console.log(this.globals.questions);
 },(error) => {
         console.log('error is ', error)
     })
+/*
+
     this.surveyService.getSurveyResponses().subscribe((response)=>{
         this.results= [];
         //console.log('response is ', response);
@@ -198,5 +190,6 @@ this.surveyService.addSurvey(responses[j]).subscribe((response)=>{
       avatar:'ay.jpeg',
       title:'Admin'
   };
-
+  */
+}
 }

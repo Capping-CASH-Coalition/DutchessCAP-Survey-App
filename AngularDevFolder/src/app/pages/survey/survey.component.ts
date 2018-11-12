@@ -14,44 +14,79 @@ export class SurveyComponent {
   currSurvey = this.globals.surveys[0].survey_id;
 
   selectOption: number;
+  radioChoices = [];
 
   surveyData: Array<any> = [];
+  radioResponses: Array<any> = [];
 
   ngOnInit() {
     console.log(this.globals.surveys);
   }
 
-  updateResponses(event, textValue: string, questionId: number) {
-    console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
-    console.log(questionId);
-    
+  updateResponses(event, textValue: string, questionId: number, page: number) {
     let responses = [-1, -1, -1, "", 1 - 1 - 1999];
+    if ( this.globals.surveys[0].questions[questionId].question_type == "dropdown" || this.globals.surveys[0].questions[questionId].question_type == "mc" ){
+      responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+      responses[1] = questionId; // Question id
+      responses[2] = this.selectOption; // Still need option id what option they choose
+      responses[3] = this.grabText(this.selectOption, questionId); // Still need response text
+      responses[4] = 11 - 12 - 2018; // year it was take      
+      
+      this.surveyData.push(responses);
+    } else if ( this.globals.surveys[0].questions[questionId].question_type == "checkboxes" ){
+      for( let option of this.radioChoices){
+        responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+        responses[1] = questionId;
+        responses[2] = option[1];
+        responses[3] = this.grabText(this.selectOption, questionId);
+        responses[4] = 11 - 12 - 2018;
 
-    responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-    responses[1] = questionId; // Question id
-    responses[2] = this.selectOption; // Still need option id what option they choose
-    responses[3] = this.grabText(this.selectOption, questionId);; // Still need response text
-    responses[4] = 11-12-2018; // year it was take
+        console.log(option)
 
-    this.surveyData.push(responses);
-    
+        this.surveyData.push(responses);
+      }
+    }
+
     console.log(responses);
     console.log(this.surveyData);
+
   }
 
   onSubmit(form: any): void {
     console.log('you submitted value:', form);
   }
 
-  
-  public setSelectedOption(value): void {
-    console.log("Selected: " + value);
-    this.selectOption = value;
+
+  setSelectedOption(e, value, questionType): void {
+    let index = 0;
+    if ( questionType == "dd" || questionType == "mc"){
+      console.log("Selected: " + value);
+      this.selectOption = value;
+    }else if ( questionType == "cb"){
+      console.log( "Selected: " + value);
+      if(e){
+        if(e.target.checked){
+          this.radioChoices.push(value);
+          console.log(this.radioChoices);
+        }else{
+          console.log("unchecked");
+          for (let choice of this.radioChoices){
+            console.log(choice);
+            if (choice == value){
+              this.radioChoices.splice(index, 1);
+            }
+            index = index + 1;
+          }
+          index = 0;          
+          console.log(this.radioChoices);
+        }
+      }
+    }
   }
 
-  grabText(optionId, questionId){
-    for (let option of this.globals.surveys[0].questions[questionId].options){
-      if (this.selectOption == option.option_id){
+  grabText(optionId, questionId) {
+    for (let option of this.globals.surveys[0].questions[questionId].options) {
+      if (this.selectOption == option.option_id) {
         return option.option_text;
       }
     }

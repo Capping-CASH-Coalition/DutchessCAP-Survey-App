@@ -14,7 +14,7 @@ export class Globals {
                question_id: 0,
                question_text: "What is your favorite color?",
                question_type: "dropdown",
-               question_active: false,
+               question_active: true,
                options: [
                   { option_id: 0, option_text: "Red", option_active: true },
                   { option_id: 1, option_text: "White", option_active: true },
@@ -86,7 +86,7 @@ export class Globals {
       },
       {
          survey_id: 1,
-         survey_name: "Alogzzines Survey",
+         survey_name: "Algozzines Survey",
          date_created: "11-02-2018",
          questions: [
             {
@@ -96,14 +96,14 @@ export class Globals {
                question_active: true,
                options: [
                   { option_id: 15, option_text: "Its awesome", option_active: true },
-                  { option_id: 16, option_text: "Its ight", option_active: true },
+                  { option_id: 16, option_text: "Its cool", option_active: true },
                   { option_id: 17, option_text: "Its miserable", option_active: true },
                ],
                responses: [
                   { response_id: 26, response_text: "Its awesome", date_taken: "2018-11-02"},
-                  { response_id: 27, response_text: "Its ight", date_taken: "2018-10-14"},
+                  { response_id: 27, response_text: "Its cool", date_taken: "2018-10-14"},
                   { response_id: 28, response_text: "Its awesome", date_taken: "2018-10-12"},
-                  { response_id: 29, response_text: "Its ight", date_taken: "2018-10-02"},
+                  { response_id: 29, response_text: "Its cool", date_taken: "2018-10-02"},
                   { response_id: 30, response_text: "Its awesome", date_taken: "2018-11-17"},
                   { response_id: 31, response_text: "Its miserable", date_taken: "2018-10-01"},
                   { response_id: 32, response_text: "Its awesome", date_taken: "2018-11-30"},

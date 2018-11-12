@@ -19,16 +19,14 @@ export class Globals {
                                     {question_id: 2, option_num: 1, option_text: "Hyde Park", option_id: 4},
                                     {question_id: 2, option_num: 2, option_text: "Poughkeepsie", option_id: 5},
                                     {question_id: 2, option_num: 3, option_text: "Wappingers", option_id: 6},
-                                    {question_id: 3, option_num: 1, option_text: "Response:", option_id: 7}];
+                                    { question_id: 3, option_num: 1, option_text: "Response:", option_id: 7 }];
 
-    public responses: Array<any> = [ {version: 1, surveyTakenId: 1, question_id: 1, response_id: 1, response_text: "Dress for success"},
-                                     {version: 1, surveyTakenId: 1, question_id: 1, response_id: 2, response_text: "CASH"},
-                                     {version: 1, surveyTakenId: 1, question_id: 2, response_id: 3, response_text: "Hyde Park"},
-                                     {version: 1, surveyTakenId: 1, question_id: 3, response_id: 4, response_text: "This survey rocks!"},
-                                     {version: 1, surveyTakenId: 1, question_id: 4, response_id: 5, response_text: "This survey website is perfect!"},
-                                     {version: 1, surveyTakenId: 1, question_id: 4, response_id: 6, response_text: "The survey could not be any better!"},
-                                     {version: 1, surveyTakenId: 1, question_id: 5, response_id: 7, response_text: "Capping is so much fun!"},
-                                     {version: 1, surveyTakenId: 1, question_id: 5, response_id: 8, response_text: "Capping is ruining my life!"}];
+  public responses: Array<any> =   [{ question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
+                                    { question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
+                                    { question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
+                                    { question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
+                                    { question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
+
     personId: number;
     yearTaken: Date;
     email: string;

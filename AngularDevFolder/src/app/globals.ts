@@ -23,15 +23,15 @@ export class Globals {
                   { option_id: 4, option_text: "Yellow", option_active: false }
                ],
                responses: [
-                  { response_id: 0, response_text: "Red", date_taken: "2018-11-02"},
-                  { response_id: 1, response_text: "White", date_taken: "2018-11-02"},
-                  { response_id: 2, response_text: "Pink", date_taken: "2018-11-02"},
-                  { response_id: 3, response_text: "Blue", date_taken: "2018-11-02"},
-                  { response_id: 4, response_text: "White", date_taken: "2018-11-02"},
-                  { response_id: 5, response_text: "White", date_taken: "2018-11-02"},
-                  { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02"},
-                  { response_id: 7, response_text: "Blue", date_taken: "2018-11-02"},
-                  { response_id: 8, response_text: "Pink", date_taken: "2018-11-02"},
+                  { response_id: 0, response_text: "Red", date_taken: "2018-11-02", hash_id: "aa"},
+                  { response_id: 1, response_text: "White", date_taken: "2018-11-02", hash_id: "ab"},
+                  { response_id: 2, response_text: "Pink", date_taken: "2018-11-02", hash_id: "ac"},
+                  { response_id: 3, response_text: "Blue", date_taken: "2018-11-02", hash_id: "ad"},
+                  { response_id: 4, response_text: "White", date_taken: "2018-11-02", hash_id: "ae"},
+                  { response_id: 5, response_text: "White", date_taken: "2018-11-02", hash_id: "af"},
+                  { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02", hash_id: "ag"},
+                  { response_id: 7, response_text: "Blue", date_taken: "2018-11-02", hash_id: "ah"},
+                  { response_id: 8, response_text: "Pink", date_taken: "2018-11-02", hash_id: "ai"},
                ]
             },
             {
@@ -47,15 +47,15 @@ export class Globals {
                   { option_id: 9, option_text: "Poughkeepsie", option_active: true }
                ],
                responses: [
-                  { response_id: 9, response_text: "New York City", date_taken: "2018-11-02"},
-                  { response_id: 10, response_text: "Boston", date_taken: "2018-11-02"},
-                  { response_id: 11, response_text: "New York City", date_taken: "2018-11-02"},
-                  { response_id: 12, response_text: "Washington", date_taken: "2018-11-02"},
-                  { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02"},
-                  { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02"},
-                  { response_id: 15, response_text: "New York City", date_taken: "2018-11-02"},
-                  { response_id: 16, response_text: "Miami", date_taken: "2018-11-02"},
-                  { response_id: 17, response_text: "Boston", date_taken: "2018-11-02"},
+                  { response_id: 9, response_text: "New York City", date_taken: "2018-11-02", hash_id: "aa"},
+                  { response_id: 10, response_text: "Boston", date_taken: "2018-11-02", hash_id: "ab"},
+                  { response_id: 11, response_text: "New York City", date_taken: "2018-11-02", hash_id: "ac"},
+                  { response_id: 12, response_text: "Washington", date_taken: "2018-11-02", hash_id: "ad"},
+                  { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02", hash_id: "ae"},
+                  { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02", hash_id: "af"},
+                  { response_id: 15, response_text: "New York City", date_taken: "2018-11-02", hash_id: "ag"},
+                  { response_id: 16, response_text: "Miami", date_taken: "2018-11-02", hash_id: "ah"},
+                  { response_id: 17, response_text: "Boston", date_taken: "2018-11-02", hash_id: "ai"},
                ]
             },
             {
@@ -71,15 +71,15 @@ export class Globals {
                   { option_id: 14, option_text: "Less drinking", option_active: false }
                ],
                responses: [
-                  { response_id: 18, response_text: "More Time", date_taken: "2018-11-02"},
-                  { response_id: 19, response_text: "More Time", date_taken: "2018-11-02"},
-                  { response_id: 20, response_text: "More Money", date_taken: "2018-11-02"},
-                  { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02"},
-                  { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02"},
-                  { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02"},
-                  { response_id: 24, response_text: "More Money", date_taken: "2018-11-02"},
-                  { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02"},
-                  { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02"},
+                  { response_id: 18, response_text: "More Time", date_taken: "2018-11-02", hash_id: "aa"},
+                  { response_id: 19, response_text: "More Time", date_taken: "2018-11-02", hash_id: "ab"},
+                  { response_id: 20, response_text: "More Money", date_taken: "2018-11-02", hash_id: "ac"},
+                  { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02", hash_id: "ad"},
+                  { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02", hash_id: "ae"},
+                  { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02", hash_id: "af"},
+                  { response_id: 24, response_text: "More Money", date_taken: "2018-11-02", hash_id: "ag"},
+                  { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02", hash_id: "ah"},
+                  { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02", hash_id: "ai"},
                ]
             }
          ]
@@ -100,15 +100,15 @@ export class Globals {
                   { option_id: 17, option_text: "Its miserable", option_active: true },
                ],
                responses: [
-                  { response_id: 26, response_text: "Its awesome", date_taken: "2018-11-02"},
-                  { response_id: 27, response_text: "Its cool", date_taken: "2018-10-14"},
-                  { response_id: 28, response_text: "Its awesome", date_taken: "2018-10-12"},
-                  { response_id: 29, response_text: "Its cool", date_taken: "2018-10-02"},
-                  { response_id: 30, response_text: "Its awesome", date_taken: "2018-11-17"},
-                  { response_id: 31, response_text: "Its miserable", date_taken: "2018-10-01"},
-                  { response_id: 32, response_text: "Its awesome", date_taken: "2018-11-30"},
-                  { response_id: 33, response_text: "Its miserable", date_taken: "2018-10-22"},
-                  { response_id: 34, response_text: "Its miserable", date_taken: "2018-11-12"},
+                  { response_id: 26, response_text: "Its awesome", date_taken: "2018-11-02", hash:"ba"},
+                  { response_id: 27, response_text: "Its cool", date_taken: "2018-10-14", hash_id: "bb"},
+                  { response_id: 28, response_text: "Its awesome", date_taken: "2018-10-12", hash_id: "bc"},
+                  { response_id: 29, response_text: "Its cool", date_taken: "2018-10-02", hash_id: "bd"},
+                  { response_id: 30, response_text: "Its awesome", date_taken: "2018-11-17", hash_id: "be"},
+                  { response_id: 31, response_text: "Its miserable", date_taken: "2018-10-01", hash_id: "bf"},
+                  { response_id: 32, response_text: "Its awesome", date_taken: "2018-11-30", hash_id: "bg"},
+                  { response_id: 33, response_text: "Its miserable", date_taken: "2018-10-22", hash_id: "bh"},
+                  { response_id: 34, response_text: "Its miserable", date_taken: "2018-11-12", hash_id: "bi"},
                ]
             },
             {
@@ -118,15 +118,15 @@ export class Globals {
                question_active: true,
                options: [{ option_id: -1, option_text: "TEXT RESPONSE", option_active: false },],
                responses: [
-                  { response_id: 35, response_text: "I love capping so much,", date_taken: "2018-11-02"},
-                  { response_id: 36, response_text: "Its ok, could be better", date_taken: "2018-11-02"},
-                  { response_id: 37, response_text: "I love my capping teacher! Johnson is great!", date_taken: "2018-11-02"},
-                  { response_id: 38, response_text: "Welp", date_taken: "2018-11-02"},
-                  { response_id: 39, response_text: "Algozzine for the win!", date_taken: "2018-11-02"},
-                  { response_id: 40, response_text: "I hate my life", date_taken: "2018-11-02"},
-                  { response_id: 41, response_text: "This has been an incredible experience", date_taken: "2018-11-02"},
-                  { response_id: 42, response_text: "I cry myself to sleep everyday", date_taken: "2018-11-02"},
-                  { response_id: 43, response_text: "I find standing in cold windy rain to be more enjoyable than capping.", date_taken: "2018-11-02"},
+                  { response_id: 35, response_text: "I love capping so much,", date_taken: "2018-11-02", hash_id: "ba"},
+                  { response_id: 36, response_text: "Its ok, could be better", date_taken: "2018-11-02", hash_id: "bb"},
+                  { response_id: 37, response_text: "I love my capping teacher! Johnson is great!", date_taken: "2018-11-02", hash_id: "bc"},
+                  { response_id: 38, response_text: "Welp", date_taken: "2018-11-02", hash_id: "bd"},
+                  { response_id: 39, response_text: "Algozzine for the win!", date_taken: "2018-11-02", hash_id: "be"},
+                  { response_id: 40, response_text: "I hate my life", date_taken: "2018-11-02", hash_id: "bf"},
+                  { response_id: 41, response_text: "This has been an incredible experience", date_taken: "2018-11-02", hash_id: "bg"},
+                  { response_id: 42, response_text: "I cry myself to sleep everyday", date_taken: "2018-11-02", hash_id: "bh"},
+                  { response_id: 43, response_text: "I find standing in cold windy rain to be more enjoyable than capping.", date_taken: "2018-11-02", hash_id: "bi"},
                ]
             }
          ]

@@ -25,6 +25,7 @@ export class SurveyComponent {
 
   updateResponses(event, textValue: string, questionId: number, page: number) {
     let responses = [-1, -1, -1, "", 1 - 1 - 1999];
+    let index = 0;
     if ( this.globals.surveys[0].questions[questionId].question_type == "dropdown" || this.globals.surveys[0].questions[questionId].question_type == "mc" ){
       responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
       responses[1] = questionId; // Question id
@@ -35,16 +36,18 @@ export class SurveyComponent {
       this.surveyData.push(responses);
     } else if ( this.globals.surveys[0].questions[questionId].question_type == "checkboxes" ){
       for( let option of this.radioChoices){
+        responses = [-1, -1, -1, "", 1 - 1 - 1999];
         responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
         responses[1] = questionId;
-        responses[2] = option[1];
-        responses[3] = this.grabText(this.selectOption, questionId);
+        responses[2] = option;
+        responses[3] = this.grabText(option, questionId);
         responses[4] = 11 - 12 - 2018;
 
-        console.log(option)
+        console.log(option);
 
         this.surveyData.push(responses);
       }
+      index = 0;
     }
 
     console.log(responses);
@@ -88,7 +91,8 @@ export class SurveyComponent {
     for (let option of this.globals.surveys[0].questions[questionId].options) {
       if (this.selectOption == option.option_id) {
         return option.option_text;
-      }
+      }else if(optionId == option.option_id)
+        return option.option_text;
     }
   }
 }

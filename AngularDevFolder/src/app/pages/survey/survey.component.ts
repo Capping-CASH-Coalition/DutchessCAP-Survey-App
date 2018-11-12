@@ -25,14 +25,19 @@ export class SurveyComponent {
   updateResponses(event, textValue: string, questionId: number) {
     console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
     console.log(questionId);
+
+
+    
     for (let element in this.responses) {
       this.responses["0"] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-      this.responses["1"] = questionId - 1; // Question id
+      this.responses["1"] = questionId; // Question id
       this.responses["2"] = this.selectOption; // Still need option id what option they choose
-      this.responses["3"] = " test "; // Still need response text
+      this.responses["3"] = this.globals.surveys[0].questions[questionId].options[this.selectOption].option_text; // Still need response text
       this.responses["4"] = 13; // year of taken
       console.log(element);
     }
+
+    console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
 
     this.surveyData.push(this.responses);
     

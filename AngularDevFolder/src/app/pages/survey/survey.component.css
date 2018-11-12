@@ -1,3 +1,9 @@
-#divCheckboxOptionText {
-    color: darkgray;
+
+.header {
+    color: #36A0FF;
+    font-size: 27px;
+    padding: 10px;
+}
+.pages{
+    margin-left:290px;
 }

@@ -1,18 +1,25 @@
-<ul>
+
+<div class="container">
+<div class="row">
+<div class="col-md-10">
+<div class="well well-sm">
+
 
   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
-    <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
-      <form>
+    <div *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}" style="align:center">
+      <form action="surveyEnd.component.html">
+        <fieldset>
         <div class=row>
-          <div class="col-lg-6">
+         <!-- <div class="col-lg-6">
 
-          </div>
-
-          <div class="col-lg-6">
+          </div>-->
+          <legend class="text-center header">Dutchess CAP Survey</legend>
+          <div class="col-lg-6" style="text-align: center; margin-left: 220px;">
             <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
-            {{ question.question_id + 1 }}. {{ question.question_text}}
+            
+            <h3>  {{ question.question_id + 1 }}. {{ question.question_text}} </h3>
 
-            <div [ngSwitch]="question.question_type">
+            <div [ngSwitch]="question.question_type" style="height:100px">
 
               <div *ngSwitchCase="'dropdown'">
                 <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event.target.value)">
@@ -48,15 +55,20 @@
           </div>
 
         </div>
-        <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue ,p)"></pagination-controls>
+        <div class="pages">
+        <pagination-controls  (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue ,p)" style="margin-left:550px"></pagination-controls>
+        </div>
+      </fieldset>
       </form>
-    </li>
+    </div>
     
   </div>
 
-</ul>
 
-
+</div>
+</div>
+</div>
+</div>
 <!--
 <form>
   <div class="form-group" *ngFor="let question of globals.surveys.questions[i].question_id; let i=index">

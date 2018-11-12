@@ -30,8 +30,6 @@ export const appRoutes=[
         path: 'survey',
         loadChildren:'./pages/survey/survey.module#SurveyModule',
     },
-    {
-      path: 'openEndedData',
-      loadChildren:'./pages/openEndedData/openEndedData.module#OpenEndedDataModule',
-  },
+
+
 ];

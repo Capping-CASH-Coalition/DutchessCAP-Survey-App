@@ -6,7 +6,7 @@
 
 
   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
-    <div *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}" style="align:center">
+    <div *ngFor="let question of survey.questions | ActiveQuestions | paginate: {itemsPerPage:1, currentPage: p}" style="align:center">
       <form action="surveyEnd.component.html">
         <fieldset>
         <div class=row>
@@ -24,14 +24,14 @@
               <div *ngSwitchCase="'dropdown'">
                 <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event.target.value)">
                   <option disabled selected>-Please Select an Option-</option>
-                  <option *ngFor="let option of question.options" value="{{option.option_id}}" >
+                  <option *ngFor="let option of question.options | ActiveOptions" value="{{option.option_id}}" >
                     {{ option.option_text }}
                   </option>
                 </select>
               </div>
 
               <div *ngSwitchCase="'checkboxes'">
-                <div *ngFor="let option of question.options" id="divCheckboxOptionText">
+                <div *ngFor="let option of question.options | ActiveOptions" id="divCheckboxOptionText">
                   <input class="form-check-input" type="checkbox">
                   {{ option.option_text }}
                 </div>
@@ -44,7 +44,7 @@
               </div>
 
               <div *ngSwitchCase="'mc'">
-                <div *ngFor="let option of question.options" id="radioBoxOptionText">
+                <div *ngFor="let option of question.options | ActiveOptions" id="radioBoxOptionText">
                   <input type="radio" class="form-check-input" name="question.question_id">
                   {{ option.option_text }}
                 </div>

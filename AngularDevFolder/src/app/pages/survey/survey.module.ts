@@ -9,6 +9,8 @@ import { surveyRoutes } from "./survey.routes";
 import { FilterByQuestionIDPipe } from "./filterQuestionId.pipe"
 import { FilterBySurveyIdPipe } from "./filterSurvey.pipe"
 import { Globals } from './../../globals';
+import { FilterByQuestionActivePipe} from '../../pipes/filterByQuestionActive.pipe';
+import { FilterByOptionActivePipe } from '../../pipes/filterByOptionActive.pipe'
 
 @NgModule({
   imports: [
@@ -20,7 +22,9 @@ import { Globals } from './../../globals';
   declarations: [
     SurveyComponent,
     FilterByQuestionIDPipe,
-    FilterBySurveyIdPipe
+    FilterBySurveyIdPipe,
+    FilterByQuestionActivePipe,
+    FilterByOptionActivePipe
   ],
   providers:[
     Globals

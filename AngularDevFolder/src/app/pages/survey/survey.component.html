@@ -2,7 +2,7 @@
 
   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
     <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
-      <form>
+      <form #testForm="ngForm">
         <div class=row>
           <div class="col-lg-6">
 

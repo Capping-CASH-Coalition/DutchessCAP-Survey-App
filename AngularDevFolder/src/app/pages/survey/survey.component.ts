@@ -1,6 +1,7 @@
 import { Globals } from './../../globals';
 import { Component, OnInit } from '@angular/core';
 import { stringify } from 'querystring';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-survey',
@@ -22,7 +23,8 @@ export class SurveyComponent {
     console.log(this.globals.surveys);
   }
 
-  updateResponses(event, textValue: string, questionId: number) {
+  /*
+  updateResponsess(event, textValue: string, questionId: number) {
     console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
     console.log(questionId);
     for (let element in this.responses) {
@@ -39,7 +41,10 @@ export class SurveyComponent {
     console.log(this.responses);
     console.log(this.surveyData);
   }
-
+*/
+updateResponses(testForm : NgForm){
+  console.log(testForm.value);
+}
   onSubmit(form: any): void {
     console.log('you submitted value:', form);
   }

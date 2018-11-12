@@ -1,61 +1,107 @@
 <ul>
 
-   <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
-     <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
-       <form>
-         <div class=row>
-           <div class="col-lg-6">
- 
-           </div>
- 
-           <div class="col-lg-6">
-             <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
-             {{ question.question_id + 1 }}. {{ question.question_text}}
- 
-             <div [ngSwitch]="question.question_type">
- 
-               <div *ngSwitchCase="'select'">
-                 <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event.target.value)">
-                   <option disabled selected>-Please Select an Option-</option>
-                   <option *ngFor="let option of question.options" value="{{option.option_id}}" >
-                     {{ option.option_text }}
-                   </option>
-                 </select>
-               </div>
- 
-               <div *ngSwitchCase="'checkbox'">
-                 <div *ngFor="let option of question.options" id="divCheckboxOptionText">
-                   <input class="form-check-input" type="checkbox">
-                   {{ option.option_text }}
-                 </div>
-               </div>
- 
-               <div *ngSwitchCase="'text'">
-                 <div class="form-check-label">
-                   <textarea class="form-control" name="test" rows="2" [(ngModel)]="textAreaValue"></textarea>
-                 </div>
-               </div>
- 
-               <div *ngSwitchCase="'radio'">
-                 <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event.target.value)">
-                   <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
-                   {{ option.option_text }}
-                 </div>
-               </div>
-               
-             </div>
- 
-           </div>
- 
-         </div>
-         <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue ,question.question_id)"></pagination-controls>
-       </form>
-     </li>
-     
-   </div>
- 
- </ul>
- 
+
+  <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
+    <li *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
+      <form #testForm="ngForm">
+        <div class=row>
+          <div class="col-lg-6">
+
+          </div>
+
+          <div class="col-lg-6">
+            <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
+            {{ question.question_id + 1 }}. {{ question.question_text}}
+
+            <div [ngSwitch]="question.question_type">
+
+              <div *ngSwitchCase="'select'">
+                <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event.target.value)">
+                  <option disabled selected>-Please Select an Option-</option>
+                  <option *ngFor="let option of question.options" value="{{option.option_id}}" >
+                    {{ option.option_text }}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngSwitchCase="'checkbox'">
+                <div *ngFor="let option of question.options" id="divCheckboxOptionText">
+                  <input class="form-check-input" type="checkbox">
+                  {{ option.option_text }}
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'text'">
+                <div class="form-check-label">
+                  <textarea class="form-control" name="test" rows="2" [(ngModel)]="textAreaValue"></textarea>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'radio'">
+                <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event.target.value)">
+                  <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
+                  {{ option.option_text }}
+                </div>
+              </div>
+              
+            </div>
+
+          </div>
+
+        </div>
+        <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue ,question.question_id)"></pagination-controls>
+      </form>
+    </li>
+    
+  </div>
+
+</ul>
+
+
+
+<form>
+
+  <div class="form-group" *ngFor="let question of globals.surveys.questions[i].question_id; let i=index">
+    <label for="question_label">{{ question.question_text }} </label>
+  <div [ngSwitch]="question.question_type">
+
+      <div *ngSwitchCase="'select'">
+        <select class="form-control" id="select">
+          <option *ngFor="let option of globals.options | filterByQuestionID: question.question_id" (click)="changeData($event, option.option_text)">
+            {{ option.option_text }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngSwitchCase="'checkbox'">
+        <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id" id="divCheckboxOptionText">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" value="option.option_text" (change)="changeData($event, option.option_text)">
+              {{ option.option_text }}
+          </label>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'text'">
+        <label class="form-check-label"></label>
+        <textarea class="form-control" name="this" rows="3"></textarea>
+      </div>
+
+      <div *ngSwitchCase="'radio'">
+          <div  *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
+            <label class="check-label">
+              <input type="radio" class="form-check-input" name="radio{{option.question_id}}" id="optionRadios{{option.option_num}}" value="option{{option.option_num}}" (change) = "changeData($event, option.option_text)">
+              {{ option.option_text }}
+            </label>
+          </div>
+      </div>
+
+      <label class="form-control" id="unknownType" *ngSwitchDefault>Unknown Type</label>
+
+    </div>
+  </div>
+  <button class="btn btn-upload" (click)="uploadData()">Submit</button>
+</form>
  
  <!--
  <form>

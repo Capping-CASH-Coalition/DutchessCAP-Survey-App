@@ -1,6 +1,7 @@
 import { Globals } from './../../globals';
 import { Component, OnInit } from '@angular/core';
 import { stringify } from 'querystring';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-survey',
@@ -16,35 +17,33 @@ export class SurveyComponent {
   selectOption: number;
 
   surveyData: Array<any> = [];
-  responses = [-1, -1, -1, "", 1 - 1 - 1999];
 
   ngOnInit() {
     console.log(this.globals.surveys);
   }
 
-  updateResponses(event, textValue: string, questionId: number) {
+  /*
+  updateResponsess(event, textValue: string, questionId: number) {
     console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
     console.log(questionId);
-
-
     
-    for (let element in this.responses) {
-      this.responses["0"] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-      this.responses["1"] = questionId; // Question id
-      this.responses["2"] = this.selectOption; // Still need option id what option they choose
-      this.responses["3"] = this.globals.surveys[0].questions[questionId].options[this.selectOption].option_text; // Still need response text
-      this.responses["4"] = 13; // year of taken
-      console.log(element);
-    }
+    let responses = [-1, -1, -1, "", 1 - 1 - 1999];
 
-    console.log("pageChanged" + " " + this.globals.surveys[0].survey_id + " " + questionId);
+    responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
+    responses[1] = questionId; // Question id
+    responses[2] = this.selectOption; // Still need option id what option they choose
+    responses[3] = this.grabText(this.selectOption, questionId);; // Still need response text
+    responses[4] = 11-12-2018; // year it was take
 
-    this.surveyData.push(this.responses);
+    this.surveyData.push(responses);
     
-    console.log(this.responses);
+    console.log(responses);
     console.log(this.surveyData);
   }
-
+*/
+updateResponses(testForm : NgForm){
+  console.log(testForm.value);
+}
   onSubmit(form: any): void {
     console.log('you submitted value:', form);
   }
@@ -53,5 +52,13 @@ export class SurveyComponent {
   public setSelectedOption(value): void {
     console.log("Selected: " + value);
     this.selectOption = value;
+  }
+
+  grabText(optionId, questionId){
+    for (let option of this.globals.surveys[0].questions[questionId].options){
+      if (this.selectOption == option.option_id){
+        return option.option_text;
+      }
+    }
   }
 }

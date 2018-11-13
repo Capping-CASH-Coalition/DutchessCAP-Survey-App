@@ -135,4 +135,8 @@ export class SurveyComponent {
     };
     return index;
   }
+
+  removeResponse(){
+    
+  }
 }

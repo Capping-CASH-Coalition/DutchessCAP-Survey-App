@@ -40,11 +40,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-var Responses = [{ question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
-    { question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
-    { question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
-    { question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
-    { question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
+var Responses = [{ survey_id: 1, question_id: 1, option_id: 1, response_text: "Community Outreach" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" }];
 var Surveys = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
     { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
     { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
@@ -65,7 +65,8 @@ var AppComponent = (function () {
             _this.questions = [];
             //console.log('response is ', response);
             for (var i = 0; i < response.length; i++) {
-                var qArray = { "question_num": response[i].question_num,
+                var qArray = {
+                    "question_num": response[i].question_num,
                     "question_id": response[i].question_id,
                     "question_text": response[i].question_text,
                     "question_type": response[i].question_type,
@@ -89,13 +90,13 @@ var AppComponent = (function () {
                     "question_id": response[i].question_id,
                     "question_num": response[i].question_num,
                     "question_text": response[i].question_text,
-                    "question_type": response[i].question_type,
                     "question_is_active": response[i].question_is_active,
+                    "question_type": response[i].question_type,
                     "response_id": response[i].response_id,
                     "survey_id": response[i].survey_id,
                     "option_id": response[i].option_id,
                     "response_text": response[i].response_text,
-                    "date_taken": response[i].date_taken,
+                    "date_taken": response[i].date_taken
                 };
                 _this.results.push(rArray);
             }
@@ -104,96 +105,114 @@ var AppComponent = (function () {
             console.log('error is ', error);
         });
         for (var j = 0; j < Responses.length; j++) {
-            this.surveyService.postSurveyResponses(Responses[j]).subscribe(function (response) {
+            this.surveyService.postSurveyResponse(Responses[j]).subscribe(function (response) {
                 _this.responses = [];
                 //console.log('response is ', response);
                 for (var i = 0; i < response.length; i++) {
                     var sArray = {
-                        "response_id": response[i].response_id,
                         "question_id": response[i].question_id,
                         "survey_id": response[i].survey_id,
                         "option_id": response[i].option_id,
-                        "response_text": response[i].response_text,
+                        "response_text": response[i].response_text
                     };
                     _this.responses.push(sArray);
+                    console.log(_this.responses);
                 }
-                console.log(_this.responses);
             }, function (error) {
                 console.log('error is ', error);
             });
         }
-        for (var j = 0; j < Surveys.length; j++) {
-            this.surveyService.postSurveyResponses(Responses[j]).subscribe(function (response) {
-                _this.surveys = [];
-                //console.log('response is ', response);
-                for (var i = 0; i < response.length; i++) {
-                    var lArray = {
-                        "question_id": response[i].question_id,
-                        "question_num": response[i].question_num,
-                        "question_text": response[i].question_text,
-                        "question_is_active": response[i].question_is_active,
-                        "question_type": response[i].question_type,
-                        "option_id": response[i].option_id,
-                        "option_num": response[i].option_num,
-                        "option_text": response[i].option_text,
-                        "option_is_active": response[i].option_is_active
-                    };
-                    _this.surveys.push(lArray);
-                }
-                console.log(_this.surveys);
-            }, function (error) {
-                console.log('error is ', error);
-            });
-        }
-        for (var j = 0; j < Updates.length; j++) {
-            if (Updates[j].question_id = '') {
-                this.surveyService.insertSurveyQuestions(Updates[j]).subscribe(function (response) {
-                    _this.updates = [];
-                    //console.log('response is ', response);
-                    for (var i = 0; i < response.length; i++) {
-                        var mArray = {
-                            "question_num": response[i].question_num,
-                            "question_text": response[i].question_text,
-                            "question_is_active": response[i].question_is_active,
-                            "question_type": response[i].question_type,
-                            "option_id": response[i].option_id,
-                            "option_num": response[i].option_num,
-                            "option_text": response[i].option_text,
-                            "option_is_active": response[i].option_is_active
-                        };
-                        _this.updates.push(mArray);
-                    }
-                    console.log(_this.updates);
-                }, function (error) {
-                    console.log('error is ', error);
-                });
+        /*
+        for(let j =0; j <Surveys.length; j++){
+        this.surveyService.postSurveyResponses(Su[j]).subscribe((response)=>{
+            this.surveys = [];
+            //console.log('response is ', response);
+            for (let i = 0; i < response.length; i++) {
+        
+                let lArray =
+                {
+                "question_id": response[i].question_id,
+                  "question_num": response[i].question_num,
+                  "question_text": response[i].question_text,
+                "question_is_active": response[i].question_is_active,
+                "question_type": response[i].question_type,
+                "option_id": response[i].option_id,
+                "option_num": response[i].option_num,
+                "option_text": response[i].option_text,
+                "option_is_active": response[i].option_is_active
+                
+               
+              }
+                  ;
+                this.surveys.push(lArray);
+        
             }
-            if (Updates[j].question_id != '') {
-                this.surveyService.updateSurveyQuestions(Updates[j]).subscribe(function (response) {
-                    _this.updates = [];
-                    //console.log('response is ', response);
-                    for (var i = 0; i < response.length; i++) {
-                        var dArray = {
-                            "question_id": response[i].question_id,
-                            "question_num": response[i].question_num,
-                            "question_text": response[i].question_text,
-                            "question_is_active": response[i].question_is_active,
-                            "question_type": response[i].question_type,
-                            "option_id": response[i].option_id,
-                            "option_num": response[i].option_num,
-                            "option_text": response[i].option_text,
-                            "option_is_active": response[i].option_is_active,
-                            "response_id": response[i].response_id,
-                            "survey_id": response[i].survey_id
-                        };
-                        _this.updates.push(dArray);
-                    }
-                    console.log(_this.updates);
-                }, function (error) {
-                    console.log('error is ', error);
-                });
-            }
+            console.log(this.surveys);
+        },(error) => {
+            console.log('error is ', error)
+        })
         }
+        
+            for (let j = 0; j < Updates.length; j++) {
+              if (Updates[j].question_id = '') {
+                this.surveyService.insertSurveyQuestions(Updates[j]).subscribe((response) => {
+                  this.updates = [];
+                  //console.log('response is ', response);
+                  for (let i = 0; i < response.length; i++) {
+        
+                    let mArray =
+                    {
+                      "question_num": response[i].question_num,
+                      "question_text": response[i].question_text,
+                      "question_is_active": response[i].question_is_active,
+                      "question_type": response[i].question_type,
+                      "option_id": response[i].option_id,
+                      "option_num": response[i].option_num,
+                      "option_text": response[i].option_text,
+                      "option_is_active": response[i].option_is_active
+                    }
+                      ;
+                    this.updates.push(mArray);
+        
+                  }
+                  console.log(this.updates);
+                }, (error) => {
+                  console.log('error is ', error)
+                })
+              }
+              if (Updates[j].question_id != '') {
+                this.surveyService.updateSurveyQuestions(Updates[j]).subscribe((response) => {
+                  this.updates = [];
+                  //console.log('response is ', response);
+                  for (let i = 0; i < response.length; i++) {
+        
+                    let dArray =
+                    {
+                      "question_id": response[i].question_id,
+                      "question_num": response[i].question_num,
+                      "question_text": response[i].question_text,
+                      "question_is_active": response[i].question_is_active,
+                      "question_type": response[i].question_type,
+                      "option_id": response[i].option_id,
+                      "option_num": response[i].option_num,
+                      "option_text": response[i].option_text,
+                      "option_is_active": response[i].option_is_active,
+                      "response_id": response[i].response_id,
+                      "survey_id": response[i].survey_id
+                    }
+                      ;
+                    this.updates.push(dArray);
+        
+                  }
+                  console.log(this.updates);
+                }, (error) => {
+                  console.log('error is ', error)
+                })
+              }
+            }
+        
+        
+        */
     };
     return AppComponent;
 }());
@@ -291,11 +310,11 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(109);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_common_http__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_common_http__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_component__ = __webpack_require__(111);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_topnavbar_topnavbar_component__ = __webpack_require__(116);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_navigation_navigation_component__ = __webpack_require__(115);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__app_routes__ = __webpack_require__(114);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_home_home_component__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__survey_service__ = __webpack_require__(64);
@@ -401,7 +420,7 @@ var appRoutes = [
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_login__ = __webpack_require__(118);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Navigation; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -650,7 +669,7 @@ HomeComponent = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -663,55 +682,51 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
+var httpOptions = {
+    headers: new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpHeaders */]({
+        'Content-Type': 'application/json',
+    })
+};
 var SurveyService = (function () {
+    /*httpOptions: any = {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    };*/
     function SurveyService(http) {
         this.http = http;
     }
     SurveyService.prototype.getSurveyQuestions = function (survey_name) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
-            .set('survey_name', survey_name);
-        return this.http.get('http://localhost:3000/api/surveyQuestions', { params: params });
+        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_name);
     };
     SurveyService.prototype.getSurveyResponses = function (survey_name) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
-            .set('survey_name', survey_name);
-        return this.http.get('http://localhost:3000/api/surveyResponses', { params: params });
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_name);
     };
-    SurveyService.prototype.postSurveyResponses = function (responses) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
-            .set('responses', responses);
-        return this.http.post('http://localhost:3000/api/postSurveyResponse', { params: params });
+    SurveyService.prototype.postSurveyResponse = function (response) {
+        return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
     };
     SurveyService.prototype.postNewSurvey = function (surveys) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
             .set('surveys', surveys);
-        return this.http.post('http://localhost:3000/api/newSurvey', { params: params });
+        return this.http.post('http://localhost:3000/api/newSurvey', surveys);
     };
     SurveyService.prototype.updateSurveyQuestions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', { params: params });
+        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
     };
     SurveyService.prototype.updateSurveyOptions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
             .set('updates', updates);
         return this.http.post('http://localhost:3000/api/newSurveyOptions', { params: params });
     };
     SurveyService.prototype.insertSurveyQuestions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
             .set('updates', updates);
         return this.http.post('http://localhost:3000/api/insertSurveyQuestion', { params: params });
-    };
-    SurveyService.prototype.insertSurveyOptions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/insertSurveyOptions', { params: params });
     };
     return SurveyService;
 }());
 SurveyService = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["c" /* Injectable */])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */]) === "function" && _a || Object])
 ], SurveyService);
 
 var _a;

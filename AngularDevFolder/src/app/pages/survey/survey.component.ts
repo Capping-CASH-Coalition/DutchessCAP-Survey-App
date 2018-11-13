@@ -137,6 +137,7 @@ export class SurveyComponent {
   }
 
   removeResponse(){
-    
+    this.surveyData.pop();
+    console.log(this.surveyData);
   }
 }

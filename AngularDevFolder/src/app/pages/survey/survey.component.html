@@ -72,7 +72,7 @@
 
                     <div class="pagination-next" [class.disabled]="p.isLastPage()">
                       <a *ngIf="!p.isLastPage()" (click)="p.next()" (click)="updateResponses($event, textAreaValue, grabIndex(question.question_id), p)"> Next </a>
-                      <a *ngIf="p.isLastPage()" (click)="submit()"> Submit </a>
+                      <a *ngIf="p.isLastPage()" (click)="submit()" (click)="updateResponses($event, textAreaValue, grabIndex(question.question_id), p)"> Submit </a>
                     </div>
                   </div>
                 </pagination-template>

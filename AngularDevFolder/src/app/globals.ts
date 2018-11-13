@@ -184,6 +184,4 @@ export class Globals {
        })
     }
     ~~~~~~~~~DONT DELETE~~~~~~~~~~DONT DELETE~~~~~~~~~~DONT DELETE~~~~~~~~~~DONT DELETE~~~~~~~~~~DONT DELETE~~~~~~~~~
-    */
-
 }

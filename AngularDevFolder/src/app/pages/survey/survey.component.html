@@ -5,13 +5,17 @@
 
 
         <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
+
           <div *ngFor="let question of survey.questions | paginate: config">
+
             <form action="surveyEnd.component.html">
               <fieldset>
                 <div class=row>
                   <!-- <div class="col-lg-6">
 
-                  </div>-->
+
+          </div>-->
+
                   <legend class="text-center header">Dutchess CAP Survey</legend>
                   <div class="col-lg-6" style="text-align: center; margin-left: 220px;">
                     <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
@@ -79,6 +83,7 @@
                 <!--
                 <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event, textAreaValue, grabIndex(question.question_id), p)"></pagination-controls>
                  -->
+
               </fieldset>
             </form>
           </div>

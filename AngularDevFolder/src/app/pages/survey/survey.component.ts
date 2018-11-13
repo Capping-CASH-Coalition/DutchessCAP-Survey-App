@@ -25,7 +25,12 @@ export class SurveyComponent {
   }
 
   updateResponses(event, textValue: string, questionIndex: number, page: number) {
-    let responses = [-1, -1, -1, "", 1 - 1 - 1999];
+    var now = new Date();
+    var month = now.getUTCMonth() + 1;
+    var day = now.getUTCDate();
+    var year = now.getUTCFullYear();
+
+    let responses = [-1, -1, -1, "", now];
     let index = 0;
     console.log(questionIndex);
     if ( this.currSurveyVer.questions[questionIndex].question_type == "dropdown" || this.currSurveyVer.questions[questionIndex].question_type == "mc" ){
@@ -33,7 +38,7 @@ export class SurveyComponent {
       responses[1] = this.currSurveyVer.questions[questionIndex].question_id; // Question id
       responses[2] = this.selectOption; // Still need option id what option they choose
       responses[3] = this.grabText(this.selectOption, questionIndex); // Still need response text
-      responses[4] = 11 - 12 - 2018; // year it was take      
+      responses[4] = year + "-" + month + "-" + day; // year it was take      
       
       this.surveyData.push(responses);
     } else if ( this.currSurveyVer.questions[questionIndex].question_type == "checkboxes" ){
@@ -43,7 +48,7 @@ export class SurveyComponent {
         responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
         responses[2] = option;
         responses[3] = this.grabText(option, questionIndex);
-        responses[4] = 11 - 12 - 2018;
+        responses[4] = year + "-" + month + "-" + day;
 
         console.log(option);
 
@@ -56,7 +61,7 @@ export class SurveyComponent {
           responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
           responses[2] = null;
           responses[3] = textValue;
-          responses[4] = 11 - 12 - 2018;
+          responses[4] = year + "-" + month + "-" + day;
   
           console.log(textValue);
   

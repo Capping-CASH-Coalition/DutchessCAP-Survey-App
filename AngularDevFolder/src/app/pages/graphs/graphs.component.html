@@ -1,52 +1,93 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    
- 
-   <div class="row">
-      <button class='pull-right btn btn-lg' (click)='editQuestion()' style='background-color:transparent;'>
-         <div>
-            <i id="btnQuestionAdd" class="fa fa-cog"></i>
+
+   {{currentSurvey.survey_name}}<br>
+   {{currentDatasetType}}<br>
+   {{currentQuestionID}}<br>
+
+  <div class="row">
+    <button class='pull-right btn btn-lg' (click)='editQuestion()' style='background-color:transparent;'>
+      <div>
+        <i id="btnQuestionAdd" class="fa fa-cog"></i>
+      </div>
+    </button>
+
+    <div class="col-lg-3">
+      <br>
+      <form [formGroup]="chartFiltersForm">
+        <div class="form-group">
+
+          <div class="filterBlock">
+               <label for="deepGraphSwitch">Deep Graph Switch</label>
+            <div class="btn-group" id="deepGraphSwitch" role="group" aria-label="Basic example" (click)="updateMultipleDataSetForm($event.target.value)">
+              <button type="button" value="single"  class="btn btn-info">Single </button>
+              <button type="button" value="multiple" class="btn btn-success">Matrix</button>
+            </div>
+          </div>
+
+          <div class="filterBlock">
+            <label for="graphType">Graph Type</label>
+            <select class="form-control" (change)="updateChartType($event.target.value)"
+              required>
+              <option *ngFor="let graph of graphService.getGraphTypes()" [value]="graph.val">
+                {{graph.view}}
+              </option>
+            </select>
+          </div>
+
+          <div class="filterBlock">
+            <label for="graphType">Select Survey</label>
+            <select class="form-control" (change)="updateCurrentSurvey($event.target.value)"
+              required>
+              <option *ngFor="let survey of globals.surveys" [value]="survey.survey_id">
+                {{survey.survey_name}}
+              </option>
+            </select>
+          </div>
+
+          <div class="filterBlock">
+            <label for="graphType">Select Question</label>
+            <select class="form-control" (change)="updateCurrentQuestion($event.target.value)"
+              required>
+              <option *ngFor="let question of currentSurvey.questions | GraphableQuestion" [value]="question.question_id">
+                {{question.question_text}}
+               </option>
+            </select>
+          </div>
+
+         <div id="multipleDataSets">
+            <div class="filterBlock">
+               <label for="graphType">Select Sub Question</label>
+               <select class="form-control" (change)="updateSubQuestion($event.target.value)"
+                  required>
+                  <option *ngFor="let question of currentSurvey.questions | GraphableQuestion" [value]="question.question_id">
+                  {{question.question_text}}
+                  </option>
+               </select>
+            </div>
+            <div *ngFor="let option of currentSubQuestion.options" >
+               <input class="form-check-input" type="checkbox">
+                    {{ option.option_text }}
+            </div>
          </div>
-      </button>
 
-      <div class="col-lg-3">
-            <br>
-            <form [formGroup]="chartFiltersForm">
-               <div class="form-group">
 
-                  <div class="filterBlock">
-                     <label for="graphType">Graph Type</label>
-                     <select  class="form-control" 
-                              formControlName="graphType"
-                              id="graphType"
-                              (change)="updateChartType($event.target.value)"
-                              required>
-                     <option *ngFor="let t of chartTypes; let idx = index" 
-                              [value]="t"
-                              [selected]="idx === 0">
-                              {{t}}
-                           </option>
-                     </select>
-                  </div>
-
-                  <div class="filterBlock">
-                     <fieldset id="filterTopLevel">
-                     <label for="graphFilterTopLevel">Select Question</label>
-                     <table id="graphFilterTopLevel" class="radioBtnFilterTable">
-                        <tbody>
-                        <tr *ngFor="let filter of chartDataFilters; let idx = index">
-                           <td width="30px">
-                              <input type="radio" 
-                                     name="filterTopLevel"
-                                     (click)="updateTopFilter(filter)"
-                                     [checked]="idx === 0">
-                           </td>
-                           <td>{{ filter }}</td>
-                        </tr>
-                        </tbody>
-                     </table>
-                     </fieldset>
-                  </div>
-<!--
+          <!--
+          <div class="filterBlock">
+            <fieldset id="filterTopLevel">
+              <label for="graphFilterTopLevel">Select Question</label>
+              <table id="graphFilterTopLevel" class="radioBtnFilterTable">
+                <tbody>
+                  <tr *ngFor="let filter of chartDataFilters; let idx = index">
+                    <td width="30px">
+                      <input type="radio" name="filterTopLevel" (click)="updateTopFilter(filter)" [checked]="idx === 0">
+                    </td>
+                    <td>{{ filter }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </fieldset>
+          </div>
+         
                   <div class="filterBlock">
                      <fieldset id="filterSubLevel">
                      <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scope)</label>
@@ -67,25 +108,24 @@
                      </fieldset>
                   </div>
 -->
-                  <div class="filterBlock">
-                        <button  type="button" 
-                                 class="btn btn-primary btn-block btn-sm">
-                                 <a href="graphs" (click)="download($event)" style="color:white">
-                                    <i class="fas fa-download"></i>
-                                    Export Graph
-                                 </a>
-                        </button>
-                  </div>
+          <div class="filterBlock">
+            <button type="button" class="btn btn-primary btn-block btn-sm">
+              <a href="graphs" (click)="download($event)" style="color:white">
+                <i class="fas fa-download"></i>
+                Export Graph
+              </a>
+            </button>
+          </div>
 
-               </div>
-            </form>
-      </div>
+        </div>
+      </form>
+    </div>
 
-      <div class="col-lg-9">
-         <canvas id="graphCanvas" width="600" height="600"></canvas>
-      </div>
+    <div class="col-lg-9">
+      <canvas id="graphCanvas" width="600" height="600"></canvas>
+    </div>
 
-   </div>
+  </div>
 
-    
+
 </div>

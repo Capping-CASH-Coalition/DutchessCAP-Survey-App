@@ -2,6 +2,7 @@ import { Globals } from './../../globals';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { stringify } from 'querystring';
 import { PaginationInstance } from 'ngx-pagination';
+import { SurveyService } from '../../survey.service';
 
 @Component({
   selector: 'app-survey',
@@ -11,7 +12,7 @@ import { PaginationInstance } from 'ngx-pagination';
 })
 
 export class SurveyComponent {
-  constructor(private globals: Globals) { }
+  constructor(private globals: Globals, private surveyService: SurveyService) { }
 
   public config: PaginationInstance = {
     id: 'custom',
@@ -33,6 +34,10 @@ export class SurveyComponent {
   }
 
   submit(){
+
+    for (let i = 0; i < this.surveyData.length; i++) {
+      this.surveyService.postSurveyResponse(this.surveyData[i]);
+    }
     console.log("popop");
   }
 

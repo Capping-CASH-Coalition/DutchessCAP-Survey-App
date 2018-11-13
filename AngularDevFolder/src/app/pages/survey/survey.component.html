@@ -1,70 +1,71 @@
-
 <div class="container">
-<div class="row">
-<div class="col-md-10">
-<div class="well well-sm">
+  <div class="row">
+    <div class="col-md-10">
+      <div class="well well-sm">
 
 
-  <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
-    <div *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}" style="align:center">
-      <form action="surveyEnd.component.html">
-        <fieldset>
-        <div class=row>
-         <!-- <div class="col-lg-6">
+        <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
+          <div *ngFor="let question of survey.questions | paginate: {itemsPerPage:1, currentPage: p}">
+            <form action="surveyEnd.component.html">
+              <fieldset>
+                <div class=row>
+                  <!-- <div class="col-lg-6">
 
-          </div>-->
-          <legend class="text-center header">Dutchess CAP Survey</legend>
-          <div class="col-lg-6" style="text-align: center; margin-left: 220px;">
-            <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
-            
-            <h3>  {{ question.question_id + 1 }}. {{ question.question_text}} </h3>
+                  </div>-->
+                  <legend class="text-center header">Dutchess CAP Survey</legend>
+                  <div class="col-lg-6" style="text-align: center; margin-left: 220px;">
+                    <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
 
-            <div [ngSwitch]="question.question_type" style="height:100px">
+                    <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>
 
-              <div *ngSwitchCase="'dropdown'">
-                <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption" (change)="setSelectedOption($event, $event.target.value, 'dd')">
-                  <option disabled selected>-Please Select an Option-</option>
-                  <option *ngFor="let option of question.options" value="{{option.option_id}}" >
-                    {{ option.option_text }}
-                  </option>
-                </select>
-              </div>
+                    <div [ngSwitch]="question.question_type" style="height:100px">
 
-              <div *ngSwitchCase="'checkboxes'">
-                <div *ngFor="let option of question.options" id="divCheckboxOptionText" (change)="setSelectedOption($event, $event.target.value, 'cb')">
-                  <input class="form-check-input" type="checkbox" value="{{option.option_id}}" >
-                  {{ option.option_text }}
+                      <div *ngSwitchCase="'dropdown'">
+                        <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption"
+                          (change)="setSelectedOption($event, $event.target.value, 'dd')">
+                          <option disabled selected>-Please Select an Option-</option>
+                          <option *ngFor="let option of question.options" value="{{option.option_id}}">
+                            {{ option.option_text }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div *ngSwitchCase="'checkboxes'">
+                        <div *ngFor="let option of question.options" id="divCheckboxOptionText" (change)="setSelectedOption($event, $event.target.value, 'cb')">
+                          <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
+                          {{ option.option_text }}
+                        </div>
+                      </div>
+
+                      <div *ngSwitchCase="'text'">
+                        <div class="form-check-label">
+                          <textarea class="form-control" name="test" rows="2" [(ngModel)]="textAreaValue"></textarea>
+                        </div>
+                      </div>
+
+                      <div *ngSwitchCase="'mc'">
+                        <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
+                          <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
+                          {{ option.option_text }}
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
                 </div>
-              </div>
-
-              <div *ngSwitchCase="'text'">
-                <div class="form-check-label">
-                  <textarea class="form-control" name="test" rows="2" [(ngModel)]="textAreaValue"></textarea>
-                </div>
-              </div>
-
-              <div *ngSwitchCase="'mc'">
-                <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
-                  <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
-                  {{ option.option_text }}
-                </div>
-              </div>
-              
-            </div>
-
+                <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event, textAreaValue, grabIndex(question.question_id), p)"></pagination-controls>
+              </fieldset>
+            </form>
           </div>
 
         </div>
-        <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue , question.question_id, p)"></pagination-controls>
-      </form>
+
+
+      </div>
     </div>
-    
   </div>
-
-
-</div>
-</div>
-</div>
 </div>
 <!--
 <form>

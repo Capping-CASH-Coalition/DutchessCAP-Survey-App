@@ -11,7 +11,8 @@ import { stringify } from 'querystring';
 export class SurveyComponent {
   constructor(private globals: Globals) { }
 
-  currSurvey = this.globals.surveys[0].survey_id;
+  currSurvey = this.globals.surveys[1].survey_id;
+  currSurveyVer= this.globals.surveys[1];
 
   selectOption: number;
   radioChoices = [];
@@ -23,24 +24,25 @@ export class SurveyComponent {
     console.log(this.globals.surveys);
   }
 
-  updateResponses(event, textValue: string, questionId: number, page: number) {
+  updateResponses(event, textValue: string, questionIndex: number, page: number) {
     let responses = [-1, -1, -1, "", 1 - 1 - 1999];
     let index = 0;
-    if ( this.globals.surveys[0].questions[questionId].question_type == "dropdown" || this.globals.surveys[0].questions[questionId].question_type == "mc" ){
-      responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-      responses[1] = questionId; // Question id
+    console.log(questionIndex);
+    if ( this.currSurveyVer.questions[questionIndex].question_type == "dropdown" || this.currSurveyVer.questions[questionIndex].question_type == "mc" ){
+      responses[0] = this.currSurvey; // What version of survey is taken on
+      responses[1] = this.currSurveyVer.questions[questionIndex].question_id; // Question id
       responses[2] = this.selectOption; // Still need option id what option they choose
-      responses[3] = this.grabText(this.selectOption, questionId); // Still need response text
+      responses[3] = this.grabText(this.selectOption, questionIndex); // Still need response text
       responses[4] = 11 - 12 - 2018; // year it was take      
       
       this.surveyData.push(responses);
-    } else if ( this.globals.surveys[0].questions[questionId].question_type == "checkboxes" ){
+    } else if ( this.currSurveyVer.questions[questionIndex].question_type == "checkboxes" ){
       for( let option of this.radioChoices){
         responses = [-1, -1, -1, "", 1 - 1 - 1999];
-        responses[0] = this.globals.surveys[0].survey_id; // What version of survey is taken on
-        responses[1] = questionId;
+        responses[0] = this.currSurvey; // What version of survey is taken on
+        responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
         responses[2] = option;
-        responses[3] = this.grabText(option, questionId);
+        responses[3] = this.grabText(option, questionIndex);
         responses[4] = 11 - 12 - 2018;
 
         console.log(option);
@@ -87,12 +89,24 @@ export class SurveyComponent {
     }
   }
 
-  grabText(optionId, questionId) {
-    for (let option of this.globals.surveys[0].questions[questionId].options) {
+  grabText(optionId, questionIndex) {
+    for (let option of this.currSurveyVer.questions[questionIndex].options) {
       if (this.selectOption == option.option_id) {
         return option.option_text;
       }else if(optionId == option.option_id)
         return option.option_text;
     }
   }
+
+  grabIndex(questionId){
+    let index = 0;
+    for(let questionIndex in this.currSurveyVer.questions){
+      if(questionId == this.currSurveyVer.questions[questionIndex].question_id){
+        index = parseInt(questionIndex);
+      }
+    };
+    return index;    
+  }
+
+  
 }

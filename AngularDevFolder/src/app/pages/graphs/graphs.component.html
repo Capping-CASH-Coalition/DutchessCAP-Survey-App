@@ -47,11 +47,11 @@
             </select>
           </div>
 
-          <div id="multipleDataSets">
+          <div id="multipleDataSets" *ngIf="currentDatasetType != 'single'">
 
             <div class="filterBlock">
               <label for="graphType">Select Sub Question</label>
-              <select class="form-control" formControlName="subQuestionId" (change)="updateOptions()" required>
+              <select class="form-control" formControlName="subQuestionId" required>
                 <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
                   [value]="question.question_id">
                   {{question.question_text}}
@@ -60,10 +60,10 @@
             </div>
             <div class="filterBlock">
                <form [formGroup]="optionsForm" (change)="submit()">
-                  <label formArrayName="options" *ngFor="let option of optionsForm.controls.options.controls; let i = index">
+                  <label formArrayName="options" *ngFor="let option of getSubQuestionOptions(); let i = index">
                      <div class="col-lg-12">
                         <input type="checkbox" [formControlName]="i">
-                        {{orders[i].name}} 
+                        {{option.option_text}} 
                      </div>
                   </label>
                </form>

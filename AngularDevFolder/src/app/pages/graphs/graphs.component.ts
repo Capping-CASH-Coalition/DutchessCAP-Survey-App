@@ -88,7 +88,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    }
 
    initOptionsForm() {
-      const controls = this.orders.map(c => new FormControl(false));
+      const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       controls[0].setValue(true); // Set the first checkbox to true (checked)
       console.log(controls);
       this.optionsForm = this.fb.group({
@@ -96,88 +96,12 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
-
-   orders = [
-      { id: 100, name: 'order 1' },
-      { id: 200, name: 'order 2' },
-      { id: 300, name: 'order 3' },
-      { id: 400, name: 'order 4' }
-   ];
-
-   submit() {
-      const selectedOrderIds = this.optionsForm.value.options
-         .map((v, i) => v ? this.orders[i].id : null)
-         .filter(v => v !== null);
-
-      console.log(selectedOrderIds);
+   getSubQuestionOptions() {
+      let sid: number = this.chartForm.controls.surveyId.value;
+      let qid: number = this.chartForm.controls.subQuestionId.value;
+      return this.globals.surveys[sid].questions[qid].options;
    }
 
-   /** this.survey = this._fb.group({
-         surveyName: new FormControl(currSurvey.survey_name),
-         questions: this._fb.array([])
-      });
-
-      this.patchFormQuestions(currSurvey.questions);
-
-   }
-
-   patchFormQuestions(questions: any[]) {
-      const control = <FormArray>this.survey.controls['questions'];
-      questions.forEach(q => {
-         if (q.question_active) {
-            control.push(this._fb.group({
-               questionText: new FormControl(q.question_text),
-               questionType: new FormControl(q.question_type),
-               questionOptions: this.patchFormOptions(q.options)
-            }));
-         }
-      });
-   } */
-
-   patchOptions() {
-      const control = <FormArray>this.chartForm.controls.subQuestionOptions;
-      this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(question => {
-         if (question.question_id === this.chartForm.controls.surveyId.value) {
-            question.options.forEach(o => {
-               control.push(this.fb.group({
-                  option: new FormControl(o.option_text)
-               }));
-            })
-            //control = question.options.map(c => new FormControl(false));
-            //control[0].setValue(true);
-         }
-      });
-   }
-
-
-   getSubQuestionOptions(subQuestionId): FormArray {
-      console.log("SQID ", subQuestionId);
-      let control: FormArray;
-      this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(question => {
-         if (question.question_id === subQuestionId) {
-            control = question.options.map(c => new FormControl(false));
-            control[0].setValue(true);
-         }
-      });
-      return control;
-   }
-
-
-   /*
-      getSubQuestionOptions(subQuestionId): FormArray {
-         let ops = new FormArray([]);
-         this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(question => {
-            if (question.question_id === subQuestionId){
-               question.options.forEach(o => {
-                  ops.push(this.fb.group({
-                     option: new FormControl(o.option_text)
-                  }))
-               });
-            }
-         });
-         return ops;
-      }
-   */
    private buildChart(chartData: Chart): void {
       this.chart = chartData;
       this.chart.update();
@@ -192,6 +116,17 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    download(event) {
       this.graphService.downloadChart(event, 'canvas');
    }
+
+
+   submit() {
+      const options = this.getSubQuestionOptions()
+      const selectedOrderIds = this.optionsForm.value.options
+         .map((v, i) => v ? options[i].option_text : null)
+         .filter(v => v !== null);
+
+      console.log(selectedOrderIds);
+   }
+
 
 
 }

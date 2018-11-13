@@ -30,7 +30,7 @@ export class GraphService {
 
    public createSingleChart(context, chartType, map: Map<string, number>): Chart {
       return new Chart(context, {
-         type: chartType,//this.chartForm.controls.chartType.value,
+         type: chartType,
          data: {
             labels: Array.from(map.keys()),
             datasets: [{

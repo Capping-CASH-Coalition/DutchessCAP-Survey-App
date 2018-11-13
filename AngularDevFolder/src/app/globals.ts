@@ -116,7 +116,7 @@ export class Globals {
                question_text: "Please elaborate on the previous answer",
                question_type: "text",
                question_active: true,
-               options: [{ option_id: -1, option_text: "TEXT RESPONSE", option_active: false },],
+               options: [null],
                responses: [
                   { response_id: 35, response_text: "I love capping so much,", date_taken: "2018-11-02", hash_id: "ba"},
                   { response_id: 36, response_text: "Its ok, could be better", date_taken: "2018-11-02", hash_id: "bb"},

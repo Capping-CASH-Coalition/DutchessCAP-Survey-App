@@ -1,9 +1,4 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-
-   {{currentSurvey.survey_name}}<br>
-   {{currentDatasetType}}<br>
-   {{currentQuestionID}}<br>
-
   <div class="row">
     <button class='pull-right btn btn-lg' (click)='editQuestion()' style='background-color:transparent;'>
       <div>
@@ -13,21 +8,20 @@
 
     <div class="col-lg-3">
       <br>
-      <form [formGroup]="chartFiltersForm">
+      <form [formGroup]="chartForm">
         <div class="form-group">
 
           <div class="filterBlock">
-               <label for="deepGraphSwitch">Deep Graph Switch</label>
+            <label for="deepGraphSwitch">Deep Graph Switch</label>
             <div class="btn-group" id="deepGraphSwitch" role="group" aria-label="Basic example" (click)="updateMultipleDataSetForm($event.target.value)">
-              <button type="button" value="single"  class="btn btn-info">Single </button>
+              <button type="button" value="single" class="btn btn-info">Single </button>
               <button type="button" value="multiple" class="btn btn-success">Matrix</button>
             </div>
           </div>
 
           <div class="filterBlock">
-            <label for="graphType">Graph Type</label>
-            <select class="form-control" (change)="updateChartType($event.target.value)"
-              required>
+            <label for="graphType">Chart Type</label>
+            <select class="form-control" formControlName="chartType" required>
               <option *ngFor="let graph of graphService.getGraphTypes()" [value]="graph.val">
                 {{graph.view}}
               </option>
@@ -36,8 +30,7 @@
 
           <div class="filterBlock">
             <label for="graphType">Select Survey</label>
-            <select class="form-control" (change)="updateCurrentSurvey($event.target.value)"
-              required>
+            <select class="form-control" formControlName="surveyId" required>
               <option *ngFor="let survey of globals.surveys" [value]="survey.survey_id">
                 {{survey.survey_name}}
               </option>
@@ -46,68 +39,28 @@
 
           <div class="filterBlock">
             <label for="graphType">Select Question</label>
-            <select class="form-control" (change)="updateCurrentQuestion($event.target.value)"
-              required>
-              <option *ngFor="let question of currentSurvey.questions | GraphableQuestion" [value]="question.question_id">
+            <select class="form-control" formControlName="questionId" required>
+              <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion" [value]="question.question_id">
                 {{question.question_text}}
-               </option>
+              </option>
             </select>
           </div>
 
-         <div id="multipleDataSets">
+          <div id="multipleDataSets" *ngIf="false">
             <div class="filterBlock">
-               <label for="graphType">Select Sub Question</label>
-               <select class="form-control" (change)="updateSubQuestion($event.target.value)"
-                  required>
-                  <option *ngFor="let question of currentSurvey.questions | GraphableQuestion" [value]="question.question_id">
+              <label for="graphType">Select Sub Question</label>
+              <select class="form-control" formControlName="subQuestionId" required>
+                <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion" [value]="question.question_id">
                   {{question.question_text}}
-                  </option>
-               </select>
-            </div>
-            <div *ngFor="let option of currentSubQuestion.options" >
-               <input class="form-check-input" type="checkbox">
-                    {{ option.option_text }}
-            </div>
-         </div>
-
-
-          <!--
-          <div class="filterBlock">
-            <fieldset id="filterTopLevel">
-              <label for="graphFilterTopLevel">Select Question</label>
-              <table id="graphFilterTopLevel" class="radioBtnFilterTable">
-                <tbody>
-                  <tr *ngFor="let filter of chartDataFilters; let idx = index">
-                    <td width="30px">
-                      <input type="radio" name="filterTopLevel" (click)="updateTopFilter(filter)" [checked]="idx === 0">
-                    </td>
-                    <td>{{ filter }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </fieldset>
+                </option>
+              </select>
+            </div><!--
+            <div *ngFor="let option of currentSubQuestion.options">
+              <input class="form-check-input" type="checkbox">
+              {{ option.option_text }}
+            </div>-->
           </div>
-         
-                  <div class="filterBlock">
-                     <fieldset id="filterSubLevel">
-                     <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scope)</label>
-                     <table id="graphFilterSubLevel">
-                        <tbody>
-                        <tr *ngFor="let filter of chartDataFilters">
-                           <td width="30px">
-                              <input   type="radio" 
-                                       name="filtelSubLevel"
-                                       id="{{filter}}SubLevelID"
-                                       [disabled]=true
-                                       (click)="updateSubFilter(filter)">
-                           </td>
-                           <td>{{ filter }}</td>
-                        </tr>
-                        </tbody>
-                     </table>
-                     </fieldset>
-                  </div>
--->
+
           <div class="filterBlock">
             <button type="button" class="btn btn-primary btn-block btn-sm">
               <a href="graphs" (click)="download($event)" style="color:white">
@@ -129,3 +82,5 @@
 
 
 </div>
+
+<pre> {{chartForm.value | json}}</pre>

@@ -1,8 +1,7 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Chart} from "chart.js";
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, FormControlName } from '@angular/forms';
 import { GraphData } from './graphData.component';
-import { ChartType } from './chartType.component';
 import { GraphService } from './graph.service'
 import { Globals } from '../../globals';
 
@@ -18,26 +17,23 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    
    constructor(
       private graphService: GraphService,
-      private globals: Globals
+      private globals: Globals,
+      private fb: FormBuilder,
    ){};
 
-   currentSurvey: any;
    currentDatasetType: string;
-   currentQuestion: any;
-   currentSubQuestion: any;
+   chartForm: FormGroup;
+   canvas: any;
+   ctx: any;
+   chart: Chart = null;
 
    ngOnInit() {
-      //this.initChartGlobals(this.chartDataArr[1]);
-      //
-      this.currentSurvey = this.globals.surveys[0];
-      this.currentDatasetType = 'single';
-      this.currentQuestion = this.currentSurvey.questions[0];
-      this.currentSubQuestion= this.currentSurvey.questions[0];
+      this.initChartForm();
    }
 
    ngAfterViewInit() {
-     // this.canvas = document.getElementById('graphCanvas');
-     // this.ctx = this.canvas.getContext('2d');  
+     this.canvas = document.getElementById('graphCanvas');
+     this.ctx = this.canvas.getContext('2d');  
      // this.initChart();
    };
 
@@ -45,40 +41,65 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       this.currentDatasetType = val;
    }
 
-   updateCurrentSurvey(id): void {
-      this.currentSurvey = this.globals.surveys[id];
-      console.log(this.currentSurvey);
-   }
-   
-   updateCurrentQuestion(id): void {
-      console.log("fucking id: ", id);
-      this.currentQuestion = this.currentSurvey.questions.forEach(q => {
-         console.log("select ID: " + id + " === " + q.question_id )
-         if (q.question_id == id) {
-            console.log("fuck me up" )
-            console.log(q);
-            return q;
+
+   // will need to create methods to get surveyId, questionId, subQuestionId,
+   initChartForm() {
+      this.chartForm = this.fb.group({
+         chartType: new FormControl('pie'),
+         surveyId: new FormControl('0'),
+         questionId: new FormControl('0'),
+        // subQuestionId: new FormControl('1'),
+        // subQuestionOptions: this.getSubQuestionOptions(this.chartForm.controls.subQuestionId.value)
+      });
+   }  
+
+
+   getSubQuestionOptions(subQuestionId): FormArray {
+      let ops = new FormArray([]);
+      this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(question => {
+         if (question.question_id === subQuestionId){
+            question.options.forEach(o => {
+               ops.push(this.fb.group({
+                  option: new FormControl(o.option_text)
+               }))
+            });
          }
       });
-      console.log(this.currentQuestion);
+      return ops;
    }
 
-   updateSubQuestion(id): void {
-      console.log("fucking id: ", id);
-      this.currentSubQuestion = this.currentSurvey.questions.forEach(q => {
-         if (q.question_id === id)
-            return q;
+   /*
+
+   patchFormOptions(options) {
+      let ops = new FormArray([]);
+      options.forEach(o => {
+         ops.push(this._fb.group({
+            option: new FormControl(o.option_text)
+         }));
       });
-      console.log(this.currentSubQuestion);
+      return ops;
    }
 
+   initQuestion() {
+      return this._fb.group({
+         questionText: new FormControl(''),
+         questionType: new FormControl(''),
+         questionOptions: this._fb.array([
+            this.initOption(),
+         ])
+      });
+   }
 
+   initOption() {
+      return this._fb.group({
+         option: new FormControl('')
+      })
+   }
 
-/*
 
    // Data Filters/Form Group
-   chartFiltersForm: FormGroup;
-   chartDataFilters: string[] = [];
+  // chartFiltersForm: FormGroup;
+/*   chartDataFilters: string[] = [];
    chartTypes: string[] = [];
    
    chartTypesObj: ChartType[] = [];

@@ -48,8 +48,19 @@ export class SurveyComponent {
         console.log(option);
 
         this.surveyData.push(responses);
-      }
-      index = 0;
+
+      } 
+    } else if ( this.currSurveyVer.questions[questionIndex].question_type == "text" ){
+          responses = [-1, -1, -1, "", 1 - 1 - 1999];
+          responses[0] = this.currSurvey; // What version of survey is taken on
+          responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
+          responses[2] = null;
+          responses[3] = textValue;
+          responses[4] = 11 - 12 - 2018;
+  
+          console.log(textValue);
+  
+          this.surveyData.push(responses);
     }
 
     console.log(responses);
@@ -107,6 +118,4 @@ export class SurveyComponent {
     };
     return index;    
   }
-
-  
 }

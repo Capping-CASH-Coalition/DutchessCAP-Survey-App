@@ -1,56 +1,116 @@
-<form>
-  <div class="form-group" *ngFor = "let answer of answers">
-    {{ answer.id }}.
-    <label for="current">{{ answer.question }}</label>
-    <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-        <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
-    </select>
-  </div>
-  
-  
-  
-  
-  
-  
-  
-  
-  <div class="form-group">
-    <label for="currentUse">1. What are you currently using CAP DC for today?</label>
-    <select ngModel name="currentUse" #currentUse="ngModel" (change)="log(currentUse)" class="form-control" id="currentUse">
-      <option *ngFor = "let answer of answers">{{ answer.prompt }}</option>
-    </select>
-  </div>
-  <div class="form-group">
-      <label for="firstName">First Name</label>
-      <input 
-        required
-        minlength="3"
-        maxlength="20"
-        pattern="banana"
-        ngModel 
-        name="firstName"
-        #firstName="ngModel"
-        (change)="log(firstName)"
-        id="firstName" 
-        type="text"
-        class="form-control"/>    
-      <div 
-        class="alert alert-danger" 
-        *ngIf="firstName.touched && !firstName.valid">
-        <div *ngIf="firstName.errors.required">
-          First name is required
+<div class="container">
+  <div class="row">
+    <div class="col-md-10">
+      <div class="well well-sm">
+
+
+        <div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey; let j = index">
+          <div *ngFor="let question of survey.questions | ActiveQuestions | paginate: {itemsPerPage:1, currentPage: p}">
+            <form action="surveyEnd.component.html">
+              <fieldset>
+                <div class=row>
+                  <!-- <div class="col-lg-6">
+
+          </div>-->
+                  <legend class="text-center header">Dutchess CAP Survey</legend>
+                  <div class="col-lg-6" style="text-align: center; margin-left: 220px;">
+                    <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currSurvey">-->
+
+                    <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>
+
+                    <div [ngSwitch]="question.question_type" style="height:100px">
+
+                      <div *ngSwitchCase="'dropdown'">
+                        <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption"
+                          (change)="setSelectedOption($event, $event.target.value, 'dd')">
+                          <option disabled selected>-Please Select an Option-</option>
+                          <option *ngFor="let option of question.options | ActiveOptions" value="{{option.option_id}}">
+                            {{ option.option_text }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div *ngSwitchCase="'checkboxes'">
+                        <div *ngFor="let option of question.options | ActiveOptions" id="divCheckboxOptionText"
+                          (change)="setSelectedOption($event, $event.target.value, 'cb')">
+                          <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
+
+                          {{ option.option_text }}
+                        </div>
+                      </div>
+
+                      <div *ngSwitchCase="'text'">
+                        <div class="form-check-label">
+                          <textarea class="form-control" name="test" rows="2" [(ngModel)]="textAreaValue"></textarea>
+                        </div>
+                      </div>
+
+                      <div *ngSwitchCase="'mc'">
+
+                        <div *ngFor="let option of question.options | ActiveOptions" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
+                          <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
+                          {{ option.option_text }}
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+                <pagination-controls (pageChange)="p =$event" (pageChange)="updateResponses($event,textAreaValue , question.question_id, p)"></pagination-controls>
+              </fieldset>
+            </form>
+          </div>
+
         </div>
-        <div *ngIf="firstName.errors.minlength">
-          First Name should be minimum {{ firstName.errors.minlength.requiredLength }} letters
-        </div>
-        <div *ngIf="firstName.errors.pattern">
-          First Name doesn't match the pattern
-        </div>
+
+
       </div>
     </div>
-  <div class="form-group">
-    <label for="comment">Comment</label>
-    <textarea ngModel name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
   </div>
-  <button class="btn btn-primary">Submit</button>
+</div>
+<!--
+<form>
+  <div class="form-group" *ngFor="let question of globals.surveys.questions[i].question_id; let i=index">
+    <label for="question_label">{{ question.question_text }} </label>
+  <div [ngSwitch]="question.question_type">
+
+      <div *ngSwitchCase="'select'">
+        <select class="form-control" id="select">
+          <option *ngFor="let option of globals.options | filterByQuestionID: question.question_id" (click)="changeData($event, option.option_text)">
+            {{ option.option_text }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngSwitchCase="'checkbox'">
+        <div *ngFor="let option of globals.options | filterByQuestionID: question.question_id" id="divCheckboxOptionText">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" value="option.option_text" (change)="changeData($event, option.option_text)">
+              {{ option.option_text }}
+          </label>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'text'">
+        <label class="form-check-label"></label>
+        <textarea class="form-control" name="this" rows="3"></textarea>
+      </div>
+
+      <div *ngSwitchCase="'radio'">
+          <div  *ngFor="let option of globals.options | filterByQuestionID: question.question_id">
+            <label class="check-label">
+              <input type="radio" class="form-check-input" name="radio{{option.question_id}}" id="optionRadios{{option.option_num}}" value="option{{option.option_num}}" (change) = "changeData($event, option.option_text)">
+              {{ option.option_text }}
+            </label>
+          </div>
+      </div>
+
+      <label class="form-control" id="unknownType" *ngSwitchDefault>Unknown Type</label>
+
+    </div>
+  </div>
+  <button class="btn btn-upload" (click)="uploadData()">Submit</button>
 </form>
+-->

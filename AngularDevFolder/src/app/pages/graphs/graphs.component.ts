@@ -96,10 +96,16 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
-   getSubQuestionOptions() {
+   getSubQuestionOptions(): any[] {
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
-      return this.globals.surveys[sid].questions[qid].options;
+      let opsReturn;
+      this.globals.surveys[sid].questions.forEach(q => {
+         if (q.question_id == qid) {
+            opsReturn = q.options;
+         }
+      });
+      return opsReturn;
    }
 
    private buildChart(chartData: Chart): void {

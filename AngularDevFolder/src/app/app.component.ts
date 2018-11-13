@@ -23,7 +23,7 @@ export class AppComponent {
   lastName: string;
 
   constructor(private surveyService: SurveyService) { }
-
+/*
   ngOnInit() { 
     this.surveyService.getQuestions().subscribe((response)=>{
         this.questions = [];
@@ -73,5 +73,5 @@ export class AppComponent {
       avatar:'ay.jpeg',
       title:'Admin'
   };
-
+*/
 }

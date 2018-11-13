@@ -40,25 +40,35 @@
           <div class="filterBlock">
             <label for="graphType">Select Question</label>
             <select class="form-control" formControlName="questionId" (change)="updateChart()" required>
-              <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion" [value]="question.question_id">
+              <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
+                [value]="question.question_id">
                 {{question.question_text}}
               </option>
             </select>
           </div>
 
-          <div id="multipleDataSets" *ngIf="false">
+          <div id="multipleDataSets">
+
             <div class="filterBlock">
               <label for="graphType">Select Sub Question</label>
-              <select class="form-control" formControlName="subQuestionId" required>
-                <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion" [value]="question.question_id">
+              <select class="form-control" formControlName="subQuestionId" (change)="updateOptions()" required>
+                <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
+                  [value]="question.question_id">
                   {{question.question_text}}
                 </option>
               </select>
-            </div><!--
-            <div *ngFor="let option of currentSubQuestion.options">
-              <input class="form-check-input" type="checkbox">
-              {{ option.option_text }}
-            </div>-->
+            </div>
+            <div class="filterBlock">
+               <form [formGroup]="optionsForm" (change)="submit()">
+                  <label formArrayName="options" *ngFor="let option of optionsForm.controls.options.controls; let i = index">
+                     <div class="col-lg-12">
+                        <input type="checkbox" [formControlName]="i">
+                        {{orders[i].name}} 
+                     </div>
+                  </label>
+               </form>
+            </div>
+
           </div>
 
           <div class="filterBlock">

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChartColor } from 'chart.js';
+import { Chart } from 'chart.js';
 
 @Injectable()
 export class GraphService {
@@ -22,8 +23,24 @@ export class GraphService {
       'rgba(153, 102, 255,1)',
       'rgba(255, 159, 64, 1)'
    ]
+
    private chartOptions = {
       responsive: false
+   }
+
+   public createSingleChart(context, chartType, map: Map<string, number>): Chart {
+      return new Chart(context, {
+         type: chartType,//this.chartForm.controls.chartType.value,
+         data: {
+            labels: Array.from(map.keys()),
+            datasets: [{
+               label: 'Total Distribution of Question Answers',
+               data: Array.from(map.values()),
+               backgroundColor: this.getColors()
+            }]
+         },
+         options: this.getOptions()
+      });
    }
 
 

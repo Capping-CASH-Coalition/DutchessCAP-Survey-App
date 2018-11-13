@@ -21,7 +21,7 @@
 
           <div class="filterBlock">
             <label for="graphType">Chart Type</label>
-            <select class="form-control" formControlName="chartType" required>
+            <select class="form-control" formControlName="chartType" (change)="updateChart()" required>
               <option *ngFor="let graph of graphService.getGraphTypes()" [value]="graph.val">
                 {{graph.view}}
               </option>
@@ -39,7 +39,7 @@
 
           <div class="filterBlock">
             <label for="graphType">Select Question</label>
-            <select class="form-control" formControlName="questionId" required>
+            <select class="form-control" formControlName="questionId" (change)="updateChart()" required>
               <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion" [value]="question.question_id">
                 {{question.question_text}}
               </option>

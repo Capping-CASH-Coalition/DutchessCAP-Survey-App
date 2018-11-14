@@ -52,14 +52,14 @@
             <div class="filterBlock">
               <label for="graphType">Select Sub Question</label>
               <select class="form-control" formControlName="subQuestionId" required>
-                <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
+                <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion"
                   [value]="question.question_id">
                   {{question.question_text}}
                 </option>
               </select>
             </div>
             <div class="filterBlock">
-               <form [formGroup]="optionsForm" (change)="submit()">
+               <form [formGroup]="optionsForm" (change)="updateSelectedOptions()">
                   <label formArrayName="options" *ngFor="let option of getSubQuestionOptions(); let i = index">
                      <div class="col-lg-12">
                         <input type="checkbox" [formControlName]="i">

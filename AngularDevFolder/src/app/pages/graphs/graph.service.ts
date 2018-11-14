@@ -34,13 +34,21 @@ export class GraphService {
          data: {
             labels: Array.from(map.keys()),
             datasets: [{
-               label: 'Total Distribution of Question Answers',
+               label: 'Total',
                data: Array.from(map.values()),
                backgroundColor: this.getColors()
             }]
          },
          options: this.getOptions()
       });
+   }
+
+   public createMatrixChart(context, chartType, matrixData ): Chart {
+      return new Chart(context, {
+         type: chartType,
+         data: matrixData,
+         options: this.getOptions()
+      })
    }
 
 

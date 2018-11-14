@@ -20,7 +20,7 @@ export class Globals {
                   { option_id: 1, option_text: "White", option_active: true },
                   { option_id: 2, option_text: "Pink", option_active: true },
                   { option_id: 3, option_text: "Blue", option_active: true },
-                  { option_id: 4, option_text: "Yellow", option_active: false }
+                  { option_id: 4, option_text: "Yellow", option_active: true }
                ],
                responses: [
                   { response_id: 0, response_text: "Red", date_taken: "2018-11-02", hash_id: "aa"},

@@ -26,6 +26,9 @@ import { FilterPipe } from './pipes/filter.pipe';
 import { ContactComponent } from "./pages/contact/contact.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
+import { GraphService } from './graph.service'
+import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe'
+import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe'
 
 
 @NgModule({
@@ -46,7 +49,9 @@ import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
       FilterPipe,
       ContactComponent,
       EditComponent,
-      ExportRawComponent
+      ExportRawComponent,
+      GraphableQuestionPipe,
+      ExceptQuestionIdPipe
    ],
    imports: [
       BrowserModule,
@@ -57,7 +62,7 @@ import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
       ReactiveFormsModule,
       NgxPaginationModule
    ],
-   providers: [SurveyService, Globals, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+   providers: [SurveyService, GraphService, Globals, {provide: LocationStrategy, useClass: HashLocationStrategy}],
    bootstrap: [AppComponent]
 })
 export class AppModule { }

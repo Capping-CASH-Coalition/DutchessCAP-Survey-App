@@ -130,7 +130,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       let datasets: any[] = new Array();
    //   console.log(this.selectedOptions);
       // checkbox options loop
-      this.selectedOptions.forEach(o => {
+      this.selectedOptions.forEach((o, index) => {
       //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       //   console.log("new option loop thru: ", o);
          // map contains all the top question options labels with values 0
@@ -167,6 +167,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          datasets.push({
             label: o,
             data: Array.from(dsMap.values()),
+            backgroundColor: this.graphService.getColorByIndex(index)
          })
       });
       return datasets;

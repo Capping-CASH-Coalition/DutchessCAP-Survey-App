@@ -51,13 +51,22 @@ export class GraphService {
       })
    }
 
-
    public getGraphTypes(): any[] {
       return this.graphTypes;
    }
 
    public getColors(): string[] {
       return this.colors;
+   }
+
+   public getColorByIndex(i: number): string {
+      if ( i > this.colors.length ) {
+         console.log("color out of bounds");
+         return null;
+      }
+      else {
+         return this.colors[i];
+      }
    }
 
    public getOptions(): any {

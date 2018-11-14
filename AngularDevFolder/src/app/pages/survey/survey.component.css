@@ -9,9 +9,11 @@
 
 .pageNumbers {
     list-style-type: none;
+    display:inline;
 }
 
 .pageNumberActive {
     color: black;
     list-style-type: none;
+    display:inline;
 }

@@ -1,6 +1,13 @@
-import {HomeComponent} from "./pages/home/home.component";
+import { HomeComponent } from "./pages/home/home.component";
+import { GraphsComponent } from './pages/graphs/graphs.component';
+import { InputComponent } from './pages/input/input.component';
+import { SurveyComponent } from './pages/survey/survey.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { EditComponent } from './pages/edit/edit.component';
+import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 
 export const appRoutes=[
+    // TODO: Add 404 page
     {
         path:'',
         redirectTo:'home',
@@ -11,29 +18,27 @@ export const appRoutes=[
         component: HomeComponent
     },
     {
-        path: 'input',
-        loadChildren:'./pages/input/input.module#InputModule',
+        path: 'graphs',
+        component: GraphsComponent,
     },
     {
-        path: 'edit',
-        loadChildren:'./pages/edit/edit.module#EditModule',
+        path: 'input',
+        component: InputComponent,
     },
     {
         path: 'exportRaw',
-        loadChildren:'./pages/exportRaw/exportRaw.module#ExportRawModule',
+        component: ExportRawComponent,
     },
     {
-        path: 'graphs',
-        loadChildren:'./pages/graphs/graphs.module#GraphsModule',
+        path: 'edit',
+        component: EditComponent,
     },
     {
         path: 'survey',
-        loadChildren:'./pages/survey/survey.module#SurveyModule',
+        component: SurveyComponent,
     },
     {
-        path: 'surveyEnd',
-        loadChildren: './pages/surveyEnd/surveyEnd.module#SurveyEndModule',
+        path: 'contact',
+        component: ContactComponent,
     }
-
-
 ];

@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Chart} from "chart.js";
 import { FormGroup, FormControl } from '@angular/forms';
-import { GraphData } from './graphData.component';
-import { ChartType } from './chartType.component';
+import { GraphData } from '../../models/graphData.component';
+import { ChartType } from '../../models/chartType.component';
 
 @Component({
     selector: 'app-graphs',

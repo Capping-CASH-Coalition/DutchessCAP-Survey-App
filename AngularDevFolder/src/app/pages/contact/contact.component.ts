@@ -4,12 +4,12 @@ import { stringify } from 'querystring';
 import { NgForm } from "@angular/forms"
 
 @Component({
-  selector: 'app-surveyEnd',
-  templateUrl: './surveyEnd.component.html',
-  styleUrls: ['./surveyEnd.component.css'],
+  selector: 'app-contact',
+  templateUrl: './contact.component.html',
+  styleUrls: ['./contact.component.css'],
 })
 
-export class SurveyComponent {
+export class ContactComponent {
 
   data = [];
 

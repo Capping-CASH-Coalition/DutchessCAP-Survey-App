@@ -1,6 +1,5 @@
 import { Globals } from './../../globals';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { stringify } from 'querystring';
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../survey.service';
 
@@ -12,136 +11,137 @@ import { SurveyService } from '../../survey.service';
 })
 
 export class SurveyComponent {
+  
   constructor(private globals: Globals, private surveyService: SurveyService) { }
 
+  // Pagination element uses this
   public config: PaginationInstance = {
     id: 'custom',
     itemsPerPage: 1,
     currentPage: 1
   };
 
-  currSurvey = this.globals.surveys[0].survey_id;
-  currSurveyVer = this.globals.surveys[0];
+  // Hardcoded for now
+  currentSurveyId = this.globals.surveys[0].survey_id;
+  currentSurveyIndex = this.globals.surveys[0];
 
-  selectOption: number;
-  radioChoices = [];
-
+  selectedOption: number;
+  radioChoices: Array<any> = [];
   surveyData: Array<any> = [];
   radioResponses: Array<any> = [];
 
   ngOnInit() {
-    console.log(this.globals.surveys);
   }
 
-  submit(){
-
+  // When submit button is hit, this will post the survey data to the database
+  postOnSubmit() {
+    // For each response in surveyData, post the surveyData[index] response object
     for (let i = 0; i < this.surveyData.length; i++) {
       this.surveyService.postSurveyResponse(this.surveyData[i]);
     }
     console.log("popop");
   }
 
+  // When next button is clicked, save the selected options to the survey data object
   updateResponses(event, textValue: string, questionIndex: number, page: number) {
-    var now = new Date();
-    var month = now.getUTCMonth() + 1;
-    var day = now.getUTCDate();
-    var year = now.getUTCFullYear();
-
-    let responses = [-1, -1, -1, "", now];
-    let index = 0;
-
-    if (this.currSurveyVer.questions[questionIndex].question_type == "dropdown" || this.currSurveyVer.questions[questionIndex].question_type == "mc") {
-      responses[0] = this.currSurvey; // What version of survey is taken on
-      responses[1] = this.currSurveyVer.questions[questionIndex].question_id; // Question id
-      responses[2] = this.selectOption; // Still need option id what option they choose
-      responses[3] = this.grabText(this.selectOption, questionIndex); // Still need response text
-      responses[4] = year + "-" + month + "-" + day; // year it was take      
-
-      this.surveyData.push(responses);
-    } else if (this.currSurveyVer.questions[questionIndex].question_type == "checkboxes") {
+ 
+    // Response object mirrors the database response table
+    let response = {survey_id: 0,
+                    question_id: 0,
+                    option_id: 0,
+                    response_text: ""};
+    
+    // If question type is dropdown or multiple choice, only need to add 1 response
+    if (this.currentSurveyIndex.questions[questionIndex].question_type == "dropdown" ||
+        this.currentSurveyIndex.questions[questionIndex].question_type == "mc") {
+          response.survey_id = this.currentSurveyId; // Survey ID
+          response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+          response.option_id = this.selectedOption; // Option ID
+          response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
+          // Push to survey data array
+          this.surveyData.push(response);
+    // If question type is checkbox, check for multiple responses
+    } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "checkboxes") {
+      // Iterate through the options that were selected
       for (let option of this.radioChoices) {
-        responses = [-1, -1, -1, "", 1 - 1 - 1999];
-        responses[0] = this.currSurvey; // What version of survey is taken on
-        responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
-        responses[2] = option;
-        responses[3] = this.grabText(option, questionIndex);
-        responses[4] = year + "-" + month + "-" + day;
+        response.survey_id = this.currentSurveyId; // Survey ID
+        response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+        response.option_id = option; // Option ID
+        response.response_text = this.getResponseText(option, questionIndex); // Response text
 
         console.log(option);
-
-        this.surveyData.push(responses);
-
+        // Push to survey data array
+        this.surveyData.push(response);
       }
-    } else if (this.currSurveyVer.questions[questionIndex].question_type == "text") {
-      responses = [-1, -1, -1, "", 1 - 1 - 1999];
-      responses[0] = this.currSurvey; // What version of survey is taken on
-      responses[1] = this.currSurveyVer.questions[questionIndex].question_id;
-      responses[2] = null;
-      responses[3] = textValue;
-      responses[4] = year + "-" + month + "-" + day;
+      // Empty the radioChoices array
+      this.radioChoices = [];
+    // If question type is text (open-ended), set option id to 1
+    } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "text") {
+      response.survey_id = this.currentSurveyId; // Survey ID
+      response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+      response.option_id = 1; // Option ID
+      response.response_text = textValue; // Response text
 
       console.log(textValue);
-
-      this.surveyData.push(responses);
+      this.surveyData.push(response);
     }
 
-    console.log(responses);
     console.log(this.surveyData);
-
   }
 
-  onSubmit(form: any): void {
-    console.log('you submitted value:', form);
-  }
-
-
-  setSelectedOption(e, value, questionType): void {
-    let index = 0;
+  // This is called to find the selected options within the HTML
+  setSelectedOption(event, value, questionType): void {
+    // If question type is dropdown or multiple choice, there is only 1 selected value
     if (questionType == "dd" || questionType == "mc") {
       console.log("Selected: " + value);
-      this.selectOption = value;
+      this.selectedOption = value;
+    // If question type is checkbox, there is 1+ options
     } else if (questionType == "cb") {
       console.log("Selected: " + value);
-      if (e) {
-        if (e.target.checked) {
+      // event is the clicked HTML element
+      if (event) {
+        // If checked, add it to the radioChoice array
+        if (event.target.checked) {
           this.radioChoices.push(value);
           console.log(this.radioChoices);
+        // If unchecked, remove it from the radioChoice array
         } else {
           console.log("unchecked");
-          for (let choice of this.radioChoices) {
-            console.log(choice);
-            if (choice == value) {
-              this.radioChoices.splice(index, 1);
+          // Iterate through the radio choices to see which matches the value
+          for (let i = 0; i < this.radioChoices.length; i++) {
+            console.log(this.radioChoices[i]);
+            // If it matches, remove it from radioChoice array
+            if (this.radioChoices[i] == value) {
+              this.radioChoices.splice(i, 1);
             }
-            index = index + 1;
           }
-          index = 0;
           console.log(this.radioChoices);
         }
       }
     }
   }
 
-  grabText(optionId, questionIndex) {
-    for (let option of this.currSurveyVer.questions[questionIndex].options) {
-      if (this.selectOption == option.option_id) {
+  getResponseText(optionId, questionIndex) {
+    // Iterate through the question's options
+    for (let option of this.currentSurveyIndex.questions[questionIndex].options) {
+      if (this.selectedOption == option.option_id) {
         return option.option_text;
       } else if (optionId == option.option_id)
         return option.option_text;
     }
   }
 
-  grabIndex(questionId) {
-    let index = 0;
-    for (let questionIndex in this.currSurveyVer.questions) {
-      if (questionId == this.currSurveyVer.questions[questionIndex].question_id) {
-        index = parseInt(questionIndex);
+  // Gets called
+  getQuestionIndex(questionId) {
+    for (let i = 0; i < this.currentSurveyIndex.questions.length; i++) {
+      if (questionId == this.currentSurveyIndex.questions[i].question_id) {
+        return i;
       }
     };
-    return index;
   }
 
-  removeResponse(){
+  // Gets called when previous button is clicked
+  removeResponse() {
     this.surveyData.pop();
     console.log(this.surveyData);
   }

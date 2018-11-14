@@ -9,9 +9,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl, FormControlName } from 
 })
 export class InputComponent implements OnInit {
    
-   constructor(
-      private globals: Globals
-   ) { };
+   constructor(private globals: Globals) { };
 
    survey;
 

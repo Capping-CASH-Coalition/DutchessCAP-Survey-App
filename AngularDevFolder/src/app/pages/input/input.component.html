@@ -25,13 +25,11 @@
   <form>
     <div class="row form-group" *ngFor="let question of survey.questions | ActiveQuestions; let i = index ">
 
-
       <div class="col-lg-4" style="margin-left:40px">
         <span class="spanQuestion"> {{ i+1 }} . <span class="spanQuestionText">{{ question.question_text }}</span></span>
       </div>
 
       <div class="col-lg-7">
-        
         <div [ngSwitch]="question.question_type">
 
           <div *ngSwitchCase="'dropdown'">
@@ -69,9 +67,6 @@
       </div>
 
     </div>
-    
   </form>
   
-
-
 </div>

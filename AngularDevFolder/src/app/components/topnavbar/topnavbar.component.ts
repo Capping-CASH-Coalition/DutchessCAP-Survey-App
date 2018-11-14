@@ -13,8 +13,4 @@ export class Topnavbar {
         jQuery("body").toggleClass("mini-navbar");
         smoothlyMenu();
     }
-    logout() {
-        localStorage.clear();
-        // location.href='http://to_login_page';
-    }
 }

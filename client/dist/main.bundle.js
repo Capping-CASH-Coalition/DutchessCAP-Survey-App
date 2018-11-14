@@ -1,11 +1,33 @@
-webpackJsonp([7,10],{
+webpackJsonp([8,11],{
 
-/***/ 108:
+/***/ 100:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(110);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(113);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(118);
+
+
+
+
+if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].production) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["a" /* enableProdMode */])();
+}
+__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_2__app_app_module__["a" /* AppModule */])
+    .catch(function (err) { return console.log(err); }); // Added by Survey builder. be cautious
+//# sourceMappingURL=main.js.map
+
+/***/ }),
+
+/***/ 111:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_survey_service__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_survey_service__ = __webpack_require__(63);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,63 +40,96 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+var Responses = [{ survey_id: 1, question_id: 1, option_id: 1, response_text: "Community Outreach" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
+    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" }];
+var Surveys = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
+    { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
+    { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
+    { survey_id: 2, question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
+    { survey_id: 2, question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
+var Updates = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
+    { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
+    { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
+    { survey_id: 2, question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
+    { survey_id: 2, question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
 var AppComponent = (function () {
     function AppComponent(surveyService) {
         this.surveyService = surveyService;
-        this.loginInfo = {
-            first_name: 'Linda',
-            last_name: 'Eddy',
-            avatar: 'ay.jpeg',
-            title: 'Admin'
-        };
     }
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.surveyService.getQuestions().subscribe(function (response) {
+        this.surveyService.getSurveyQuestions('hi').subscribe(function (response) {
             _this.questions = [];
             //console.log('response is ', response);
             for (var i = 0; i < response.length; i++) {
-                if (response[i].survey_version == 1) {
-                    _this.version = 1;
-                    var qArray = { "question_num": response[i].question_num,
-                        "question_id": response[i].question_id,
-                        "question_text": response[i].question_text,
-                        "question_type": response[i].question_type };
-                    _this.questions.push(qArray);
-                }
+                var qArray = {
+                    "question_num": response[i].question_num,
+                    "question_id": response[i].question_id,
+                    "question_text": response[i].question_text,
+                    "question_type": response[i].question_type,
+                    "question_is_active": response[i].question_is_active,
+                    "option_id": response.option_id,
+                    "option_num": response[i].option_num,
+                    "option_text": response[i].option_text,
+                    "option_is_active": response[i].option_is_active
+                };
+                _this.questions.push(qArray);
             }
-            //console.log(this.questions);
-            _this.surveyService.getOptions().subscribe(function (response) {
-                _this.options = [];
-                //console.log('response is ', response);
-                for (var i = 0; i < _this.questions.length; i++) {
-                    //console.log(response[i]);
-                    for (var j = 0; j < response.length; j++) {
-                        if (response[j].question_id == _this.questions[i].question_id) {
-                            var rArray = [
-                                { "option_id": response[i].option_id,
-                                    "option_num": response[i].option_num,
-                                    "option_text": response[i].option_text }
-                            ];
-                            _this.options.push(rArray);
-                        }
-                    }
-                }
-                //console.log(this.options);
-            }, function (error) {
-                console.log('error is ', error);
-            });
+            console.log(_this.questions);
         }, function (error) {
             console.log('error is ', error);
         });
+        this.surveyService.getSurveyResponses('hi').subscribe(function (response) {
+            _this.results = [];
+            //console.log('response is ', response);
+            for (var i = 0; i < response.length; i++) {
+                var rArray = {
+                    "question_id": response[i].question_id,
+                    "question_num": response[i].question_num,
+                    "question_text": response[i].question_text,
+                    "question_is_active": response[i].question_is_active,
+                    "question_type": response[i].question_type,
+                    "response_id": response[i].response_id,
+                    "survey_id": response[i].survey_id,
+                    "option_id": response[i].option_id,
+                    "response_text": response[i].response_text,
+                    "date_taken": response[i].date_taken
+                };
+                _this.results.push(rArray);
+            }
+            console.log(_this.results);
+        }, function (error) {
+            console.log('error is ', error);
+        });
+        for (var j = 0; j < Responses.length; j++) {
+            this.surveyService.postSurveyResponse(Responses[j]).subscribe(function (response) {
+                _this.responses = [];
+                //console.log('response is ', response);
+                for (var i = 0; i < response.length; i++) {
+                    var sArray = {
+                        "question_id": response[i].question_id,
+                        "survey_id": response[i].survey_id,
+                        "option_id": response[i].option_id,
+                        "response_text": response[i].response_text
+                    };
+                    _this.responses.push(sArray);
+                    console.log(_this.responses);
+                }
+            }, function (error) {
+                console.log('error is ', error);
+            });
+        }
     };
     return AppComponent;
 }());
 AppComponent = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* Component */])({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["D" /* Component */])({
         selector: 'app-root',
-        template: __webpack_require__(178),
-        styles: [__webpack_require__(171)],
+        template: __webpack_require__(180),
+        styles: [__webpack_require__(173)],
         providers: [__WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */]]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__app_survey_service__["a" /* SurveyService */]) === "function" && _a || Object])
@@ -85,7 +140,7 @@ var _a;
 
 /***/ }),
 
-/***/ 109:
+/***/ 112:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -156,23 +211,24 @@ function smoothlyMenu() {
 
 /***/ }),
 
-/***/ 110:
+/***/ 113:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(104);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_common_http__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_component__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_topnavbar_topnavbar_component__ = __webpack_require__(113);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_navigation_navigation_component__ = __webpack_require__(112);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_common_http__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_component__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_topnavbar_topnavbar_component__ = __webpack_require__(116);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_navigation_navigation_component__ = __webpack_require__(115);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__(62);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__app_routes__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__app_routes__ = __webpack_require__(114);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_home_home_component__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__survey_service__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__keys_pipe__ = __webpack_require__(114);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__survey_service__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pipes_keys_pipe__ = __webpack_require__(117);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__angular_common__ = __webpack_require__(17);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -180,6 +236,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -205,7 +262,7 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_7__components_navigation_navigation_component__["a" /* Navigation */],
             __WEBPACK_IMPORTED_MODULE_6__components_topnavbar_topnavbar_component__["a" /* Topnavbar */],
             __WEBPACK_IMPORTED_MODULE_10__pages_home_home_component__["a" /* HomeComponent */],
-            __WEBPACK_IMPORTED_MODULE_12__keys_pipe__["a" /* KeysPipe */]
+            __WEBPACK_IMPORTED_MODULE_12__pipes_keys_pipe__["a" /* KeysPipe */]
         ],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
@@ -214,7 +271,7 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClientModule */],
             __WEBPACK_IMPORTED_MODULE_8__angular_router__["a" /* RouterModule */].forRoot(__WEBPACK_IMPORTED_MODULE_9__app_routes__["a" /* appRoutes */])
         ],
-        providers: [__WEBPACK_IMPORTED_MODULE_11__survey_service__["a" /* SurveyService */], __WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */]],
+        providers: [__WEBPACK_IMPORTED_MODULE_11__survey_service__["a" /* SurveyService */], __WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */], { provide: __WEBPACK_IMPORTED_MODULE_13__angular_common__["a" /* LocationStrategy */], useClass: __WEBPACK_IMPORTED_MODULE_13__angular_common__["b" /* HashLocationStrategy */] }],
         bootstrap: [__WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */]]
     })
 ], AppModule);
@@ -223,7 +280,7 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 111:
+/***/ 114:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -257,22 +314,24 @@ var appRoutes = [
         loadChildren: './pages/graphs/graphs.module#GraphsModule',
     },
     {
-        path: 'openEndedData',
-        loadChildren: './pages/openEndedData/openEndedData.module#OpenEndedDataModule',
+        path: 'survey',
+        loadChildren: './pages/survey/survey.module#SurveyModule',
     },
+    {
+        path: 'surveyEnd',
+        loadChildren: './pages/surveyEnd/surveyEnd.module#SurveyEndModule',
+    }
 ];
 //# sourceMappingURL=app.routes.js.map
 
 /***/ }),
 
-/***/ 112:
+/***/ 115:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(62);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_login__ = __webpack_require__(115);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__survey_service__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Navigation; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -285,43 +344,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-
-
 var Navigation = (function () {
     function Navigation(router) {
         this.router = router;
     }
-    Navigation.prototype.ngOnInit = function () {
-    };
+    Navigation.prototype.ngOnInit = function () { };
     Navigation.prototype.activeRoute = function (routename) {
         return this.router.url.indexOf(routename) > -1;
     };
     return Navigation;
 }());
-__decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["s" /* Input */])(),
-    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__models_login__["a" /* Login */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__models_login__["a" /* Login */]) === "function" && _a || Object)
-], Navigation.prototype, "loginInfo", void 0);
 Navigation = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* Component */])({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["D" /* Component */])({
         selector: 'navigation',
-        template: __webpack_require__(179),
-        providers: [__WEBPACK_IMPORTED_MODULE_3__survey_service__["a" /* SurveyService */]]
+        template: __webpack_require__(181)
     }),
-    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object])
 ], Navigation);
 
-var _a, _b;
+var _a;
 //# sourceMappingURL=navigation.component.js.map
 
 /***/ }),
 
-/***/ 113:
+/***/ 116:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_helpers__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_helpers__ = __webpack_require__(112);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Topnavbar; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -340,16 +391,12 @@ var Topnavbar = (function () {
         jQuery("body").toggleClass("mini-navbar");
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__app_helpers__["a" /* smoothlyMenu */])();
     };
-    Topnavbar.prototype.logout = function () {
-        localStorage.clear();
-        // location.href='http://to_login_page';
-    };
     return Topnavbar;
 }());
 Topnavbar = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* Component */])({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["D" /* Component */])({
         selector: 'topnavbar',
-        template: __webpack_require__(180)
+        template: __webpack_require__(182)
     })
 ], Topnavbar);
 
@@ -357,7 +404,7 @@ Topnavbar = __decorate([
 
 /***/ }),
 
-/***/ 114:
+/***/ 117:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -390,29 +437,14 @@ var KeysPipe = (function () {
     return KeysPipe;
 }());
 KeysPipe = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* Pipe */])({ name: 'keys', pure: false })
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Pipe */])({ name: 'keys', pure: false })
 ], KeysPipe);
 
 //# sourceMappingURL=keys.pipe.js.map
 
 /***/ }),
 
-/***/ 115:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Login; });
-var Login = (function () {
-    function Login() {
-    }
-    return Login;
-}());
-
-//# sourceMappingURL=login.js.map
-
-/***/ }),
-
-/***/ 116:
+/***/ 118:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -424,10 +456,10 @@ var environment = {
 
 /***/ }),
 
-/***/ 171:
+/***/ 173:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(17)();
+exports = module.exports = __webpack_require__(18)();
 // imports
 
 
@@ -442,48 +474,48 @@ module.exports = module.exports.toString();
 
 /***/ }),
 
-/***/ 178:
-/***/ (function(module, exports) {
-
-module.exports = "<div id=\"wrapper\">\n  <navigation [loginInfo]=\"loginInfo\" *ngIf=\"loginInfo\"></navigation>\n\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n\n    <topnavbar></topnavbar>\n\n    <router-outlet></router-outlet>\n\n    <div class=\"footer\">\n      <div>\n        <strong>Copyright</strong> Marist College Capping &copy; 2018\n      </div>\n    </div>\n  </div>\n</div>"
-
-/***/ }),
-
-/***/ 179:
-/***/ (function(module, exports) {
-
-module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"navigation\">\n    <div class=\"sidebar-collapse\">\n        <ul class=\"nav metismenu\" id=\"side-menu\">\n            <li class=\"nav-header\">\n                <div class=\"dropdown profile-element\">\n                    <span>\n                        <img alt=\"image\" class=\"img-rectangle\" width=\"165px\"\n                             src=\"./assets/img/dutchess-cap.png\" />\n                    </span>\n                    <a data-toggle=\"dropdown\" class=\"dropdown-toggle\" href=\"#\">\n                      <span class=\"clear\">\n                          <span class=\"block m-t-xs\">\n                          <strong class=\"font-bold\">{{loginInfo.first_name}} {{loginInfo.last_name}}</strong>\n                      </span>\n                          <span class=\"text-muted text-xs block\">{{loginInfo.title}}</span>\n                      </span>\n                    </a>\n                </div>\n                <div class=\"logo-element\">\n                    Hello\n                </div>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('home')}\">\n                <a [routerLink]=\"['./home']\"><i class=\"fa fa-dashboard\"></i> <span class=\"nav-label\">Home</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('graphs')}\">\n               <a [routerLink]=\"['./graphs']\"><i class=\"far fa-database\"></i> <span class=\"nav-label\">Graphs</span></a>\n           </li>\n           <li [ngClass]=\"{active: activeRoute('openEndedData')}\">\n              <a [routerLink]=\"['./openEndedData']\"><i class=\"far fa-database\"></i> <span class=\"nav-label\">Open Ended Data</span></a>\n          </li>\n            <li [ngClass]=\"{active: activeRoute('input')}\">\n                <a [routerLink]=\"['./input']\"><i class=\"far fa-database\"></i> <span class=\"nav-label\">Manual Input</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('edit')}\">\n                <a [routerLink]=\"['./edit']\"><i class=\"far fa-database\"></i> <span class=\"nav-label\">Edit Survey</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('exportRaw')}\">\n                <a [routerLink]=\"['./exportRaw']\"><i class=\"far fa-database\"></i> <span class=\"nav-label\">View Raw Data</span></a>\n            </li>\n        </ul>\n\n    </div>\n</nav>"
-
-/***/ }),
-
 /***/ 180:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row border-bottom\">\n    <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" style=\"margin-bottom: 0\">\n        <ul class=\"nav navbar-top-links navbar-right\">\n            <li>\n                <a (click)=\"logout()\">\n                    <i class=\"fa fa-sign-out\"></i> Log out\n                </a>\n            </li>\n        </ul>\n    </nav>\n</div>"
+module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <router-outlet></router-outlet>\n    <div class=\"footer\">\n      <div>\n        <strong>Copyright</strong> Marist College Capping &copy; 2018\n      </div>\n    </div>\n  </div>\n</div>\n\n\n"
 
 /***/ }),
 
 /***/ 181:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"wrapper wrapper-content\">\n\n    <div class=\"row\">\n        <div class=\"col-lg-3\">\n            <div class=\"ibox float-e-margins\">\n                <div class=\"ibox-title\">\n                    <span class=\"label label-primary pull-right\">Year</span>\n                    <h5>Survey Submissions</h5>\n                </div>\n                <div class=\"ibox-content\">\n                    <h1 class=\"no-margins\">6,394</h1>\n                    <div class=\"stat-percent font-bold text-primary\">98% <i class=\"fa fa-level-up\"></i></div>\n                    <small>Total Submissions</small>\n                </div>\n            </div>\n            <button type=\"button\" class=\"btn btn-primary\">Primary</button>\n            <button type=\"button\" class=\"btn btn-secondary\">Secondary</button>\n            <button type=\"button\" class=\"btn btn-success\">Success</button>\n            <button type=\"button\" class=\"btn btn-danger\">Danger</button>\n            <button type=\"button\" class=\"btn btn-warning\">Warning</button>\n            <button type=\"button\" class=\"btn btn-info\">Info</button>\n            <button type=\"button\" class=\"btn btn-light\">Light</button>\n            <button type=\"button\" class=\"btn btn-dark\">Dark</button>\n\n            <button type=\"button\" class=\"btn btn-link\">Link</button>\n        </div>\n    </div>\n\n</div>"
+module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"navigation\">\n    <div class=\"sidebar-collapse\">\n        <ul class=\"nav metismenu\" id=\"side-menu\">\n            <li class=\"nav-header\">\n                <div class=\"dropdown profile-element\">\n                    <span>\n                        <img alt=\"image\" class=\"img-rectangle\" width=\"165px\"\n                             src=\"./assets/img/dutchess-cap.png\" />\n                    </span>\n                </div>\n                <div class=\"logo-element\">\n                    Hello\n                </div>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('home')}\">\n                <a [routerLink]=\"['./home']\"><i class=\"fas fa-home\"></i> <span class=\"nav-label\">Home</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('graphs')}\">\n               <a [routerLink]=\"['./graphs']\"><i class=\"fas fa-chart-line\"></i> <span class=\"nav-label\">Graph Designer</span></a>\n           </li>\n            <li [ngClass]=\"{active: activeRoute('input')}\">\n                <a [routerLink]=\"['./input']\"><i class=\"fas fa-user-edit\"></i> <span class=\"nav-label\">Input Survey Manually</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('exportRaw')}\">\n                <a [routerLink]=\"['./exportRaw']\"><i class=\"fas fa-table\"></i> <span class=\"nav-label\">Query/Export Data</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('edit')}\">\n                  <a [routerLink]=\"['./edit']\"><i class=\"fas fa-edit\"></i> <span class=\"nav-label\">Edit Survey</span></a>\n            </li>\n        </ul>\n    </div>\n</nav>"
 
 /***/ }),
 
-/***/ 238:
+/***/ 182:
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" style=\"margin-bottom: 0\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a style=\"font-size:12px\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey Site\n                    </a>\n                </li>\n                <b style=\"font-size:16px\">/</b>\n                <li>\n                    <a style=\"font-size:12px\">\n                    <i class=\"fas fa-sign-out-alt\"></i> Log out\n                </a>\n            </li>\n         </ul>\n      </nav>\n   </div>\n</div>"
+
+/***/ }),
+
+/***/ 183:
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"wrapper wrapper-content\">\n    <div class=\"row\">\n        <div class=\"col-lg-3\">\n            <div class=\"ibox float-e-margins\">\n                <div class=\"ibox-title\">\n                    <span class=\"label label-primary pull-right\">Year</span>\n                    <h5>Survey Submissions</h5>\n                </div>\n                <div class=\"ibox-content\">\n                    <h1 class=\"no-margins\">6,394</h1>\n                    <div class=\"stat-percent font-bold text-primary\">98% <i class=\"fas fa-level-up-alt\"></i></div>\n                    <small>Total Submissions</small>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>"
+
+/***/ }),
+
+/***/ 246:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(97);
+module.exports = __webpack_require__(100);
 
 
 /***/ }),
 
-/***/ 34:
+/***/ 63:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(34);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -496,24 +528,48 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
+var httpOptions = {
+    headers: new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpHeaders */]({
+        'Content-Type': 'application/json',
+    })
+};
 var SurveyService = (function () {
     function SurveyService(http) {
         this.http = http;
     }
-    SurveyService.prototype.getSurvey = function () {
-        return this.http.get('http://localhost:3000/api/survey');
+    SurveyService.prototype.getSurveyQuestions = function (survey_name) {
+        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_name);
     };
-    SurveyService.prototype.getQuestions = function () {
-        return this.http.get('http://localhost:3000/api/question');
+    SurveyService.prototype.getSurveyResponses = function (survey_name) {
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_name);
     };
-    SurveyService.prototype.getOptions = function () {
-        return this.http.get('http://localhost:3000/api/option');
+    SurveyService.prototype.postSurveyResponse = function (response) {
+        return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+    };
+    SurveyService.prototype.postNewSurvey = function (surveys) {
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
+            .set('surveys', surveys);
+        return this.http.post('http://localhost:3000/api/newSurvey', surveys);
+    };
+    SurveyService.prototype.updateSurveyQuestions = function (updates) {
+        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
+    };
+    SurveyService.prototype.updateSurveyOptions = function (updates) {
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
+            .set('updates', updates);
+        return this.http.post('http://localhost:3000/api/newSurveyOptions', { params: params });
+    };
+    SurveyService.prototype.insertSurveyQuestions = function (updates) {
+        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
+            .set('updates', updates);
+        return this.http.post('http://localhost:3000/api/insertSurveyQuestion', { params: params });
     };
     return SurveyService;
 }());
 SurveyService = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["c" /* Injectable */])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpClient */]) === "function" && _a || Object])
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["e" /* Injectable */])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */]) === "function" && _a || Object])
 ], SurveyService);
 
 var _a;
@@ -545,9 +601,9 @@ var HomeComponent = (function () {
     return HomeComponent;
 }());
 HomeComponent = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* Component */])({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["D" /* Component */])({
         selector: 'home',
-        template: __webpack_require__(181)
+        template: __webpack_require__(183)
     }),
     __metadata("design:paramtypes", [])
 ], HomeComponent);
@@ -556,29 +612,33 @@ HomeComponent = __decorate([
 
 /***/ }),
 
-/***/ 96:
+/***/ 99:
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"./pages/edit/edit.module": [
-		241,
-		2
+		249,
+		5
 	],
 	"./pages/exportRaw/exportRaw.module": [
-		242,
-		4
+		250,
+		2
 	],
 	"./pages/graphs/graphs.module": [
-		243,
+		251,
 		0
 	],
 	"./pages/input/input.module": [
-		244,
-		3
+		252,
+		4
 	],
-	"./pages/openEndedData/openEndedData.module": [
-		245,
+	"./pages/survey/survey.module": [
+		253,
 		1
+	],
+	"./pages/surveyEnd/surveyEnd.module": [
+		254,
+		3
 	]
 };
 function webpackAsyncContext(req) {
@@ -592,31 +652,10 @@ webpackAsyncContext.keys = function webpackAsyncContextKeys() {
 	return Object.keys(map);
 };
 module.exports = webpackAsyncContext;
-webpackAsyncContext.id = 96;
+webpackAsyncContext.id = 99;
 
-
-/***/ }),
-
-/***/ 97:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(116);
-
-
-
-
-if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].production) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["a" /* enableProdMode */])();
-}
-__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_2__app_app_module__["a" /* AppModule */]);
-//# sourceMappingURL=main.js.map
 
 /***/ })
 
-},[238]);
+},[246]);
 //# sourceMappingURL=main.bundle.js.map

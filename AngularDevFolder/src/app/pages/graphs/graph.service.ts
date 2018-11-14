@@ -12,7 +12,6 @@ export class GraphService {
       {val: 'polarArea', view: 'Polar Area' },
       {val: 'line', view: 'Line' },
       {val: 'radar', view: 'Radar' },
-      {val: 'bubble', view: 'Bubble Hubble' },
    ]
 
    private colors: string[] = [
@@ -24,8 +23,19 @@ export class GraphService {
       'rgba(255, 159, 64, 1)'
    ]
 
-   private chartOptions = {
-      responsive: false
+   private linearChartOptions = {
+      responsive: false,
+      scales: {
+         yAxes: [{
+             ticks: {
+                 beginAtZero: true
+             }
+         }]
+     }
+   }
+
+   private radialChartOptions = {
+      responsive: false,
    }
 
    public createSingleChart(context, chartType, map: Map<string, number>): Chart {
@@ -39,7 +49,7 @@ export class GraphService {
                backgroundColor: this.getColors()
             }]
          },
-         options: this.getOptions()
+         options: this.getOptions(chartType)
       });
    }
 
@@ -47,7 +57,7 @@ export class GraphService {
       return new Chart(context, {
          type: chartType,
          data: matrixData,
-         options: this.getOptions()
+         options: this.getOptions(chartType)
       })
    }
 
@@ -69,8 +79,11 @@ export class GraphService {
       }
    }
 
-   public getOptions(): any {
-      return this.chartOptions;
+   public getOptions(chartType): any {
+      if ( chartType == 'bar' || chartType == 'line' )
+         return this.linearChartOptions;
+      else 
+         return this.radialChartOptions;  
    }
 
    public downloadChart(event, canvas) {

@@ -42,7 +42,7 @@ export class Globals {
                options: [
                   { option_id: 5, option_text: "New York City", option_active: true },
                   { option_id: 6, option_text: "Boston", option_active: true },
-                  { option_id: 7, option_text: "Washington", option_active: false },
+                  { option_id: 7, option_text: "Washington", option_active: true },
                   { option_id: 8, option_text: "Miami", option_active: true },
                   { option_id: 9, option_text: "Poughkeepsie", option_active: true }
                ],
@@ -64,7 +64,7 @@ export class Globals {
                question_type: "checkboxes",
                question_active: true,
                options: [
-                  { option_id: 10, option_text: "More Money", option_active: false },
+                  { option_id: 10, option_text: "More Money", option_active: true },
                   { option_id: 11, option_text: "More Time", option_active: true },
                   { option_id: 12, option_text: "More Clothes", option_active: true },
                   { option_id: 13, option_text: "Less capping work", option_active: true },

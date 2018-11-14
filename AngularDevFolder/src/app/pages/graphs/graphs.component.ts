@@ -90,6 +90,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
       }
       else {
+         this.updateSelectedOptions();
          console.log("Matrix selected");
          this.destroyChart();
          let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())

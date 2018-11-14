@@ -1,0 +1,33 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <span>
+                        <img alt="image" class="img-rectangle" width="165px"
+                             src="./assets/img/dutchess-cap.png" />
+                    </span>
+                </div>
+                <div class="logo-element">
+                    Hello
+                </div>
+            </li>
+            <li [ngClass]="{active: activeRoute('home')}">
+                <a [routerLink]="['./home']"><i class="fas fa-home"></i> <span class="nav-label">Home</span></a>
+            </li>
+            <li [ngClass]="{active: activeRoute('graphs')}">
+               <a [routerLink]="['./graphs']"><i class="fas fa-chart-line"></i> <span class="nav-label">Graph Designer</span></a>
+           </li>
+            <li [ngClass]="{active: activeRoute('input')}">
+                <a [routerLink]="['./input']"><i class="fas fa-user-edit"></i> <span class="nav-label">Input Survey Manually</span></a>
+            </li>
+            <li [ngClass]="{active: activeRoute('exportRaw')}">
+                <a [routerLink]="['./exportRaw']"><i class="fas fa-table"></i> <span class="nav-label">Query/Export Data</span></a>
+            </li>
+            <li [ngClass]="{active: activeRoute('edit')}">
+                  <a [routerLink]="['./edit']"><i class="fas fa-edit"></i> <span class="nav-label">Edit Survey</span></a>
+            </li>
+        </ul>
+
+    </div>
+</nav>

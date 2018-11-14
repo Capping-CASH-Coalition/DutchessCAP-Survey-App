@@ -1,0 +1,19 @@
+.header {
+    color: #36A0FF;
+    font-size: 27px;
+    padding: 10px;
+}
+.header2 {
+    color: #36A0FF;
+    font-size: 15px;
+    padding: 10px;
+    margin-bottom:30px;
+}
+
+.bigicon {
+    font-size: 35px;
+    color: #36A0FF;
+}
+.pagination{
+    text-align:center;
+}

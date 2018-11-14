@@ -43,7 +43,7 @@ export class SurveyComponent {
   }
 
   // When next button is clicked, save the selected options to the survey data object
-  updateResponses(event, textValue: string, questionIndex: number, page: number) {
+  updateResponses(textValue: string, questionIndex: number) {
  
     // Response object mirrors the database response table
     let response = {survey_id: 0,
@@ -141,8 +141,19 @@ export class SurveyComponent {
   }
 
   // Gets called when previous button is clicked
-  removeResponse() {
-    this.surveyData.pop();
-    console.log(this.surveyData);
+  removeResponse(questionIndex: number, currentPage: number) {
+    if (this.currentSurveyIndex.questions[questionIndex].question_type == "checkboxes") {
+      // Pop 1 for each response in surveyData that matches the current question ID
+      for (let i = this.surveyData.length - 1; i > 0; i--) {
+        if (this.surveyData[i].question_id == this.currentSurveyIndex.questions[questionIndex].question_id) {
+          this.surveyData.pop();
+        }
+      }
+      console.log(this.surveyData);
+    // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
+    } else {
+      this.surveyData.pop();
+      console.log(this.surveyData);
+   }
   }
 }

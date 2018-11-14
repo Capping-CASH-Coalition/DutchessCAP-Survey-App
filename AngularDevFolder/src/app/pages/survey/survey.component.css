@@ -6,3 +6,12 @@
 .pages{
     margin-left:290px;
 }
+
+.pageNumbers {
+    list-style-type: none;
+}
+
+.pageNumberActive {
+    color: black;
+    list-style-type: none;
+}

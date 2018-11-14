@@ -93,7 +93,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          this.updateSelectedOptions();
          console.log("Matrix selected");
          this.destroyChart();
-         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())
+         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData(this.chartForm.controls.chartType.value))
          this.buildChart(c)
 
       }
@@ -174,8 +174,10 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       return datasets;
    }
 
-   matrixGraphData(): any {
+   matrixGraphData(chartType): any {
+      
       return {
+         //labels: (chartType === 'bar' || chartType === 'line') ? Array.from(this.initMatrixLabelsMap().keys()) : this.selectedOptions,
          labels: Array.from(this.initMatrixLabelsMap().keys()),
          datasets: this.mapMatrixDataSets()
       }

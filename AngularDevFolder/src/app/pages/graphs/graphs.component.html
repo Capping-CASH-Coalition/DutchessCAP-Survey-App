@@ -11,16 +11,16 @@
           </div>
         </button>
 
-        <div class="col-lg-3">
+        <div class="col-lg-3"style="margin-bottom: 500px">
           <br>
           <form [formGroup]="chartForm">
             <div class="form-group">
 
               <div class="filterBlock">
-                <label for="deepGraphSwitch">Deep Graph Switch</label>
-                <div class="btn-group" id="deepGraphSwitch" role="group" aria-label="Basic example" (click)="updateMultipleDataSetForm($event.target.value)">
-                  <button type="button" value="single" class="btn btn-info">Single </button>
-                  <button type="button" value="multiple" class="btn btn-success">Matrix</button>
+                <label for="deepGraphSwitch">Data Set Modeling Switch</label>
+                <div class="btn-group w-100" id="deepGraphSwitch" role="group" (click)="updateMultipleDataSetForm($event.target.value)">
+                  <button [disabled]="buttonStateSingle()" type="button" value="single" class="btnGroupSwitch btn btn-success">Single</button>
+                  <button [disabled]="buttonStateMultiple()" type="button" value="multiple" class="btnGroupSwitch btn btn-success">Double</button>
                 </div>
               </div>
 
@@ -53,7 +53,6 @@
               </div>
 
               <div id="multipleDataSets" *ngIf="currentDatasetType != 'single'">
-
                 <div class="filterBlock">
                   <label for="graphType">Select Sub Question</label>
                   <select class="form-control" formControlName="subQuestionId" required (change)="updateChart()">
@@ -63,20 +62,22 @@
                     </option>
                   </select>
                 </div>
-                <div class="filterBlock">
+                <div class="optionsDiv">
                   <form [formGroup]="optionsForm" (change)="updateChart()">
-                    <label formArrayName="options" *ngFor="let option of getSubQuestionOptions(); let i = index">
+                    <small class="optionsLabel text-muted">Sub Question Data Filter</small>
+                    <ul class="optionsList" formArrayName="options" *ngFor="let option of getSubQuestionOptions(); let i = index">
                       <div class="col-lg-12">
-                        <input type="checkbox" [formControlName]="i">
-                        {{option.option_text}}
+                         <li>
+                           <input type="checkbox" [formControlName]="i">
+                           <span class="spanOption">{{option.option_text}}</span>
+                        </li>
                       </div>
-                    </label>
+                     </ul>
                   </form>
                 </div>
-
               </div>
-
-              <div class="filterBlock">
+              <div class="btnBlock">
+               <hr>
                 <button type="button" class="btn btn-primary btn-block btn-sm">
                   <a href="graphs" (click)="download($event)" style="color:white">
                     <i class="fas fa-download"></i>

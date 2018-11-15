@@ -49,6 +49,14 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
+   buttonStateSingle(): boolean {
+      return this.currentDatasetType == 'single' ? true : false;
+   }
+
+   buttonStateMultiple(): boolean {
+      return this.currentDatasetType == 'multiple' ? true : false;
+   }
+
    initOptionsForm() {
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       controls[0].setValue(true); // Set the first checkbox to true (checked)

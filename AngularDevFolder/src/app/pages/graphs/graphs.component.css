@@ -5,3 +5,40 @@
 .divExportBtn {
    margin-top: 60px;
 }
+
+.optionsDiv {
+   margin-top: 10px;
+}
+
+.optionsLabel {
+   padding-left: 10px;
+   margin-bottom: 10px;
+}
+
+.spanOption{
+   margin-left: 15px;
+   font-weight: 400;
+}
+
+.optionsList {
+   margin-top: 10px;
+   list-style: none;
+}
+
+.btnBlock {
+   margin-top: 30px;
+}
+
+#multipleDataSets{
+   margin-bottom: 20px;
+}
+
+.btnGroupSwitch {
+   padding-left:37px; 
+   padding-right:37px;
+}
+
+
+li {
+   margin-bottom: 5px;
+}

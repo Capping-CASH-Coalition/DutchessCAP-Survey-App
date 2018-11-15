@@ -1,155 +1,127 @@
 <div id="wrapper">
-      <navigation></navigation>
-      <div id="page-wrapper" class="gray-bg">
-          <topnavbar></topnavbar>
-
-            <div class="row wrapper border-bottom white-bg page-heading">
-            
-            <div class="row" style="margin-top:10px; margin-bottom:10px">
-            
-                  <div class="col-lg-1">
-                  </div>
-
-                  <div class="col-lg-5">
-                  <select class="form-control" id="exampleFormControlSelect" (change)="updateSurveyFormData($event.target.value)">
-                        <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
-                        <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
-                              {{ s.survey_name }}
-                        </option>
-                  </select>         
-                  </div>
-
-                  <div class="col-lg-5">
-                  <button type="button" (click)="newSurveyForm()" class="btn btn-warning btn-sm pull-right">Create New Survey</button>
-                  </div>
-
-                  <div class="col-lg-1">
-                  </div>
-
+  <navigation></navigation>
+  <div id="page-wrapper" class="gray-bg">
+    <topnavbar></topnavbar>
+    <div id="ctr">
+      <div class="row">
+        <div class="col-lg-10 ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="row justify-content-between btnBar">
+               <div class="col">
+                  <select class="form-control pull-left" id="surveySelect" (change)="updateSurveyFormData($event.target.value)">
+                    <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
+                    <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
+                      {{ s.survey_name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col">
+                  <button type="button" (click)="newSurveyForm()" class="pull-right btn btn-warning btn-sm">Create New Survey</button>
+                </div>
             </div>
-
-            <div class="row">
-
-                  <div class="col-lg-1">
-                  </div>
-
-                  <div class="col-lg-10">
-                  <div class="ibox-content">
-                        <div class="feed-activity-list">
-                        
-                        <form [formGroup]="survey" novalidate (ngSubmit)="save(survey)">
-
-                              <div class="form-group">
-                              <h2 style="font-weight:bold">Survey Name</h2>
-                              <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="surveyName" placeholder="Enter Survey Name">
-                              </div>
-
-                              <!-- QUESTIONS -->
-                              <div formArrayName="questions">
-                              <div *ngFor="let question of survey.controls.questions.controls; let i=index">
-                                    
-                                    <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
-
-                                    <h3> Question {{ i+1}}</h3>
-
-                                    <div class="row">
-                                          <div class="col-lg-3">
-                                          <div class="row">
-                                                <div class="col-lg-12">
-                                                <small class="text-muted">Question Type</small>
-                                                </div>
-                                          </div>
-                                          <div class="row">
-                                                <div class="col-lg-12">
-                                                <!--TYPE GO HERE-->
-                                                <select formControlName="questionType" class="form-control form-control-sm" required>
-                                                      <option value="" disabled selected>Select a question type:</option>
-                                                      <option value="dropdown">Dropdown</option>
-                                                      <option value="checkboxes">Checkboxes</option>
-                                                      <option value="mc">Multiple Choice</option>
-                                                      <option value="text">Textbox</option>
-                                                </select>
-                                                </div>
-                                          </div>
-                                          </div>
-                                          <div class="col-lg-9">
-                                          <button *ngIf="survey.controls.questions.length > 1"  class='pull-right btn btn-lg' (click)='removeQuestion(i)' style='background-color:transparent;'> 
-                                                <div>
-                                                <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
-                                                </div>
-                                          </button>
-                                          </div>
-                                    </div>
-
-                                    <div class="row" style="margin-top:10px">
-                                          <div class="col-lg-12">
-                                          <small class="text-muted">Question Prompt</small>
-                                          <!--TEXT BOX GOES HERE-->      
-                                          <div class="form-group">
-                                                <textarea formControlName="questionText" class="form-control" id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here..."></textarea>
-                                          </div>
-                                          </div>
-                                    </div>
-
-                                    <div class="row" *ngIf="showOptionsDiv(question)"> 
-                                          <div class="col-lg-1">
-                                          </div>
-                                          <div class="col-lg-5" > 
-                                          <!--OPTIONS GO HERE--> 
-                                          <div> <!-- SHOWING OPTIONS-->
-                                                <small class="text-muted">Add Options</small>
-                                                <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index">
-                                                <div class="row">
-                                                      <div class="col-lg-10">
-                                                      <div [formGroupName]="j">
-                                                            <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="Enter Option" formControlName="option">
-                                                            </div>   
-                                                      </div>
-                                                      </div>
-                                                      <div class="col-lg-2">
-                                                      <span *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)"><i class="fas fa-trash-alt"></i></span>
-                                                      </div>
-                                                </div>
-                                                <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.questionOptions.length-1" (click)="addOption(question)" style="float: right"><i class="fa fa-plus-circle"></i> Add Option</button>
-                                                </div>
-                                          </div>
-                                          </div>
-                                    </div>
-
-                                    <div class="row">
-                                          <div class="col-lg-12">
-                                          <button  class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
-                                                <div>
-                                                <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
-                                                </div>
-                                          </button>
-                                          </div>
-                                    </div>
-                                    
-                                    
-                                    </div> <!--END OF FEED ELEMENT DIV-  -->
-
-
-                              </div> <!--END OF nfFor DIV-->
-
-                              </div> <!--END OF Form Array for Questions Div-->
-                        
-                        </form>
-
+            <hr>
+            <div class="feed-activity-list">
+              <form [formGroup]="survey" novalidate (ngSubmit)="save(survey)">
+                <div class="form-group">
+                  <h2 style="font-weight:bold">Survey Name</h2>
+                  <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="surveyName"
+                    placeholder="Enter Survey Name">
+                </div>
+                <!-- QUESTIONS -->
+                <div formArrayName="questions">
+                  <div *ngFor="let question of survey.controls.questions.controls; let i=index">
+                    <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
+                      <h3> Question {{ i+1}}</h3>
+                      <div class="row">
+                        <div class="col-lg-3">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <small class="text-muted">Question Type</small>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <!--TYPE GO HERE-->
+                              <select formControlName="questionType" class="form-control form-control-sm" required>
+                                <option value="" disabled selected>Select question type:</option>
+                                <option value="dropdown">Dropdown</option>
+                                <option value="checkboxes">Checkboxes</option>
+                                <option value="mc">Multiple Choice</option>
+                                <option value="text">Textbox</option>
+                              </select>
+                            </div>
+                          </div>
                         </div>
-                        <button type="button" class="btn btn-primary btn-lg btn-block">Save Survey</button>
+                        <div class="col-lg-9">
+                          <button *ngIf="survey.controls.questions.length > 1" class='pull-right btn btn-lg' (click)='removeQuestion(i)'
+                            style='background-color:transparent;'>
+                            <div>
+                              <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="row" style="margin-top:10px">
+                        <div class="col-lg-12">
+                          <small class="text-muted">Question Prompt</small>
+                          <!--TEXT BOX GOES HERE-->
+                          <div class="form-group">
+                            <textarea formControlName="questionText" class="form-control" id="exampleTextarea" rows="2"
+                              placeholder="Enter Question Prompt Here..."></textarea>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row" *ngIf="showOptionsDiv(question)">
+                        <div class="col-lg-1">
+                        </div>
+                        <div class="col-lg-5">
+                          <!--OPTIONS GO HERE-->
+                          <div>
+                            <!-- SHOWING OPTIONS-->
+                            <small class="text-muted">Add Options</small>
+                            <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index">
+                              <div class="row">
+                                <div class="col-lg-10">
+                                  <div [formGroupName]="j">
+                                    <div class="form-group">
+                                      <input type="text" class="form-control" placeholder="Enter Option"
+                                        formControlName="option">
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-lg-2">
+                                  <span *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)"><i
+                                      class="fas fa-trash-alt"></i></span>
+                                </div>
+                              </div>
+                              <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.questionOptions.length-1"
+                                (click)="addOption(question)" style="float: right"><i class="fa fa-plus-circle"></i>
+                                Add Option</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <button class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
+                            <div>
+                              <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <!--END OF FEED ELEMENT DIV-  -->
                   </div>
-
-                  
-
-                  </div>
-
-                  <div class="col-lg-1">
-                  </div>
-
+                  <!--END OF nfFor DIV-->
+                </div>
+                <!--END OF Form Array for Questions Div-->
+              </form>
             </div>
-
-            </div>
+            <button type="button" class="btn btn-primary btn-lg btn-block">Save Survey</button>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
 </div>

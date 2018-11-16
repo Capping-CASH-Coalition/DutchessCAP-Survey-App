@@ -36,6 +36,7 @@ export class EditComponent implements OnInit {
          ])
       });
       this.nameReadOnly = false;
+      jQuery("#surveySelect").val(-1);
    }  
 
 
@@ -51,9 +52,7 @@ export class EditComponent implements OnInit {
          surveyName: new FormControl(currSurvey.survey_name),
          questions: this._fb.array([])
       });
-
       this.patchFormQuestions(currSurvey.questions);
-
    }
 
    patchFormQuestions(questions: any[]) {

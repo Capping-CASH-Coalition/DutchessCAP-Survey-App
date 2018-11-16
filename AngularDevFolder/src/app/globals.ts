@@ -8,7 +8,8 @@ export class Globals {
       {
          survey_id: 0,
          survey_name: "Lindas Survey",
-         date_created: "2018-02-13",
+         date_created: "11-03-2018",
+         is_active: true,
          questions: [
             {
                question_id: 0,
@@ -88,6 +89,7 @@ export class Globals {
          survey_id: 1,
          survey_name: "Algozzines Survey",
          date_created: "11-02-2018",
+         is_active: false,
          questions: [
             {
                question_id: 3,

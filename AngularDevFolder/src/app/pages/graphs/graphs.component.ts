@@ -1,6 +1,5 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { Chart } from "chart.js";
-import { FormBuilder, FormGroup, FormArray, FormControl, FormControlName } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { GraphService } from '../../graph.service'
 import { Globals } from '../../globals';
 

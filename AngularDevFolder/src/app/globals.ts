@@ -89,7 +89,7 @@ export class Globals {
          survey_id: 1,
          survey_name: "Algozzines Survey",
          date_created: "11-02-2018",
-         is_active: false,
+         is_active: true,
          questions: [
             {
                question_id: 3,

@@ -19,26 +19,38 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       private fb: FormBuilder,
    ) { };
 
+   // global to track which switch for the dataset
    currentDatasetType: string = 'single';
+   // form for the chart filters
    chartForm: FormGroup;
+   // sub form specifically for the matrix options
    optionsForm: FormGroup;
+   // canvas id holder
    canvas: any;
+   // canvas context
    ctx: any;
+   // chart object
    chart: Chart = null;
+   // contains the selected options
    selectedOptions: string[];
 
    ngOnInit() {
+      // init the chart form
       this.initChartForm();
+      // init the options form
       this.initOptionsForm();
+      // grab the updated selected options
       this.updateSelectedOptions();
    }
 
+   // after the HTML has loaded, init graph elements
    ngAfterViewInit() {
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
       this.updateChart();
    };
 
+   // init chart form
    initChartForm() {
       this.chartForm = this.fb.group({
          chartType: new FormControl('pie'),
@@ -48,14 +60,15 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
+   // set the single state button to disabled or not disabled
    buttonStateSingle(): boolean {
       return this.currentDatasetType == 'single' ? true : false;
    }
-
+   // set the multiple state button to disabled or not disabled
    buttonStateMultiple(): boolean {
       return this.currentDatasetType == 'multiple' ? true : false;
    }
-
+   // init the options with the subquestion id appropiately 
    initOptionsForm() {
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       controls[0].setValue(true); // Set the first checkbox to true (checked)
@@ -64,19 +77,23 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
-   // go back to account for disabled options and filter them out
+   // map the dataset for an individual dataset graph
    mapSingleData(): Map<string, number> {
       let map = new Map();
       let survey = this.globals.surveys[this.chartForm.controls.surveyId.value];
       survey.questions.forEach(question => {
+         // for each question, if the question id equals the one in the select value
          if (question.question_id == this.chartForm.controls.questionId.value) {
+            // for each response of the question
             question.responses.forEach(r => {
+               // if the dataset has the response text/answer: get the count and increase and set back
                if (map.has(r.response_text)) {
                   let count = map.get(r.response_text);
                   // increment count by 1
                   count += 1;
                   map.set(r.response_text, count);
                }
+               // if the dataset does not have the response, it is the first time seeing it so set with value of 1
                else {
                   map.set(r.response_text, 1);
                }
@@ -86,28 +103,27 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       return map;
    }
 
-
+   // used when a change happens to update the chart
    updateChart(): void {
+      // if the switch is on single, destroy the chart, get the new data, build it using graph service
       if (this.currentDatasetType === 'single') {
          let map: Map<string, number>;
          this.destroyChart();
          map = this.mapSingleData();
          this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
       }
+      // if the switch is on multiple, destroy the chart, create new Chart from graph service, build it
       else {
          this.updateSelectedOptions();
          console.log("Matrix selected");
          this.destroyChart();
-         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData(this.chartForm.controls.chartType.value))
+         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())
          this.buildChart(c)
 
       }
    }
 
-   /**
-    *  mapTopLevelFilter() => maps the top level filter of the current question.
-    * @returns: map <hash_id, response_text>
-    */
+
    mapTopLevelFilter(): Map<string, string> {
       let responseMap: Map<string, string> = new Map();
       this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
@@ -134,26 +150,22 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    mapMatrixDataSets(): any[] {
       let questionMap: Map<string, string> = this.mapTopLevelFilter();
       let datasets: any[] = new Array();
-   //   console.log(this.selectedOptions);
-      // checkbox options loop
+      // go through the checkboxes that are selected
       this.selectedOptions.forEach((o, index) => {
-      //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-      //   console.log("new option loop thru: ", o);
-         // map contains all the top question options labels with values 0
+         // dsMap contains all the top question options labels with values 0
          let dsMap = this.initMatrixLabelsMap();
-      //   console.log("DSMAP BEFORE:", dsMap);
          // Sub question responses loop
          this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(sq => {
             if (sq.question_id == this.chartForm.controls.subQuestionId.value) {
+               // loop through all the sub question responses
                sq.responses.forEach(r => {
                   // question map has hash id key of this response
                   if (questionMap.has(r.hash_id)) {
                      // key for new 'map'
                      let k = questionMap.get(r.hash_id);
-                  //   console.log("quesiton map has response hash id: ", r.hash_id);
-                  //   console.log("quesiton map hash id value ", k);
-                  //   console.log("sq response text :", r.response_text);
+                     // if the resonse text equals the option then it coorelates
                      if (r.response_text == o) {
+                        // make sure that the dataset map has the key
                         if (dsMap.has(k)) {
                            // get count in dataset map
                            let count = dsMap.get(k);
@@ -167,9 +179,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                });
             }
          });
-         //console.log("DSMAP AFTER:", dsMap);
-        // console.log("O text: ", o);
-       //  console.log("data: ", Array.from(dsMap.values()));
+         // push the dataset values
          datasets.push({
             label: o,
             data: Array.from(dsMap.values()),
@@ -179,19 +189,20 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       return datasets;
    }
 
-   matrixGraphData(chartType): any {
-      
+   // pulls together the above functions to set the labels and datasets for the matrix graph
+   matrixGraphData(): any {
       return {
-         //labels: (chartType === 'bar' || chartType === 'line') ? Array.from(this.initMatrixLabelsMap().keys()) : this.selectedOptions,
          labels: Array.from(this.initMatrixLabelsMap().keys()),
          datasets: this.mapMatrixDataSets()
       }
    }
 
+   // update the dataset switch to single or multiple
    updateMultipleDataSetForm(val) {
       this.currentDatasetType = val;
    }
 
+   // get the options of the sub questions with active options
    getSubQuestionOptions(): any[] {
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
@@ -205,22 +216,25 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       return opsReturn;
    }
 
+   // build the chart from the Chart data and update it on the canvas
    private buildChart(chartData: Chart): void {
       this.chart = chartData;
       this.chart.update();
    }
 
+   // destroy the chart if it is not null
    private destroyChart(): void {
       if (this.chart != null) {
          this.chart.destroy();
       }
    }
 
+   // use graph service to download the chart given an event
    download(event) {
       this.graphService.downloadChart(event, 'canvas');
    }
 
-
+   // update the selected options to only be the checked ones
    updateSelectedOptions() {
       const options = this.getSubQuestionOptions()
       this.selectedOptions = this.optionsForm.value.options

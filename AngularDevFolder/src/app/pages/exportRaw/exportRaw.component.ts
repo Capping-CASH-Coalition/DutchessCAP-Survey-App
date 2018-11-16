@@ -7,37 +7,50 @@ import { Globals } from '../../globals';
    templateUrl: './exportRaw.component.html',
 })
 export class ExportRawComponent implements OnInit {
-   constructor(private globals: Globals) { }
+   
+   constructor(private globals: Globals) {}
 
+   // datafeed that the table uses to populate data
    dataFeed: any[];
-
+   // set the current survey and the date to filter by
    currSurvey: any;
    dateFilter: Date;
 
    ngOnInit() {
+      // set the current survey to the first survey in the  globals
       this.currSurvey = this.globals.surveys[0];
+      // update the date value select to be the date created of the survey
       this.updateDate(this.currSurvey.date_created);
+      // set the data feed to -1 which is all questions
       this.updateDataFeed(-1);
    }
 
+   // set the date filter global from the survey
    updateDate(date) {
       this.dateFilter = date;
    }
 
+   // set the current survey from the given id 
    updateSurvey(id) {
       this.currSurvey = this.globals.surveys[id];
+      // get questions from the current survey
       this.getQuestions();
+      // update feed to -1 which is all questions
       this.updateDataFeed(-1);
    }
 
+   // get all the questions of th current survey, filtering out the inactive ones
    getQuestions(): string[] {
       return this.currSurvey.questions.filter(
          (question: any) =>
             question.question_active === true);
    }
 
+   // updates the datafeed from a given question
    updateDataFeed(question_id: number) {
+      // clear the datafeed.
       this.dataFeed = [];
+      // if the question = -1 then get all questions from the survey
       if (question_id == -1) {
          this.currSurvey.questions.forEach(question => {
             if (question.question_active) {
@@ -52,6 +65,7 @@ export class ExportRawComponent implements OnInit {
             }
          });
       }
+      // otherwise, get get the responses from the given question id
       else {
          this.currSurvey.questions.forEach(question => {
             if (question.question_id == question_id) {
@@ -65,11 +79,10 @@ export class ExportRawComponent implements OnInit {
                });
             }
          });
-
-
       }
    }
 
+   // download the feed table as a CSV
    downloadCSV(csv) {
       let csvFile;
       let downloadLink;
@@ -89,6 +102,7 @@ export class ExportRawComponent implements OnInit {
       downloadLink.click();
    }
 
+   // export the table to format for download
    exportTableToCSV() {
       let csv = [];
       let rows = document.querySelectorAll("table tr");

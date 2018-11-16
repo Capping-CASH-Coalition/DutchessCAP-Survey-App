@@ -1,78 +1,71 @@
 <div id="wrapper">
-    <navigation></navigation>
-    <div id="page-wrapper" class="white-bg">
-      <topnavbar></topnavbar>
-      <div class="row wrapper border-bottom white-bg page-heading">
-
-        <div class="row" style="margin-top:30px">
-          <div class="col-lg-2">
-            <div class="form-group">
-              <label for="exampleFormControlSelect1">Survey</label>
-              <select class="form-control" id="exampleFormControlSelect1" (change)="updateSurvey($event.target.value)">
-                <option *ngFor="let survey of globals.surveys" value="{{survey.survey_id}}">
-                  {{ survey.survey_name }}
-                </option>
-              </select>
+  <navigation></navigation>
+  <div id="page-wrapper" class="gray-bg">
+    <topnavbar></topnavbar>
+    <div id="ctr">
+      <div class="row">
+        <div class="col-lg-11 ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="row justify-content-between btnBar">
+              <div class="col">
+                <select class="form-control pull-left" id="surveySelect" (change)="updateSurvey($event.target.value)">
+                  <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
+                    {{ s.survey_name }}
+                  </option>
+                </select>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary pull-right btn-sm">
+                  <i class="fas fa-database"></i>
+                  Add to Database
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-lg-8">
+            <hr>
+            <div class="feed-activity-list">
+              <form>
+                <div class="row form-group" *ngFor="let question of survey.questions | ActiveQuestions; let i = index ">
+                  <div class="col-lg-4" style="margin-left:40px">
+                    <span class="spanQuestion"> {{ i+1 }} . <span class="spanQuestionText">{{ question.question_text }}</span></span>
+                  </div>
+                  <div class="col-lg-7">
+                    <div [ngSwitch]="question.question_type">
 
-          </div>
-          <div class="col-lg-2">
-            <div class="form-group">
-              <button type="button" style="margin-top:25px;" class="btn btn-primary btn-block btn-sm btnExport"><i class="fas fa-database"></i> Add to
-                Database</button>
+                      <div *ngSwitchCase="'dropdown'">
+                        <select class="form-control" id="questionType">
+                          <option *ngFor="let option of question.options">
+                            {{ option.option_text }}
+                          </option>
+                        </select>
+                      </div>
+                      <div *ngSwitchCase="'checkboxes'">
+                        <div *ngFor="let option of question.options" id="divCheckboxOptionText">
+                          <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" value="option.option_text">
+                            <span class="spanOption">{{ option.option_text }}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div *ngSwitchCase="'text'">
+                        <label class="form-check-label"></label>
+                        <textarea class="form-control" id="textArea" rows="3"></textarea>
+                      </div>
+                      <div *ngSwitchCase="'mc'">
+                        <div *ngFor="let option of question.options">
+                          <label class="check-label">
+                            <input type="radio" class="form-check-input" name="optionsRadios">
+                            <span class="spanOption">{{ option.option_text }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-
-        <form>
-          <div class="row form-group" *ngFor="let question of survey.questions | ActiveQuestions; let i = index ">
-
-            <div class="col-lg-4" style="margin-left:40px">
-              <span class="spanQuestion"> {{ i+1 }} . <span class="spanQuestionText">{{ question.question_text }}</span></span>
-            </div>
-
-            <div class="col-lg-7">
-              <div [ngSwitch]="question.question_type">
-
-                <div *ngSwitchCase="'dropdown'">
-                  <select class="form-control" id="questionType">
-                    <option *ngFor="let option of question.options">
-                      {{ option.option_text }}
-                    </option>
-                  </select>
-                </div>
-
-                <div *ngSwitchCase="'checkboxes'">
-                  <div *ngFor="let option of question.options" id="divCheckboxOptionText">
-                    <label class="form-check-label">
-                      <input class="form-check-input" type="checkbox" value="option.option_text">
-                      <span class="spanOption">{{ option.option_text }}</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div *ngSwitchCase="'text'">
-                  <label class="form-check-label"></label>
-                  <textarea class="form-control" id="textArea" rows="3"></textarea>
-                </div>
-
-                <div *ngSwitchCase="'mc'">
-                  <div *ngFor="let option of question.options">
-                    <label class="check-label">
-                      <input type="radio" class="form-check-input" name="optionsRadios">
-                      <span class="spanOption">{{ option.option_text }}</span>
-                    </label>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </form>
-  
       </div>
     </div>
+  </div>
 </div>

@@ -1,13 +1,27 @@
 .spanOption{
-   margin-left: 15px;
-   font-weight: 400;
-}
-
-.spanQuestionText{
-   margin-left:5px
-}
-
-.spanQuestion{
-   font-weight: 600;
-   font-size: 14px;
-}
+    margin-left: 15px;
+    font-weight: 400;
+ }
+ 
+ .spanQuestionText{
+    margin-left:5px
+ }
+ 
+ .spanQuestion{
+    font-weight: 600;
+    font-size: 14px;
+ }
+ 
+ .btnBar{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+ }
+ 
+ #surveySelect{
+    width: 300px;
+ }
+ 
+ #ctr {
+    margin-left: 7%;
+ }

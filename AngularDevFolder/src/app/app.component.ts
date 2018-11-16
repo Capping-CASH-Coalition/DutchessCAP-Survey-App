@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SurveyService } from '../app/survey.service';
+import { SurveyService } from './services/survey.service';
 
 var Responses: Array<any> = [{ survey_id: 1, question_id: 1, option_id: 1, response_text: "Community Outreach"},
                              { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services"},

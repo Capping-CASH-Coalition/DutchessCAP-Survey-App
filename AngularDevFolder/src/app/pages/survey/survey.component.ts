@@ -1,7 +1,7 @@
 import { Globals } from './../../globals';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PaginationInstance } from 'ngx-pagination';
-import { SurveyService } from '../../survey.service';
+import { SurveyService } from '../../services/survey.service';
 
 @Component({
   selector: 'app-survey',
@@ -12,7 +12,7 @@ import { SurveyService } from '../../survey.service';
 
 export class SurveyComponent {
   
-  constructor(private globals: Globals, private surveyService: SurveyService) { }
+  constructor(public globals: Globals, public surveyService: SurveyService) { }
 
   // Pagination element uses this
   public config: PaginationInstance = {
@@ -28,7 +28,6 @@ export class SurveyComponent {
   selectedOption: number;
   radioChoices: Array<any> = [];
   surveyData: Array<any> = [];
-  radioResponses: Array<any> = [];
 
   ngOnInit() {
   }
@@ -39,12 +38,10 @@ export class SurveyComponent {
     for (let i = 0; i < this.surveyData.length; i++) {
       this.surveyService.postSurveyResponse(this.surveyData[i]);
     }
-    console.log("popop");
   }
 
   // When next button is clicked, save the selected options to the survey data object
   updateResponses(textValue: string, questionIndex: number) {
- 
     // Response object mirrors the database response table
     let response = {survey_id: 0,
                     question_id: 0,
@@ -63,18 +60,22 @@ export class SurveyComponent {
     // If question type is checkbox, check for multiple responses
     } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "checkboxes") {
       // Iterate through the options that were selected
-      for (let option of this.radioChoices) {
+      for (let i = 0; i < this.radioChoices.length; i++) {
+        response = {survey_id: 0,
+                    question_id: 0,
+                    option_id: 0,
+                    response_text: ""};
         response.survey_id = this.currentSurveyId; // Survey ID
         response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
-        response.option_id = option; // Option ID
-        response.response_text = this.getResponseText(option, questionIndex); // Response text
-
-        console.log(option);
+        response.option_id = this.radioChoices[i]; // Option ID
+        response.response_text = this.getResponseText(this.radioChoices[i], questionIndex); // Response text
+        console.log("pushing to surveyData: " + this.radioChoices[i]);
         // Push to survey data array
         this.surveyData.push(response);
+        console.log("survey data after push: " + this.surveyData[i])
       }
-      // Empty the radioChoices array
-      this.radioChoices = [];
+      // Empty/initialize the radioChoices array
+      //this.radioChoices = [];
     // If question type is text (open-ended), set option id to 1
     } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "text") {
       response.survey_id = this.currentSurveyId; // Survey ID
@@ -82,7 +83,7 @@ export class SurveyComponent {
       response.option_id = 1; // Option ID
       response.response_text = textValue; // Response text
 
-      console.log(textValue);
+      //console.log(textValue);
       this.surveyData.push(response);
     }
 
@@ -93,29 +94,23 @@ export class SurveyComponent {
   setSelectedOption(event, value, questionType): void {
     // If question type is dropdown or multiple choice, there is only 1 selected value
     if (questionType == "dd" || questionType == "mc") {
-      console.log("Selected: " + value);
       this.selectedOption = value;
     // If question type is checkbox, there is 1+ options
     } else if (questionType == "cb") {
-      console.log("Selected: " + value);
       // event is the clicked HTML element
       if (event) {
         // If checked, add it to the radioChoice array
         if (event.target.checked) {
           this.radioChoices.push(value);
-          console.log(this.radioChoices);
         // If unchecked, remove it from the radioChoice array
         } else {
-          console.log("unchecked");
           // Iterate through the radio choices to see which matches the value
           for (let i = 0; i < this.radioChoices.length; i++) {
-            console.log(this.radioChoices[i]);
             // If it matches, remove it from radioChoice array
             if (this.radioChoices[i] == value) {
               this.radioChoices.splice(i, 1);
             }
           }
-          console.log(this.radioChoices);
         }
       }
     }
@@ -153,7 +148,6 @@ export class SurveyComponent {
     // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
     } else {
       this.surveyData.pop();
-      console.log(this.surveyData);
    }
   }
 }

@@ -1,95 +1,101 @@
 <div id="wrapper">
-      <navigation></navigation>
-      <div id="page-wrapper" class="gray-bg">
-            <topnavbar></topnavbar>
-            <div class="row wrapper border-bottom white-bg page-heading">
-            
-                  <div class="row">
-                        <button class='pull-right btn btn-lg' (click)='editQuestion()' style='background-color:transparent;'>
-                        <div>
-                              <i id="btnQuestionAdd" class="fa fa-cog"></i>
+            <navigation></navigation>
+            <div id="page-wrapper" class="gray-bg">
+              <topnavbar></topnavbar>
+          
+              <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="row">
+          
+                  <div class="col-lg-3"style="margin-bottom: 500px">
+                    <br>
+                    <form [formGroup]="chartForm">
+                      <div class="form-group">
+          
+                        <div class="filterBlock">
+                          <label for="deepGraphSwitch">Data Set Modeling Switch</label>
+                          <div class="btn-group w-100" id="deepGraphSwitch" role="group" (click)="updateMultipleDataSetForm($event.target.value)">
+                            <button [disabled]="buttonStateSingle()" type="button" value="single" class="btnGroupSwitch btn btn-success">Single</button>
+                            <button [disabled]="buttonStateMultiple()" type="button" value="multiple" class="btnGroupSwitch btn btn-success">Double</button>
+                          </div>
                         </div>
-                        </button>
-
-                        <div class="col-lg-3">
-                              <br>
-                              <form [formGroup]="chartFiltersForm">
-                              <div class="form-group">
-
-                                    <div class="filterBlock">
-                                    <label for="graphType">Graph Type</label>
-                                    <select  class="form-control" 
-                                                formControlName="graphType"
-                                                id="graphType"
-                                                (change)="updateChartType($event.target.value)"
-                                                required>
-                                    <option *ngFor="let t of chartTypes; let idx = index" 
-                                                [value]="t"
-                                                [selected]="idx === 0">
-                                                {{t}}
-                                          </option>
-                                    </select>
-                                    </div>
-
-                                    <div class="filterBlock">
-                                    <fieldset id="filterTopLevel">
-                                    <label for="graphFilterTopLevel">Select Question</label>
-                                    <table id="graphFilterTopLevel" class="radioBtnFilterTable">
-                                          <tbody>
-                                          <tr *ngFor="let filter of chartDataFilters; let idx = index">
-                                          <td width="30px">
-                                                <input type="radio" 
-                                                      name="filterTopLevel"
-                                                      (click)="updateTopFilter(filter)"
-                                                      [checked]="idx === 0">
-                                          </td>
-                                          <td>{{ filter }}</td>
-                                          </tr>
-                                          </tbody>
-                                    </table>
-                                    </fieldset>
-                                    </div>
-                  <!--
-                                    <div class="filterBlock">
-                                    <fieldset id="filterSubLevel">
-                                    <label for="graphFilterSubLevel">Sub Level Filter (WIP out of scope)</label>
-                                    <table id="graphFilterSubLevel">
-                                          <tbody>
-                                          <tr *ngFor="let filter of chartDataFilters">
-                                          <td width="30px">
-                                                <input   type="radio" 
-                                                      name="filtelSubLevel"
-                                                      id="{{filter}}SubLevelID"
-                                                      [disabled]=true
-                                                      (click)="updateSubFilter(filter)">
-                                          </td>
-                                          <td>{{ filter }}</td>
-                                          </tr>
-                                          </tbody>
-                                    </table>
-                                    </fieldset>
-                                    </div>
-                  -->
-                                    <div class="filterBlock">
-                                          <button  type="button" 
-                                                class="btn btn-primary btn-block btn-sm">
-                                                <a href="graphs" (click)="download($event)" style="color:white">
-                                                      <i class="fas fa-download"></i>
-                                                      Export Graph
-                                                </a>
-                                          </button>
-                                    </div>
-
-                              </div>
-                              </form>
+          
+                        <div class="filterBlock">
+                          <label for="graphType">Chart Type</label>
+                          <select class="form-control" formControlName="chartType" (change)="updateChart()" required>
+                            <option *ngFor="let graph of graphService.getGraphTypes()" [value]="graph.val">
+                              {{graph.view}}
+                            </option>
+                          </select>
                         </div>
-
-                        <div class="col-lg-9">
-                        <canvas id="graphCanvas" width="600" height="600"></canvas>
+          
+                        <div class="filterBlock">
+                          <label for="graphType">Select Survey</label>
+                          <select class="form-control" formControlName="surveyId" required>
+                            <option *ngFor="let survey of globals.surveys" [value]="survey.survey_id">
+                              {{survey.survey_name}}
+                            </option>
+                          </select>
                         </div>
-
+          
+                        <div class="filterBlock">
+                          <label for="graphType">Select Question</label>
+                          <select class="form-control" formControlName="questionId" (change)="updateChart()" required>
+                            <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
+                              [value]="question.question_id">
+                              {{question.question_text}}
+                            </option>
+                          </select>
+                        </div>
+          
+                        <div id="multipleDataSets" *ngIf="currentDatasetType != 'single'">
+                          <div class="filterBlock">
+                            <label for="graphType">Select Sub Question</label>
+                            <select class="form-control" formControlName="subQuestionId" required (change)="updateChart()">
+                              <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion"
+                                [value]="question.question_id">
+                                {{question.question_text}}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="optionsDiv">
+                            <form [formGroup]="optionsForm" (change)="updateChart()">
+                              <small class="optionsLabel text-muted">Sub Question Data Filter</small>
+                              <ul class="optionsList" formArrayName="options" *ngFor="let option of getSubQuestionOptions(); let i = index">
+                                <div class="col-lg-12">
+                                   <li>
+                                     <input type="checkbox" [formControlName]="i">
+                                     <span class="spanOption">{{option.option_text}}</span>
+                                  </li>
+                                </div>
+                               </ul>
+                            </form>
+                          </div>
+                        </div>
+                        <div class="btnBlock">
+                         <hr>
+                          <button type="button" class="btn btn-primary btn-block btn-sm">
+                            <a href="graphs" (click)="download($event)" style="color:white">
+                              <i class="fas fa-download"></i>
+                              Export Graph
+                            </a>
+                          </button>
+                        </div>
+          
+                      </div>
+                    </form>
                   </div>
-
+          
+                  <div class="col-lg-8">
+                    <canvas id="graphCanvas" width="670" height="670"></canvas>
+                  </div>
+          
+                  <div class="col-lg-1">
+          
+                  </div>
+          
+                </div>
+          
+          
+              </div>
             </div>
-      </div>
-</div>>
+          </div>

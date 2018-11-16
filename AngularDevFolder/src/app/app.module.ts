@@ -31,10 +31,8 @@ import { FilterPipe } from './pipes/filter.pipe';
 import { FilterBySurveyIdPipe } from './pipes/filterSurvey.pipe';
 import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe';
 import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe';
-import { ContactComponent } from "./pages/contact/contact.component";
-import { GraphService } from './graph.service'
-import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe'
-import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe'
+import { FilterByQuestionActivePipe } from './pipes/filterByQuestionActive.pipe'
+
 
 // Custom imports
 import { appRoutes } from "./app.routes";
@@ -60,13 +58,13 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
       FilterByQuestionIDPipe,
       FilterByDatePipe,
       FilterPipe,
-      FilterByQuestionActivePipe,
       FilterBySurveyIdPipe,
       ContactComponent,
       EditComponent,
       ExportRawComponent,
       GraphableQuestionPipe,
-      ExceptQuestionIdPipe
+      ExceptQuestionIdPipe,
+      FilterByQuestionActivePipe
    ],
    // Imports bring in external modules such as core Angular modules
    imports: [

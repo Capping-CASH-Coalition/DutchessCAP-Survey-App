@@ -1,12 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'GraphableQuestion'
+   name: 'GraphableQuestion'
 })
+
 export class GraphableQuestionPipe implements PipeTransform {
 
-  transform(value: any, args?: any): any {
-    return null;
-  }
-
+    transform(questions : any): any[] {
+        if (questions) {
+            return questions.filter((question: any) => question.question_type != 'text');
+        }
+    }
 }

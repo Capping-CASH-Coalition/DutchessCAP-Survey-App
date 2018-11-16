@@ -3,19 +3,18 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { GraphService } from '../../services/graph.service'
 import { Globals } from '../../globals';
 
-
 @Component({
    selector: 'app-graphs',
    templateUrl: './graphs.component.html',
    styleUrls: ['./graphs.component.css']
 })
 
-
 export class GraphsComponent implements AfterViewInit, OnInit {
 
    constructor(
       public graphService: GraphService,
       public globals: Globals,
+
       private fb: FormBuilder,
    ) { };
 

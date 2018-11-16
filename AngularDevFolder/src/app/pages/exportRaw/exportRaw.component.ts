@@ -8,7 +8,7 @@ import { Globals } from '../../globals';
 })
 export class ExportRawComponent implements OnInit {
    
-   constructor(private globals: Globals) {}
+   constructor(public globals: Globals) {}
 
    // datafeed that the table uses to populate data
    dataFeed: any[];
@@ -116,8 +116,5 @@ export class ExportRawComponent implements OnInit {
       // Download CSV file
       this.downloadCSV(csv.join("\n"));
    }
-
-
-
 
 }

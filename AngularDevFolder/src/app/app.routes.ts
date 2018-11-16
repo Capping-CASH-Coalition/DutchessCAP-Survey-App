@@ -5,12 +5,13 @@ import { SurveyComponent } from './pages/survey/survey.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
+// path refers to the end of the url after .org such as www.dutchesscap.org/
 export const appRoutes=[
-    // TODO: Add 404 page
-    {
+    {   // When path is empty, redirect to the home page
         path:'',
-        redirectTo:'home',
+        redirectTo:'notFound',
         pathMatch:'full'
     },
     {
@@ -40,5 +41,9 @@ export const appRoutes=[
     {
         path: 'contact',
         component: ContactComponent,
+    },
+    {
+        path: '**',
+        component: NotFoundComponent,
     }
 ];

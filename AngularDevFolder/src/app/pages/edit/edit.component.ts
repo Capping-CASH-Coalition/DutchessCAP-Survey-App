@@ -17,7 +17,7 @@ export class EditComponent implements OnInit {
 
    constructor(
       private _fb: FormBuilder,
-      private globals: Globals
+      public globals: Globals
    ) { };
 
    // initilaize a new blank survey form

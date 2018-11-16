@@ -25,30 +25,23 @@
                           <option disabled selected>-Please Select an Option-</option>
                           <option *ngFor="let option of question.options" value="{{option.option_id}}">
                             {{ option.option_text }}
-                          </option>
-                        </select>
-                      </div>
-
-                      <div *ngSwitchCase="'checkboxes'">
-                        <div *ngFor="let option of question.options" id="divCheckboxOptionText" (change)="setSelectedOption($event, $event.target.value, 'cb')">
-                          <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
-                          {{ option.option_text }}
+                          </div>
                         </div>
-                      </div>
-
-                      <div *ngSwitchCase="'text'">
-                        <div class="form-check-label">
-                          <textarea class="form-control" name="text" rows="2" [(ngModel)]="textAreaValue"></textarea>
+  
+                        <div *ngSwitchCase="'text'">
+                          <div class="form-check-label">
+                            <textarea class="form-control" name="text" rows="2" [(ngModel)]="textAreaValue"></textarea>
+                          </div>
                         </div>
-                      </div>
-
-                      <div *ngSwitchCase="'mc'">
-                        <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
-                          <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
-                          {{ option.option_text }}
+  
+                        <div *ngSwitchCase="'mc'">
+                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
+                            <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
+                            {{ option.option_text }}
+                          </div>
                         </div>
+  
                       </div>
-
                     </div>
                     <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="config.currentPage = $event">
 
@@ -87,5 +80,4 @@
         </div>
       </div>
     </div>
-  </div>
 </div>

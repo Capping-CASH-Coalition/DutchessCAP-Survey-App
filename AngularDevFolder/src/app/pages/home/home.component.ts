@@ -8,7 +8,7 @@ import { Globals } from "../../globals";
 })
 export class HomeComponent implements OnInit {
    constructor(
-      private globals: Globals
+      public globals: Globals
    ) { };
 
    ngOnInit() {

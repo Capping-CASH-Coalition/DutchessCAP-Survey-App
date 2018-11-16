@@ -1,58 +1,74 @@
+// Angular/3rd party imports
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Input } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from "@angular/router";
+import { LocationStrategy, HashLocationStrategy, CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
+
+// Component imports
 import { AppComponent } from './app.component';
 import { TopnavbarComponent } from "./components/topnavbar/topnavbar.component";
 import { NavigationComponent } from "./components/navigation/navigation.component";
-import { RouterModule } from "@angular/router";
-import { appRoutes } from "./app.routes";
 import { HomeComponent } from "./pages/home/home.component";
-import { SurveyService } from './survey.service';
-import { KeysPipe } from './pipes/keys.pipe';
-import { LocationStrategy, HashLocationStrategy, CommonModule } from '@angular/common';
-import { FilterByQuestionActivePipe } from './pipes/filterByQuestionActive.pipe';
 import { GraphsComponent } from "./pages/graphs/graphs.component";
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { InputComponent } from "./pages/input/input.component";
-import { Globals } from './globals';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { SurveyComponent } from "./pages/survey/survey.component";
-import { FilterByQuestionIDPipe } from "./pipes/filterQuestionId.pipe";
-import { FilterBySurveyIdPipe } from "./pipes/filterSurvey.pipe";
-import { FilterByOptionActivePipe } from './pipes/filterByOptionActive.pipe';
-import { FilterByDatePipe } from './pipes/filterByDate.pipe';
-import { FilterPipe } from './pipes/filter.pipe';
+import { InputComponent } from "./pages/input/input.component";
 import { ContactComponent } from "./pages/contact/contact.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
+
+// Services/Pipes imports
+import { SurveyService } from './services/survey.service';
+import { GraphService } from './services/graph.service';
+import { KeysPipe } from './pipes/keys.pipe';
+import { FilterByQuestionIDPipe } from "./pipes/filterQuestionId.pipe";
+import { FilterByOptionActivePipe } from './pipes/filterByOptionActive.pipe';
+import { FilterByDatePipe } from './pipes/filterByDate.pipe';
+import { FilterPipe } from './pipes/filter.pipe';
+import { FilterBySurveyIdPipe } from './pipes/filterSurvey.pipe';
+import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe';
+import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe';
+import { ContactComponent } from "./pages/contact/contact.component";
 import { GraphService } from './graph.service'
 import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe'
 import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe'
 
+// Custom imports
+import { appRoutes } from "./app.routes";
+import { Globals } from './globals';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 @NgModule({
+    // Declarations allow all components and pipes to be used through the project
    declarations: [
       AppComponent,
       NavigationComponent,
       TopnavbarComponent,
       HomeComponent,
-      KeysPipe,
+      ContactComponent,
+      EditComponent,
+      ExportRawComponent,
       GraphsComponent,
-      FilterByQuestionActivePipe,
       InputComponent,
       SurveyComponent,
+      NotFoundComponent,
+      KeysPipe,
       FilterByOptionActivePipe,
       FilterByQuestionIDPipe,
-      FilterBySurveyIdPipe,
       FilterByDatePipe,
       FilterPipe,
+      FilterByQuestionActivePipe,
+      FilterBySurveyIdPipe,
       ContactComponent,
       EditComponent,
       ExportRawComponent,
       GraphableQuestionPipe,
       ExceptQuestionIdPipe
    ],
+   // Imports bring in external modules such as core Angular modules
    imports: [
       BrowserModule,
       FormsModule,
@@ -60,9 +76,12 @@ import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe'
       HttpClientModule,
       RouterModule.forRoot(appRoutes),
       ReactiveFormsModule,
-      NgxPaginationModule
+      NgxPaginationModule,
+      CommonModule
    ],
+   // Providers allow all components to use the given services
    providers: [SurveyService, GraphService, Globals, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+   // Bootstrap is the first component loaded in the project
    bootstrap: [AppComponent]
 })
 export class AppModule { }

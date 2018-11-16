@@ -1,25 +1,25 @@
 #btnQuestionAdd {
-   color: green;
-}
-
-#btnQuestionRemove {
-   color: #eb494e
-}
-
-a:hover { 
-   background-color: yellow;
-}
-
-.btnBar{
-   padding-left: 15px;
-   padding-right: 15px;
-   padding-top: 15px;
-}
-
-#surveySelect{
-   width: 300px;
-}
-
-#ctr {
-   margin-left: 13%;
-}
+    color: green;
+ }
+ 
+ #btnQuestionRemove {
+    color: #eb494e
+ }
+ 
+ a:hover { 
+    background-color: yellow;
+ }
+ 
+ .btnBar{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+ }
+ 
+ #surveySelect{
+    width: 300px;
+ }
+ 
+ #ctr {
+    margin-left: 13%;
+ }

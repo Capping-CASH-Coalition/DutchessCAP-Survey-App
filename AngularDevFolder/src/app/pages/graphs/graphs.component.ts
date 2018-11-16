@@ -1,8 +1,7 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
-import { GraphService } from '../../graph.service'
+import { GraphService } from '../../services/graph.service'
 import { Globals } from '../../globals';
-
 
 @Component({
    selector: 'app-graphs',
@@ -10,12 +9,12 @@ import { Globals } from '../../globals';
    styleUrls: ['./graphs.component.css']
 })
 
-
 export class GraphsComponent implements AfterViewInit, OnInit {
 
    constructor(
-      private graphService: GraphService,
-      private globals: Globals,
+      public graphService: GraphService,
+      public globals: Globals,
+
       private fb: FormBuilder,
    ) { };
 

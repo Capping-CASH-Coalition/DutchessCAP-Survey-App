@@ -4,12 +4,14 @@ import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
+import { SurveyLandingComponent } from '../survey-landing/survey-landing.component';
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [SurveyLandingComponent]
 })
 
 export class SurveyComponent {
@@ -17,7 +19,8 @@ export class SurveyComponent {
   constructor(public globals: Globals, 
               public surveyService: SurveyService,
               public auth: AuthenticationService,
-              private router: Router) { }
+              private router: Router,
+              public surveyLanding: SurveyLandingComponent) { }
 
   // This constantly checks if the user is authenticated
   ngDoCheck(): void {
@@ -37,6 +40,8 @@ export class SurveyComponent {
   // Hardcoded for now
   currentSurveyId = this.globals.surveys[0].survey_id;
   currentSurveyIndex = this.globals.surveys[0];
+
+  //this.surveyLandComponent.selectedVersion Was using it to test the selected version and what to load
 
   selectedOption: number;
   radioChoices: Array<any> = [];

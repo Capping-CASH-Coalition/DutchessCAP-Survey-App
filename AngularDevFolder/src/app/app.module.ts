@@ -19,6 +19,8 @@ import { InputComponent } from "./pages/input/input.component";
 import { ContactComponent } from "./pages/contact/contact.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { SurveyLandingComponent } from './pages/survey-landing/survey-landing.component';
 
 // Services/Pipes imports
 import { SurveyService } from './services/survey.service';
@@ -39,7 +41,7 @@ import { FilterByQuestionActivePipe } from './pipes/filterByQuestionActive.pipe'
 // Custom imports
 import { appRoutes } from "./app.routes";
 import { Globals } from './globals';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
+
 
 @NgModule({
     // Declarations allow all components and pipes to be used through the project
@@ -55,6 +57,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
       InputComponent,
       SurveyComponent,
       NotFoundComponent,
+      SurveyLandingComponent,
       KeysPipe,
       FilterByOptionActivePipe,
       FilterByQuestionIDPipe,
@@ -66,7 +69,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
       ExportRawComponent,
       GraphableQuestionPipe,
       ExceptQuestionIdPipe,
-      FilterByQuestionActivePipe
+      FilterByQuestionActivePipe, 
    ],
    // Imports bring in external modules such as core Angular modules
    imports: [

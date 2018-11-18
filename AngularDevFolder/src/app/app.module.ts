@@ -23,6 +23,8 @@ import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 // Services/Pipes imports
 import { SurveyService } from './services/survey.service';
 import { GraphService } from './services/graph.service';
+import { AuthenticationService } from './services/authentication.service';
+import { AuthGuardService } from './services/auth-guard.service';
 import { KeysPipe } from './pipes/keys.pipe';
 import { FilterByQuestionIDPipe } from "./pipes/filterQuestionId.pipe";
 import { FilterByOptionActivePipe } from './pipes/filterByOptionActive.pipe';
@@ -78,7 +80,14 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
       CommonModule
    ],
    // Providers allow all components to use the given services
-   providers: [SurveyService, GraphService, Globals, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+   providers: [
+       SurveyService, 
+       GraphService, 
+       AuthenticationService, 
+       AuthGuardService, 
+       Globals, 
+       {provide: LocationStrategy, useClass: HashLocationStrategy}
+    ],
    // Bootstrap is the first component loaded in the project
    bootstrap: [AppComponent]
 })

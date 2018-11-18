@@ -1,4 +1,6 @@
 <div class="white-bg">
+  <button
+    *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
       <div class="row">
         <div class="col-lg-12">
           <div>

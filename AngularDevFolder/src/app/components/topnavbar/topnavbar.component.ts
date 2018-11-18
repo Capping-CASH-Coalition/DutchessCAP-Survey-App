@@ -1,17 +1,17 @@
-import { Component, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import {smoothlyMenu} from "../../app.helpers";
-//import { Navigation } from '../navigation/navigation.component';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'topnavbar',
     templateUrl: './topnavbar.component.html',
     styleUrls: ['./topnavbar.component.css']
 })
-export class TopnavbarComponent {
-    
-    ngOnInit() {
 
-    }
+export class TopnavbarComponent {
+    // Declare the AuthenticationService so that it's available to this component
+    constructor(private auth: AuthenticationService) { }
+    
     toggleNavigation(): void {
         jQuery("body").toggleClass("mini-navbar");
         smoothlyMenu();

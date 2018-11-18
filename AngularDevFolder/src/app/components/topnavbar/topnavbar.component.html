@@ -3,17 +3,12 @@
         <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
             <ul class="nav navbar-top-links navbar-right">
                 <li>
-                    <a style="font-size:12px">
-                        <i class="fas fa-globe-americas"></i> Return To Survey Site
+                    <a *ngIf="auth.isAuthenticated()"
+                    (click)="auth.logout()" style="font-size:12px">
+                        <i class="fas fa-globe-americas"></i> Return To Survey / Logout
                     </a>
                 </li>
-                <b style="font-size:16px">/</b>
-                <li>
-                    <a style="font-size:12px">
-                    <i class="fas fa-sign-out-alt"></i> Log out
-                </a>
-            </li>
-         </ul>
-      </nav>
-   </div>
+            </ul>
+        </nav>
+    </div>
 </div>

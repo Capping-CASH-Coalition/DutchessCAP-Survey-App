@@ -6,12 +6,13 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
 
 // path refers to the end of the url after .org such as www.dutchesscap.org/
 export const appRoutes=[
     {   // When path is empty, redirect to the home page
         path:'',
-        redirectTo:'notFound',
+        redirectTo:'home',
         pathMatch:'full'
     },
     {
@@ -20,7 +21,8 @@ export const appRoutes=[
     },
     {
         path: 'graphs',
-        component: GraphsComponent,
+        component: GraphsComponent
+        //canActivate: [AuthGuard]
     },
     {
         path: 'input',
@@ -42,7 +44,7 @@ export const appRoutes=[
         path: 'contact',
         component: ContactComponent,
     },
-    {
+    {   // When path does not match one of the declared paths, redirect to 404 page
         path: '**',
         component: NotFoundComponent,
     }

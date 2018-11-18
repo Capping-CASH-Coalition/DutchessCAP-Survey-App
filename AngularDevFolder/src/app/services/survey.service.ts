@@ -20,9 +20,12 @@ export class SurveyService {
   constructor(private http: HttpClient) { }
 
 
+  getSurveys() {
+    return this.http.get<any>('http://localhost:3000/api/surveys');
+  }
 
-  getSurveyQuestions(survey_name) {
-    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_name);
+  getSurveyQuestions(survey_id) {
+    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id);
   }
   getSurveyOptions(survey_name) {
     return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_name);

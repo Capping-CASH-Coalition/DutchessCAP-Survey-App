@@ -166,40 +166,53 @@ export class AppComponent {
   optionID;
   surveyID;
   questionNum;
-  constructor(private surveyService: SurveyService) { }
-
-
-
-
-
-
+  constructor(private surveyService: SurveyService,
+              private globals: Globals) { }
 
 
   ngOnInit() {
 
+   /* this.surveyService.getSurveys().subscribe((response) => {
+      for (let i = 0; i < response.length; i++) {
+        let survey = {
+          "survey_id": response[i].survey_id,
+          "survey_name": response[i].survey_name,
+          "date_taken": response[i].date_taken
+        };
 
-     /*this.surveyService.getSurveyQuestions('hi').subscribe((response)=>{
-           this.questions = [];
-           //console.log('response is ', response);
-           for (let i = 0; i < response.length; i++) {
-   
-             let qArray =
-             {
-               
-               "question_id": response[i].question_id,
-               "question_text": response[i].question_text,
-               "question_type": response[i].question_type,
-               "question_is_active": response[i].question_is_active
-             };
-                 
-             surveys.questions[i].push(qArray);
-   
-           }
-           console.log(this.questions);
+        this.globals.surveys.push(survey);
+        console.log(this.globals.surveys);
+      }
+    }, (error) => {
+      console.log('error is ', error)
+      })*/
+    
+
+
+    this.surveyService.getSurveyQuestions('1').subscribe((response) => {
+           
+      for (let j = 0; j < this.globals.surveys.length; j++) {
+        for (let i = 0; i < response.length; i++) {
+
+          let qArray =
+          {
+
+            "question_id": response[i].question_id,
+            "question_text": response[i].question_text,
+            "question_type": response[i].question_type,
+            "question_is_active": response[i].question_is_active
+          };
+          if (this.globals.surveys[j].survey_id == 1) {
+              this.globals.surveys[j].questions.push(qArray);
+              console.log(this.globals.surveys[j].questions);
+            }
+          }
+        }
+           
    },(error) => {
            console.log('error is ', error)
        })
-    this.surveyService.getOptions('hi').subscribe((response) => {
+    /*this.surveyService.getOptions('hi').subscribe((response) => {
       this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
            this.results= [];
            //console.log('response is ', response);
@@ -221,7 +234,8 @@ export class AppComponent {
            console.log(this.results);
    },(error) => {
            console.log('error is ', error)
-       })
+        })
+
        /*for(let j =0; j<Responses.length; j++){
        this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
            this.responses = [];
@@ -292,6 +306,7 @@ export class AppComponent {
       console.log('error is ', error)
     })*/
 
+   /* function f(object: some)
     this.surveyService.getQuestionLength().subscribe((response) => {
       this.questionID = response[0];
 
@@ -332,20 +347,22 @@ export class AppComponent {
                 console.log('error is ', error)
               });
               for (let j = 0; FormValues1.questions[i].questionOptions.length; j++) {
-                if (FormValues1.questions[i].questionOptions[j].option == "") {
+                if (FormValues1.questions[i].questionOptions[j].optionID == "") {
                   this.optionID = this.optionID + 1;
                   let insertOption = { "option_text": FormValues1.questions[i].questionOptions[j].option, "question_id": FormValues1.questions[i].questionID }; 
                   this.surveyService.postOptionID(insertOption).subscribe((response) => {
                   }, (error) => {
                     console.log('error is ', error)
                   });
-                  let insertArchitectures = { "survey_id": FormValues1.questions, "question_id": FormValues1.questions[i].questionID, "option_id": this.optionID }
+                  let insertArchitectures = {
+                    "survey_id": FormValues1.SurveyID, "question_id": FormValues1.questions[i].questionID, "option_id": this.optionID
+                  }
                   this.surveyService.postArchitectures(insertArchitectures).subscribe((response) => {
                   }, (error) => {
                     console.log('error is ', error)
                   });
                 }
-                if (FormValues1.questions[i].questionOptions[j].option != "") {
+                if (FormValues1.questions[i].questionOptions[j].optionID != "") {
                   let insertOption = { "option_id": FormValues1.questions[i].questionOptions[j].optionID, "option_is_active": FormValues1.questions[i].questionOptions[j].option_is_active };
                   this.surveyService.updateSurveyOption(insertOption).subscribe((response) => {
                   }, (error) => {
@@ -363,7 +380,7 @@ export class AppComponent {
       })
     }, (error) => {
       console.log('error is ', error)
-    })
+    })*/
 
 
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SurveyService } from '../app/survey.service';
+import { SurveyService } from './services/survey.service';
 import { Globals } from   './globals';
 
 

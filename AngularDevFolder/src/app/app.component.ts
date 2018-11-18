@@ -186,10 +186,37 @@ export class AppComponent {
     }, (error) => {
       console.log('error is ', error)
       })*/
-    
+
+    this.surveyService.getSurveyOptions(1).subscribe((response) => {
+
+      for (let j = 0; j < this.globals.surveys.length; j++) {
+        for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
+          for (let i = 0; i < response.length; i++) {
+
+            let qArray =
+            {
+
+              "option_id": response[i].option_id,
+              "option_text": response[i].question_text,
+              "option_is_active": response[i].option_is_active,
+              "question_id": response[i].question_id
+            };
+            if (this.globals.surveys[j].survey_id == 1) {
+              if (this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                this.globals.surveys[j].questions.push(qArray);
+                console.log(this.globals.surveys[j].questions);
+              }
+            }
+          }
+        }
+      }
+    }, (error) => {
+      console.log('error is ', error)
+    }) 
 
 
-    this.surveyService.getSurveyQuestions('1').subscribe((response) => {
+
+    /*this.surveyService.getSurveyQuestions('1').subscribe((response) => {
            
       for (let j = 0; j < this.globals.surveys.length; j++) {
         for (let i = 0; i < response.length; i++) {
@@ -205,13 +232,13 @@ export class AppComponent {
           if (this.globals.surveys[j].survey_id == 1) {
               this.globals.surveys[j].questions.push(qArray);
               console.log(this.globals.surveys[j].questions);
-            }
+            } 
           }
         }
            
    },(error) => {
            console.log('error is ', error)
-       })
+       })*/
     /*this.surveyService.getOptions('hi').subscribe((response) => {
       this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
            this.results= [];

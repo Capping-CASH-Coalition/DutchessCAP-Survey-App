@@ -26,7 +26,7 @@ router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
             console.log(err);
             return res.status(500).json({ success: false, data: err });
         }
-        const query = client.query('SELECT DISTINCT questions.question_id, questions.question_text, questions.question_is_active, questions.question_type FROM questions, architectures, surveys WHERE questions.question_id = architectures.question_id AND architecture.survey_id = surveys.survey_id AND survey.survey_id = ($1) ORDER BY survey_id ASC', [survey_id]);
+        const query = client.query('SELECT DISTINCT questions.question_id, questions.question_text, questions.question_is_active, questions.question_type FROM questions, architectures, surveys WHERE surveys.survey_id = ($1) AND questions.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id ORDER BY questions.question_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -39,7 +39,7 @@ router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
     });
 });
 
-/*router.get('/api/surveyOuestions/:survey_id', (req, res, next) => {
+router.get('/api/surveyOptions/:survey_id', (req, res, next) => {
     const results = [];
     var survey_id = req.params.survey_id;
 
@@ -51,7 +51,7 @@ router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
             console.log(err);
             return res.status(500).json({ success: false, data: err });
         }
-        const query = client.query('SELECT DISTINCT question.question_id, question.question_text, questions.question_is_active, question_type FROM questions WHERE questions.question_id = architectures.question_id AND architecture.survey_id = surveys.survey_id AND survey.survey_id = ($1) ORDER BY survey_id ASC', [survey_id]);
+        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM options WHERE options.question_id = architectures.question_id AND architecture.survey_id = surveys.survey_id AND survey.survey_id = ($1) ORDER BY survey_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -62,7 +62,7 @@ router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
             return res.json(results);
         });
     });
-});*/
+});
 
 router.get('/api/surveyOptions/:survey_name', (req, res, next) => {
     const results = [];

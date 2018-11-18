@@ -1,7 +1,9 @@
 import { Globals } from './../../globals';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DoCheck } from '@angular/core';
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey',
@@ -11,8 +13,19 @@ import { SurveyService } from '../../services/survey.service';
 })
 
 export class SurveyComponent {
-  
-  constructor(public globals: Globals, public surveyService: SurveyService) { }
+  // Declare the imports to be used within the component
+  constructor(public globals: Globals, 
+              public surveyService: SurveyService,
+              public auth: AuthenticationService,
+              private router: Router) { }
+
+  // This constantly checks if the user is authenticated
+  ngDoCheck(): void {
+    // If authenticated, redirect to the home dashboard
+    if (!this.auth.isAuthenticated) {
+      this.router.navigate(['home']);
+    }
+  }
 
   // Pagination element uses this
   public config: PaginationInstance = {
@@ -29,15 +42,13 @@ export class SurveyComponent {
   radioChoices: Array<any> = [];
   surveyData: Array<any> = [];
 
-  ngOnInit() {
-  }
-
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
     // For each response in surveyData, post the surveyData[index] response object
     for (let i = 0; i < this.surveyData.length; i++) {
       this.surveyService.postSurveyResponse(this.surveyData[i]);
     }
+    this.router.navigate(['contact']);
   }
 
   // When next button is clicked, save the selected options to the survey data object

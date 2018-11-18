@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const pg = require('pg');
 const path = require('path');
+// Change postgres url to full server. current url is for local on Gary's
 const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
 // Get Survey information functions

@@ -6,6 +6,7 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { SurveyLandingComponent } from './pages/survey-landing/survey-landing.component';
 import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
 
 // path refers to the end of the url after .org such as www.dutchesscap.org/
@@ -39,6 +40,10 @@ export const appRoutes=[
     {
         path: 'survey',
         component: SurveyComponent,
+    },
+    {
+        path: 'surveyhome',
+        component: SurveyLandingComponent,
     },
     {
         path: 'contact',

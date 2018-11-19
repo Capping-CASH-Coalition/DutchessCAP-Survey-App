@@ -1,5 +1,5 @@
 import { Globals } from './../../globals';
-import { Component, ChangeDetectionStrategy, DoCheck } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DoCheck, OnInit } from '@angular/core';
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -14,7 +14,7 @@ import { SurveyLandingComponent } from '../survey-landing/survey-landing.compone
   providers: [SurveyLandingComponent]
 })
 
-export class SurveyComponent {
+export class SurveyComponent implements OnInit {
   // Declare the imports to be used within the component
   constructor(public globals: Globals, 
               public surveyService: SurveyService,
@@ -28,6 +28,55 @@ export class SurveyComponent {
     if (!this.auth.isAuthenticated) {
       this.router.navigate(['home']);
     }
+  }
+
+  ngOnInit() {
+    console.log()
+    this.surveyService.getSurveyQuestions(this.surveyLanding.selectedSurveyId).subscribe((response)=>{
+      for (let i = 0; i < this.globals.surveys.length; i++) {
+        if (this.surveyLanding.surveys[i].survey_id == this.surveyLanding.selectedSurveyId) {
+          this.surveyLanding.surveys[i].questions = [];
+          //console.log('response is ', response);
+          for (let i = 0; i < response.length; i++) {
+            let qArray =
+            {
+              "question_id": response[i].question_id,
+              "question_text": response[i].question_text,
+              "question_type": response[i].question_type,
+              "question_is_active": response[i].question_is_active
+            };
+            this.surveyLanding.surveys[i].questions.push(qArray);
+          }
+        }
+        console.log(this.surveyLanding.surveys[i].questions);
+      }
+      
+    },(error) => {
+      console.log('error is ', error)
+    })/*
+this.surveyService.getOptions('hi').subscribe((response) => {
+ this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
+      this.results= [];
+      //console.log('response is ', response);
+      for (let i = 0; i < response.length; i++) {
+
+        let rArray =
+        {
+         
+       
+          "option_id": response[i].option_id,
+          "option_text": response[i].option_text,
+          "option_is_active": response[i].option_is_active,
+          "question_id": response[i].question_id
+        };
+        for (let j = 0; j < surveys.questions.)
+          this.results.push(rArray);
+
+      }
+      console.log(this.results);
+},(error) => {
+      console.log('error is ', error)
+  })*/
   }
 
   // Pagination element uses this
@@ -46,15 +95,35 @@ export class SurveyComponent {
   selectedOption: number;
   radioChoices: Array<any> = [];
   surveyData: Array<any> = [];
-
+/*
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
     // For each response in surveyData, post the surveyData[index] response object
     for (let i = 0; i < this.surveyData.length; i++) {
-      this.surveyService.postSurveyResponse(this.surveyData[i]);
+      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe((response)=>{
+        responses = [];
+        //console.log('response is ', response);
+        for (let i = 0; i < response.length; i++) {
+           
+          let sArray =
+          {
+            "question_id": response[i].question_id,
+            "survey_id": response[i].survey_id,
+            "option_id": response[i].option_id,
+            "response_text": response[i].response_text
+            }
+              ;
+            this.responses.push(sArray);
+            console.log(this.responses);
+        }
+        
+},(error) => {
+        console.log('error is ', error)
+    })
+    } 
     }
     this.router.navigate(['contact']);
-  }
+  }*/
 
   // When next button is clicked, save the selected options to the survey data object
   updateResponses(textValue: string, questionIndex: number) {
@@ -164,6 +233,6 @@ export class SurveyComponent {
     // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
     } else {
       this.surveyData.pop();
-   }
+    }
   }
 }

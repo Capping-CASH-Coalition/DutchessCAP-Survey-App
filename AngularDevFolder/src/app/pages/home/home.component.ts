@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
    }
 
    // go through the surveys and get the info for the survey details card
+   /*
    getSurveyInfo(): any[] {
       let surveyDetails: any[] = [];
       this.globals.surveys.forEach(survey => {
@@ -32,5 +33,5 @@ export class HomeComponent implements OnInit {
       });
       return surveyDetails;
    }
-
+*/
 }

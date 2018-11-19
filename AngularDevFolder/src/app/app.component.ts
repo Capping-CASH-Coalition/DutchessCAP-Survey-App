@@ -174,9 +174,8 @@ export class AppComponent {
         let survey = {
           "survey_id": response[i].survey_id,
           "survey_name": response[i].survey_name,
-          "date_taken": response[i].date_taken
+          "date_created": response[i].date_created
         };
-
         this.globals.surveys.push(survey);
         console.log(this.globals.surveys);
       }
@@ -184,7 +183,6 @@ export class AppComponent {
       console.log('error is ', error)
     })
   }
-
   getQuestions(id) {
     this.surveyService.getSurveyQuestions(id).subscribe((response) => {
 
@@ -287,7 +285,7 @@ export class AppComponent {
     //this.getSurveys();
     //this.getQuestions(1);
     //this.getOptions(1);
-    this.getResponses(1);
+    //this.getResponses(1);
    
 
        /*for(let j =0; j<Responses.length; j++){

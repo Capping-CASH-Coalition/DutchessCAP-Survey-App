@@ -51,33 +51,7 @@ router.get('/api/surveyOptions/:survey_id', (req, res, next) => {
             console.log(err);
             return res.status(500).json({ success: false, data: err });
         }
-        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM options WHERE options.question_id = architectures.question_id AND architecture.survey_id = surveys.survey_id AND survey.survey_id = ($1) ORDER BY survey_id ASC', [survey_id]);
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
-});
-
-router.get('/api/surveyOptions/:survey_name', (req, res, next) => {
-    const results = [];
-
-    var survey_name = req.params.survey_name;
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-
-        const query = client.query('SELECT DISTINCT * FROM options WHERE option.question_id = architectures.option_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_name = ($1) ORDER BY response_id ASC', [survey_name]);
+        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM surveys, options, architectures WHERE options.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY options.question_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -103,7 +77,7 @@ router.get('/api/surveyResponses/:survey_name', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
 
-        const query = client.query('SELECT DISTINCT * FROM responses WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_name = ($1) ORDER BY response_id ASC', [survey_name]);
+        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses_ FROM responses WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_name = ($1) ORDER BY response_id ASC', [survey_name]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);

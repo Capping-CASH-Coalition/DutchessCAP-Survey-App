@@ -31,8 +31,8 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id);
   }
 
-  getSurveyResponses(survey_name) {
-    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_name);
+  getSurveyResponses(survey_id) {
+    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
   }
 
 

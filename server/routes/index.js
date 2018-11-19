@@ -64,10 +64,10 @@ router.get('/api/surveyOptions/:survey_id', (req, res, next) => {
     });
 });
 
-router.get('/api/surveyResponses/:survey_name', (req, res, next) => {
+router.get('/api/surveyResponses/:survey_id', (req, res, next) => {
     const results = [];
 
-    var survey_name = req.params.survey_name;
+    var survey_id = req.params.survey_id;
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -77,7 +77,7 @@ router.get('/api/surveyResponses/:survey_name', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
 
-        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses_ FROM responses WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_name = ($1) ORDER BY response_id ASC', [survey_name]);
+        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses.option_id, responses.response_text, responses.date_taken FROM responses, architectures, surveys WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY response_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);

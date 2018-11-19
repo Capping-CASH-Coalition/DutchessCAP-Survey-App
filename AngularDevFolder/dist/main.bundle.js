@@ -40,8 +40,8 @@ var SurveyService = (function () {
     SurveyService.prototype.getSurveyOptions = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id);
     };
-    SurveyService.prototype.getSurveyResponses = function (survey_name) {
-        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_name);
+    SurveyService.prototype.getSurveyResponses = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
     };
     SurveyService.prototype.postSurveyResponse = function (response) {
         return this.http.post('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
@@ -1602,10 +1602,38 @@ var AppComponent = (function () {
             console.log('error is ', error);
         });
     };
+    AppComponent.prototype.getResponses = function (id) {
+        var _this = this;
+        this.surveyService.getSurveyResponses(id).subscribe(function (response) {
+            for (var j = 0; j < _this.globals.surveys.length; j++) {
+                if (_this.globals.surveys[j].survey_id == id) {
+                    for (var k = 0; k < _this.globals.surveys[j].questions.length; k++) {
+                        for (var i = 0; i < response.length; i++) {
+                            var rArray = {
+                                "response_id": response[i].response_id,
+                                "survey_id": response[i].survey_id,
+                                "question_id": response[i].question_id,
+                                "option_id": response[i].option_id,
+                                "response_text": response[i].response_text,
+                                "date_taken": response[i].date_taken
+                            };
+                            if (_this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                                _this.globals.surveys[j].questions[k].responses.push(rArray);
+                                console.log(_this.globals.surveys[j].questions[k].responses);
+                            }
+                        }
+                    }
+                }
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
     AppComponent.prototype.ngOnInit = function () {
         //this.getSurveys();
         //this.getQuestions(1);
-        this.getOptions(1);
+        //this.getOptions(1);
+        this.getResponses(1);
         /*for(let j =0; j<Responses.length; j++){
         this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
             this.responses = [];

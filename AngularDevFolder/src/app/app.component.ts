@@ -245,13 +245,49 @@ export class AppComponent {
       console.log('error is ', error)
     }) 
   }
+  getResponses(id) {
+    this.surveyService.getSurveyResponses(id).subscribe((response) => {
+
+      for (let j = 0; j < this.globals.surveys.length; j++) {
+
+
+        if (this.globals.surveys[j].survey_id == id) {
+
+          for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
+
+
+            for (let i = 0; i < response.length; i++) {
+
+              let rArray =
+              {
+
+                "response_id": response[i].response_id,
+                "survey_id": response[i].survey_id,
+                "question_id": response[i].question_id,
+                "option_id": response[i].option_id,
+                "response_text": response[i].response_text,
+                "date_taken": response[i].date_taken
+              };
+
+              if (this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                this.globals.surveys[j].questions[k].responses.push(rArray);
+                console.log(this.globals.surveys[j].questions[k].responses);
+              }
+            }
+          }
+        }
+      }
+    }, (error) => {
+      console.log('error is ', error)
+    })
+  }
+  
 
   ngOnInit() {
     //this.getSurveys();
     //this.getQuestions(1);
-    this.getOptions(1);
-
-    
+    //this.getOptions(1);
+    this.getResponses(1);
    
 
        /*for(let j =0; j<Responses.length; j++){

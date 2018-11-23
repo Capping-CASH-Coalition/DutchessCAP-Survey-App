@@ -47,7 +47,7 @@
                       <div class="col-md-6">
                         <div *ngSwitchCase="'dropdown'">
                           <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption"
-                            (change)="setSelectedOption($event, $event.target.value, 'dd')">
+                            (change)="optionSelect($event, $event.target.value, 'dd')">
                             <option disabled selected>-Please Select an Option-</option>
                             <option *ngFor="let option of question.options" value="{{option.option_id}}">
                               {{ option.option_text }}
@@ -61,7 +61,7 @@
                       <div class="col-md-6">
                         <div *ngSwitchCase="'checkboxes'">
                           <div *ngFor="let option of question.options" class="form-check-label" id="divCheckboxOptionText"
-                            (change)="setSelectedOption($event, $event.target.value, 'cb')">
+                            (change)="optionSelect($event, $event.target.value, 'cb')">
                             <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
                             {{ option.option_text }}
                           </div>
@@ -82,7 +82,7 @@
                     <div class="form-group">
                       <div class="col-md-6">
                         <div *ngSwitchCase="'mc'">
-                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="setSelectedOption($event, $event.target.value, 'mc')">
+                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="optionSelect($event, $event.target.value, 'mc')">
                             <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
                             {{ option.option_text }}
                           </div>

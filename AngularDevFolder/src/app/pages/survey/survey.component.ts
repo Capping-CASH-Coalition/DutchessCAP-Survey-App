@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, DoCheck, OnInit } from '@angular/co
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
-import { Router } from '@angular/router';
 import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Response } from '../../models/response.model';
@@ -21,17 +20,35 @@ import { SurveyInfo } from 'app/models/surveyInfo.model';
 export class SurveyComponent implements OnInit, DoCheck {
   // Declare the imports to be used within the component
   constructor(public surveyService: SurveyService,
-              public auth: AuthenticationService,
-              private router: Router) { }
+              public auth: AuthenticationService) { }
 
-  // Survey landing/home page functions/variables
+  /* 
+      Variables for the Survey Component
+  */
+
+  // Survey variables set by surveySelect()
   selectedSurveyId: number;
-  showLanding: boolean = true;
-  surveys: Array<any> = [];
   selectedSurveyIndex: number;
+  // Shows the landing introduction when true
+  showLanding: boolean = true;
+  // Holds the dynamic survey variables for display
+  surveys: Array<any> = [];
+  // Set by optionSelect()
   selectedOption: number;
+  // Fills when multiple choices are selected by updateResponses()
   radioChoices: Array<any> = [];
+  // Pushes/pops when user selects next or previous
   surveyData: Array<any> = [];
+  // Pagination element uses this
+  public config: PaginationInstance = {
+    id: 'custom',
+    itemsPerPage: 1,
+    currentPage: 1
+  };
+
+  /*
+      Survey Landing/Home page functions
+  */
 
   // This continuously checks if the user is authenticated
   ngDoCheck(): void {
@@ -47,9 +64,9 @@ export class SurveyComponent implements OnInit, DoCheck {
       // Get 1 survey at a time and push into surveys array
       for (let i = 0; i < response.length; i++) {
         let survey: SurveyInfo = {
-          "survey_id": response[i].survey_id,
-          "survey_name": response[i].survey_name,
-          "date_created": response[i].date_created
+              "survey_id": response[i].survey_id,
+              "survey_name": response[i].survey_name,
+              "date_created": response[i].date_created
         };
 
         this.surveys.push(survey);
@@ -58,6 +75,17 @@ export class SurveyComponent implements OnInit, DoCheck {
     }, (error) => {
       console.log('error is ', error)
       })
+  }
+
+  // When a user clicks a survey in the dropdown, save the selectedSurveyId
+  surveySelect($event, value) {
+    this.selectedSurveyId = value;
+    for (let i = 0; i < this.surveys.length; i++) {
+      if (this.selectedSurveyId == this.surveys[i].survey_id) {
+        this.selectedSurveyIndex = this.surveys[i];
+      }
+    }
+    console.log(this.selectedSurveyId);
   }
 
   // When the user clicks start, get the survey questions and options based on the survey id
@@ -105,24 +133,9 @@ export class SurveyComponent implements OnInit, DoCheck {
     })
   }
 
-  // When a user clicks a survey in the dropdown, save the selectedSurveyId
-  surveySelect($event, value) {
-    this.selectedSurveyId = value;
-    for (let i = 0; i < this.surveys.length; i++) {
-      if (this.selectedSurveyId == this.surveys[i].survey_id) {
-        this.selectedSurveyIndex = this.surveys[i];
-      }
-    }
-    console.log(this.selectedSurveyId);
-  }
-
-  // Survey variables and functions
-  // Pagination element uses this
-  public config: PaginationInstance = {
-    id: 'custom',
-    itemsPerPage: 1,
-    currentPage: 1
-  };
+  /*
+      Survey Functions
+  */
 
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
@@ -203,7 +216,7 @@ export class SurveyComponent implements OnInit, DoCheck {
   }
 
   // This is called to find the selected options within the HTML
-  setSelectedOption(event, value, questionType): void {
+  optionSelect(event, value, questionType): void {
     // If question type is dropdown or multiple choice, there is only 1 selected value
     if (questionType == "dd" || questionType == "mc") {
       this.selectedOption = value;

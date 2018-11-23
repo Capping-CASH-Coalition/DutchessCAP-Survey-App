@@ -36,23 +36,10 @@ export class SurveyService {
   postSurveyResponse(response) {
     return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
   }
-  // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
+  // Function that will call the index.js route to update a questions give the specific updates
   updateSurveyQuestions(updates) {
     return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
   }
-
-  updateSurveyOptions(updates) {
-    const params = new HttpParams()
-      .set('updates', updates);
-    return this.http.post<any>('http://localhost:3000/api/newSurveyOptions', { params });
-  }
-
-  insertSurveyQuestions(updates) {
-    const params = new HttpParams()
-      .set('updates', updates);
-    return this.http.post<any>('http://localhost:3000/api/insertSurveyQuestion', { params });
-  }
-
   postSurveyID(survey_name) {
     return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
   }

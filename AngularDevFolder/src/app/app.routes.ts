@@ -2,7 +2,6 @@ import { HomeComponent } from "./pages/home/home.component";
 import { GraphsComponent } from './pages/graphs/graphs.component';
 import { InputComponent } from './pages/input/input.component';
 import { SurveyComponent } from './pages/survey/survey.component';
-import { ContactComponent } from './pages/contact/contact.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -44,10 +43,6 @@ export const appRoutes=[
     {
         path: 'surveyhome',
         component: SurveyLandingComponent,
-    },
-    {
-        path: 'contact',
-        component: ContactComponent,
     },
     {   // When path does not match one of the declared paths, redirect to 404 page
         path: '**',

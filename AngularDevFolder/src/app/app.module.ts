@@ -16,7 +16,6 @@ import { HomeComponent } from "./pages/home/home.component";
 import { GraphsComponent } from "./pages/graphs/graphs.component";
 import { SurveyComponent } from "./pages/survey/survey.component";
 import { InputComponent } from "./pages/input/input.component";
-import { ContactComponent } from "./pages/contact/contact.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -50,7 +49,6 @@ import { Globals } from './globals';
       NavigationComponent,
       TopnavbarComponent,
       HomeComponent,
-      ContactComponent,
       EditComponent,
       ExportRawComponent,
       GraphsComponent,
@@ -64,9 +62,6 @@ import { Globals } from './globals';
       FilterByDatePipe,
       FilterPipe,
       FilterBySurveyIdPipe,
-      ContactComponent,
-      EditComponent,
-      ExportRawComponent,
       GraphableQuestionPipe,
       ExceptQuestionIdPipe,
       FilterByQuestionActivePipe, 

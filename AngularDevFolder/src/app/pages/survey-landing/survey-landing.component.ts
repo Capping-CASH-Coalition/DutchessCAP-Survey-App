@@ -1,7 +1,5 @@
 import { Globals } from '../../globals';
 import { Component, OnInit } from '@angular/core';
-import { stringify } from 'querystring';
-import { NgForm } from '@angular/forms';
 import { SurveyService } from 'app/services/survey.service';
 import { Router } from '@angular/router';
 

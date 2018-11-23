@@ -4,25 +4,26 @@ import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
-import { SurveyLandingComponent } from '../survey-landing/survey-landing.component';
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [SurveyLandingComponent]
+  providers: [Globals, SurveyService]
 })
 
-export class SurveyComponent implements OnInit {
+export class SurveyComponent implements OnInit, DoCheck {
   // Declare the imports to be used within the component
   constructor(public globals: Globals, 
               public surveyService: SurveyService,
               public auth: AuthenticationService,
-              private router: Router,
-              public surveyLanding: SurveyLandingComponent) { }
+              private router: Router) { }
 
-  // This constantly checks if the user is authenticated
+  // Survey landing/home page functions/variables
+  selectedSurveyId: number;
+  showLanding: boolean = true;
+  // This continuously checks if the user is authenticated
   ngDoCheck(): void {
     // If authenticated, redirect to the home dashboard
     if (!this.auth.isAuthenticated) {
@@ -30,55 +31,88 @@ export class SurveyComponent implements OnInit {
     }
   }
 
+  // On component initialization, get the survey ids, names, and date created
   ngOnInit() {
-    console.log()
-    this.surveyService.getSurveyQuestions(this.surveyLanding.selectedSurveyId).subscribe((response)=>{
+    this.surveyService.getSurveys().subscribe((response) => {
+      // Get 1 survey at a time and push into globals
+      for (let i = 0; i < response.length; i++) {
+        let survey = {
+          "survey_id": response[i].survey_id,
+          "survey_name": response[i].survey_name,
+          "date_created": response[i].date_created
+        };
+
+        this.globals.surveys.push(survey);
+        console.log(this.globals.surveys);
+      }
+    }, (error) => {
+      console.log('error is ', error)
+      })
+  }
+
+  // When the user clicks start, get the survey questions and options based on the survey id
+  onStart() {
+    this.showLanding = false;
+    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
+      // For all surveys in globals, check to see which matches the selectedSurveyId
       for (let i = 0; i < this.globals.surveys.length; i++) {
-        if (this.surveyLanding.surveys[i].survey_id == this.surveyLanding.selectedSurveyId) {
-          this.surveyLanding.surveys[i].questions = [];
+        // If it matches, push the question into that array index
+        if (this.globals.surveys[i].survey_id == this.selectedSurveyId) {
+          // Initialize the questions?
+          //this.globals.surveys[i].questions = [];
           //console.log('response is ', response);
           for (let i = 0; i < response.length; i++) {
-            let qArray =
+            let question =
             {
               "question_id": response[i].question_id,
               "question_text": response[i].question_text,
               "question_type": response[i].question_type,
               "question_is_active": response[i].question_is_active
             };
-            this.surveyLanding.surveys[i].questions.push(qArray);
+            this.globals.surveys[i].questions.push(question);
           }
         }
-        console.log(this.surveyLanding.surveys[i].questions);
+        console.log(this.globals.surveys[i].questions);
       }
-      
+
+      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
+        for (let j = 0; j < this.globals.surveys.length; j++) {
+          for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
+            for (let l = 0; l < response.length; l++) {
+              let option =
+              {
+                "option_id": response[l].option_id,
+                "option_text": response[l].question_text,
+                "option_is_active": response[l].option_is_active,
+                "question_id": response[l].question_id
+              };
+
+              if (this.globals.surveys[j].survey_id == this.selectedSurveyId) {
+                if (this.globals.surveys[j].questions[k].question_id == response[l].question_id) {
+                  this.globals.surveys[j].questions.push(option);
+                  console.log(this.globals.surveys[j].questions);
+                }
+              }
+            }
+          }
+        }
+      }, (error) => {
+        console.log('error is ', error)
+      }) 
+    
     },(error) => {
       console.log('error is ', error)
-    })/*
-this.surveyService.getOptions('hi').subscribe((response) => {
- this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
-      this.results= [];
-      //console.log('response is ', response);
-      for (let i = 0; i < response.length; i++) {
+    })
+  }
+    
 
-        let rArray =
-        {
-         
-       
-          "option_id": response[i].option_id,
-          "option_text": response[i].option_text,
-          "option_is_active": response[i].option_is_active,
-          "question_id": response[i].question_id
-        };
-        for (let j = 0; j < surveys.questions.)
-          this.results.push(rArray);
-
-      }
-      console.log(this.results);
-},(error) => {
-      console.log('error is ', error)
-  })*/
+  // When a user clicks a survey in the dropdown, save the selectedSurveyId
+  surveySelect($event, value) {
+    this.selectedSurveyId = value;
+    console.log(this.selectedSurveyId);
   }
 
+  // Survey variables and functions
   // Pagination element uses this
   public config: PaginationInstance = {
     id: 'custom',
@@ -90,22 +124,20 @@ this.surveyService.getOptions('hi').subscribe((response) => {
   currentSurveyId = this.globals.surveys[0].survey_id;
   currentSurveyIndex = this.globals.surveys[0];
 
-  //this.surveyLandComponent.selectedVersion Was using it to test the selected version and what to load
-
   selectedOption: number;
   radioChoices: Array<any> = [];
   surveyData: Array<any> = [];
-/*
+
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
     // For each response in surveyData, post the surveyData[index] response object
     for (let i = 0; i < this.surveyData.length; i++) {
       this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe((response)=>{
-        responses = [];
+        let responses = [];
         //console.log('response is ', response);
         for (let i = 0; i < response.length; i++) {
            
-          let sArray =
+          let choice =
           {
             "question_id": response[i].question_id,
             "survey_id": response[i].survey_id,
@@ -113,17 +145,16 @@ this.surveyService.getOptions('hi').subscribe((response) => {
             "response_text": response[i].response_text
             }
               ;
-            this.responses.push(sArray);
-            console.log(this.responses);
+            responses.push(choice);
+            console.log(responses);
         }
         
-},(error) => {
-        console.log('error is ', error)
-    })
+      },(error) => {
+          console.log('error is ', error)
+      })
     } 
-    }
     this.router.navigate(['contact']);
-  }*/
+  }
 
   // When next button is clicked, save the selected options to the survey data object
   updateResponses(textValue: string, questionIndex: number) {

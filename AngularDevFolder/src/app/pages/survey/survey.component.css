@@ -3,9 +3,18 @@
     font-size: 27px;
     padding: 10px;
 }
+
 .header2 {
     font-size: 20px;
 }
+
+.header3 {
+    color: #36A0FF;
+    font-size: 15px;
+    padding: 10px;
+    margin-bottom:30px;
+}
+
 .pages{
     margin-left:290px;
 }
@@ -39,6 +48,11 @@
     height: 100%;
     margin: 0 auto;
 }
+
+.container2 {
+    height: 90%;
+}
+
 #bucket{ 
     margin-left: auto;
     margin-right: auto;
@@ -46,7 +60,17 @@
     float: none;
     padding-top: 1%;
 }
+
 #dropdownStyle{
     float: none;
     margin: auto 0;
+}
+
+.bigicon {
+    font-size: 35px;
+    color: #36A0FF;
+}
+
+#btn{
+    margin-top: 1%;
 }

@@ -1,17 +1,43 @@
-<div class="container">
+<!-- Survey Landing/Home page -->
+<div class="container2" *ngIf="!isLanding" style="margin: 0 auto">
+    <div class="row">
+        <div class="col-md-7" id="bucket" >
+            <div class="well well-sm">
+                <legend class="text-center header">Welcome to Dutchess CAP</legend>
+                <p class="text-center header3">Please select the survey you would like to take:</p>
+               
+                <form class="form-horizontal" method="post" #start="ngForm" validate>
+
+                    <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
+                        <option disabled selected>-Please Select an Option-</option>
+                        <option name ="surveyValue" *ngFor="let surveyActive of globals.surveys" value="{{surveyActive.survey_id}}" ngModel>{{surveyActive.survey_name}}</option>
+                    </select>
+                    
+                    <div class="form-group">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" id="btn" class="btn btn-primary btn-lg" (click)="onStart()">Start</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Actual survey with questions -->
+<div class="container" *ngIf="isLanding">
     <button
     *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
     <div class="row">
       <div class="col-md-9" id="bucket">
         <div class="well well-sm">
-          <div *ngFor="let survey of globals.surveys | filterBySurveyID: currentSurveyId; let j = index">
+          <div *ngFor="let survey of globals.surveys | filterBySurveyID: selectedSurveyId; let j = index">
             <div *ngFor="let question of survey.questions | paginate: config">
-              <form class="form-horiziontal" action="contact.component.html">
+              <form class="form-horiziontal">
                 <fieldset>
   
                   <legend class="text-center header">{{ survey.survey_name }}</legend>
   
-                  <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: currentSurveyId">-->
+                  <!--<div *ngFor="let survey of globals.surveys | filterBySurveyID: selectedSurveyId">-->
                   <div class="text-center header2">
                     <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>
                   </div>

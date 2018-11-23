@@ -97,7 +97,7 @@ export class SurveyComponent implements OnInit, DoCheck {
       //this.surveys[i].questions = [];
       //console.log('response is ', response);
       for (let i = 0; i < response.length; i++) {
-        let question = {
+        let question: Question = {
               "question_id": response[i].question_id,
               "question_text": response[i].question_text,
               "question_type": response[i].question_type,

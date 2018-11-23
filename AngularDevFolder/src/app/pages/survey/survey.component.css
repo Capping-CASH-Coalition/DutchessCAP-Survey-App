@@ -23,6 +23,7 @@
     list-style-type: none;
     display:inline;
 }
+
 .custom-pagination{
     display:inline-block;
 }
@@ -30,6 +31,7 @@
 .pagination{
     display: inline;
 }
+
 .pageNumberActive {
     color: black;
     list-style-type: none;
@@ -40,10 +42,11 @@
     display:inline-block;
     margin-right:5px;
 }
+
 .container-fluid{
-    width:100%;
-    
+    width:100%;    
 }
+
 .container{
     height: 100%;
     margin: 0 auto;

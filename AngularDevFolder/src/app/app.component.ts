@@ -167,57 +167,25 @@ export class AppComponent {
   surveyID;
   questionNum;
   constructor(private surveyService: SurveyService,
-              private globals: Globals) { }
-
-
-  ngOnInit() {
-
-   /* this.surveyService.getSurveys().subscribe((response) => {
+    private globals: Globals) { }
+  getSurveys() {
+    this.surveyService.getSurveys().subscribe((response) => {
       for (let i = 0; i < response.length; i++) {
         let survey = {
           "survey_id": response[i].survey_id,
           "survey_name": response[i].survey_name,
-          "date_taken": response[i].date_taken
+          "date_created": response[i].date_created
         };
-
         this.globals.surveys.push(survey);
         console.log(this.globals.surveys);
       }
     }, (error) => {
       console.log('error is ', error)
-      })*/
+    })
+  }
+  getQuestions(id) {
+    this.surveyService.getSurveyQuestions(id).subscribe((response) => {
 
-    this.surveyService.getSurveyOptions(1).subscribe((response) => {
-
-      for (let j = 0; j < this.globals.surveys.length; j++) {
-        for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
-          for (let i = 0; i < response.length; i++) {
-
-            let qArray =
-            {
-
-              "option_id": response[i].option_id,
-              "option_text": response[i].question_text,
-              "option_is_active": response[i].option_is_active,
-              "question_id": response[i].question_id
-            };
-            if (this.globals.surveys[j].survey_id == 1) {
-              if (this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
-                this.globals.surveys[j].questions.push(qArray);
-                console.log(this.globals.surveys[j].questions);
-              }
-            }
-          }
-        }
-      }
-    }, (error) => {
-      console.log('error is ', error)
-    }) 
-
-
-
-    /*this.surveyService.getSurveyQuestions('1').subscribe((response) => {
-           
       for (let j = 0; j < this.globals.surveys.length; j++) {
         for (let i = 0; i < response.length; i++) {
 
@@ -229,39 +197,96 @@ export class AppComponent {
             "question_type": response[i].question_type,
             "question_is_active": response[i].question_is_active
           };
-          if (this.globals.surveys[j].survey_id == 1) {
-              this.globals.surveys[j].questions.push(qArray);
-              console.log(this.globals.surveys[j].questions);
-            } 
+          if (this.globals.surveys[j].survey_id == id) {
+            this.globals.surveys[j].questions.push(qArray);
+            console.log(this.globals.surveys[j].questions);
           }
         }
-           
-   },(error) => {
-           console.log('error is ', error)
-       })*/
-    /*this.surveyService.getOptions('hi').subscribe((response) => {
-      this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
-           this.results= [];
-           //console.log('response is ', response);
-           for (let i = 0; i < response.length; i++) {
+      }
+
+    }, (error) => {
+      console.log('error is ', error)
+    })
+  }
+
+  getOptions(id) {
+    this.surveyService.getSurveyOptions(id).subscribe((response) => {
+
+      for (let j = 0; j < this.globals.surveys.length; j++) {
+
+
+        if (this.globals.surveys[j].survey_id == id) {
+
+          for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
+
+
+            for (let i = 0; i < response.length; i++) {
+
+              let qArray =
+              {
+
+                "option_id": response[i].option_id,
+                "option_text": response[i].option_text,
+                "option_is_active": response[i].option_is_active,
+                "question_id": response[i].question_id
+              };
+
+              if (this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                this.globals.surveys[j].questions[k].options.push(qArray);
+                console.log(this.globals.surveys[j].questions[k].options);
+              }
+            }
+          }
+        }
+      }
+    }, (error) => {
+      console.log('error is ', error)
+    }) 
+  }
+  getResponses(id) {
+    this.surveyService.getSurveyResponses(id).subscribe((response) => {
+
+      for (let j = 0; j < this.globals.surveys.length; j++) {
+
+
+        if (this.globals.surveys[j].survey_id == id) {
+
+          for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
+
+
+            for (let i = 0; i < response.length; i++) {
+
+              let rArray =
+              {
+
+                "response_id": response[i].response_id,
+                "survey_id": response[i].survey_id,
+                "question_id": response[i].question_id,
+                "option_id": response[i].option_id,
+                "response_text": response[i].response_text,
+                "date_taken": response[i].date_taken
+              };
+
+              if (this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                this.globals.surveys[j].questions[k].responses.push(rArray);
+                console.log(this.globals.surveys[j].questions[k].responses);
+              }
+            }
+          }
+        }
+      }
+    }, (error) => {
+      console.log('error is ', error)
+    })
+  }
+  
+
+  ngOnInit() {
+    //this.getSurveys();
+    //this.getQuestions(1);
+    //this.getOptions(1);
+    //this.getResponses(1);
    
-             let rArray =
-             {
-              
-            
-               "option_id": response[i].option_id,
-               "option_text": response[i].option_text,
-               "option_is_active": response[i].option_is_active,
-               "question_id": response[i].question_id
-             };
-             for (let j = 0; j < surveys.questions.)
-               this.results.push(rArray);
-   
-           }
-           console.log(this.results);
-   },(error) => {
-           console.log('error is ', error)
-        })
 
        /*for(let j =0; j<Responses.length; j++){
        this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{

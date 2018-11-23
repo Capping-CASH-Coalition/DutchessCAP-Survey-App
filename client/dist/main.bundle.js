@@ -19,50 +19,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+// Http specifc header that is needed to post data to the database
 var httpOptions = {
     headers: new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpHeaders */]({
         'Content-Type': 'application/json',
     })
 };
 var SurveyService = (function () {
-    /*httpOptions: any = {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    };*/
+    // Instantiates the HttpClient class
     function SurveyService(http) {
         this.http = http;
     }
+    // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getSurveys = function () {
         return this.http.get('http://localhost:3000/api/surveys');
     };
+    // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyQuestions = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id);
     };
-    SurveyService.prototype.getSurveyOptions = function (survey_name) {
-        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_name);
+    // Function that will call the index.js route to get all options given a specific survey_id as a parameter
+    SurveyService.prototype.getSurveyOptions = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id);
     };
-    SurveyService.prototype.getSurveyResponses = function (survey_name) {
-        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_name);
+    // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
+    SurveyService.prototype.getSurveyResponses = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
     };
+    // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
     SurveyService.prototype.postSurveyResponse = function (response) {
         return this.http.post('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
     };
-    SurveyService.prototype.postNewSurvey = function (surveys) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('surveys', surveys);
-        return this.http.post('http://localhost:3000/api/newSurvey', surveys);
-    };
+    // Function that will call the index.js route to update a questions give the specific updates
     SurveyService.prototype.updateSurveyQuestions = function (updates) {
         return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
-    };
-    SurveyService.prototype.updateSurveyOptions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/newSurveyOptions', { params: params });
-    };
-    SurveyService.prototype.insertSurveyQuestions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/insertSurveyQuestion', { params: params });
     };
     SurveyService.prototype.postSurveyID = function (survey_name) {
         return this.http.post('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
@@ -101,7 +91,7 @@ var SurveyService = (function () {
 }());
 SurveyService = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */]) === "function" && _a || Object])
 ], SurveyService);
 
 var _a;
@@ -1540,23 +1530,25 @@ var AppComponent = (function () {
         this.surveyService = surveyService;
         this.globals = globals;
     }
-    AppComponent.prototype.ngOnInit = function () {
-        /* this.surveyService.getSurveys().subscribe((response) => {
-           for (let i = 0; i < response.length; i++) {
-             let survey = {
-               "survey_id": response[i].survey_id,
-               "survey_name": response[i].survey_name,
-               "date_taken": response[i].date_taken
-             };
-     
-             this.globals.surveys.push(survey);
-             console.log(this.globals.surveys);
-           }
-         }, (error) => {
-           console.log('error is ', error)
-           })*/
+    AppComponent.prototype.getSurveys = function () {
         var _this = this;
-        this.surveyService.getSurveyQuestions('1').subscribe(function (response) {
+        this.surveyService.getSurveys().subscribe(function (response) {
+            for (var i = 0; i < response.length; i++) {
+                var survey = {
+                    "survey_id": response[i].survey_id,
+                    "survey_name": response[i].survey_name,
+                    "date_created": response[i].date_created
+                };
+                _this.globals.surveys.push(survey);
+                console.log(_this.globals.surveys);
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
+    AppComponent.prototype.getQuestions = function (id) {
+        var _this = this;
+        this.surveyService.getSurveyQuestions(id).subscribe(function (response) {
             for (var j = 0; j < _this.globals.surveys.length; j++) {
                 for (var i = 0; i < response.length; i++) {
                     var qArray = {
@@ -1565,7 +1557,7 @@ var AppComponent = (function () {
                         "question_type": response[i].question_type,
                         "question_is_active": response[i].question_is_active
                     };
-                    if (_this.globals.surveys[j].survey_id == 1) {
+                    if (_this.globals.surveys[j].survey_id == id) {
                         _this.globals.surveys[j].questions.push(qArray);
                         console.log(_this.globals.surveys[j].questions);
                     }
@@ -1574,99 +1566,133 @@ var AppComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
-        /*this.surveyService.getOptions('hi').subscribe((response) => {
-          this.surveyService.getSurveyResponses('hi').subscribe((response)=>{
-               this.results= [];
-               //console.log('response is ', response);
-               for (let i = 0; i < response.length; i++) {
-       
-                 let rArray =
-                 {
-                  
-                
-                   "option_id": response[i].option_id,
-                   "option_text": response[i].option_text,
-                   "option_is_active": response[i].option_is_active,
-                   "question_id": response[i].question_id
-                 };
-                 for (let j = 0; j < surveys.questions.)
-                   this.results.push(rArray);
-       
-               }
-               console.log(this.results);
-       },(error) => {
-               console.log('error is ', error)
-            })
-    
-           /*for(let j =0; j<Responses.length; j++){
-           this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
-               this.responses = [];
-               //console.log('response is ', response);
-               for (let i = 0; i < response.length; i++) {
-                  
-                 let sArray =
-                 {
-                   "question_id": response[i].question_id,
-                   "survey_id": response[i].survey_id,
-                   "option_id": response[i].option_id,
-                   "response_text": response[i].response_text
-                   }
-                     ;
-                   this.responses.push(sArray);
-                   console.log(this.responses);
-               }
-               
-       },(error) => {
-               console.log('error is ', error)
-           })
-           }
-        this.surveyService.getQuestionLength().subscribe((response) => {
-          this.questionID = response[0];
-          this.surveyService.getOptionLength().subscribe((value) => {
-            this.optionID = value[0];
-            this.surveyService.getSurveyLength().subscribe((data) => {
-              this.surveyID = data[0];
-              this.surveyID = this.surveyID + 1;
-              let insertSurveyID = { "survey_name": FormValues.SurveyName };
-              this.surveyService.postSurveyID(insertSurveyID).subscribe((response) => {
-              }, (error) => {
-                console.log('error is ', error)
-              });
-              wait(50);
-              for (let j = 0; j < FormValues.questions.length; j++) {
-                this.questionID = this.questionID + 1;
-                wait(50);
-                let insertQuestionsArray = { "question_text": FormValues.questions[j].questionText, "question_type": FormValues.questions[j].questionType };
-                wait(50);
-                this.surveyService.postQuestionID(insertQuestionsArray).subscribe((response) => {
-                }, (error) => {
-                  console.log('error is ', error)
-                });
-                for (let i = 0; i < FormValues.questions[j].questionOptions.length; i++) {
-                  this.optionID = this.optionID + 1;
-                  let insertOptionIDArray = { "option_text": FormValues.questions[j].questionOptions[i].option, "question_id": this.questionID }
-                  wait(50);
-                  this.surveyService.postOptionID(insertOptionIDArray).subscribe((response) => {
-                  }, (error) => {
-                    console.log('error is ', error)
-                  });
-                  let insertArchitecturesArray = { "survey_id": this.surveyID, "question_id": this.questionID, "option_id": this.optionID };
-                  wait(50);
-                  this.surveyService.postArchitectures(insertArchitecturesArray).subscribe((response) => {
-                  }, (error) => {
-                    console.log('error is ', error)
-                  })
+    };
+    AppComponent.prototype.getOptions = function (id) {
+        var _this = this;
+        this.surveyService.getSurveyOptions(id).subscribe(function (response) {
+            for (var j = 0; j < _this.globals.surveys.length; j++) {
+                if (_this.globals.surveys[j].survey_id == id) {
+                    for (var k = 0; k < _this.globals.surveys[j].questions.length; k++) {
+                        for (var i = 0; i < response.length; i++) {
+                            var qArray = {
+                                "option_id": response[i].option_id,
+                                "option_text": response[i].option_text,
+                                "option_is_active": response[i].option_is_active,
+                                "question_id": response[i].question_id
+                            };
+                            if (_this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                                _this.globals.surveys[j].questions[k].options.push(qArray);
+                                console.log(_this.globals.surveys[j].questions[k].options);
+                            }
+                        }
+                    }
                 }
-              }
-            }, (error) => {
-              console.log('error is ', error)
-            })
-          }, (error) => {
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
+    AppComponent.prototype.getResponses = function (id) {
+        var _this = this;
+        this.surveyService.getSurveyResponses(id).subscribe(function (response) {
+            for (var j = 0; j < _this.globals.surveys.length; j++) {
+                if (_this.globals.surveys[j].survey_id == id) {
+                    for (var k = 0; k < _this.globals.surveys[j].questions.length; k++) {
+                        for (var i = 0; i < response.length; i++) {
+                            var rArray = {
+                                "response_id": response[i].response_id,
+                                "survey_id": response[i].survey_id,
+                                "question_id": response[i].question_id,
+                                "option_id": response[i].option_id,
+                                "response_text": response[i].response_text,
+                                "date_taken": response[i].date_taken
+                            };
+                            if (_this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
+                                _this.globals.surveys[j].questions[k].responses.push(rArray);
+                                console.log(_this.globals.surveys[j].questions[k].responses);
+                            }
+                        }
+                    }
+                }
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
+    AppComponent.prototype.ngOnInit = function () {
+        //this.getSurveys();
+        this.getQuestions(1);
+        //this.getOptions(1);
+        //this.getResponses(1);
+        /*for(let j =0; j<Responses.length; j++){
+        this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
+            this.responses = [];
+            //console.log('response is ', response);
+            for (let i = 0; i < response.length; i++) {
+               
+              let sArray =
+              {
+                "question_id": response[i].question_id,
+                "survey_id": response[i].survey_id,
+                "option_id": response[i].option_id,
+                "response_text": response[i].response_text
+                }
+                  ;
+                this.responses.push(sArray);
+                console.log(this.responses);
+            }
+            
+    },(error) => {
             console.log('error is ', error)
-          })
-        }, (error) => {
-          console.log('error is ', error)
-        })*/
+        })
+        }
+     this.surveyService.getQuestionLength().subscribe((response) => {
+       this.questionID = response[0];
+       this.surveyService.getOptionLength().subscribe((value) => {
+         this.optionID = value[0];
+         this.surveyService.getSurveyLength().subscribe((data) => {
+           this.surveyID = data[0];
+           this.surveyID = this.surveyID + 1;
+           let insertSurveyID = { "survey_name": FormValues.SurveyName };
+           this.surveyService.postSurveyID(insertSurveyID).subscribe((response) => {
+           }, (error) => {
+             console.log('error is ', error)
+           });
+           wait(50);
+           for (let j = 0; j < FormValues.questions.length; j++) {
+             this.questionID = this.questionID + 1;
+             wait(50);
+             let insertQuestionsArray = { "question_text": FormValues.questions[j].questionText, "question_type": FormValues.questions[j].questionType };
+             wait(50);
+             this.surveyService.postQuestionID(insertQuestionsArray).subscribe((response) => {
+             }, (error) => {
+               console.log('error is ', error)
+             });
+             for (let i = 0; i < FormValues.questions[j].questionOptions.length; i++) {
+               this.optionID = this.optionID + 1;
+               let insertOptionIDArray = { "option_text": FormValues.questions[j].questionOptions[i].option, "question_id": this.questionID }
+               wait(50);
+               this.surveyService.postOptionID(insertOptionIDArray).subscribe((response) => {
+               }, (error) => {
+                 console.log('error is ', error)
+               });
+               let insertArchitecturesArray = { "survey_id": this.surveyID, "question_id": this.questionID, "option_id": this.optionID };
+               wait(50);
+               this.surveyService.postArchitectures(insertArchitecturesArray).subscribe((response) => {
+               }, (error) => {
+                 console.log('error is ', error)
+               })
+             }
+           }
+         }, (error) => {
+           console.log('error is ', error)
+         })
+       }, (error) => {
+         console.log('error is ', error)
+       })
+     }, (error) => {
+       console.log('error is ', error)
+     })*/
         /* function f(object: some)
          this.surveyService.getQuestionLength().subscribe((response) => {
            this.questionID = response[0];

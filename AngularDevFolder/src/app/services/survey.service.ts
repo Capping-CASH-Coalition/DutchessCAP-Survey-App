@@ -20,58 +20,56 @@ export class SurveyService {
   getSurveys() {
     return this.http.get<any>('http://localhost:3000/api/surveys');
   }
+  
   // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
   getSurveyQuestions(survey_id) {
     return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id);
   }
+  
   // Function that will call the index.js route to get all options given a specific survey_id as a parameter
   getSurveyOptions(survey_id) {
     return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id);
   }
+  
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
   getSurveyResponses(survey_id) {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
   }
+  
   // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
   postSurveyResponse(response) {
     return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
   }
-  // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
+
+  // Function that will call the index.js route to update a questions give the specific updates
   updateSurveyQuestions(updates) {
     return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
   }
-
-  updateSurveyOptions(updates) {
-    const params = new HttpParams()
-      .set('updates', updates);
-    return this.http.post<any>('http://localhost:3000/api/newSurveyOptions', { params });
-  }
-
-  insertSurveyQuestions(updates) {
-    const params = new HttpParams()
-      .set('updates', updates);
-    return this.http.post<any>('http://localhost:3000/api/insertSurveyQuestion', { params });
-  }
-
+  
   postSurveyID(survey_name) {
     return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
   }
+  
   getSurveyID() {
     return this.http.get<any>('http://localhost:3000/api/getSurveyID');
   }
+  
   postQuestionID(question) {
     return this.http.post<any>('http://localhost:3000/api/postQuestionID', question, httpOptions);
   }
+  
   getQuestionLength() {
     return this.http.get<any>('http://localhost:3000/api/getQuestionLength');
   }
+  
   getOptionLength() {
     return this.http.get<any>('http://localhost:3000/api/getOptionLength');
   }
+  
   getSurveyLength() {
     return this.http.get<any>('http://localhost:3000/api/getSurveyLength');
   }
-
+  
   postOptionID(option) {
     return this.http.post<any>('http://localhost:3000/api/postOptionID', option, httpOptions);
   }
@@ -91,10 +89,4 @@ export class SurveyService {
   updateSurveyOption(option) {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
   }
-
-
-
-  
-
-
 }

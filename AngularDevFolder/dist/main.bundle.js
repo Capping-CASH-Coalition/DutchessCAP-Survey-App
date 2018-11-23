@@ -769,7 +769,6 @@ NotFoundComponent = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_survey_service__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(76);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_router__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -784,25 +783,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var SurveyComponent = (function () {
     // Declare the imports to be used within the component
-    function SurveyComponent(surveyService, auth, router) {
+    function SurveyComponent(surveyService, auth, changeref) {
         this.surveyService = surveyService;
         this.auth = auth;
-        this.router = router;
+        this.changeref = changeref;
+        // Shows the landing introduction when true
         this.showLanding = true;
+        // Holds the dynamic survey variables for display
         this.surveys = [];
-        // Survey variables and functions
+        // Fills when multiple choices are selected by updateResponses()
+        this.radioChoices = [];
+        // Pushes/pops when user selects next or previous
+        this.surveyData = [];
         // Pagination element uses this
         this.config = {
             id: 'custom',
             itemsPerPage: 1,
             currentPage: 1
         };
-        this.radioChoices = [];
-        this.surveyData = [];
     }
+    /*
+        Survey Landing/Home page functions
+    */
     // This continuously checks if the user is authenticated
     SurveyComponent.prototype.ngDoCheck = function () {
         // If authenticated, redirect to the home dashboard
@@ -823,16 +827,28 @@ var SurveyComponent = (function () {
                 };
                 _this.surveys.push(survey);
                 console.log(_this.surveys);
+                _this.changeref.detectChanges();
             }
         }, function (error) {
             console.log('error is ', error);
         });
     };
+    // When a user clicks a survey in the dropdown, save the selectedSurveyId
+    SurveyComponent.prototype.surveySelect = function ($event, value) {
+        this.selectedSurveyId = value;
+        for (var i = 0; i < this.surveys.length; i++) {
+            if (this.selectedSurveyId == this.surveys[i].survey_id) {
+                this.selectedSurveyIndex = this.surveys[i];
+            }
+        }
+        console.log(this.selectedSurveyId);
+    };
     // When the user clicks start, get the survey questions and options based on the survey id
     SurveyComponent.prototype.onStart = function () {
         var _this = this;
-        console.log(this.showLanding);
+        console.log("showLanding before start: " + this.showLanding);
         this.showLanding = false;
+        console.log("showLanding after start: " + this.showLanding);
         this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
             // Initialize the questions?
             //this.surveys[i].questions = [];
@@ -870,16 +886,9 @@ var SurveyComponent = (function () {
             console.log('error is ', error);
         });
     };
-    // When a user clicks a survey in the dropdown, save the selectedSurveyId
-    SurveyComponent.prototype.surveySelect = function ($event, value) {
-        this.selectedSurveyId = value;
-        for (var i = 0; i < this.surveys.length; i++) {
-            if (this.selectedSurveyId == this.surveys[i].survey_id) {
-                this.selectedSurveyIndex = this.surveys[i];
-            }
-        }
-        console.log(this.selectedSurveyId);
-    };
+    /*
+        Survey Functions
+    */
     // When submit button is hit, this will post the survey data to the database
     SurveyComponent.prototype.postOnSubmit = function () {
         // For each response in surveyData, post the surveyData[index] response object
@@ -954,7 +963,7 @@ var SurveyComponent = (function () {
         console.log(this.surveyData);
     };
     // This is called to find the selected options within the HTML
-    SurveyComponent.prototype.setSelectedOption = function (event, value, questionType) {
+    SurveyComponent.prototype.optionSelect = function (event, value, questionType) {
         // If question type is dropdown or multiple choice, there is only 1 selected value
         if (questionType == "dd" || questionType == "mc") {
             this.selectedOption = value;
@@ -1026,7 +1035,7 @@ SurveyComponent = __decorate([
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush,
         providers: [__WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
 ], SurveyComponent);
 
 var _a, _b, _c;
@@ -1779,7 +1788,7 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(105);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(618);
@@ -1975,7 +1984,7 @@ var appRoutes = [
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(75);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NavigationComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2372,7 +2381,7 @@ KeysPipe = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(76);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuardService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -2700,7 +2709,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".header {\n    color: #36A0FF;\n    font-size: 27px;\n    padding: 10px;\n}\n\n.header2 {\n    font-size: 20px;\n}\n\n.header3 {\n    color: #36A0FF;\n    font-size: 15px;\n    padding: 10px;\n    margin-bottom:30px;\n}\n\n.pages{\n    margin-left:290px;\n}\n\n.pageNumbers {\n    list-style-type: none;\n    display:inline;\n}\n.custom-pagination{\n    display:inline-block;\n}\n\n.pagination{\n    display: inline;\n}\n.pageNumberActive {\n    color: black;\n    list-style-type: none;\n    display:inline;\n}\n\n.inline {\n    display:inline-block;\n    margin-right:5px;\n}\n.container-fluid{\n    width:100%;\n    \n}\n.container{\n    height: 100%;\n    margin: 0 auto;\n}\n\n.container2 {\n    height: 90%;\n}\n\n#bucket{ \n    margin-left: auto;\n    margin-right: auto;\n    text-align: center;\n    float: none;\n    padding-top: 1%;\n}\n\n#dropdownStyle{\n    float: none;\n    margin: auto 0;\n}\n\n.bigicon {\n    font-size: 35px;\n    color: #36A0FF;\n}\n\n#btn{\n    margin-top: 1%;\n}", ""]);
+exports.push([module.i, ".header {\n    color: #36A0FF;\n    font-size: 27px;\n    padding: 10px;\n}\n\n.header2 {\n    font-size: 20px;\n}\n\n.header3 {\n    color: #36A0FF;\n    font-size: 15px;\n    padding: 10px;\n    margin-bottom:30px;\n}\n\n.pages{\n    margin-left:290px;\n}\n\n.pageNumbers {\n    list-style-type: none;\n    display:inline;\n}\n\n.custom-pagination{\n    display:inline-block;\n}\n\n.pagination{\n    display: inline;\n}\n\n.pageNumberActive {\n    color: black;\n    list-style-type: none;\n    display:inline;\n}\n\n.inline {\n    display:inline-block;\n    margin-right:5px;\n}\n\n.container-fluid{\n    width:100%;    \n}\n\n.container{\n    height: 100%;\n    margin: 0 auto;\n}\n\n.container2 {\n    height: 90%;\n}\n\n#bucket{ \n    margin-left: auto;\n    margin-right: auto;\n    text-align: center;\n    float: none;\n    padding-top: 1%;\n}\n\n#dropdownStyle{\n    float: none;\n    margin: auto 0;\n}\n\n.bigicon {\n    font-size: 35px;\n    color: #36A0FF;\n}\n\n#btn{\n    margin-top: 1%;\n}", ""]);
 
 // exports
 
@@ -3046,7 +3055,7 @@ module.exports = "<div id=\"notfound\">\n\t<div class=\"notfound\">\n\t\t<div cl
 /***/ 637:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option name =\"surveyValue\" *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\" ngModel>{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n<!-- Actual survey with questions -->\n<div class=\"container\" *ngIf=\"isLanding\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n  \n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <!--<div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">-->\n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>\n                  </div>\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'dropdown'\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"setSelectedOption($event, $event.target.value, 'dd')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'checkboxes'\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"setSelectedOption($event, $event.target.value, 'cb')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'text'\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'mc'\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"setSelectedOption($event, $event.target.value, 'mc')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
+module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option name =\"surveyValue\" *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\" ngModel>{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n  \n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <!--<div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">-->\n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>\n                  </div>\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'dropdown'\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'dd')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'checkboxes'\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'cb')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'text'\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'mc'\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'mc')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
 
 /***/ }),
 
@@ -3055,7 +3064,7 @@ module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(185);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_lock__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(417);

@@ -1,5 +1,5 @@
 //import { Globals } from './../../globals';
-import { Component, ChangeDetectionStrategy, DoCheck, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DoCheck, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -20,7 +20,8 @@ import { SurveyInfo } from 'app/models/surveyInfo.model';
 export class SurveyComponent implements OnInit, DoCheck {
   // Declare the imports to be used within the component
   constructor(public surveyService: SurveyService,
-              public auth: AuthenticationService) { }
+              public auth: AuthenticationService,
+              private changeref: ChangeDetectorRef) { }
 
   /* 
       Variables for the Survey Component
@@ -61,17 +62,18 @@ export class SurveyComponent implements OnInit, DoCheck {
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
     this.surveyService.getSurveys().subscribe((response) => {
-      // Get 1 survey at a time and push into surveys array
-      for (let i = 0; i < response.length; i++) {
-        let survey: SurveyInfo = {
-              "survey_id": response[i].survey_id,
-              "survey_name": response[i].survey_name,
-              "date_created": response[i].date_created
-        };
+        // Get 1 survey at a time and push into surveys array
+        for (let i = 0; i < response.length; i++) {
+          let survey: SurveyInfo = {
+                "survey_id": response[i].survey_id,
+                "survey_name": response[i].survey_name,
+                "date_created": response[i].date_created
+          };
 
-        this.surveys.push(survey);
-        console.log(this.surveys);
-      }
+          this.surveys.push(survey);
+          console.log(this.surveys);
+          this.changeref.detectChanges();
+        }
     }, (error) => {
       console.log('error is ', error)
       })
@@ -90,8 +92,9 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // When the user clicks start, get the survey questions and options based on the survey id
   onStart(): void {
-    console.log(this.showLanding);
+    console.log("showLanding before start: " + this.showLanding);
     this.showLanding = false;
+    console.log("showLanding after start: " + this.showLanding);
     this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
       // Initialize the questions?
       //this.surveys[i].questions = [];

@@ -25,7 +25,7 @@
 </div>
 
 <!-- Actual survey with questions -->
-<div class="container" *ngIf="isLanding">
+<div class="container">
     <button
     *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
     <div class="row">

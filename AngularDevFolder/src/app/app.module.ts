@@ -19,7 +19,6 @@ import { InputComponent } from "./pages/input/input.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { SurveyLandingComponent } from './pages/survey-landing/survey-landing.component';
 
 // Services/Pipes imports
 import { SurveyService } from './services/survey.service';
@@ -55,7 +54,6 @@ import { Globals } from './globals';
       InputComponent,
       SurveyComponent,
       NotFoundComponent,
-      SurveyLandingComponent,
       KeysPipe,
       FilterByOptionActivePipe,
       FilterByQuestionIDPipe,

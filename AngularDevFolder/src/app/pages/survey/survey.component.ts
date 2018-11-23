@@ -1,49 +1,59 @@
-import { Globals } from './../../globals';
+//import { Globals } from './../../globals';
 import { Component, ChangeDetectionStrategy, DoCheck, OnInit } from '@angular/core';
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
+import { Survey } from '../../models/survey.model';
+import { Question } from '../../models/question.model';
+import { Response } from '../../models/response.model';
+import { Option } from '../../models/option.model';
+import { SurveyInfo } from 'app/models/surveyInfo.model';
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [Globals, SurveyService]
+  providers: [SurveyService]
 })
 
 export class SurveyComponent implements OnInit, DoCheck {
   // Declare the imports to be used within the component
-  constructor(public globals: Globals, 
-              public surveyService: SurveyService,
+  constructor(public surveyService: SurveyService,
               public auth: AuthenticationService,
               private router: Router) { }
 
   // Survey landing/home page functions/variables
   selectedSurveyId: number;
   showLanding: boolean = true;
+  surveys: Array<any> = [];
+  selectedSurveyIndex: number;
+  selectedOption: number;
+  radioChoices: Array<any> = [];
+  surveyData: Array<any> = [];
+
   // This continuously checks if the user is authenticated
   ngDoCheck(): void {
     // If authenticated, redirect to the home dashboard
     if (!this.auth.isAuthenticated) {
-      this.router.navigate(['home']);
+      //this.router.navigate(['home']);
     }
   }
 
   // On component initialization, get the survey ids, names, and date created
-  ngOnInit() {
+  ngOnInit(): void {
     this.surveyService.getSurveys().subscribe((response) => {
-      // Get 1 survey at a time and push into globals
+      // Get 1 survey at a time and push into surveys array
       for (let i = 0; i < response.length; i++) {
-        let survey = {
+        let survey: SurveyInfo = {
           "survey_id": response[i].survey_id,
           "survey_name": response[i].survey_name,
           "date_created": response[i].date_created
         };
 
-        this.globals.surveys.push(survey);
-        console.log(this.globals.surveys);
+        this.surveys.push(survey);
+        console.log(this.surveys);
       }
     }, (error) => {
       console.log('error is ', error)
@@ -51,49 +61,39 @@ export class SurveyComponent implements OnInit, DoCheck {
   }
 
   // When the user clicks start, get the survey questions and options based on the survey id
-  onStart() {
+  onStart(): void {
+    console.log(this.showLanding);
     this.showLanding = false;
     this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
-      // For all surveys in globals, check to see which matches the selectedSurveyId
-      for (let i = 0; i < this.globals.surveys.length; i++) {
-        // If it matches, push the question into that array index
-        if (this.globals.surveys[i].survey_id == this.selectedSurveyId) {
-          // Initialize the questions?
-          //this.globals.surveys[i].questions = [];
-          //console.log('response is ', response);
-          for (let i = 0; i < response.length; i++) {
-            let question =
-            {
+      // Initialize the questions?
+      //this.surveys[i].questions = [];
+      //console.log('response is ', response);
+      for (let i = 0; i < response.length; i++) {
+        let question = {
               "question_id": response[i].question_id,
               "question_text": response[i].question_text,
               "question_type": response[i].question_type,
               "question_is_active": response[i].question_is_active
-            };
-            this.globals.surveys[i].questions.push(question);
-          }
-        }
-        console.log(this.globals.surveys[i].questions);
+        };
+        this.surveys[this.selectedSurveyIndex].questions.push(question);
       }
+      console.log(this.surveys[this.selectedSurveyIndex].questions);
 
+      // Get the survey options based on the selectedSurveyId
       this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-        for (let j = 0; j < this.globals.surveys.length; j++) {
-          for (let k = 0; k < this.globals.surveys[j].questions.length; k++) {
-            for (let l = 0; l < response.length; l++) {
-              let option =
-              {
-                "option_id": response[l].option_id,
-                "option_text": response[l].question_text,
-                "option_is_active": response[l].option_is_active,
-                "question_id": response[l].question_id
+          for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
+            for (let k = 0; k < response.length; k++) {
+              let option: Option = {
+                    "option_id": response[k].option_id,
+                    "option_text": response[k].question_text,
+                    "option_is_active": response[k].option_is_active,
+                    "question_id": response[k].question_id
               };
 
-              if (this.globals.surveys[j].survey_id == this.selectedSurveyId) {
-                if (this.globals.surveys[j].questions[k].question_id == response[l].question_id) {
-                  this.globals.surveys[j].questions.push(option);
-                  console.log(this.globals.surveys[j].questions);
-                }
+              if (this.surveys[this.selectedSurveyIndex].questions[i].question_id == response[k].question_id) {
+                this.surveys[this.selectedSurveyIndex].questions.push(option);
+                console.log(this.surveys[this.selectedSurveyIndex].questions);
               }
-            }
           }
         }
       }, (error) => {
@@ -104,11 +104,15 @@ export class SurveyComponent implements OnInit, DoCheck {
       console.log('error is ', error)
     })
   }
-    
 
   // When a user clicks a survey in the dropdown, save the selectedSurveyId
   surveySelect($event, value) {
     this.selectedSurveyId = value;
+    for (let i = 0; i < this.surveys.length; i++) {
+      if (this.selectedSurveyId == this.surveys[i].survey_id) {
+        this.selectedSurveyIndex = this.surveys[i];
+      }
+    }
     console.log(this.selectedSurveyId);
   }
 
@@ -120,14 +124,6 @@ export class SurveyComponent implements OnInit, DoCheck {
     currentPage: 1
   };
 
-  // Hardcoded for now
-  currentSurveyId = this.globals.surveys[0].survey_id;
-  currentSurveyIndex = this.globals.surveys[0];
-
-  selectedOption: number;
-  radioChoices: Array<any> = [];
-  surveyData: Array<any> = [];
-
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
     // For each response in surveyData, post the surveyData[index] response object
@@ -137,52 +133,55 @@ export class SurveyComponent implements OnInit, DoCheck {
         //console.log('response is ', response);
         for (let i = 0; i < response.length; i++) {
            
-          let choice =
-          {
-            "question_id": response[i].question_id,
-            "survey_id": response[i].survey_id,
-            "option_id": response[i].option_id,
-            "response_text": response[i].response_text
-            }
-              ;
-            responses.push(choice);
-            console.log(responses);
+          let choice: Response = {
+                "question_id": response[i].question_id,
+                "survey_id": response[i].survey_id,
+                "option_id": response[i].option_id,
+                "response_text": response[i].response_text
+          };
+          responses.push(choice);
+          console.log(responses);
         }
         
       },(error) => {
           console.log('error is ', error)
       })
     } 
-    this.router.navigate(['contact']);
   }
 
   // When next button is clicked, save the selected options to the survey data object
   updateResponses(textValue: string, questionIndex: number) {
     // Response object mirrors the database response table
-    let response = {survey_id: 0,
-                    question_id: 0,
-                    option_id: 0,
-                    response_text: ""};
+    let response: Response = {
+          survey_id: 0,
+          question_id: 0,
+          option_id: 0,
+          response_text: ""
+    };
     
     // If question type is dropdown or multiple choice, only need to add 1 response
-    if (this.currentSurveyIndex.questions[questionIndex].question_type == "dropdown" ||
-        this.currentSurveyIndex.questions[questionIndex].question_type == "mc") {
-          response.survey_id = this.currentSurveyId; // Survey ID
-          response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "dropdown" ||
+        this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "mc") {
+          response.survey_id = this.selectedSurveyId; // Survey ID
+          response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
           response.option_id = this.selectedOption; // Option ID
           response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
           // Push to survey data array
           this.surveyData.push(response);
     // If question type is checkbox, check for multiple responses
-    } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "checkboxes") {
+    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
       // Iterate through the options that were selected
       for (let i = 0; i < this.radioChoices.length; i++) {
-        response = {survey_id: 0,
-                    question_id: 0,
-                    option_id: 0,
-                    response_text: ""};
-        response.survey_id = this.currentSurveyId; // Survey ID
-        response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+        // Initialize response to prevent duplication
+        response = { 
+          survey_id: 0,
+          question_id: 0,
+          option_id: 0,
+          response_text: ""
+        };
+
+        response.survey_id = this.selectedSurveyId; // Survey ID
+        response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
         response.option_id = this.radioChoices[i]; // Option ID
         response.response_text = this.getResponseText(this.radioChoices[i], questionIndex); // Response text
         console.log("pushing to surveyData: " + this.radioChoices[i]);
@@ -190,19 +189,16 @@ export class SurveyComponent implements OnInit, DoCheck {
         this.surveyData.push(response);
         console.log("survey data after push: " + this.surveyData[i])
       }
-      // Empty/initialize the radioChoices array
-      //this.radioChoices = [];
     // If question type is text (open-ended), set option id to 1
-    } else if (this.currentSurveyIndex.questions[questionIndex].question_type == "text") {
-      response.survey_id = this.currentSurveyId; // Survey ID
-      response.question_id = this.currentSurveyIndex.questions[questionIndex].question_id; // Question ID
+    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
+      response.survey_id = this.selectedSurveyId; // Survey ID
+      response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
       response.option_id = 1; // Option ID
       response.response_text = textValue; // Response text
 
       //console.log(textValue);
       this.surveyData.push(response);
     }
-
     console.log(this.surveyData);
   }
 
@@ -234,7 +230,7 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   getResponseText(optionId, questionIndex) {
     // Iterate through the question's options
-    for (let option of this.currentSurveyIndex.questions[questionIndex].options) {
+    for (let option of this.surveys[this.selectedSurveyIndex].questions[questionIndex].options) {
       if (this.selectedOption == option.option_id) {
         return option.option_text;
       } else if (optionId == option.option_id)
@@ -244,8 +240,8 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // Gets called
   getQuestionIndex(questionId) {
-    for (let i = 0; i < this.currentSurveyIndex.questions.length; i++) {
-      if (questionId == this.currentSurveyIndex.questions[i].question_id) {
+    for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
+      if (questionId == this.surveys[this.selectedSurveyIndex].questions[i].question_id) {
         return i;
       }
     };
@@ -253,10 +249,10 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // Gets called when previous button is clicked
   removeResponse(questionIndex: number, currentPage: number) {
-    if (this.currentSurveyIndex.questions[questionIndex].question_type == "checkboxes") {
+    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
       // Pop 1 for each response in surveyData that matches the current question ID
       for (let i = this.surveyData.length - 1; i > 0; i--) {
-        if (this.surveyData[i].question_id == this.currentSurveyIndex.questions[questionIndex].question_id) {
+        if (this.surveyData[i].question_id == this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id) {
           this.surveyData.pop();
         }
       }

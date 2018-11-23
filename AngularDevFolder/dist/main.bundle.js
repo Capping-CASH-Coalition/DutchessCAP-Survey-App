@@ -19,50 +19,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+// Http specifc header that is needed to post data to the database
 var httpOptions = {
     headers: new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["b" /* HttpHeaders */]({
         'Content-Type': 'application/json',
     })
 };
 var SurveyService = (function () {
-    /*httpOptions: any = {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    };*/
+    // Instantiates the HttpClient class
     function SurveyService(http) {
         this.http = http;
     }
+    // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getSurveys = function () {
         return this.http.get('http://localhost:3000/api/surveys');
     };
+    // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyQuestions = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id);
     };
+    // Function that will call the index.js route to get all options given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyOptions = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id);
     };
+    // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyResponses = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
     };
+    // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
     SurveyService.prototype.postSurveyResponse = function (response) {
         return this.http.post('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
     };
-    SurveyService.prototype.postNewSurvey = function (surveys) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('surveys', surveys);
-        return this.http.post('http://localhost:3000/api/newSurvey', surveys);
-    };
+    // Function that will call the index.js route to update a questions give the specific updates
     SurveyService.prototype.updateSurveyQuestions = function (updates) {
         return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
-    };
-    SurveyService.prototype.updateSurveyOptions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/newSurveyOptions', { params: params });
-    };
-    SurveyService.prototype.insertSurveyQuestions = function (updates) {
-        var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpParams */]()
-            .set('updates', updates);
-        return this.http.post('http://localhost:3000/api/insertSurveyQuestion', { params: params });
     };
     SurveyService.prototype.postSurveyID = function (survey_name) {
         return this.http.post('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
@@ -101,7 +91,7 @@ var SurveyService = (function () {
 }());
 SurveyService = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpClient */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpClient */]) === "function" && _a || Object])
 ], SurveyService);
 
 var _a;
@@ -1547,7 +1537,7 @@ var AppComponent = (function () {
                 var survey = {
                     "survey_id": response[i].survey_id,
                     "survey_name": response[i].survey_name,
-                    "date_taken": response[i].date_taken
+                    "date_created": response[i].date_created
                 };
                 _this.globals.surveys.push(survey);
                 console.log(_this.globals.surveys);
@@ -1631,9 +1621,9 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.ngOnInit = function () {
         //this.getSurveys();
-        //this.getQuestions(1);
+        this.getQuestions(1);
         //this.getOptions(1);
-        this.getResponses(1);
+        //this.getResponses(1);
         /*for(let j =0; j<Responses.length; j++){
         this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
             this.responses = [];

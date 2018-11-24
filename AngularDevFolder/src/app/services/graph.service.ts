@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { ChartColor } from 'chart.js';
 import { Chart } from 'chart.js';
 
 @Injectable()
 export class GraphService {
 
-   private graphTypes: any[] = [
+    private graphTypes: any[] = [
       {val: 'pie', view: 'Pie' },
       {val: 'bar', view: 'Bar' },
       {val: 'doughnut', view: 'Doughnut' },
       {val: 'polarArea', view: 'Polar Area' },
       {val: 'line', view: 'Line' },
       {val: 'radar', view: 'Radar' },
-   ]
+    ]
 
-   private colors: string[] = [
+    private colors: string[] = [
       'rgba(054, 162, 235, 1)',
       'rgba(255, 099, 132, 1)',
       'rgba(255, 206, 086, 1)',
@@ -46,112 +45,109 @@ export class GraphService {
       'rgba(255, 174, 185, 1)'
    ]
 
-   private linearChartOptions = {
-      responsive: false,
-      scales: {
-         yAxes: [{
-             ticks: {
-                 beginAtZero: true
-             }
-         }]
-     }
-   }
-
-   private radialChartOptions = {
-      responsive: false,
-   }
-
-   public createSingleChart(context, chartType, map: Map<string, number>): Chart {
-      return new Chart(context, {
-         type: chartType,
-         data: {
-            labels: Array.from(map.keys()),
-            datasets: [{
-               label: 'Total',
-               data: Array.from(map.values()),
-               backgroundColor: this.getColors()
+    private linearChartOptions = {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
             }]
-         },
-         options: this.getOptions(chartType)
-      });
+        }
    }
 
-   public createMatrixChart(context, chartType, matrixData ): Chart {
-      return new Chart(context, {
-         type: chartType,
-         data: matrixData,
-         options: this.getOptions(chartType)
-      })
-   }
+    private radialChartOptions = {
+        responsive: false,
+    }
 
-   public createDateChart(context, chartType, matrixData ): Chart {
-      return new Chart(context, {
-         type: chartType,
-         data: matrixData,
-         options: {
-            elements: {
-               line: {
-                   tension: 0
-               }
-           },
-            responsive: true,
-            title:      {
-                display: true,
-                text:    "Responses By Survey For Past Year"
-            },
-            scales:     {
-                xAxes: [{
-                    type:       "time",
-                    time:       {
-                        tooltipFormat: 'll',
-                    },
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'Date'
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'value'
-                    }
+    public createSingleChart(context, chartType, map: Map<string, number>): Chart {
+        return new Chart(context, {
+            type: chartType,
+            data: {
+                labels: Array.from(map.keys()),
+                datasets: [{
+                    label: 'Total',
+                    data: Array.from(map.values()),
+                    backgroundColor: this.getColors()
                 }]
-           }
-         }
-      })
-   }
+            },
+            options: this.getOptions(chartType)
+        });
+    }
 
-   public getGraphTypes(): any[] {
-      return this.graphTypes;
-   }
+    public createMatrixChart(context, chartType, matrixData ): Chart {
+        return new Chart(context, {
+            type: chartType,
+            data: matrixData,
+            options: this.getOptions(chartType)
+            })
+    }
 
-   public getColors(): string[] {
-      return this.colors;
-   }
+    public createDateChart(context, chartType, matrixData ): Chart {
+        return new Chart(context, {
+            type: chartType,
+            data: matrixData,
+            options: {
+                elements: {
+                    line: {
+                        tension: 0
+                    }
+                },
+                responsive: true,
+                title: {
+                    display: true,
+                    text: "Responses By Survey For Past Year"
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            tooltipFormat: 'll',
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'value'
+                        }
+                    }]
+                }
+            }
+        })
+    }
 
-   public getColorByIndex(i: number): string {
-      if ( i > this.colors.length ) {
-         console.log("color out of bounds");
-         return null;
-      }
-      else {
-         return this.colors[i];
-      }
-   }
+    public getGraphTypes(): any[] {
+        return this.graphTypes;
+    }
 
-   public getOptions(chartType): any {
-      if ( chartType == 'bar' || chartType == 'line' )
-         return this.linearChartOptions;
-      else 
-         return this.radialChartOptions;  
-   }
+    public getColors(): string[] {
+        return this.colors;
+    }
 
-   public downloadChart(event, canvas) {
-      let anchor = event.target;
-      let can = document.getElementsByTagName(canvas)[0] as HTMLCanvasElement;
-      anchor.href = can.toDataURL("image/png");
-      anchor.download = "Graph.png";
-   }
+    public getColorByIndex(i: number): string {
+        if ( i > this.colors.length ) {
+            console.log("color out of bounds");
+            return null;
+        } else {
+            return this.colors[i];
+        }
+    }
 
+    public getOptions(chartType): any {
+        if ( chartType == 'bar' || chartType == 'line' )
+            return this.linearChartOptions;
+        else 
+            return this.radialChartOptions;  
+    }
 
+    public downloadChart(event, canvas) {
+        let anchor = event.target;
+        let can = document.getElementsByTagName(canvas)[0] as HTMLCanvasElement;
+        anchor.href = can.toDataURL("image/png");
+        anchor.download = "Graph.png";
+    }
 }

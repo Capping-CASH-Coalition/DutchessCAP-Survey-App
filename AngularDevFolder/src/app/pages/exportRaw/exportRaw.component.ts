@@ -116,5 +116,4 @@ export class ExportRawComponent implements OnInit {
       // Download CSV file
       this.downloadCSV(csv.join("\n"));
    }
-
 }

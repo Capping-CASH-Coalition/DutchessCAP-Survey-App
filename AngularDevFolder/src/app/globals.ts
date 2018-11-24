@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SurveyService } from './services/survey.service';
 
 @Injectable()
 export class Globals {

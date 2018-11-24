@@ -241,12 +241,10 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          .filter(v => v !== null);
    }
 
-
    graphOptionsModal(): void {
       jQuery('#myModal').on('shown.bs.modal', function () {
          jQuery('#myInput').trigger('focus')
        })
    }
-
 
 }

@@ -152,4 +152,6 @@ export class GraphService {
       anchor.href = can.toDataURL("image/png");
       anchor.download = "Graph.png";
    }
+
+
 }

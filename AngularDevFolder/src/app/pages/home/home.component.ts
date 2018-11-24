@@ -8,8 +8,10 @@ import { GraphService } from '../../services/graph.service';
    styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-   constructor(public globals: Globals,
-               public graphService: GraphService) { };
+   constructor(
+      public globals: Globals,
+      public graphService: GraphService
+   ) { };
 
    ngOnInit() {
    }
@@ -26,11 +28,14 @@ export class HomeComponent implements OnInit {
       this.updateChart();
    };
 
+   
+
+
    updateChart(): void {
       this.destroyChart();
       let c: Chart = this.graphService.createDateChart(this.ctx, "line", this.DateGraphData())
       this.buildChart(c)
-    }
+}
 
    private destroyChart(): void {
       if (this.chart != null) {
@@ -62,6 +67,8 @@ export class HomeComponent implements OnInit {
       this.chart.update();
    }
 
+   
+   
    mapDateData(val): Map<string, number> {
       let map = new Map();
       let survey = this.globals.surveys[val];
@@ -87,6 +94,8 @@ export class HomeComponent implements OnInit {
       });
       return map;
    }
+
+
 
    mapDateDataSets(): any[] {
       let datasets: any[] = new Array();
@@ -123,6 +132,7 @@ export class HomeComponent implements OnInit {
       return data
    }
 
+
    // pulls together the above functions to set the labels and datasets for the matrix graph
    DateGraphData(): any {
       return {
@@ -155,4 +165,5 @@ export class HomeComponent implements OnInit {
 
       return today1;
    }
+   
 }

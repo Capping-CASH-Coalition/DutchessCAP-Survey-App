@@ -67,6 +67,8 @@
 #dropdownStyle{
     float: none;
     margin: auto 0;
+    width:250px;
+    transform: translateX(25%);
 }
 
 .bigicon {
@@ -76,4 +78,12 @@
 
 #btn{
     margin-top: 1%;
+}
+
+.radioStyle{
+    transform: translateX(50%);
+}
+
+.form-group{
+    margin: -10px;
 }

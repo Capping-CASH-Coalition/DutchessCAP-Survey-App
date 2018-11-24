@@ -34,10 +34,10 @@ export class SurveyComponent implements OnInit, DoCheck {
   showLanding: boolean = true;
   // Holds the dynamic survey variables for display
   surveys: Array<any> = [];
-  // Set by optionSelect()
+  // Option_id that is set by optionSelect()
   selectedOption: number;
   // Fills when multiple choices are selected by updateResponses()
-  radioChoices: Array<any> = [];
+  checkboxChoices: Array<any> = [];
   // Pushes/pops when user selects next or previous
   surveyData: Array<any> = [];
   // Pagination element uses this
@@ -150,6 +150,137 @@ export class SurveyComponent implements OnInit, DoCheck {
       Survey Functions
   */
 
+  // When next button is clicked, save the selected options to the survey data object
+  updateResponses(textValue: string, questionIndex: number) {
+    // Response object mirrors the database response table
+    let response: Response = {
+          survey_id: 0,
+          question_id: 0,
+          option_id: 0,
+          response_text: ""
+    };
+    
+    // If question type is select or multiple choice, only need to add 1 response
+    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "select" ||
+        this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "radio") {
+          // Initialize values to prevent duplication
+          response = { 
+            survey_id: 0,
+            question_id: 0,
+            option_id: 0,
+            response_text: ""
+          };
+
+          response.survey_id = this.selectedSurveyId; // Survey ID
+          response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+          response.option_id = this.selectedOption; // Option ID
+          response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
+          // Push to survey data array
+          console.log("pushing to surveyData: " + this.selectedOption);
+          this.surveyData.push(response);
+    // If question type is checkbox, check for multiple responses
+    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkbox") {
+      // Iterate through the options that were selected
+      for (let i = 0; i < this.checkboxChoices.length; i++) {
+        // Initialize response to prevent duplication
+        response = { 
+          survey_id: 0,
+          question_id: 0,
+          option_id: 0,
+          response_text: ""
+        };
+
+        response.survey_id = this.selectedSurveyId; // Survey ID
+        response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+        response.option_id = this.checkboxChoices[i]; // Option ID
+        response.response_text = this.getResponseText(this.checkboxChoices[i], questionIndex); // Response text
+        console.log("pushing to surveyData: " + this.checkboxChoices[i]);
+        // Push to survey data array
+        this.surveyData.push(response);
+      }
+    // If question type is text (open-ended), set option id to 1
+    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
+      // Initialize response to prevent duplication
+      response = { 
+        survey_id: 0,
+        question_id: 0,
+        option_id: 0,
+        response_text: ""
+      };
+
+      response.survey_id = this.selectedSurveyId; // Survey ID
+      response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+      response.option_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].options[0].option_id; // Option ID
+      response.response_text = textValue; // Response text
+
+      console.log("pushing to surveyData: " + textValue);
+      this.surveyData.push(response);
+    }
+    console.log(this.surveyData);
+  }
+
+  // This is called to find the selected options within the HTML
+  optionSelect(event, value, questionType): void {
+    // If question type is select or multiple choice, there is only 1 selected value
+    if (questionType == "select") {
+      this.selectedOption = value;
+    // If question type is checkbox, there is 1+ options
+    } else if (questionType == "checkbox") {
+      // event is the clicked HTML element
+      if (event) {
+        // If checked, add it to the checkboxChoice array
+        if (event.target.checked) {
+          this.checkboxChoices.push(value);
+        // If unchecked, remove it from the checkboxChoice array
+        } else {
+          // Iterate through the checkbox choices to see which matches the value
+          for (let i = 0; i < this.checkboxChoices.length; i++) {
+            // If it matches, remove it from checkboxChoice array
+            if (this.checkboxChoices[i] == value) {
+              this.checkboxChoices.splice(i, 1);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Returns the option text as the response_text
+  getResponseText(optionId, questionIndex): string {
+    // Iterate through the question's options
+    for (let option of this.surveys[this.selectedSurveyIndex].questions[questionIndex].options) {
+      if (optionId == option.option_id) {
+        console.log("Matched option text: " + option.option_text);
+        return option.option_text;
+      }
+    }
+  }
+
+  // Gets called
+  getQuestionIndex(questionId): number {
+    for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
+      if (questionId == this.surveys[this.selectedSurveyIndex].questions[i].question_id) {
+        return i;
+      }
+    };
+  }
+
+  // Gets called when previous button is clicked
+  removeResponse(questionIndex: number, currentPage: number) {
+    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkbox") {
+      // Pop 1 for each response in surveyData that matches the current question ID
+      for (let i = this.surveyData.length - 1; i > 0; i--) {
+        if (this.surveyData[i].question_id == this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id) {
+          this.surveyData.pop();
+        }
+      }
+      console.log(this.surveyData);
+    // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
+    } else {
+      this.surveyData.pop();
+    }
+  }
+
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
     // For each response in surveyData, post the surveyData[index] response object
@@ -173,119 +304,5 @@ export class SurveyComponent implements OnInit, DoCheck {
           console.log('error is ', error)
       })
     } 
-  }
-
-  // When next button is clicked, save the selected options to the survey data object
-  updateResponses(textValue: string, questionIndex: number) {
-    // Response object mirrors the database response table
-    let response: Response = {
-          survey_id: 0,
-          question_id: 0,
-          option_id: 0,
-          response_text: ""
-    };
-    
-    // If question type is dropdown or multiple choice, only need to add 1 response
-    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "dropdown" ||
-        this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "mc") {
-          response.survey_id = this.selectedSurveyId; // Survey ID
-          response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-          response.option_id = this.selectedOption; // Option ID
-          response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
-          // Push to survey data array
-          this.surveyData.push(response);
-    // If question type is checkbox, check for multiple responses
-    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
-      // Iterate through the options that were selected
-      for (let i = 0; i < this.radioChoices.length; i++) {
-        // Initialize response to prevent duplication
-        response = { 
-          survey_id: 0,
-          question_id: 0,
-          option_id: 0,
-          response_text: ""
-        };
-
-        response.survey_id = this.selectedSurveyId; // Survey ID
-        response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-        response.option_id = this.radioChoices[i]; // Option ID
-        response.response_text = this.getResponseText(this.radioChoices[i], questionIndex); // Response text
-        console.log("pushing to surveyData: " + this.radioChoices[i]);
-        // Push to survey data array
-        this.surveyData.push(response);
-        console.log("survey data after push: " + this.surveyData[i])
-      }
-    // If question type is text (open-ended), set option id to 1
-    } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
-      response.survey_id = this.selectedSurveyId; // Survey ID
-      response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-      response.option_id = 1; // Option ID
-      response.response_text = textValue; // Response text
-
-      //console.log(textValue);
-      this.surveyData.push(response);
-    }
-    console.log(this.surveyData);
-  }
-
-  // This is called to find the selected options within the HTML
-  optionSelect(event, value, questionType): void {
-    // If question type is dropdown or multiple choice, there is only 1 selected value
-    if (questionType == "dropdown" || questionType == "mc") {
-      this.selectedOption = value;
-    // If question type is checkbox, there is 1+ options
-    } else if (questionType == "cb") {
-      // event is the clicked HTML element
-      if (event) {
-        // If checked, add it to the radioChoice array
-        if (event.target.checked) {
-          this.radioChoices.push(value);
-        // If unchecked, remove it from the radioChoice array
-        } else {
-          // Iterate through the radio choices to see which matches the value
-          for (let i = 0; i < this.radioChoices.length; i++) {
-            // If it matches, remove it from radioChoice array
-            if (this.radioChoices[i] == value) {
-              this.radioChoices.splice(i, 1);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  getResponseText(optionId, questionIndex) {
-    // Iterate through the question's options
-    for (let option of this.surveys[this.selectedSurveyIndex].questions[questionIndex].options) {
-      if (this.selectedOption == option.option_id) {
-        return option.option_text;
-      } else if (optionId == option.option_id)
-        return option.option_text;
-    }
-  }
-
-  // Gets called
-  getQuestionIndex(questionId) {
-    for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
-      if (questionId == this.surveys[this.selectedSurveyIndex].questions[i].question_id) {
-        return i;
-      }
-    };
-  }
-
-  // Gets called when previous button is clicked
-  removeResponse(questionIndex: number, currentPage: number) {
-    if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
-      // Pop 1 for each response in surveyData that matches the current question ID
-      for (let i = this.surveyData.length - 1; i > 0; i--) {
-        if (this.surveyData[i].question_id == this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id) {
-          this.surveyData.pop();
-        }
-      }
-      console.log(this.surveyData);
-    // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
-    } else {
-      this.surveyData.pop();
-    }
   }
 }

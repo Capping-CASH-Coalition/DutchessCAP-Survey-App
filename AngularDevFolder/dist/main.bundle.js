@@ -794,7 +794,7 @@ var SurveyComponent = (function () {
         // Holds the dynamic survey variables for display
         this.surveys = [];
         // Fills when multiple choices are selected by updateResponses()
-        this.radioChoices = [];
+        this.checkboxChoices = [];
         // Pushes/pops when user selects next or previous
         this.surveyData = [];
         // Pagination element uses this
@@ -900,6 +900,134 @@ var SurveyComponent = (function () {
     /*
         Survey Functions
     */
+    // When next button is clicked, save the selected options to the survey data object
+    SurveyComponent.prototype.updateResponses = function (textValue, questionIndex) {
+        // Response object mirrors the database response table
+        var response = {
+            survey_id: 0,
+            question_id: 0,
+            option_id: 0,
+            response_text: ""
+        };
+        // If question type is select or multiple choice, only need to add 1 response
+        if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "select" ||
+            this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "radio") {
+            // Initialize values to prevent duplication
+            response = {
+                survey_id: 0,
+                question_id: 0,
+                option_id: 0,
+                response_text: ""
+            };
+            response.survey_id = this.selectedSurveyId; // Survey ID
+            response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+            response.option_id = this.selectedOption; // Option ID
+            response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
+            // Push to survey data array
+            console.log("pushing to surveyData: " + this.selectedOption);
+            this.surveyData.push(response);
+            // If question type is checkbox, check for multiple responses
+        }
+        else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkbox") {
+            // Iterate through the options that were selected
+            for (var i = 0; i < this.checkboxChoices.length; i++) {
+                // Initialize response to prevent duplication
+                response = {
+                    survey_id: 0,
+                    question_id: 0,
+                    option_id: 0,
+                    response_text: ""
+                };
+                response.survey_id = this.selectedSurveyId; // Survey ID
+                response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+                response.option_id = this.checkboxChoices[i]; // Option ID
+                response.response_text = this.getResponseText(this.checkboxChoices[i], questionIndex); // Response text
+                console.log("pushing to surveyData: " + this.checkboxChoices[i]);
+                // Push to survey data array
+                this.surveyData.push(response);
+            }
+            // If question type is text (open-ended), set option id to 1
+        }
+        else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
+            // Initialize response to prevent duplication
+            response = {
+                survey_id: 0,
+                question_id: 0,
+                option_id: 0,
+                response_text: ""
+            };
+            response.survey_id = this.selectedSurveyId; // Survey ID
+            response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
+            response.option_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].options[0].option_id; // Option ID
+            response.response_text = textValue; // Response text
+            console.log("pushing to surveyData: " + textValue);
+            this.surveyData.push(response);
+        }
+        console.log(this.surveyData);
+    };
+    // This is called to find the selected options within the HTML
+    SurveyComponent.prototype.optionSelect = function (event, value, questionType) {
+        // If question type is select or multiple choice, there is only 1 selected value
+        if (questionType == "select") {
+            this.selectedOption = value;
+            // If question type is checkbox, there is 1+ options
+        }
+        else if (questionType == "checkbox") {
+            // event is the clicked HTML element
+            if (event) {
+                // If checked, add it to the checkboxChoice array
+                if (event.target.checked) {
+                    this.checkboxChoices.push(value);
+                    // If unchecked, remove it from the checkboxChoice array
+                }
+                else {
+                    // Iterate through the checkbox choices to see which matches the value
+                    for (var i = 0; i < this.checkboxChoices.length; i++) {
+                        // If it matches, remove it from checkboxChoice array
+                        if (this.checkboxChoices[i] == value) {
+                            this.checkboxChoices.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        }
+    };
+    // Returns the option text as the response_text
+    SurveyComponent.prototype.getResponseText = function (optionId, questionIndex) {
+        // Iterate through the question's options
+        for (var _i = 0, _a = this.surveys[this.selectedSurveyIndex].questions[questionIndex].options; _i < _a.length; _i++) {
+            var option = _a[_i];
+            if (optionId == option.option_id) {
+                console.log("Matched option text: " + option.option_text);
+                return option.option_text;
+            }
+        }
+    };
+    // Gets called
+    SurveyComponent.prototype.getQuestionIndex = function (questionId) {
+        for (var i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
+            if (questionId == this.surveys[this.selectedSurveyIndex].questions[i].question_id) {
+                return i;
+            }
+        }
+        ;
+    };
+    // Gets called when previous button is clicked
+    SurveyComponent.prototype.removeResponse = function (questionIndex, currentPage) {
+        if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkbox") {
+            // Pop 1 for each response in surveyData that matches the current question ID
+            for (var i = this.surveyData.length - 1; i > 0; i--) {
+                if (this.surveyData[i].question_id == this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id) {
+                    this.surveyData.pop();
+                }
+            }
+            console.log(this.surveyData);
+            // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
+        }
+        else {
+            this.surveyData.pop();
+        }
+    };
     // When submit button is hit, this will post the survey data to the database
     SurveyComponent.prototype.postOnSubmit = function () {
         // For each response in surveyData, post the surveyData[index] response object
@@ -920,120 +1048,6 @@ var SurveyComponent = (function () {
             }, function (error) {
                 console.log('error is ', error);
             });
-        }
-    };
-    // When next button is clicked, save the selected options to the survey data object
-    SurveyComponent.prototype.updateResponses = function (textValue, questionIndex) {
-        // Response object mirrors the database response table
-        var response = {
-            survey_id: 0,
-            question_id: 0,
-            option_id: 0,
-            response_text: ""
-        };
-        // If question type is dropdown or multiple choice, only need to add 1 response
-        if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "dropdown" ||
-            this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "mc") {
-            response.survey_id = this.selectedSurveyId; // Survey ID
-            response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-            response.option_id = this.selectedOption; // Option ID
-            response.response_text = this.getResponseText(this.selectedOption, questionIndex); // Response text
-            // Push to survey data array
-            this.surveyData.push(response);
-            // If question type is checkbox, check for multiple responses
-        }
-        else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
-            // Iterate through the options that were selected
-            for (var i = 0; i < this.radioChoices.length; i++) {
-                // Initialize response to prevent duplication
-                response = {
-                    survey_id: 0,
-                    question_id: 0,
-                    option_id: 0,
-                    response_text: ""
-                };
-                response.survey_id = this.selectedSurveyId; // Survey ID
-                response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-                response.option_id = this.radioChoices[i]; // Option ID
-                response.response_text = this.getResponseText(this.radioChoices[i], questionIndex); // Response text
-                console.log("pushing to surveyData: " + this.radioChoices[i]);
-                // Push to survey data array
-                this.surveyData.push(response);
-                console.log("survey data after push: " + this.surveyData[i]);
-            }
-            // If question type is text (open-ended), set option id to 1
-        }
-        else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
-            response.survey_id = this.selectedSurveyId; // Survey ID
-            response.question_id = this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id; // Question ID
-            response.option_id = 1; // Option ID
-            response.response_text = textValue; // Response text
-            //console.log(textValue);
-            this.surveyData.push(response);
-        }
-        console.log(this.surveyData);
-    };
-    // This is called to find the selected options within the HTML
-    SurveyComponent.prototype.optionSelect = function (event, value, questionType) {
-        // If question type is dropdown or multiple choice, there is only 1 selected value
-        if (questionType == "dropdown" || questionType == "mc") {
-            this.selectedOption = value;
-            // If question type is checkbox, there is 1+ options
-        }
-        else if (questionType == "cb") {
-            // event is the clicked HTML element
-            if (event) {
-                // If checked, add it to the radioChoice array
-                if (event.target.checked) {
-                    this.radioChoices.push(value);
-                    // If unchecked, remove it from the radioChoice array
-                }
-                else {
-                    // Iterate through the radio choices to see which matches the value
-                    for (var i = 0; i < this.radioChoices.length; i++) {
-                        // If it matches, remove it from radioChoice array
-                        if (this.radioChoices[i] == value) {
-                            this.radioChoices.splice(i, 1);
-                        }
-                    }
-                }
-            }
-        }
-    };
-    SurveyComponent.prototype.getResponseText = function (optionId, questionIndex) {
-        // Iterate through the question's options
-        for (var _i = 0, _a = this.surveys[this.selectedSurveyIndex].questions[questionIndex].options; _i < _a.length; _i++) {
-            var option = _a[_i];
-            if (this.selectedOption == option.option_id) {
-                return option.option_text;
-            }
-            else if (optionId == option.option_id)
-                return option.option_text;
-        }
-    };
-    // Gets called
-    SurveyComponent.prototype.getQuestionIndex = function (questionId) {
-        for (var i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
-            if (questionId == this.surveys[this.selectedSurveyIndex].questions[i].question_id) {
-                return i;
-            }
-        }
-        ;
-    };
-    // Gets called when previous button is clicked
-    SurveyComponent.prototype.removeResponse = function (questionIndex, currentPage) {
-        if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "checkboxes") {
-            // Pop 1 for each response in surveyData that matches the current question ID
-            for (var i = this.surveyData.length - 1; i > 0; i--) {
-                if (this.surveyData[i].question_id == this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_id) {
-                    this.surveyData.pop();
-                }
-            }
-            console.log(this.surveyData);
-            // If question type is text (open-ended), multiple choice, or dropdown/select, pop 1
-        }
-        else {
-            this.surveyData.pop();
         }
     };
     return SurveyComponent;
@@ -2720,7 +2734,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".header {\n    color: #36A0FF;\n    font-size: 27px;\n    padding: 10px;\n}\n\n.header2 {\n    font-size: 20px;\n}\n\n.header3 {\n    color: #36A0FF;\n    font-size: 15px;\n    padding: 10px;\n    margin-bottom:30px;\n}\n\n.pages{\n    margin-left:290px;\n}\n\n.pageNumbers {\n    list-style-type: none;\n    display:inline;\n}\n\n.custom-pagination{\n    display:inline-block;\n}\n\n.pagination{\n    display: inline;\n}\n\n.pageNumberActive {\n    color: black;\n    list-style-type: none;\n    display:inline;\n}\n\n.inline {\n    display:inline-block;\n    margin-right:5px;\n}\n\n.container-fluid{\n    width:100%;    \n}\n\n.container{\n    height: 100%;\n    margin: 0 auto;\n}\n\n.container2 {\n    height: 90%;\n}\n\n#bucket{ \n    margin-left: auto;\n    margin-right: auto;\n    text-align: center;\n    float: none;\n    padding-top: 1%;\n}\n\n#dropdownStyle{\n    float: none;\n    margin: auto 0;\n}\n\n.bigicon {\n    font-size: 35px;\n    color: #36A0FF;\n}\n\n#btn{\n    margin-top: 1%;\n}", ""]);
+exports.push([module.i, ".header {\n    color: #36A0FF;\n    font-size: 27px;\n    padding: 10px;\n}\n\n.header2 {\n    font-size: 20px;\n}\n\n.header3 {\n    color: #36A0FF;\n    font-size: 15px;\n    padding: 10px;\n    margin-bottom:30px;\n}\n\n.pages{\n    margin-left:290px;\n}\n\n.pageNumbers {\n    list-style-type: none;\n    display:inline;\n}\n\n.custom-pagination{\n    display:inline-block;\n}\n\n.pagination{\n    display: inline;\n}\n\n.pageNumberActive {\n    color: black;\n    list-style-type: none;\n    display:inline;\n}\n\n.inline {\n    display:inline-block;\n    margin-right:5px;\n}\n\n.container-fluid{\n    width:100%;    \n}\n\n.container{\n    height: 100%;\n    margin: 0 auto;\n}\n\n.container2 {\n    height: 90%;\n}\n\n#bucket{ \n    margin-left: auto;\n    margin-right: auto;\n    text-align: center;\n    float: none;\n    padding-top: 1%;\n}\n\n#dropdownStyle{\n    float: none;\n    margin: auto 0;\n    width:250px;\n    transform: translateX(25%);\n}\n\n.bigicon {\n    font-size: 35px;\n    color: #36A0FF;\n}\n\n#btn{\n    margin-top: 1%;\n}\n\n.radioStyle{\n    transform: translateX(50%);\n}\n\n.form-group{\n    margin: -10px;\n}", ""]);
 
 // exports
 
@@ -3066,7 +3080,7 @@ module.exports = "<div id=\"notfound\">\n\t<div class=\"notfound\">\n\t\t<div cl
 /***/ 637:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n  \n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id }}. {{ question.question_text}} </h3>\n                  </div>\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'dropdown'\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'dropdown')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'checkboxes'\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'checkboxes')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'text'\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'mc'\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'mc')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
+module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id }}. {{ question.question_text}} </h3>\n                  </div>\n\n                  <div [ngSwitch]=\"question.question_type\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\" *ngSwitchCase=\"'select'\">\n                      <div class=\"col-md-6\" id=\"bucket\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'select')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\" *ngSwitchCase=\"'checkbox'\" id=\"checkboxStyle\">\n                        <div class=\"col-md-6\" id=\"bucket\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'checkbox')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\" *ngSwitchCase=\"'text'\" id=\"textStyle\">\n                        <div class=\"col-md-6\" id=\"bucket\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\" *ngSwitchCase=\"'radio'\" id=\"radioStyle\">\n                      <div class=\"col-md-6\" id=\"bucket\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'radio')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
 
 /***/ }),
 

@@ -35,58 +35,50 @@
             <div *ngFor="let question of survey.questions | paginate: config">
               <form class="form-horiziontal">
                 <fieldset>
-  
                   <legend class="text-center header">{{ survey.survey_name }}</legend>
   
                   <div class="text-center header2">
                     <h3> {{ question.question_id }}. {{ question.question_text}} </h3>
                   </div>
-                  <div [ngSwitch]="question.question_type" style="height:150px">
+
+                  <div [ngSwitch]="question.question_type">
   
-                    <div class="form-group" id="dropdownStyle">
-                      <div class="col-md-6">
-                        <div *ngSwitchCase="'dropdown'">
+                    <div class="form-group" id="dropdownStyle" *ngSwitchCase="'select'">
+                      <div class="col-md-6" id="bucket">
                           <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption"
-                            (change)="optionSelect($event, $event.target.value, 'dropdown')">
+                            (change)="optionSelect($event, $event.target.value, 'select')">
                             <option disabled selected>-Please Select an Option-</option>
                             <option *ngFor="let option of question.options" value="{{option.option_id}}">
                               {{ option.option_text }}
                             </option>
                           </select>
-                        </div>
                       </div>
                     </div>
   
-                    <div class="form-check">
-                      <div class="col-md-6">
-                        <div *ngSwitchCase="'checkboxes'">
+                    <div class="form-check" *ngSwitchCase="'checkbox'" id="checkboxStyle">
+                        <div class="col-md-6" id="bucket">
                           <div *ngFor="let option of question.options" class="form-check-label" id="divCheckboxOptionText"
-                            (change)="optionSelect($event, $event.target.value, 'checkboxes')">
+                            (change)="optionSelect($event, $event.target.value, 'checkbox')">
                             <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
                             {{ option.option_text }}
                           </div>
-                        </div>
                       </div>
                     </div>
   
-                    <div class="form-group">
-                      <div class="col-md-6">
-                        <div *ngSwitchCase="'text'">
+                    <div class="form-group" *ngSwitchCase="'text'" id="textStyle">
+                        <div class="col-md-6" id="bucket">
                           <div class="form-check-label">
                             <textarea class="form-control" name="text" rows="2" [(ngModel)]="textAreaValue"></textarea>
                           </div>
-                        </div>
                       </div>
                     </div>
   
-                    <div class="form-group">
-                      <div class="col-md-6">
-                        <div *ngSwitchCase="'mc'">
-                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="optionSelect($event, $event.target.value, 'mc')">
+                    <div class="form-group" *ngSwitchCase="'radio'" id="radioStyle">
+                      <div class="col-md-6" id="bucket">
+                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="optionSelect($event, $event.target.value, 'radio')">
                             <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
                             {{ option.option_text }}
                           </div>
-                        </div>
                       </div>
                     </div>
   

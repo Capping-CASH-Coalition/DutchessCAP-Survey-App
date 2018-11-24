@@ -84,6 +84,43 @@ export class GraphService {
       })
    }
 
+   public createDateChart(context, chartType, matrixData ): Chart {
+      return new Chart(context, {
+         type: chartType,
+         data: matrixData,
+         options: {
+            elements: {
+               line: {
+                   tension: 0
+               }
+           },
+            responsive: true,
+            title:      {
+                display: true,
+                text:    "Responses By Survey For Past Year"
+            },
+            scales:     {
+                xAxes: [{
+                    type:       "time",
+                    time:       {
+                        tooltipFormat: 'll',
+                    },
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'Date'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'value'
+                    }
+                }]
+           }
+         }
+      })
+   }
+
    public getGraphTypes(): any[] {
       return this.graphTypes;
    }
@@ -115,6 +152,4 @@ export class GraphService {
       anchor.href = can.toDataURL("image/png");
       anchor.download = "Graph.png";
    }
-
-
 }

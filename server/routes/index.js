@@ -229,7 +229,11 @@ router.post('/api/postSurveyResponse', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that inserts an individual response into the responses table 
-        const query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [data.survey_id, data.question_id, data.option_id, data.response_text, data.survey_hash]);
+        client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [data.survey_id, data.question_id, data.option_id, data.response_text, data.survey_hash]);
+
+        console.log("data = " + data.survey_id, data.question_id, data.option_id, data.response_text, data.survey_hash);
+
+
          // After all data is returned, close connection and return results
         query.on('end', () => {
             done();

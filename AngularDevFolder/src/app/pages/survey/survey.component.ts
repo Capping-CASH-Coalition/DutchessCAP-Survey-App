@@ -27,19 +27,21 @@ export class SurveyComponent implements OnInit, DoCheck {
       Variables for the Survey Component
   */
 
-  // Survey variables set by surveySelect()
-  selectedSurveyId: number;
-  selectedSurveyIndex: number;
   // Shows the landing introduction when true
   showLanding: boolean = true;
   // Holds the dynamic survey variables for display
   surveys: Array<any> = [];
+  // Survey variables set by surveySelect()
+  selectedSurveyId: number;
+  selectedSurveyIndex: number;
   // Option_id that is set by optionSelect()
   selectedOption: number;
   // Fills when multiple choices are selected by updateResponses()
   checkboxChoices: Array<any> = [];
   // Pushes/pops when user selects next or previous
   surveyData: Array<any> = [];
+  // Unique user hash
+  currentUser: string;
   // Pagination element uses this
   public config: PaginationInstance = {
     id: 'custom',
@@ -157,7 +159,8 @@ export class SurveyComponent implements OnInit, DoCheck {
           survey_id: 0,
           question_id: 0,
           option_id: 0,
-          response_text: ""
+          response_text: "",
+          survey_hash: this.currentUser
     };
     
     // If question type is select or multiple choice, only need to add 1 response
@@ -168,7 +171,8 @@ export class SurveyComponent implements OnInit, DoCheck {
             survey_id: 0,
             question_id: 0,
             option_id: 0,
-            response_text: ""
+            response_text: "",
+            survey_hash: this.currentUser
           };
 
           response.survey_id = this.selectedSurveyId; // Survey ID
@@ -183,11 +187,13 @@ export class SurveyComponent implements OnInit, DoCheck {
       // Iterate through the options that were selected
       for (let i = 0; i < this.checkboxChoices.length; i++) {
         // Initialize response to prevent duplication
-        response = { 
+          response = { 
           survey_id: 0,
           question_id: 0,
           option_id: 0,
-          response_text: ""
+           response_text: "",
+           survey_hash: this.currentUser
+
         };
 
         response.survey_id = this.selectedSurveyId; // Survey ID
@@ -205,7 +211,8 @@ export class SurveyComponent implements OnInit, DoCheck {
         survey_id: 0,
         question_id: 0,
         option_id: 0,
-        response_text: ""
+        response_text: "",
+        survey_hash: this.currentUser
       };
 
       response.survey_id = this.selectedSurveyId; // Survey ID
@@ -294,7 +301,8 @@ export class SurveyComponent implements OnInit, DoCheck {
                 "question_id": response[i].question_id,
                 "survey_id": response[i].survey_id,
                 "option_id": response[i].option_id,
-                "response_text": response[i].response_text
+                "response_text": response[i].response_text,
+                "survey_hash": response[i].survey_hash
           };
           responses.push(choice);
           console.log(responses);

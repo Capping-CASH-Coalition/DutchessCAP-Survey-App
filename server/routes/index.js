@@ -91,7 +91,7 @@ router.get('/api/surveyResponses/:survey_id', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that gets all responses for a specified survey_id
-        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses.option_id, responses.response_text, responses.date_taken FROM responses, architectures, surveys WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY response_id ASC', [survey_id]);
+        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses.option_id, responses.response_text, responses.date_taken, responses.survey_hash FROM responses, architectures, surveys WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY response_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -219,7 +219,7 @@ router.post('/api/postSurveyResponse', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Created array that will hold the data to be passed to the sql function
-    const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text };
+    const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text, survey_hash: req.body.survey_hash };
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -229,7 +229,7 @@ router.post('/api/postSurveyResponse', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that inserts an individual response into the responses table 
-        const query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text) VALUES ($1, $2, $3, $4)', [data.survey_id, data.question_id, data.option_id, data.response_text]);
+        const query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [data.survey_id, data.question_id, data.option_id, data.response_text, data.survey_hash]);
          // After all data is returned, close connection and return results
         query.on('end', () => {
             done();

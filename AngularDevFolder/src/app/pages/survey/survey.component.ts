@@ -67,11 +67,13 @@ export class SurveyComponent implements OnInit, DoCheck {
           let survey: SurveyInfo = {
                 "survey_id": response[i].survey_id,
                 "survey_name": response[i].survey_name,
-                "date_created": response[i].date_created
+                "date_created": response[i].date_created,
+                "survey_is_active": response[i].survey_is_active
           };
 
           this.surveys.push(survey);
           console.log(this.surveys);
+          // Manually detect changes as the page will load faster than the async call
           this.changeref.detectChanges();
         }
     }, (error) => {
@@ -84,7 +86,7 @@ export class SurveyComponent implements OnInit, DoCheck {
     this.selectedSurveyId = value;
     for (let i = 0; i < this.surveys.length; i++) {
       if (this.selectedSurveyId == this.surveys[i].survey_id) {
-        this.selectedSurveyIndex = this.surveys[i];
+        this.selectedSurveyIndex = i;
       }
     }
     console.log(this.selectedSurveyId);
@@ -96,9 +98,9 @@ export class SurveyComponent implements OnInit, DoCheck {
     this.showLanding = false;
     console.log("showLanding after start: " + this.showLanding);
     this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
-      // Initialize the questions?
-      //this.surveys[i].questions = [];
-      //console.log('response is ', response);
+      // Initialize the questions
+      this.surveys[this.selectedSurveyIndex].questions = [];
+      // Iterate through the questions and push them one at a time
       for (let i = 0; i < response.length; i++) {
         let question: Question = {
               "question_id": response[i].question_id,
@@ -107,11 +109,16 @@ export class SurveyComponent implements OnInit, DoCheck {
               "question_is_active": response[i].question_is_active
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
+        //console.log("Questions after iteration: " + this.surveys[this.selectedSurveyIndex].questions);
       }
-      console.log(this.surveys[this.selectedSurveyIndex].questions);
-
+      //console.log("Questions after loop: " + this.surveys[this.selectedSurveyIndex].questions);
+      // Manually detect changes as the page will load faster than the async call
+      this.changeref.detectChanges();
+      /*
       // Get the survey options based on the selectedSurveyId
       this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
+        // Initialize the options?
+        this.surveys[this.selectedSurveyIndex].options = [];
           for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
             for (let k = 0; k < response.length; k++) {
               let option: Option = {
@@ -127,10 +134,13 @@ export class SurveyComponent implements OnInit, DoCheck {
               }
           }
         }
+        // Manually detect changes as the page will load faster than the async call
+        this.changeref.detectChanges();
+        
       }, (error) => {
         console.log('error is ', error)
       }) 
-    
+      */
     },(error) => {
       console.log('error is ', error)
     })

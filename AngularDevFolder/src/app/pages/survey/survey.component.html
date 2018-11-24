@@ -10,7 +10,7 @@
 
                     <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
                         <option disabled selected>-Please Select an Option-</option>
-                        <option name ="surveyValue" *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}" ngModel>{{surveyActive.survey_name}}</option>
+                        <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
                     </select>
                     
                     <div class="form-group">

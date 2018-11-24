@@ -106,41 +106,41 @@ export class SurveyComponent implements OnInit, DoCheck {
               "question_id": response[i].question_id,
               "question_text": response[i].question_text,
               "question_type": response[i].question_type,
-              "question_is_active": response[i].question_is_active
+              "question_is_active": response[i].question_is_active,
+              options: []
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
-        //console.log("Questions after iteration: " + this.surveys[this.selectedSurveyIndex].questions);
+        this.changeref.detectChanges();
       }
-      //console.log("Questions after loop: " + this.surveys[this.selectedSurveyIndex].questions);
       // Manually detect changes as the page will load faster than the async call
       this.changeref.detectChanges();
-      /*
+      
       // Get the survey options based on the selectedSurveyId
       this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-        // Initialize the options?
-        this.surveys[this.selectedSurveyIndex].options = [];
-          for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
-            for (let k = 0; k < response.length; k++) {
-              let option: Option = {
-                    "option_id": response[k].option_id,
-                    "option_text": response[k].question_text,
-                    "option_is_active": response[k].option_is_active,
-                    "question_id": response[k].question_id
-              };
 
-              if (this.surveys[this.selectedSurveyIndex].questions[i].question_id == response[k].question_id) {
-                this.surveys[this.selectedSurveyIndex].questions.push(option);
-                console.log(this.surveys[this.selectedSurveyIndex].questions);
-              }
+        for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
+          for (let k = 0; k < response.length; k++) {
+            let option: Option = {
+                  "option_id": response[k].option_id,
+                  "option_text": response[k].option_text,
+                  "option_is_active": response[k].option_is_active,
+                  "question_id": response[k].question_id
+            };
+            // If the question IDs match, push the option into the questions[j].options array
+            //console.log("Questions[j].qid: " + this.surveys[this.selectedSurveyIndex].questions[j].question_id);
+            if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+              this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
+              console.log("Options after push: " + this.surveys[this.selectedSurveyIndex].questions[j].options[0]);
+              console.log("Options after push: " + this.surveys[this.selectedSurveyIndex].questions[j].options[0].option_text);
+            }
           }
+          this.changeref.detectChanges();
         }
         // Manually detect changes as the page will load faster than the async call
         this.changeref.detectChanges();
-        
       }, (error) => {
         console.log('error is ', error)
       }) 
-      */
     },(error) => {
       console.log('error is ', error)
     })
@@ -231,7 +231,7 @@ export class SurveyComponent implements OnInit, DoCheck {
   // This is called to find the selected options within the HTML
   optionSelect(event, value, questionType): void {
     // If question type is dropdown or multiple choice, there is only 1 selected value
-    if (questionType == "dd" || questionType == "mc") {
+    if (questionType == "dropdown" || questionType == "mc") {
       this.selectedOption = value;
     // If question type is checkbox, there is 1+ options
     } else if (questionType == "cb") {

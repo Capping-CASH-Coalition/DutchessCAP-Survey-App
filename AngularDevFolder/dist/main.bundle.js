@@ -823,7 +823,8 @@ var SurveyComponent = (function () {
                 var survey = {
                     "survey_id": response[i].survey_id,
                     "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created
+                    "date_created": response[i].date_created,
+                    "survey_is_active": response[i].survey_is_active
                 };
                 _this.surveys.push(survey);
                 console.log(_this.surveys);
@@ -851,50 +852,47 @@ var SurveyComponent = (function () {
         this.showLanding = false;
         console.log("showLanding after start: " + this.showLanding);
         this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
-            // Initialize the questions?
+            // Initialize the questions
             _this.surveys[_this.selectedSurveyIndex].questions = [];
-            //console.log('response is ', response);
+            // Iterate through the questions and push them one at a time
             for (var i = 0; i < response.length; i++) {
-                console.log("Response " + i + ": " + response[i]);
                 var question = {
                     "question_id": response[i].question_id,
                     "question_text": response[i].question_text,
                     "question_type": response[i].question_type,
-                    "question_is_active": response[i].question_is_active
+                    "question_is_active": response[i].question_is_active,
+                    options: []
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
-                console.log("Questions after iteration: " + _this.surveys[_this.selectedSurveyIndex].questions);
+                _this.changeref.detectChanges();
             }
-            console.log("Questions after loop: " + _this.surveys[_this.selectedSurveyIndex].questions);
             // Manually detect changes as the page will load faster than the async call
             _this.changeref.detectChanges();
-            /*
             // Get the survey options based on the selectedSurveyId
-            this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-              // Initialize the options?
-              this.surveys[this.selectedSurveyIndex].options = [];
-                for (let i = 0; i < this.surveys[this.selectedSurveyIndex].questions.length; i++) {
-                  for (let k = 0; k < response.length; k++) {
-                    let option: Option = {
-                          "option_id": response[k].option_id,
-                          "option_text": response[k].question_text,
-                          "option_is_active": response[k].option_is_active,
-                          "question_id": response[k].question_id
-                    };
-      
-                    if (this.surveys[this.selectedSurveyIndex].questions[i].question_id == response[k].question_id) {
-                      this.surveys[this.selectedSurveyIndex].questions.push(option);
-                      console.log(this.surveys[this.selectedSurveyIndex].questions);
+            _this.surveyService.getSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
+                for (var j = 0; j < _this.surveys[_this.selectedSurveyIndex].questions.length; j++) {
+                    for (var k = 0; k < response.length; k++) {
+                        var option = {
+                            "option_id": response[k].option_id,
+                            "option_text": response[k].option_text,
+                            "option_is_active": response[k].option_is_active,
+                            "question_id": response[k].question_id
+                        };
+                        // If the question IDs match, push the option into the questions[j].options array
+                        //console.log("Questions[j].qid: " + this.surveys[this.selectedSurveyIndex].questions[j].question_id);
+                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+                            _this.surveys[_this.selectedSurveyIndex].questions[j].options.push(option);
+                            console.log("Options after push: " + _this.surveys[_this.selectedSurveyIndex].questions[j].options[0]);
+                            console.log("Options after push: " + _this.surveys[_this.selectedSurveyIndex].questions[j].options[0].option_text);
+                        }
                     }
+                    _this.changeref.detectChanges();
                 }
-              }
-              // Manually detect changes as the page will load faster than the async call
-              this.changeref.detectChanges();
-              
-            }, (error) => {
-              console.log('error is ', error)
-            })
-            */
+                // Manually detect changes as the page will load faster than the async call
+                _this.changeref.detectChanges();
+            }, function (error) {
+                console.log('error is ', error);
+            });
         }, function (error) {
             console.log('error is ', error);
         });
@@ -978,7 +976,7 @@ var SurveyComponent = (function () {
     // This is called to find the selected options within the HTML
     SurveyComponent.prototype.optionSelect = function (event, value, questionType) {
         // If question type is dropdown or multiple choice, there is only 1 selected value
-        if (questionType == "dd" || questionType == "mc") {
+        if (questionType == "dropdown" || questionType == "mc") {
             this.selectedOption = value;
             // If question type is checkbox, there is 1+ options
         }
@@ -3068,7 +3066,7 @@ module.exports = "<div id=\"notfound\">\n\t<div class=\"notfound\">\n\t\t<div cl
 /***/ 637:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n  \n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <!--<div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">-->\n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id + 1 }}. {{ question.question_text}} </h3>\n                  </div>\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'dropdown'\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'dd')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'checkboxes'\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'cb')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'text'\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'mc'\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'mc')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
+module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" *ngIf=\"!isLanding\" style=\"margin: 0 auto\">\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select an Option-</option>\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\">\n    <button\n    *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">Login</button>\n    <div class=\"row\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n  \n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <div class=\"text-center header2\">\n                    <h3> {{ question.question_id }}. {{ question.question_text}} </h3>\n                  </div>\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'dropdown'\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'dropdown')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'checkboxes'\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'checkboxes')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'text'\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\">\n                      <div class=\"col-md-6\">\n                        <div *ngSwitchCase=\"'mc'\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'mc')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>"
 
 /***/ }),
 

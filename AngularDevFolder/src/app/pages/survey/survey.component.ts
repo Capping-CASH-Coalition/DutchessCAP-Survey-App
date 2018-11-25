@@ -27,13 +27,8 @@ export class SurveyComponent implements OnInit, DoCheck {
       Variables for the Survey Component
   */
 
-<<<<<<< HEAD
   // Shows the survey div when true
   showSurveyDiv: boolean = false;
-=======
-  // Shows the landing introduction when true
-  showLanding: boolean = true;
->>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
   // Holds the dynamic survey variables for display
   surveys: Array<any> = [];
   // Survey variables set by surveySelect()

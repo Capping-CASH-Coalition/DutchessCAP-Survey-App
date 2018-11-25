@@ -10,8 +10,7 @@ import { GraphService } from '../../services/graph.service';
 export class HomeComponent implements OnInit {
    constructor(
       public globals: Globals,
-      public graphService: GraphService
-   ) { };
+      public graphService: GraphService) { }
 
    ngOnInit() {
    }
@@ -28,18 +27,15 @@ export class HomeComponent implements OnInit {
       this.updateChart();
    };
 
-   
-
-
    updateChart(): void {
       this.destroyChart();
       let c: Chart = this.graphService.createDateChart(this.ctx, "line", this.DateGraphData())
       this.buildChart(c)
-}
+      }
 
    private destroyChart(): void {
       if (this.chart != null) {
-         this.chart.destroy();
+            this.chart.destroy();
       }
    }
 
@@ -49,7 +45,7 @@ export class HomeComponent implements OnInit {
       this.globals.surveys.forEach(survey => {
          let submissionCount = 0;
          // get the number of responses on each question of the survey
-         survey.questions.map(q => { submissionCount += q.responses.length });
+         survey.responses.map(q => { submissionCount += q.responses.length });
          // push details to array
          surveyDetails.push({
             name: survey.survey_name,
@@ -66,8 +62,6 @@ export class HomeComponent implements OnInit {
       this.chart = chartData;
       this.chart.update();
    }
-
-   
    
    mapDateData(val): Map<string, number> {
       let map = new Map();
@@ -94,8 +88,6 @@ export class HomeComponent implements OnInit {
       });
       return map;
    }
-
-
 
    mapDateDataSets(): any[] {
       let datasets: any[] = new Array();

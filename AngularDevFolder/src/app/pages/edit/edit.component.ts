@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
-import { Globals } from "../../globals" 
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
 import { Question } from '../../models/question.model';
@@ -19,11 +18,12 @@ export class EditComponent implements OnInit {
    survey: FormGroup;
    // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
+   // Temporary editable survey variable
+   editedSurvey: Object;
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
 
    constructor(private _fb: FormBuilder,
-               public globals: Globals,
                public surveyService: SurveyService,
                private changeref: ChangeDetectorRef) { }
 
@@ -108,7 +108,86 @@ export class EditComponent implements OnInit {
       });
       this.nameReadOnly = false;
       jQuery("#surveySelect").val(-1);
-   }  
+      // Initialize the new survey
+      this.editedSurvey = {
+            "survey_name": "",
+            "questions": [{
+                  "question_id": 0,
+                  "question_text": "",
+                  "question_type": "",
+                  options: [{
+                        "option_id": 0,
+                        "option_text": "",
+                        "question_id": 0
+                  }]
+            }]
+      }
+   }
+
+   // create a new blank question
+   initQuestion() {
+      return this._fb.group({
+         questionText: new FormControl(''),
+         questionType: new FormControl(''),
+         questionOptions: this._fb.array([
+            this.initOption(),
+         ])
+      });
+   }
+
+   // create a new blank option
+   initOption() {
+      return this._fb.group({
+         option: new FormControl('')
+      })
+   }
+
+      // add question to the form group array at the given index
+   addQuestion(idx: number) {
+      const control = <FormArray>this.survey.controls['questions'];
+      control.insert(idx + 1, this.initQuestion());
+   }
+
+   // remove question from the form group array at the given index
+   removeQuestion(idx: number) {
+      const control = <FormArray>this.survey.controls['questions'];
+      control.removeAt(idx);
+   }
+
+   // add option to the form group array at the given index
+   addOption(question): void {
+      const control = <FormArray>question.controls.questionOptions;
+      control.push(this.initOption());
+   }
+
+   // remove option from the form group array at the given index
+   removeOption(question, j: number) {
+      const control = <FormArray>question.controls.questionOptions;
+      control.removeAt(j);
+   }
+
+   // checks the question type and returns boolean to display the options div
+   showOptionsDiv(question): boolean {
+      const questionType = <FormArray>question.controls.questionType.value;
+      let ret: boolean;
+      switch (questionType.toString()) {
+         case "select":
+            ret = true;
+            break;
+         case "checkbox":
+            ret = true;
+            break;
+         case "radio":
+            ret = true;
+            break;
+         case "text":
+            ret = false;
+            break;
+         default:
+            ret = true;
+      }
+      return ret;
+   }
 
    // Used to update the formgroup from a given survey id
    updateSurveyFormData(survey_id) {
@@ -152,72 +231,8 @@ export class EditComponent implements OnInit {
       return ops;
    }
 
-   // create a new blank question
-   initQuestion() {
-      return this._fb.group({
-         questionText: new FormControl(''),
-         questionType: new FormControl(''),
-         questionOptions: this._fb.array([
-            this.initOption(),
-         ])
-      });
-   }
-
-   // create a new blank option
-   initOption() {
-      return this._fb.group({
-         option: new FormControl('')
-      })
-   }
-
-   // add question to the form group array at the given index
-   addQuestion(idx: number) {
-      const control = <FormArray>this.survey.controls['questions'];
-      control.insert(idx + 1, this.initQuestion());
-   }
-
-   // remove question from the form group array at the given index
-   removeQuestion(idx: number) {
-      const control = <FormArray>this.survey.controls['questions'];
-      control.removeAt(idx);
-   }
-
-   // add option to the form group array at the given index
-   addOption(question): void {
-      const control = <FormArray>question.controls.questionOptions;
-      control.push(this.initOption());
-   }
-
-   // remove option from the form group array at the given index
-   removeOption(question, j: number) {
-      const control = <FormArray>question.controls.questionOptions;
-      control.removeAt(j);
-   }
-
-   // checks the question type and returns boolean to display the options div
-   showOptionsDiv(question): boolean {
-      const questionType = <FormArray>question.controls.questionType.value;
-      let ret: boolean;
-      switch (questionType.toString()) {
-         case "dropdown":
-            ret = true;
-            break;
-         case "checkboxes":
-            ret = true;
-            break;
-         case "mc":
-            ret = true;
-            break;
-         case "text":
-            ret = false;
-            break;
-         default:
-            ret = true;
-      }
-      return ret;
-   }
-
    save(formData) {
       console.log(formData.value);
    }
+   
 } 

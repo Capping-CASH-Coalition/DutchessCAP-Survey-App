@@ -38,7 +38,7 @@
                   <legend class="text-center header">{{ survey.survey_name }}</legend>
   
                   <div class="text-center header2">
-                    <h3> {{ question.question_id }}. {{ question.question_text}} </h3>
+                    <h3> {{ j+1 }}. {{ question.question_text}} </h3>
                   </div>
 
                   <div [ngSwitch]="question.question_type">

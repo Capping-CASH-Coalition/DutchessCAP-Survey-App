@@ -17,10 +17,6 @@ import { SurveyInfo } from 'app/models/surveyInfo.model';
 })
 
 export class SurveyComponent implements OnInit, DoCheck {
-  // Declare the imports to be used within the component
-  constructor(public surveyService: SurveyService,
-              public auth: AuthenticationService,
-              private changeref: ChangeDetectorRef) { }
 
   /* 
       Variables for the Survey Component
@@ -47,6 +43,11 @@ export class SurveyComponent implements OnInit, DoCheck {
     itemsPerPage: 1,
     currentPage: 1
   };
+
+  // Declare the imports to be used within the component
+  constructor(public surveyService: SurveyService,
+              public auth: AuthenticationService,
+              private changeref: ChangeDetectorRef) { }
 
   /*
       Survey Landing/Home page functions

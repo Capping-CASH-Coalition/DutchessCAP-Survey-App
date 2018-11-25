@@ -1,5 +1,8 @@
 # Ignore Mac DS_Store files
 **/.DS_Store
 
+# Ignore .vs files from Windows
+**/.vs
+
 #Ignore Node Modules
 #**/node_modules

@@ -201,8 +201,7 @@ var EditComponent = (function () {
         var _this = this;
         this.newSurveyForm();
         this.surveyService.getSurveys().subscribe(function (response) {
-            // Get 1 survey at a time and push into surveys array
-            for (var i = 0; i < response.length; i++) {
+            var _loop_1 = function (i) {
                 var survey = {
                     "survey_id": response[i].survey_id,
                     "survey_name": response[i].survey_name,
@@ -210,8 +209,53 @@ var EditComponent = (function () {
                     "survey_is_active": response[i].survey_is_active
                 };
                 _this.surveys.push(survey);
+                // Get the survey questions by selectedSurveyId
+                _this.surveyService.getSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
+                    // Initialize the questions
+                    _this.surveys[i].questions = [];
+                    // Iterate through the questions and push them one at a time
+                    for (var j = 0; j < response.length; j++) {
+                        var question = {
+                            "question_id": response[j].question_id,
+                            "question_text": response[j].question_text,
+                            "question_type": response[j].question_type,
+                            "question_is_active": response[j].question_is_active,
+                            options: []
+                        };
+                        _this.surveys[i].questions.push(question);
+                    }
+                    // Get the survey options based on the selectedSurveyId
+                    _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
+                        for (var k = 0; k < _this.surveys[i].questions.length; k++) {
+                            for (var l = 0; l < response.length; l++) {
+                                var option = {
+                                    "option_id": response[l].option_id,
+                                    "option_text": response[l].option_text,
+                                    "option_is_active": response[l].option_is_active,
+                                    "question_id": response[l].question_id
+                                };
+                                // If the question IDs match, push the option into the questions[j].options array
+                                if (_this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                    _this.surveys[i].questions[k].options.push(option);
+                                }
+                            }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        _this.changeref.detectChanges();
+                    }, function (error) {
+                        console.log('error is ', error);
+                    });
+                    // Manually detect changes as the page will load faster than the async call
+                    _this.changeref.detectChanges();
+                }, function (error) {
+                    console.log('error is ', error);
+                });
                 // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
+            };
+            // Get 1 survey at a time and push into surveys array
+            for (var i = 0; i < response.length; i++) {
+                _loop_1(i);
             }
         }, function (error) {
             console.log('error is ', error);
@@ -237,7 +281,7 @@ var EditComponent = (function () {
         var currSurvey;
         this.nameReadOnly = true;
         // loop through the surveys and set the current one to the one that mathches the id
-        this.globals.surveys.forEach(function (s) {
+        this.surveys.forEach(function (s) {
             currSurvey = s.survey_id == survey_id ? s : currSurvey;
         });
         // populate the survey form with proper data
@@ -253,7 +297,7 @@ var EditComponent = (function () {
         var _this = this;
         var control = this.survey.controls['questions'];
         questions.forEach(function (q) {
-            if (q.question_active) {
+            if (q.question_is_active) {
                 control.push(_this._fb.group({
                     questionText: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_text),
                     questionType: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_type),
@@ -1036,7 +1080,7 @@ var SurveyComponent = (function () {
     // On component initialization, get the survey ids, names, and date created
     SurveyComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.surveyService.getSurveys().subscribe(function (response) {
+        this.surveyService.getActiveSurveys().subscribe(function (response) {
             // Get 1 survey at a time and push into surveys array
             for (var i = 0; i < response.length; i++) {
                 var survey = {
@@ -3284,7 +3328,14 @@ var SurveyService = (function () {
     function SurveyService(http) {
         this.http = http;
     }
+    /*
+      Get functions
+    */
     // Function that will call the index.js route to get all active surveys
+    SurveyService.prototype.getActiveSurveys = function () {
+        return this.http.get('http://localhost:3000/api/activeSurveys');
+    };
+    // Function that will call the index.js route to get all surveys
     SurveyService.prototype.getSurveys = function () {
         return this.http.get('http://localhost:3000/api/surveys');
     };
@@ -3300,22 +3351,8 @@ var SurveyService = (function () {
     SurveyService.prototype.getSurveyResponses = function (survey_id) {
         return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
     };
-    // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
-    SurveyService.prototype.postSurveyResponse = function (response) {
-        return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
-    };
-    // Function that will call the index.js route to update a questions give the specific updates
-    SurveyService.prototype.updateSurveyQuestions = function (updates) {
-        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
-    };
-    SurveyService.prototype.postSurveyID = function (survey_name) {
-        return this.http.post('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
-    };
     SurveyService.prototype.getSurveyID = function () {
         return this.http.get('http://localhost:3000/api/getSurveyID');
-    };
-    SurveyService.prototype.postQuestionID = function (question) {
-        return this.http.post('http://localhost:3000/api/postQuestionID', question, httpOptions);
     };
     SurveyService.prototype.getQuestionLength = function () {
         return this.http.get('http://localhost:3000/api/getQuestionLength');
@@ -3326,14 +3363,34 @@ var SurveyService = (function () {
     SurveyService.prototype.getSurveyLength = function () {
         return this.http.get('http://localhost:3000/api/getSurveyLength');
     };
-    SurveyService.prototype.postOptionID = function (option) {
-        return this.http.post('http://localhost:3000/api/postOptionID', option, httpOptions);
-    };
     SurveyService.prototype.getOptionID = function () {
         return this.http.get('http://localhost:3000/api/getOptionID');
     };
+    /*
+      Post functions
+    */
+    // Function that will call the index.js to post an individual survey response to a survey given a specific survey_id as a parameter
+    SurveyService.prototype.postSurveyResponse = function (response) {
+        return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+    };
+    SurveyService.prototype.postSurveyID = function (survey_name) {
+        return this.http.post('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
+    };
+    SurveyService.prototype.postQuestionID = function (question) {
+        return this.http.post('http://localhost:3000/api/postQuestionID', question, httpOptions);
+    };
+    SurveyService.prototype.postOptionID = function (option) {
+        return this.http.post('http://localhost:3000/api/postOptionID', option, httpOptions);
+    };
     SurveyService.prototype.postArchitectures = function (surveyComponent) {
         return this.http.post('http://localhost:3000/api/postArchitectures', surveyComponent, httpOptions);
+    };
+    /*
+      Put/Update functions
+    */
+    // Function that will call the index.js route to update a questions given the specific updates
+    SurveyService.prototype.updateSurveyQuestions = function (updates) {
+        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
     };
     SurveyService.prototype.updateSurveyQuestion = function (question) {
         return this.http.put('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);

@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Globals } from "../../globals" 
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
+import { Question } from '../../models/question.model';
+import { Option } from '../../models/option.model';
 
 @Component({
    selector: 'app-edit',
@@ -31,68 +33,64 @@ export class EditComponent implements OnInit {
       this.surveyService.getSurveys().subscribe((response) => {
             // Get 1 survey at a time and push into surveys array
             for (let i = 0; i < response.length; i++) {
-              let survey: SurveyInfo = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created,
-                    "survey_is_active": response[i].survey_is_active
-              };
-    
-              this.surveys.push(survey);
-              // Manually detect changes as the page will load faster than the async call
-              this.changeref.detectChanges();
-            }
-
-            // Get the survey questions by selectedSurveyId
-            this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
-                  // Initialize the questions
-                  this.surveys[this.selectedSurveyIndex].questions = [];
-                  // Iterate through the questions and push them one at a time
-                  for (let i = 0; i < response.length; i++) {
-                  let question: Question = {
-                        "question_id": response[i].question_id,
-                        "question_text": response[i].question_text,
-                        "question_type": response[i].question_type,
-                        "question_is_active": response[i].question_is_active,
-                        options: []
+                  let survey: SurveyInfo = {
+                        "survey_id": response[i].survey_id,
+                        "survey_name": response[i].survey_name,
+                        "date_created": response[i].date_created,
+                        "survey_is_active": response[i].survey_is_active
                   };
-                  this.surveys[this.selectedSurveyIndex].questions.push(question);
-                  this.changeref.detectChanges();
-                  }
-                  // Manually detect changes as the page will load faster than the async call
-                  this.changeref.detectChanges();
-                  
-                  // Get the survey options based on the selectedSurveyId
-                  this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-
-                  for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
-                  for (let k = 0; k < response.length; k++) {
-                        let option: Option = {
-                              "option_id": response[k].option_id,
-                              "option_text": response[k].option_text,
-                              "option_is_active": response[k].option_is_active,
-                              "question_id": response[k].question_id
-                        };
-                        // If the question IDs match, push the option into the questions[j].options array
-                        if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
-                        this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
+    
+                  this.surveys.push(survey);
+                  // Get the survey questions by selectedSurveyId
+                  this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+                        // Initialize the questions
+                        this.surveys[i].questions = [];
+                        // Iterate through the questions and push them one at a time
+                        for (let j = 0; j < response.length; j++) {
+                              let question: Question = {
+                                    "question_id": response[j].question_id,
+                                    "question_text": response[j].question_text,
+                                    "question_type": response[j].question_type,
+                                    "question_is_active": response[j].question_is_active,
+                                    options: []
+                              };
+                              this.surveys[i].questions.push(question);
                         }
-                  }
-                  this.changeref.detectChanges();
-                  }
+                        
+                        // Get the survey options based on the selectedSurveyId
+                        this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
+
+                              for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                                    for (let l = 0; l < response.length; l++) {
+                                          let option: Option = {
+                                                "option_id": response[l].option_id,
+                                                "option_text": response[l].option_text,
+                                                "option_is_active": response[l].option_is_active,
+                                                "question_id": response[l].question_id
+                                          };
+                                          // If the question IDs match, push the option into the questions[j].options array
+                                          if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                                this.surveys[i].questions[k].options.push(option);
+                                          }
+                                    }
+                              }
+                              // Manually detect changes as the page will load faster than the async call
+                              this.changeref.detectChanges();
+                        }, (error) => {
+                              console.log('error is ', error)
+                        }) 
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                  },(error) => {
+                        console.log('error is ', error)
+                  })
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
-                  }, (error) => {
-                  console.log('error is ', error)
-                  }) 
-            },(error) => {
-                  console.log('error is ', error)
-            })
+            } 
       }, (error) => {
           console.log('error is ', error)
       })
 
-      
    }
    
    // sets the survey name to readonly based on the edit global
@@ -117,7 +115,7 @@ export class EditComponent implements OnInit {
       let currSurvey;
       this.nameReadOnly = true;
       // loop through the surveys and set the current one to the one that mathches the id
-      this.globals.surveys.forEach(s => {
+      this.surveys.forEach(s => {
          currSurvey = s.survey_id == survey_id ? s : currSurvey;
       });
       // populate the survey form with proper data
@@ -133,7 +131,7 @@ export class EditComponent implements OnInit {
    patchFormQuestions(questions: any[]) {
       const control = <FormArray>this.survey.controls['questions'];
       questions.forEach(q => {
-         if (q.question_active) {
+         if (q.question_is_active) {
             control.push(this._fb.group({
                questionText: new FormControl(q.question_text),
                questionType: new FormControl(q.question_type),

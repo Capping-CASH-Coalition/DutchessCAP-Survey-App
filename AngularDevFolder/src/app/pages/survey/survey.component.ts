@@ -27,8 +27,13 @@ export class SurveyComponent implements OnInit, DoCheck {
       Variables for the Survey Component
   */
 
+<<<<<<< HEAD
   // Shows the survey div when true
   showSurveyDiv: boolean = false;
+=======
+  // Shows the landing introduction when true
+  showLanding: boolean = true;
+>>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
   // Holds the dynamic survey variables for display
   surveys: Array<any> = [];
   // Survey variables set by surveySelect()
@@ -196,12 +201,18 @@ export class SurveyComponent implements OnInit, DoCheck {
       // Iterate through the options that were selected
       for (let i = 0; i < this.checkboxChoices.length; i++) {
         // Initialize response to prevent duplication
-        response = { 
+          response = { 
           survey_id: 0,
           question_id: 0,
           option_id: 0,
+<<<<<<< HEAD
           response_text: "",
           survey_hash: this.currentUser
+=======
+           response_text: "",
+           survey_hash: this.currentUser
+
+>>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
         };
 
         response.survey_id = this.selectedSurveyId; // Survey ID
@@ -303,8 +314,32 @@ export class SurveyComponent implements OnInit, DoCheck {
     // Unique hash UUID generated for each user
     this.surveyService.postSurveyResponse(this.surveyData).subscribe();
     // For each response in surveyData, post the surveyData[index] response object
+<<<<<<< HEAD
 //    for (let i = 0; i < this.surveyData.length; i++) {
 //      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe();
 //    } 
+=======
+    for (let i = 0; i < this.surveyData.length; i++) {
+      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe((response)=>{
+        let responses = [];
+        //console.log('response is ', response);
+        for (let i = 0; i < response.length; i++) {
+           
+          let choice: Response = {
+                "question_id": response[i].question_id,
+                "survey_id": response[i].survey_id,
+                "option_id": response[i].option_id,
+                "response_text": response[i].response_text,
+                "survey_hash": response[i].survey_hash
+          };
+          responses.push(choice);
+          console.log(responses);
+        }
+        
+      },(error) => {
+          console.log('error is ', error)
+      })
+    } 
+>>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
   }
 }

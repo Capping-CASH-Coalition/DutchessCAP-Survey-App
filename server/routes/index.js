@@ -230,7 +230,7 @@ router.post('/api/postSurveyResponse', (req, res) => {
             
             let query;
 
-            for (let i=0; i < results.length; i++) {
+            for (let i = 0; i < results.length; i++) {
                 let result = results[i];
                 console.log("result dataz = " + result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash);
                 // Created query that inserts an individual response into the responses table 
@@ -242,6 +242,7 @@ router.post('/api/postSurveyResponse', (req, res) => {
                 done();
                 console.log("query closed");
             });
+
         });
     
 });

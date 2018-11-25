@@ -4,7 +4,8 @@ var router = express.Router();
 const pg = require('pg');
 const path = require('path');
 // This string is what allows index.js to connect to the database. It is the name of the server://nameOfOwnerOfDatabase:password@host:portNumber/nameOfDatabase
-const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
+//const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
 // Change postgres url to full server. current url is for local on Gary's
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
@@ -91,7 +92,7 @@ router.get('/api/surveyResponses/:survey_id', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that gets all responses for a specified survey_id
-        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses.option_id, responses.response_text, responses.date_taken FROM responses, architectures, surveys WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY response_id ASC', [survey_id]);
+        const query = client.query('SELECT DISTINCT responses.response_id, responses.survey_id, responses.question_id, responses.option_id, responses.response_text, responses.date_taken, responses.survey_hash FROM responses, architectures, surveys WHERE responses.survey_id = architectures.survey_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY response_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -214,27 +215,35 @@ router.get('/api/getOptionLength', (req, res, next) => {
     });
 });
 
-// Route that posts a response to a survey
-router.post('/api/postSurveyResponse', (req, res, next) => {
+router.post('/api/postSurveyResponse', (req, res) => {
     //Array to hold results from query
-    const results = [];
-    // Created array that will hold the data to be passed to the sql function
-    const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id, response_text: req.body.response_text };
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // Created query that inserts an individual response into the responses table 
-        const query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text) VALUES ($1, $2, $3, $4)', [data.survey_id, data.question_id, data.option_id, data.response_text]);
-         // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
+    const results = req.body;
+
+        // Get a Postgres client from the connection pool
+        pg.connect(connectionString, (err, client, done) => {
+            // Handle connection errors
+            if (err) {
+                done();
+                console.log(err);
+                return res.status(500).json({ success: false, data: err });
+            }
+            
+            let query;
+
+            for (let i=0; i < results.length; i++) {
+                let result = results[i];
+                console.log("result dataz = " + result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash);
+                // Created query that inserts an individual response into the responses table 
+                query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash]);
+            }
+
+            // After all data is returned, close connection and return results
+            query.on('end', () => {
+                done();
+                console.log("query closed");
+            });
         });
-    });
+    
 });
 
 router.put('/api/updateSurveyQuestion', (req, res, next) => {

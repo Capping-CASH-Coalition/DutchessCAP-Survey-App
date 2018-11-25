@@ -1,5 +1,5 @@
 <!-- Survey Landing/Home page -->
-<div class="container2" *ngIf="!isLanding" style="margin: 0 auto">
+<div class="container2" style="margin: 0 auto"  *ngIf="!showSurveyDiv">
     <div class="row">
         <div class="col-md-7" id="bucket" >
             <div class="well well-sm">
@@ -9,7 +9,7 @@
                 <form class="form-horizontal" method="post" #start="ngForm" validate>
 
                     <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
-                        <option disabled selected>-Please Select an Option-</option>
+                        <option disabled selected>-Please Select a Survey-</option>
                         <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
                     </select>
                     
@@ -25,7 +25,7 @@
 </div>
 
 <!-- Actual survey with questions -->
-<div class="container">
+<div class="container" *ngIf="showSurveyDiv">
     <button
     *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
     <div class="row">

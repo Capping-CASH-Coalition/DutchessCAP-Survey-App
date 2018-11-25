@@ -38,7 +38,7 @@ export class SurveyService {
   
   // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
   postSurveyResponse(response) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', JSON.stringify(response), httpOptions);
+    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
   // Function that will call the index.js route to update a questions give the specific updates

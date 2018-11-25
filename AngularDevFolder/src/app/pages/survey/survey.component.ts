@@ -27,19 +27,21 @@ export class SurveyComponent implements OnInit, DoCheck {
       Variables for the Survey Component
   */
 
+  // Shows the survey div when true
+  showSurveyDiv: boolean = false;
+  // Holds the dynamic survey variables for display
+  surveys: Array<any> = [];
   // Survey variables set by surveySelect()
   selectedSurveyId: number;
   selectedSurveyIndex: number;
-  // Shows the landing introduction when true
-  showLanding: boolean = true;
-  // Holds the dynamic survey variables for display
-  surveys: Array<any> = [];
   // Option_id that is set by optionSelect()
   selectedOption: number;
   // Fills when multiple choices are selected by updateResponses()
   checkboxChoices: Array<any> = [];
   // Pushes/pops when user selects next or previous
   surveyData: Array<any> = [];
+  // Unique user hash
+  currentUser: string;
   // Pagination element uses this
   public config: PaginationInstance = {
     id: 'custom',
@@ -72,7 +74,6 @@ export class SurveyComponent implements OnInit, DoCheck {
           };
 
           this.surveys.push(survey);
-          console.log(this.surveys);
           // Manually detect changes as the page will load faster than the async call
           this.changeref.detectChanges();
         }
@@ -89,14 +90,27 @@ export class SurveyComponent implements OnInit, DoCheck {
         this.selectedSurveyIndex = i;
       }
     }
-    console.log(this.selectedSurveyId);
+  }
+
+  generateUUID(): string {
+    var d = new Date().getTime();
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+        d += performance.now(); //use high-precision timer if available
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
   }
 
   // When the user clicks start, get the survey questions and options based on the survey id
   onStart(): void {
-    console.log("showLanding before start: " + this.showLanding);
-    this.showLanding = false;
-    console.log("showLanding after start: " + this.showLanding);
+    // set survey div to true to be displayed
+    this.showSurveyDiv = true;
+    // Generate unique user hash
+    this.currentUser = this.generateUUID();
+    // Get the survey questions by selectedSurveyId
     this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
       // Initialize the questions
       this.surveys[this.selectedSurveyIndex].questions = [];
@@ -127,11 +141,8 @@ export class SurveyComponent implements OnInit, DoCheck {
                   "question_id": response[k].question_id
             };
             // If the question IDs match, push the option into the questions[j].options array
-            //console.log("Questions[j].qid: " + this.surveys[this.selectedSurveyIndex].questions[j].question_id);
             if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
               this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
-              console.log("Options after push: " + this.surveys[this.selectedSurveyIndex].questions[j].options[0]);
-              console.log("Options after push: " + this.surveys[this.selectedSurveyIndex].questions[j].options[0].option_text);
             }
           }
           this.changeref.detectChanges();
@@ -157,7 +168,8 @@ export class SurveyComponent implements OnInit, DoCheck {
           survey_id: 0,
           question_id: 0,
           option_id: 0,
-          response_text: ""
+          response_text: "",
+          survey_hash: this.currentUser
     };
     
     // If question type is select or multiple choice, only need to add 1 response
@@ -168,7 +180,8 @@ export class SurveyComponent implements OnInit, DoCheck {
             survey_id: 0,
             question_id: 0,
             option_id: 0,
-            response_text: ""
+            response_text: "",
+            survey_hash: this.currentUser
           };
 
           response.survey_id = this.selectedSurveyId; // Survey ID
@@ -187,7 +200,8 @@ export class SurveyComponent implements OnInit, DoCheck {
           survey_id: 0,
           question_id: 0,
           option_id: 0,
-          response_text: ""
+          response_text: "",
+          survey_hash: this.currentUser
         };
 
         response.survey_id = this.selectedSurveyId; // Survey ID
@@ -198,6 +212,8 @@ export class SurveyComponent implements OnInit, DoCheck {
         // Push to survey data array
         this.surveyData.push(response);
       }
+      // Initialize checkboxChoices
+      this.checkboxChoices = [];
     // If question type is text (open-ended), set option id to 1
     } else if (this.surveys[this.selectedSurveyIndex].questions[questionIndex].question_type == "text") {
       // Initialize response to prevent duplication
@@ -205,7 +221,8 @@ export class SurveyComponent implements OnInit, DoCheck {
         survey_id: 0,
         question_id: 0,
         option_id: 0,
-        response_text: ""
+        response_text: "",
+        survey_hash: this.currentUser
       };
 
       response.survey_id = this.selectedSurveyId; // Survey ID
@@ -222,7 +239,7 @@ export class SurveyComponent implements OnInit, DoCheck {
   // This is called to find the selected options within the HTML
   optionSelect(event, value, questionType): void {
     // If question type is select or multiple choice, there is only 1 selected value
-    if (questionType == "select") {
+    if (questionType == "select" || questionType == "radio") {
       this.selectedOption = value;
     // If question type is checkbox, there is 1+ options
     } else if (questionType == "checkbox") {
@@ -283,26 +300,11 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
+    // Unique hash UUID generated for each user
+    this.surveyService.postSurveyResponse(this.surveyData).subscribe();
     // For each response in surveyData, post the surveyData[index] response object
-    for (let i = 0; i < this.surveyData.length; i++) {
-      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe((response)=>{
-        let responses = [];
-        //console.log('response is ', response);
-        for (let i = 0; i < response.length; i++) {
-           
-          let choice: Response = {
-                "question_id": response[i].question_id,
-                "survey_id": response[i].survey_id,
-                "option_id": response[i].option_id,
-                "response_text": response[i].response_text
-          };
-          responses.push(choice);
-          console.log(responses);
-        }
-        
-      },(error) => {
-          console.log('error is ', error)
-      })
-    } 
+//    for (let i = 0; i < this.surveyData.length; i++) {
+//      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe();
+//    } 
   }
 }

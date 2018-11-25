@@ -10,7 +10,7 @@
                <div class="col">
                   <select class="form-control pull-left" id="surveySelect" (change)="updateSurveyFormData($event.target.value)">
                     <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
-                    <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
+                    <option *ngFor="let s of surveys" [value]="s.survey_id">
                       {{ s.survey_name }}
                     </option>
                   </select>

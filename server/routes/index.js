@@ -9,10 +9,9 @@ const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle
 // Change postgres url to full server. current url is for local on Gary's
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
-// Get Survey information functions
-
-
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
+/* 
+    Get functions
+*/
 
 // Get Homepage
 router.get('/', (req, res, next) => {
@@ -105,8 +104,34 @@ router.get('/api/surveyResponses/:survey_id', (req, res, next) => {
     });
 });
 
-// Route that gets all active surveys 
+// Route that gets all surveys 
 router.get('/api/surveys', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // Created query that gets all active surveys
+        const query = client.query('SELECT * FROM surveys');
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
+        });
+    });
+});
+
+// Route that gets all active surveys 
+router.get('/api/activeSurveys', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Get a Postgres client from the connection pool
@@ -215,6 +240,10 @@ router.get('/api/getOptionLength', (req, res, next) => {
     });
 });
 
+/* 
+    Post functions
+*/
+
 router.post('/api/postSurveyResponse', (req, res) => {
     //Array to hold results from query
     const results = req.body;
@@ -245,64 +274,6 @@ router.post('/api/postSurveyResponse', (req, res) => {
 
         });
     
-});
-
-router.put('/api/updateSurveyQuestion', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-    // Created array that will hold the data to be passed to the sql function
-    const data = { question_id: req.body.question_id, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type };
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // Created query that will update a specific question in the questions table given a question_id
-        const query = client.query('UPDATE questions set question_text = ($2), question_is_active = ($3), question_type = ($4) WHERE question_id = ($1)', [data.question_id, data.question_text, data.question_is_active, data.question_type]);
-
-
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
-});
-
-router.put('/api/updateSurveyOption', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-    // Created array that will hold the data to be passed to the sql function
-    const data = { option_id: req.body.option_id, option_is_active: req.body.question_is_active };
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // // Created query that will update a specific option in the questions table given a option_id
-        const query = client.query('UPDATE options set option_is_active = ($2), WHERE option_id = ($1)', [data.option_id, data.option_is_active]);
-
-
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
 });
 
 //Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
@@ -382,7 +353,7 @@ router.post('/api/postOptionID', (req, res, next) => {
 });
 
 // Route that will assign a survey a question and that question an option
-router.post('/api/postArchitecutres', (req, res, next) => {
+router.post('/api/postArchitectures', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id }
@@ -401,6 +372,68 @@ router.post('/api/postArchitecutres', (req, res, next) => {
         // After all data is returned, close connection and return results
         query.on('end', () => {
             done();
+        });
+    });
+});
+
+/* 
+    Put/Update functions
+*/
+
+router.put('/api/updateSurveyQuestion', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    // Created array that will hold the data to be passed to the sql function
+    const data = { question_id: req.body.question_id, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type };
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // Created query that will update a specific question in the questions table given a question_id
+        const query = client.query('UPDATE questions set question_text = ($2), question_is_active = ($3), question_type = ($4) WHERE question_id = ($1)', [data.question_id, data.question_text, data.question_is_active, data.question_type]);
+
+
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
+        });
+    });
+});
+
+router.put('/api/updateSurveyOption', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    // Created array that will hold the data to be passed to the sql function
+    const data = { option_id: req.body.option_id, option_is_active: req.body.question_is_active };
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // // Created query that will update a specific option in the questions table given a option_id
+        const query = client.query('UPDATE options set option_is_active = ($2), WHERE option_id = ($1)', [data.option_id, data.option_is_active]);
+
+
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
         });
     });
 });

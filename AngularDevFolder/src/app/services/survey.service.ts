@@ -16,7 +16,16 @@ export class SurveyService {
   // Instantiates the HttpClient class
   constructor(private http: HttpClient) { }
 
+  /* 
+    Get functions
+  */
+
   // Function that will call the index.js route to get all active surveys
+  getActiveSurveys() {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveys');
+  }
+
+  // Function that will call the index.js route to get all surveys
   getSurveys() {
     return this.http.get<any>('http://localhost:3000/api/surveys');
   }
@@ -35,27 +44,9 @@ export class SurveyService {
   getSurveyResponses(survey_id) {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
   }
-  
-  // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
-  postSurveyResponse(response) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
-  }
 
-  // Function that will call the index.js route to update a questions give the specific updates
-  updateSurveyQuestions(updates) {
-    return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
-  }
-  
-  postSurveyID(survey_name) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
-  }
-  
   getSurveyID() {
     return this.http.get<any>('http://localhost:3000/api/getSurveyID');
-  }
-  
-  postQuestionID(question) {
-    return this.http.post<any>('http://localhost:3000/api/postQuestionID', question, httpOptions);
   }
   
   getQuestionLength() {
@@ -69,17 +60,43 @@ export class SurveyService {
   getSurveyLength() {
     return this.http.get<any>('http://localhost:3000/api/getSurveyLength');
   }
-  
-  postOptionID(option) {
-    return this.http.post<any>('http://localhost:3000/api/postOptionID', option, httpOptions);
-  }
 
   getOptionID() {
     return this.http.get<any>('http://localhost:3000/api/getOptionID');
   }
 
+  /* 
+    Post functions
+  */
+  
+  // Function that will call the index.js to post an individual survey response to a survey given a specific survey_id as a parameter
+  postSurveyResponse(response) {
+    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+  }
+
+  postSurveyID(survey_name) {
+    return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
+  }
+
+  postQuestionID(question) {
+    return this.http.post<any>('http://localhost:3000/api/postQuestionID', question, httpOptions);
+  }
+
+  postOptionID(option) {
+    return this.http.post<any>('http://localhost:3000/api/postOptionID', option, httpOptions);
+  }
+
   postArchitectures(surveyComponent) {
     return this.http.post<any>('http://localhost:3000/api/postArchitectures', surveyComponent, httpOptions);
+  }
+
+  /* 
+    Put/Update functions
+  */
+
+  // Function that will call the index.js route to update a questions given the specific updates
+  updateSurveyQuestions(updates) {
+    return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
   }
 
   updateSurveyQuestion(question) {
@@ -89,4 +106,5 @@ export class SurveyService {
   updateSurveyOption(option) {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
   }
+
 }

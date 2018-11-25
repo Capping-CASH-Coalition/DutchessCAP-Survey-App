@@ -1,28 +1,98 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Globals } from "../../globals" 
+import { SurveyService } from 'app/services/survey.service';
+import { SurveyInfo } from '../../models/surveyInfo.model';
 
 @Component({
    selector: 'app-edit',
    templateUrl: './edit.component.html',
-   styleUrls: ['./edit.component.css']
+   styleUrls: ['./edit.component.css'],
+   providers: [SurveyService]
 })
 
 export class EditComponent implements OnInit {
 
    // declare the survey form group holding all the values for the form
    survey: FormGroup;
+   // Holds the dynamic survey variables for display
+   surveys: Array<any> = [];
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
 
-   constructor(
-      private _fb: FormBuilder,
-      public globals: Globals
-   ) { };
+   constructor(private _fb: FormBuilder,
+               public globals: Globals,
+               public surveyService: SurveyService,
+               private changeref: ChangeDetectorRef) { }
 
    // initilaize a new blank survey form
    ngOnInit() {
       this.newSurveyForm();
+      this.surveyService.getSurveys().subscribe((response) => {
+            // Get 1 survey at a time and push into surveys array
+            for (let i = 0; i < response.length; i++) {
+              let survey: SurveyInfo = {
+                    "survey_id": response[i].survey_id,
+                    "survey_name": response[i].survey_name,
+                    "date_created": response[i].date_created,
+                    "survey_is_active": response[i].survey_is_active
+              };
+    
+              this.surveys.push(survey);
+              // Manually detect changes as the page will load faster than the async call
+              this.changeref.detectChanges();
+            }
+
+            // Get the survey questions by selectedSurveyId
+            this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
+                  // Initialize the questions
+                  this.surveys[this.selectedSurveyIndex].questions = [];
+                  // Iterate through the questions and push them one at a time
+                  for (let i = 0; i < response.length; i++) {
+                  let question: Question = {
+                        "question_id": response[i].question_id,
+                        "question_text": response[i].question_text,
+                        "question_type": response[i].question_type,
+                        "question_is_active": response[i].question_is_active,
+                        options: []
+                  };
+                  this.surveys[this.selectedSurveyIndex].questions.push(question);
+                  this.changeref.detectChanges();
+                  }
+                  // Manually detect changes as the page will load faster than the async call
+                  this.changeref.detectChanges();
+                  
+                  // Get the survey options based on the selectedSurveyId
+                  this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
+
+                  for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
+                  for (let k = 0; k < response.length; k++) {
+                        let option: Option = {
+                              "option_id": response[k].option_id,
+                              "option_text": response[k].option_text,
+                              "option_is_active": response[k].option_is_active,
+                              "question_id": response[k].question_id
+                        };
+                        // If the question IDs match, push the option into the questions[j].options array
+                        if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+                        this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
+                        }
+                  }
+                  this.changeref.detectChanges();
+                  }
+                  // Manually detect changes as the page will load faster than the async call
+                  this.changeref.detectChanges();
+                  }, (error) => {
+                  console.log('error is ', error)
+                  }) 
+            },(error) => {
+                  console.log('error is ', error)
+            })
+      }, (error) => {
+          console.log('error is ', error)
+      })
+
+      
    }
    
    // sets the survey name to readonly based on the edit global
@@ -33,10 +103,10 @@ export class EditComponent implements OnInit {
    // sets the survey form to a blank survey
    newSurveyForm() {
       this.survey = this._fb.group({
-         surveyName: new FormControl(''),
-         questions: this._fb.array([
-            this.initQuestion(),
-         ])
+            surveyName: new FormControl(''),
+            questions: this._fb.array([
+                  this.initQuestion(),
+            ])
       });
       this.nameReadOnly = false;
       jQuery("#surveySelect").val(-1);

@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, DoCheck, OnInit, ChangeDetectorRef 
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
-import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Response } from '../../models/response.model';
 import { Option } from '../../models/option.model';
@@ -63,7 +62,7 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
-    this.surveyService.getSurveys().subscribe((response) => {
+    this.surveyService.getActiveSurveys().subscribe((response) => {
         // Get 1 survey at a time and push into surveys array
         for (let i = 0; i < response.length; i++) {
           let survey: SurveyInfo = {
@@ -79,7 +78,7 @@ export class SurveyComponent implements OnInit, DoCheck {
         }
     }, (error) => {
       console.log('error is ', error)
-      })
+    })
   }
 
   // When a user clicks a survey in the dropdown, save the selectedSurveyId
@@ -303,5 +302,5 @@ export class SurveyComponent implements OnInit, DoCheck {
     // Post the surveyData array to the API
     this.surveyService.postSurveyResponse(this.surveyData).subscribe();
   }
-  
+
 }

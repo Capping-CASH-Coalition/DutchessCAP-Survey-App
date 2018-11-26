@@ -412,25 +412,22 @@ var EditComponent = (function () {
                                 "question_text": formData.questions[i].question_text,
                                 "question_type": formData.questions[i].question_type
                             };
-                            _this.surveyService.postQuestion(formData.questions[i]).subscribe();
+                            _this.surveyService.postQuestion(question).subscribe();
                             for (var j = 0; j < formData.questions[i].options.length; j++) {
                                 optionId++;
                                 var option = {
-                                    "option_text": formData.questions[i].options[j].option,
+                                    "option_text": formData.questions[i].options[j].option_text,
                                     "question_id": questionId
                                 };
                                 _this.surveyService.wait(50);
-                                _this.surveyService.postOption(formData.questions[i].options[j]).subscribe();
+                                _this.surveyService.postOption(option).subscribe();
                                 var architecture = {
                                     "survey_id": surveyId,
                                     "question_id": questionId,
                                     "option_id": optionId
                                 };
                                 _this.surveyService.wait(50);
-                                _this.surveyService.postArchitecture(architecture).subscribe(function (response) {
-                                }, function (error) {
-                                    console.log('error is ', error);
-                                });
+                                _this.surveyService.postArchitecture(architecture).subscribe();
                             }
                         }
                     }, function (error) {

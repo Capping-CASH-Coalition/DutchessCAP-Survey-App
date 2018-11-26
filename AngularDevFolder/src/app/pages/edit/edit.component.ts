@@ -258,23 +258,20 @@ export class EditComponent implements OnInit {
                               "question_text": formData.questions[i].question_text, 
                               "question_type": formData.questions[i].question_type 
                             };
-                        this.surveyService.postQuestion(formData.questions[i]).subscribe();
+                        this.surveyService.postQuestion(question).subscribe();
                         for (let j = 0; j < formData.questions[i].options.length; j++) {
                           optionId++;
                           let option = { 
-                                "option_text": formData.questions[i].options[j].option, 
+                                "option_text": formData.questions[i].options[j].option_text, 
                                 "question_id": questionId }
                           this.surveyService.wait(50);
-                          this.surveyService.postOption(formData.questions[i].options[j]).subscribe();
+                          this.surveyService.postOption(option).subscribe();
                           let architecture = { 
                                 "survey_id": surveyId, 
                                 "question_id": questionId, 
                                 "option_id": optionId };
                           this.surveyService.wait(50);
-                          this.surveyService.postArchitecture(architecture).subscribe((response) => {
-                          }, (error) => {
-                            console.log('error is ', error)
-                          })
+                          this.surveyService.postArchitecture(architecture).subscribe();
                         }
                       }
                     }, (error) => {

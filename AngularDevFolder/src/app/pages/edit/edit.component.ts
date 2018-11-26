@@ -242,49 +242,52 @@ export class EditComponent implements OnInit {
       // Check if its a new survey
       console.log(surveyIndex);
       if (surveyIndex == -1) {
-            this.surveyService.getLastQuestionId().subscribe((response) => {
-                  questionId = response[0];
-                  this.surveyService.getLastOptionId().subscribe((value) => {
-                    optionId = value[0];
-                    this.surveyService.getLastSurveyId().subscribe((data) => {
-                      surveyId = data[0] + 1;
-                      let surveyName = { "survey_name": formData.survey_name };
-                      this.surveyService.postSurvey(surveyName).subscribe();
-                      this.surveyService.wait(50);
-                      for (let i = 0; i < formData.questions.length; i++) {
-                        questionId++;
-                        this.surveyService.wait(50);
-                        let question = { 
-                              "question_text": formData.questions[i].question_text, 
-                              "question_type": formData.questions[i].question_type 
-                            };
-                        this.surveyService.postQuestion(question).subscribe();
-                        for (let j = 0; j < formData.questions[i].options.length; j++) {
-                          optionId++;
-                          let option = { 
-                                "option_text": formData.questions[i].options[j].option_text, 
-                                "question_id": questionId }
-                          this.surveyService.wait(50);
-                          this.surveyService.postOption(option).subscribe();
-                          let architecture = { 
-                                "survey_id": surveyId, 
-                                "question_id": questionId, 
-                                "option_id": optionId };
-                          this.surveyService.wait(50);
-                          this.surveyService.postArchitecture(architecture).subscribe();
-                        }
-                      }
-                    }, (error) => {
-                      console.log('error is ', error)
-                    })
-                  }, (error) => {
-                    console.log('error is ', error)
-                  })
-                }, (error) => {
-                  console.log('error is ', error)
-                })
+            let surveyName = { "survey_name": formData.survey_name };
+            this.surveyService.postSurvey(surveyName).subscribe();
+            this.surveyService.wait(50);
+            for (let i = 0; i < formData.questions.length; i++) {
+                  this.surveyService.wait(50);
+                  let question = { 
+                        "question_text": formData.questions[i].question_text, 
+                        "question_type": formData.questions[i].question_type 
+                  };
+                  this.surveyService.postQuestion(question).subscribe();
+                  for (let j = 0; j < formData.questions[i].options.length; j++) {
+                        this.surveyService.getLastQuestionId().subscribe((response) => {
+                              questionId = response[0];
+                              let option = { 
+                                    "option_text": formData.questions[i].options[j].option_text, 
+                                    "question_id": questionId 
+                              };
+                              this.surveyService.wait(50);
+                              this.surveyService.postOption(option).subscribe();
+                              this.surveyService.getLastOptionId().subscribe((value) => {
+                                    optionId = value[0];
+                                    this.surveyService.getLastSurveyId().subscribe((data) => {
+                                          surveyId = data[0];
+                                          let architecture = { 
+                                                "survey_id": surveyId, 
+                                                "question_id": questionId, 
+                                                "option_id": optionId 
+                                          };
+                                          this.surveyService.wait(50);
+                                          this.surveyService.postArchitecture(architecture).subscribe();
+                                    }, (error) => {
+                                          console.log('error is ', error)
+                                    })
+                              }, (error) => {
+                                    console.log('error is ', error)
+                              })
+                        }, (error) => {
+                              console.log('error is ', error)
+                        })
+                        optionId++;
+                        
+                        
+      
+                  }
+            }
       }
-
       console.log(formData);
    }
 

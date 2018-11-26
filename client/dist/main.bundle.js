@@ -396,31 +396,29 @@ var EditComponent = (function () {
         // Check if its a new survey
         console.log(surveyIndex);
         if (surveyIndex == -1) {
-            this.surveyService.getLastQuestionId().subscribe(function (response) {
-                questionId = response[0];
-                _this.surveyService.getLastOptionId().subscribe(function (value) {
-                    optionId = value[0];
-                    _this.surveyService.getLastSurveyId().subscribe(function (data) {
-                        surveyId = data[0] + 1;
-                        var surveyName = { "survey_name": formData.survey_name };
-                        _this.surveyService.postSurvey(surveyName).subscribe();
+            var surveyName = { "survey_name": formData.survey_name };
+            this.surveyService.postSurvey(surveyName).subscribe();
+            this.surveyService.wait(50);
+            var _loop_2 = function (i) {
+                this_1.surveyService.wait(50);
+                var question = {
+                    "question_text": formData.questions[i].question_text,
+                    "question_type": formData.questions[i].question_type
+                };
+                this_1.surveyService.postQuestion(question).subscribe();
+                var _loop_3 = function (j) {
+                    this_1.surveyService.getLastQuestionId().subscribe(function (response) {
+                        questionId = response[0];
+                        var option = {
+                            "option_text": formData.questions[i].options[j].option_text,
+                            "question_id": questionId
+                        };
                         _this.surveyService.wait(50);
-                        for (var i = 0; i < formData.questions.length; i++) {
-                            questionId++;
-                            _this.surveyService.wait(50);
-                            var question = {
-                                "question_text": formData.questions[i].question_text,
-                                "question_type": formData.questions[i].question_type
-                            };
-                            _this.surveyService.postQuestion(question).subscribe();
-                            for (var j = 0; j < formData.questions[i].options.length; j++) {
-                                optionId++;
-                                var option = {
-                                    "option_text": formData.questions[i].options[j].option_text,
-                                    "question_id": questionId
-                                };
-                                _this.surveyService.wait(50);
-                                _this.surveyService.postOption(option).subscribe();
+                        _this.surveyService.postOption(option).subscribe();
+                        _this.surveyService.getLastOptionId().subscribe(function (value) {
+                            optionId = value[0];
+                            _this.surveyService.getLastSurveyId().subscribe(function (data) {
+                                surveyId = data[0];
                                 var architecture = {
                                     "survey_id": surveyId,
                                     "question_id": questionId,
@@ -428,17 +426,25 @@ var EditComponent = (function () {
                                 };
                                 _this.surveyService.wait(50);
                                 _this.surveyService.postArchitecture(architecture).subscribe();
-                            }
-                        }
+                            }, function (error) {
+                                console.log('error is ', error);
+                            });
+                        }, function (error) {
+                            console.log('error is ', error);
+                        });
                     }, function (error) {
                         console.log('error is ', error);
                     });
-                }, function (error) {
-                    console.log('error is ', error);
-                });
-            }, function (error) {
-                console.log('error is ', error);
-            });
+                    optionId++;
+                };
+                for (var j = 0; j < formData.questions[i].options.length; j++) {
+                    _loop_3(j);
+                }
+            };
+            var this_1 = this;
+            for (var i = 0; i < formData.questions.length; i++) {
+                _loop_2(i);
+            }
         }
         console.log(formData);
     };

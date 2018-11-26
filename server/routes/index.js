@@ -245,34 +245,52 @@ router.post('/api/postSurveyResponse', (req, res) => {
     //Array to hold results from query
     const results = req.body;
 
-        // Get a Postgres client from the connection pool
-        pg.connect(connectionString, (err, client, done) => {
-            // Handle connection errors
-            if (err) {
-                done();
-                console.log(err);
-                return res.status(500).json({ success: false, data: err });
-            }
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
             
-            let query;
+        let query;
+        for (let i = 0; i < results.length; i++) {
+            let result = results[i];
+            // Created query that inserts an individual response into the responses table 
+            query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash]);
+        }
 
-            for (let i = 0; i < results.length; i++) {
-                let result = results[i];
-                console.log("result dataz = " + result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash);
-                // Created query that inserts an individual response into the responses table 
-                query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash]);
-            }
-
-            // After all data is returned, close connection and return results
-            query.on('end', () => {
-                done();
-                console.log("query closed");
-            });
-
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
         });
-    
+    });
 });
+/*
+// Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
+router.post('/api/postSurvey', (req, res, next) => {
+    // Created array that will hold the data to be passed to the sql function
+    const results = req.body;
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        let query;
+        // Created query that will insert a survey_name into the surveys table.
+        query = client.query('INSERT INTO surveys (survey_name) VALUES ($1)', [data.survey_name]);
 
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+        });
+    });
+});
+*/
 // Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
 router.post('/api/postSurvey', (req, res, next) => {
     //Array to hold results from query
@@ -297,6 +315,7 @@ router.post('/api/postSurvey', (req, res, next) => {
         });
     });
 });
+
 
 
 // Route that will post a question given a question_text & question_type. The question_id and question_is_active will be automatically given by the database

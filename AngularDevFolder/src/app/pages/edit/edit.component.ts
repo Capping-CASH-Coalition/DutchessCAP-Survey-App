@@ -14,12 +14,14 @@ import { Option } from '../../models/option.model';
 
 export class EditComponent implements OnInit {
 
+   /*
+      Edit Variables
+   */
+
    // declare the survey form group holding all the values for the form
    survey: FormGroup;
    // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
-   // Temporary editable survey variable
-   editedSurvey: Object;
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
 
@@ -101,35 +103,22 @@ export class EditComponent implements OnInit {
    // sets the survey form to a blank survey
    newSurveyForm() {
       this.survey = this._fb.group({
-            surveyName: new FormControl(''),
+            survey_id: new FormControl(''),
+            survey_name: new FormControl(''),
             questions: this._fb.array([
                   this.initQuestion(),
             ])
       });
       this.nameReadOnly = false;
       jQuery("#surveySelect").val(-1);
-      // Initialize the new survey
-      this.editedSurvey = {
-            "survey_name": "",
-            "questions": [{
-                  "question_id": 0,
-                  "question_text": "",
-                  "question_type": "",
-                  options: [{
-                        "option_id": 0,
-                        "option_text": "",
-                        "question_id": 0
-                  }]
-            }]
-      }
    }
 
    // create a new blank question
    initQuestion() {
       return this._fb.group({
-         questionText: new FormControl(''),
-         questionType: new FormControl(''),
-         questionOptions: this._fb.array([
+         question_text: new FormControl(''),
+         question_type: new FormControl(''),
+         options: this._fb.array([
             this.initOption(),
          ])
       });
@@ -138,14 +127,22 @@ export class EditComponent implements OnInit {
    // create a new blank option
    initOption() {
       return this._fb.group({
-         option: new FormControl('')
+         option_text: new FormControl('')
       })
    }
 
-      // add question to the form group array at the given index
+   // add question to the form group array at the given index
    addQuestion(idx: number) {
       const control = <FormArray>this.survey.controls['questions'];
       control.insert(idx + 1, this.initQuestion());
+      // Initialize a new question
+      let newQuestion = {
+            "question_text": "",
+            "question_type": "",
+            options: [{
+                  "option_text": "",
+            }]
+      };
    }
 
    // remove question from the form group array at the given index
@@ -155,20 +152,24 @@ export class EditComponent implements OnInit {
    }
 
    // add option to the form group array at the given index
-   addOption(question): void {
-      const control = <FormArray>question.controls.questionOptions;
+   addOption(question, questionIndex: number): void {
+      const control = <FormArray>question.controls.options;
       control.push(this.initOption());
+      // Initialize a new option
+      let newOption = {
+            "option_text": ""
+      };
    }
 
    // remove option from the form group array at the given index
-   removeOption(question, j: number) {
-      const control = <FormArray>question.controls.questionOptions;
-      control.removeAt(j);
+   removeOption(question, optionIndex: number, questionIndex: number) {
+      const control = <FormArray>question.controls.options;
+      control.removeAt(optionIndex);
    }
 
    // checks the question type and returns boolean to display the options div
    showOptionsDiv(question): boolean {
-      const questionType = <FormArray>question.controls.questionType.value;
+      const questionType = <FormArray>question.controls.question_type.value;
       let ret: boolean;
       switch (questionType.toString()) {
          case "select":
@@ -199,7 +200,8 @@ export class EditComponent implements OnInit {
       });
       // populate the survey form with proper data
       this.survey = this._fb.group({
-         surveyName: new FormControl(currSurvey.survey_name),
+         survey_id: new FormControl(currSurvey.survey_id),
+         survey_name: new FormControl(currSurvey.survey_name),
          questions: this._fb.array([])
       });
       // patch the questions nested array value with the new questions
@@ -212,9 +214,9 @@ export class EditComponent implements OnInit {
       questions.forEach(q => {
          if (q.question_is_active) {
             control.push(this._fb.group({
-               questionText: new FormControl(q.question_text),
-               questionType: new FormControl(q.question_type),
-               questionOptions: this.patchFormOptions(q.options)
+               question_text: new FormControl(q.question_text),
+               question_type: new FormControl(q.question_type),
+               options: this.patchFormOptions(q.options)
             }));
          }
       });
@@ -225,14 +227,85 @@ export class EditComponent implements OnInit {
       let ops = new FormArray([]);
       options.forEach(o => {
          ops.push(this._fb.group({
-            option: new FormControl(o.option_text)
+            option_text: new FormControl(o.option_text)
          }));
       });
       return ops;
    }
 
    save(formData) {
-      console.log(formData.value);
+      // Get the survey index
+      let surveyIndex = this.getSurveyIndex(formData);
+      let questionId;
+      let optionId;
+      let surveyId;
+      // Check if its a new survey
+      console.log(surveyIndex);
+      if (surveyIndex == -1) {
+            this.surveyService.getLastQuestionId().subscribe((response) => {
+                  questionId = response[0];
+                  this.surveyService.getLastOptionId().subscribe((value) => {
+                    optionId = value[0];
+                    this.surveyService.getLastSurveyId().subscribe((data) => {
+                      surveyId = data[0] + 1;
+                      let surveyName = { "survey_name": formData.survey_name };
+                      this.surveyService.postSurvey(surveyName).subscribe();
+                      this.surveyService.wait(50);
+                      for (let i = 0; i < formData.questions.length; i++) {
+                        questionId++;
+                        this.surveyService.wait(50);
+                        let question = { 
+                              "question_text": formData.questions[i].question_text, 
+                              "question_type": formData.questions[i].question_type 
+                            };
+                        this.surveyService.postQuestion(formData.questions[i]).subscribe();
+                        for (let j = 0; j < formData.questions[i].options.length; j++) {
+                          optionId++;
+                          let option = { 
+                                "option_text": formData.questions[i].options[j].option, 
+                                "question_id": questionId }
+                          this.surveyService.wait(50);
+                          this.surveyService.postOption(formData.questions[i].options[j]).subscribe();
+                          let architecture = { 
+                                "survey_id": surveyId, 
+                                "question_id": questionId, 
+                                "option_id": optionId };
+                          this.surveyService.wait(50);
+                          this.surveyService.postArchitecture(architecture).subscribe((response) => {
+                          }, (error) => {
+                            console.log('error is ', error)
+                          })
+                        }
+                      }
+                    }, (error) => {
+                      console.log('error is ', error)
+                    })
+                  }, (error) => {
+                    console.log('error is ', error)
+                  })
+                }, (error) => {
+                  console.log('error is ', error)
+                })
+      }
+
+      console.log(formData);
    }
-   
+
+   // Returns the surveyIndex that matches the formData.survey_id
+   getSurveyIndex(formData) {
+      let index;
+      for (let i = 0; i < this.surveys.length; i++) {
+            console.log("formData.survey_id: " + formData.survey_id);
+            console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
+            if (formData.survey_id == this.surveys[i].survey_id) {
+                  index = i;
+            } else {
+                  index = -1;
+            }
+      }
+      console.log("Index: " + index);
+      return index;
+      
+   }
+
 } 

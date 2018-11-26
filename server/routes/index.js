@@ -157,10 +157,9 @@ router.get('/api/activeSurveys', (req, res, next) => {
 });
 
 // Route that gets the last question_id in the questions table
-router.get('/api/getQuestionLength', (req, res, next) => {
+router.get('/api/getLastQuestionId', (req, res, next) => {
     //Array to hold results from query
     const results = [];
-
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -185,10 +184,9 @@ router.get('/api/getQuestionLength', (req, res, next) => {
 });
 
 // Route that gets the last survey_id in the surveys table 
-router.get('/api/getSurveyLength', (req, res, next) => {
+router.get('/api/getLastSurveyId', (req, res, next) => {
     //Array to hold results from query
     const results = [];
-
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -213,10 +211,9 @@ router.get('/api/getSurveyLength', (req, res, next) => {
 });
 
 // Route that gets the last option_id in the options table
-router.get('/api/getOptionLength', (req, res, next) => {
+router.get('/api/getLastOptionId', (req, res, next) => {
     //Array to hold results from query
     const results = [];
-
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -276,8 +273,8 @@ router.post('/api/postSurveyResponse', (req, res) => {
     
 });
 
-//Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
-router.post('/api/postSurveyID', (req, res, next) => {
+// Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
+router.post('/api/postSurvey', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Created array that will hold the data to be passed to the sql function
@@ -302,8 +299,8 @@ router.post('/api/postSurveyID', (req, res, next) => {
 });
 
 
-//Route that will post a question given a question_text & question_type. The question_id and question_is_active will be automatically given by the database
-router.post('/api/postQuestionID', (req, res, next) => {
+// Route that will post a question given a question_text & question_type. The question_id and question_is_active will be automatically given by the database
+router.post('/api/postQuestion', (req, res, next) => {
     //Array to hold results from query
     const results = [];
 
@@ -328,7 +325,7 @@ router.post('/api/postQuestionID', (req, res, next) => {
 });
 
 //Route that will post an option given a option_text & question_id. The option_id and option_is_active will be automatically given by the database
-router.post('/api/postOptionID', (req, res, next) => {
+router.post('/api/postOption', (req, res, next) => {
     //Array to hold results from query
     const results = [];
 
@@ -353,7 +350,7 @@ router.post('/api/postOptionID', (req, res, next) => {
 });
 
 // Route that will assign a survey a question and that question an option
-router.post('/api/postArchitectures', (req, res, next) => {
+router.post('/api/postArchitecture', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id }

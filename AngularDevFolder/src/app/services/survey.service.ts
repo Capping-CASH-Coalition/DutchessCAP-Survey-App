@@ -45,24 +45,16 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
   }
 
-  getSurveyID() {
-    return this.http.get<any>('http://localhost:3000/api/getSurveyID');
+  getLastQuestionId() {
+    return this.http.get<any>('http://localhost:3000/api/getLastQuestionId');
   }
   
-  getQuestionLength() {
-    return this.http.get<any>('http://localhost:3000/api/getQuestionLength');
+  getLastOptionId() {
+    return this.http.get<any>('http://localhost:3000/api/getLastOptionId');
   }
   
-  getOptionLength() {
-    return this.http.get<any>('http://localhost:3000/api/getOptionLength');
-  }
-  
-  getSurveyLength() {
-    return this.http.get<any>('http://localhost:3000/api/getSurveyLength');
-  }
-
-  getOptionID() {
-    return this.http.get<any>('http://localhost:3000/api/getOptionID');
+  getLastSurveyId() {
+    return this.http.get<any>('http://localhost:3000/api/getLastSurveyId');
   }
 
   /* 
@@ -74,29 +66,33 @@ export class SurveyService {
     return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
-  postSurveyID(survey_name) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
+  postSurvey(survey_name) {
+    return this.http.post<any>('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
   }
 
-  postQuestionID(question) {
-    return this.http.post<any>('http://localhost:3000/api/postQuestionID', question, httpOptions);
+  postQuestion(question) {
+    return this.http.post<any>('http://localhost:3000/api/postQuestion', question, httpOptions);
   }
 
-  postOptionID(option) {
-    return this.http.post<any>('http://localhost:3000/api/postOptionID', option, httpOptions);
+  postOption(option) {
+    return this.http.post<any>('http://localhost:3000/api/postOption', option, httpOptions);
   }
 
-  postArchitectures(surveyComponent) {
-    return this.http.post<any>('http://localhost:3000/api/postArchitectures', surveyComponent, httpOptions);
+  postArchitecture(surveyComponent) {
+    return this.http.post<any>('http://localhost:3000/api/postArchitecture', surveyComponent, httpOptions);
   }
 
   /* 
     Put/Update functions
   */
 
+  updateSurveyName(survey_name) {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyName', survey_name);
+  }
+
   // Function that will call the index.js route to update a questions given the specific updates
   updateSurveyQuestions(updates) {
-    return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
   }
 
   updateSurveyQuestion(question) {
@@ -105,6 +101,14 @@ export class SurveyService {
 
   updateSurveyOption(option) {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
+  }
+
+  wait(ms): void {
+    var start = new Date().getTime();
+    var end = start;
+    while (end < start + ms) {
+      end = new Date().getTime();
+    }
   }
 
 }

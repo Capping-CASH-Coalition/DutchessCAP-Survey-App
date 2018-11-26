@@ -3,7 +3,12 @@
   <div id="page-wrapper" class="gray-bg">
     <topnavbar></topnavbar>
 
-    <div class="row wrapper border-bottom white-bg page-heading">
+    <!--
+    <pre>Form Value: <br>{{surveys[0].survey_name}}</pre>
+    <pre>Form Value: <br>{{surveys | json}}</pre>
+    -->
+
+    <div *ngIf="displayDiv" class="row wrapper border-bottom white-bg page-heading">
       <div class="row">
 
         <div class="col-lg-3"style="margin-bottom: 500px">
@@ -31,7 +36,7 @@
               <div class="filterBlock">
                 <label for="graphType">Select Survey</label>
                 <select class="form-control" formControlName="surveyId" required>
-                  <option *ngFor="let survey of globals.surveys" [value]="survey.survey_id">
+                  <option *ngFor="let survey of surveys" [value]="survey.survey_id">
                     {{survey.survey_name}}
                   </option>
                 </select>
@@ -40,7 +45,7 @@
               <div class="filterBlock">
                 <label for="graphType">Select Question</label>
                 <select class="form-control" formControlName="questionId" (change)="updateChart()" required>
-                  <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
+                  <option *ngFor="let question of surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion"
                     [value]="question.question_id">
                     {{question.question_text}}
                   </option>
@@ -51,7 +56,7 @@
                 <div class="filterBlock">
                   <label for="graphType">Select Sub Question</label>
                   <select class="form-control" formControlName="subQuestionId" required (change)="updateChart()">
-                    <option *ngFor="let question of globals.surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion"
+                    <option *ngFor="let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion"
                       [value]="question.question_id">
                       {{question.question_text}}
                     </option>

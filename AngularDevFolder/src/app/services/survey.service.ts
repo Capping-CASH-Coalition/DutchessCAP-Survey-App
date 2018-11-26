@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { HttpHeaders } from '@angular/common/http'
+import { Observable} from 'rxjs/Observable';
+import { catchError, retry } from 'rxjs/operators';
+import { HttpHeaders, HttpResponse, HttpClient, HttpErrorResponse } from '@angular/common/http'
+import { SurveyInfo } from 'app/models/surveyInfo.model';
+import { Response } from '../models/response.model'
 
 // Http specifc header that is needed to post data to the database
 const httpOptions = {
@@ -16,77 +18,116 @@ export class SurveyService {
   // Instantiates the HttpClient class
   constructor(private http: HttpClient) { }
 
+  /* 
+    Get functions
+  */
+
   // Function that will call the index.js route to get all active surveys
-  getSurveys() {
-    return this.http.get<any>('http://localhost:3000/api/surveys');
+  getActiveSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveys', { observe: 'response'});
+  }
+
+  // Function that will call the index.js route to get all surveys
+  getSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveys', { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
-  getSurveyQuestions(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id);
+  getSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all options given a specific survey_id as a parameter
-  getSurveyOptions(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id);
+  getSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
-  getSurveyResponses(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
-  }
-  
-  // Function that will call the index.js post an individual survey response to a survey given a specific survey_id as a parameter
-  postSurveyResponse(response) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+  getSurveyResponses(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
   }
 
-  // Function that will call the index.js route to update a questions give the specific updates
-  updateSurveyQuestions(updates) {
-    return this.http.post<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
+  getLastQuestionId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastQuestionId', { observe: 'response'});
   }
   
-  postSurveyID(survey_name) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
+  getLastOptionId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastOptionId', { observe: 'response'});
   }
   
-  getSurveyID() {
-    return this.http.get<any>('http://localhost:3000/api/getSurveyID');
-  }
-  
-  postQuestionID(question) {
-    return this.http.post<any>('http://localhost:3000/api/postQuestionID', question, httpOptions);
-  }
-  
-  getQuestionLength() {
-    return this.http.get<any>('http://localhost:3000/api/getQuestionLength');
-  }
-  
-  getOptionLength() {
-    return this.http.get<any>('http://localhost:3000/api/getOptionLength');
-  }
-  
-  getSurveyLength() {
-    return this.http.get<any>('http://localhost:3000/api/getSurveyLength');
-  }
-  
-  postOptionID(option) {
-    return this.http.post<any>('http://localhost:3000/api/postOptionID', option, httpOptions);
+  getLastSurveyId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastSurveyId', { observe: 'response'});
   }
 
-  getOptionID() {
-    return this.http.get<any>('http://localhost:3000/api/getOptionID');
+  /* 
+    Post functions
+  */
+  
+  // Function that will call the index.js to post an individual survey response to a survey given a specific survey_id as a parameter
+  postSurveyResponse(response): Observable<Response> {
+    return this.http.post<Response>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
-  postArchitectures(surveyComponent) {
-    return this.http.post<any>('http://localhost:3000/api/postArchitectures', surveyComponent, httpOptions);
+  postSurvey(survey_name): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
   }
 
-  updateSurveyQuestion(question) {
+  postQuestion(question): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postQuestion', question, httpOptions);
+  }
+
+  postOption(option): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postOption', option, httpOptions);
+  }
+
+  postArchitecture(surveyComponent): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postArchitecture', surveyComponent, httpOptions);
+  }
+
+  /* 
+    Put/Update functions
+  */
+
+  updateSurveyName(survey_name): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyName', survey_name);
+  }
+
+  // Function that will call the index.js route to update a questions given the specific updates
+  updateSurveyQuestions(updates): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
+  }
+
+  updateSurveyQuestion(question): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);
   }
 
-  updateSurveyOption(option) {
+  updateSurveyOption(option): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
   }
+
+  wait(s): void {
+   let ms = s * 1000;
+    var start = new Date().getTime();
+    var end = start;
+    while (end < start + ms) {
+      end = new Date().getTime();
+    }
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // return an observable with a user-facing error message
+    //return throwError(
+      //'Something bad happened; please try again later.');
+  };
+
 }

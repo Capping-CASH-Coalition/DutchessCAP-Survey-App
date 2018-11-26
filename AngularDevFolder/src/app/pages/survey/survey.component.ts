@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, DoCheck, OnInit, ChangeDetectorRef 
 import { PaginationInstance } from 'ngx-pagination';
 import { SurveyService } from '../../services/survey.service';
 import { AuthenticationService } from '../../services/authentication.service';
-import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Response } from '../../models/response.model';
 import { Option } from '../../models/option.model';
@@ -18,10 +17,6 @@ import { SurveyInfo } from 'app/models/surveyInfo.model';
 })
 
 export class SurveyComponent implements OnInit, DoCheck {
-  // Declare the imports to be used within the component
-  constructor(public surveyService: SurveyService,
-              public auth: AuthenticationService,
-              private changeref: ChangeDetectorRef) { }
 
   /* 
       Variables for the Survey Component
@@ -49,6 +44,11 @@ export class SurveyComponent implements OnInit, DoCheck {
     currentPage: 1
   };
 
+  // Declare the imports to be used within the component
+  constructor(public surveyService: SurveyService,
+              public auth: AuthenticationService,
+              private changeref: ChangeDetectorRef) { }
+
   /*
       Survey Landing/Home page functions
   */
@@ -63,23 +63,21 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
-    this.surveyService.getSurveys().subscribe((response) => {
+    this.surveyService.getActiveSurveys().subscribe(response => {
         // Get 1 survey at a time and push into surveys array
-        for (let i = 0; i < response.length; i++) {
+        for (let i = 0; i < response.body.length; i++) {
           let survey: SurveyInfo = {
-                "survey_id": response[i].survey_id,
-                "survey_name": response[i].survey_name,
-                "date_created": response[i].date_created,
-                "survey_is_active": response[i].survey_is_active
+                "survey_id": response.body[i].survey_id,
+                "survey_name": response.body[i].survey_name,
+                "date_created": response.body[i].date_created,
+                "survey_is_active": response.body[i].survey_is_active
           };
-
           this.surveys.push(survey);
-          // Manually detect changes as the page will load faster than the async call
-          this.changeref.detectChanges();
         }
+        this.changeref.detectChanges();
     }, (error) => {
       console.log('error is ', error)
-      })
+    })
   }
 
   // When a user clicks a survey in the dropdown, save the selectedSurveyId
@@ -111,43 +109,38 @@ export class SurveyComponent implements OnInit, DoCheck {
     // Generate unique user hash
     this.currentUser = this.generateUUID();
     // Get the survey questions by selectedSurveyId
-    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
+    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(response => {
       // Initialize the questions
       this.surveys[this.selectedSurveyIndex].questions = [];
       // Iterate through the questions and push them one at a time
-      for (let i = 0; i < response.length; i++) {
+      for (let i = 0; i < response.body.length; i++) {
         let question: Question = {
-              "question_id": response[i].question_id,
-              "question_text": response[i].question_text,
-              "question_type": response[i].question_type,
-              "question_is_active": response[i].question_is_active,
+              "question_id": response.body[i].question_id,
+              "question_text": response.body[i].question_text,
+              "question_type": response.body[i].question_type,
+              "question_is_active": response.body[i].question_is_active,
               options: []
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
-        this.changeref.detectChanges();
       }
-      // Manually detect changes as the page will load faster than the async call
       this.changeref.detectChanges();
       
       // Get the survey options based on the selectedSurveyId
-      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-
+      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe(response => {
         for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
-          for (let k = 0; k < response.length; k++) {
+          for (let k = 0; k < response.body.length; k++) {
             let option: Option = {
-                  "option_id": response[k].option_id,
-                  "option_text": response[k].option_text,
-                  "option_is_active": response[k].option_is_active,
-                  "question_id": response[k].question_id
+                  "option_id": response.body[k].option_id,
+                  "option_text": response.body[k].option_text,
+                  "option_is_active": response.body[k].option_is_active,
+                  "question_id": response.body[k].question_id
             };
             // If the question IDs match, push the option into the questions[j].options array
-            if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+            if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
               this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
             }
           }
-          this.changeref.detectChanges();
         }
-        // Manually detect changes as the page will load faster than the async call
         this.changeref.detectChanges();
       }, (error) => {
         console.log('error is ', error)
@@ -200,14 +193,8 @@ export class SurveyComponent implements OnInit, DoCheck {
           survey_id: 0,
           question_id: 0,
           option_id: 0,
-<<<<<<< HEAD
           response_text: "",
           survey_hash: this.currentUser
-=======
-           response_text: "",
-           survey_hash: this.currentUser
-
->>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
         };
 
         response.survey_id = this.selectedSurveyId; // Survey ID
@@ -306,35 +293,8 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // When submit button is hit, this will post the survey data to the database
   postOnSubmit() {
-    // Unique hash UUID generated for each user
+    // Post the surveyData array to the API
     this.surveyService.postSurveyResponse(this.surveyData).subscribe();
-    // For each response in surveyData, post the surveyData[index] response object
-<<<<<<< HEAD
-//    for (let i = 0; i < this.surveyData.length; i++) {
-//      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe();
-//    } 
-=======
-    for (let i = 0; i < this.surveyData.length; i++) {
-      this.surveyService.postSurveyResponse(this.surveyData[i]).subscribe((response)=>{
-        let responses = [];
-        //console.log('response is ', response);
-        for (let i = 0; i < response.length; i++) {
-           
-          let choice: Response = {
-                "question_id": response[i].question_id,
-                "survey_id": response[i].survey_id,
-                "option_id": response[i].option_id,
-                "response_text": response[i].response_text,
-                "survey_hash": response[i].survey_hash
-          };
-          responses.push(choice);
-          console.log(responses);
-        }
-        
-      },(error) => {
-          console.log('error is ', error)
-      })
-    } 
->>>>>>> 5a34e62ada4e62d56c2820c3989c8a5c96c7c038
   }
+
 }

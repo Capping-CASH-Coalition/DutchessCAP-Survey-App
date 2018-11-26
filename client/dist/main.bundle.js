@@ -1,6 +1,6 @@
 webpackJsonp([1,5],{
 
-/***/ 108:
+/***/ 107:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -170,7 +170,7 @@ GraphService = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(77);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EditComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -200,10 +200,10 @@ var EditComponent = (function () {
         this.surveyService.getSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created,
-                    "survey_is_active": response[i].survey_is_active
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    "survey_is_active": response.body[i].survey_is_active
                 };
                 _this.surveys.push(survey);
                 // Get the survey questions by selectedSurveyId
@@ -211,12 +211,12 @@ var EditComponent = (function () {
                     // Initialize the questions
                     _this.surveys[i].questions = [];
                     // Iterate through the questions and push them one at a time
-                    for (var j = 0; j < response.length; j++) {
+                    for (var j = 0; j < response.body.length; j++) {
                         var question = {
-                            "question_id": response[j].question_id,
-                            "question_text": response[j].question_text,
-                            "question_type": response[j].question_type,
-                            "question_is_active": response[j].question_is_active,
+                            "question_id": response.body[j].question_id,
+                            "question_text": response.body[j].question_text,
+                            "question_type": response.body[j].question_type,
+                            "question_is_active": response.body[j].question_is_active,
                             options: []
                         };
                         _this.surveys[i].questions.push(question);
@@ -224,12 +224,12 @@ var EditComponent = (function () {
                     // Get the survey options based on the selectedSurveyId
                     _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
                         for (var k = 0; k < _this.surveys[i].questions.length; k++) {
-                            for (var l = 0; l < response.length; l++) {
+                            for (var l = 0; l < response.body.length; l++) {
                                 var option = {
-                                    "option_id": response[l].option_id,
-                                    "option_text": response[l].option_text,
-                                    "option_is_active": response[l].option_is_active,
-                                    "question_id": response[l].question_id
+                                    "option_id": response.body[l].option_id,
+                                    "option_text": response.body[l].option_text,
+                                    "option_is_active": response.body[l].option_is_active,
+                                    "question_id": response.body[l].question_id
                                 };
                                 // If the question IDs match, push the option into the questions[j].options array
                                 if (_this.surveys[i].questions[k].question_id == response[l].question_id) {
@@ -237,21 +237,15 @@ var EditComponent = (function () {
                                 }
                             }
                         }
-                        // Manually detect changes as the page will load faster than the async call
-                        _this.changeref.detectChanges();
                     }, function (error) {
                         console.log('error is ', error);
                     });
-                    // Manually detect changes as the page will load faster than the async call
-                    _this.changeref.detectChanges();
                 }, function (error) {
                     console.log('error is ', error);
                 });
-                // Manually detect changes as the page will load faster than the async call
-                _this.changeref.detectChanges();
             };
             // Get 1 survey at a time and push into surveys array
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 _loop_1(i);
             }
         }, function (error) {
@@ -617,8 +611,8 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__globals__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphsComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -864,7 +858,7 @@ var _a, _b, _c;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1168,17 +1162,16 @@ var SurveyComponent = (function () {
         var _this = this;
         this.surveyService.getActiveSurveys().subscribe(function (response) {
             // Get 1 survey at a time and push into surveys array
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 var survey = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created,
-                    "survey_is_active": response[i].survey_is_active
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    "survey_is_active": response.body[i].survey_is_active
                 };
                 _this.surveys.push(survey);
-                // Manually detect changes as the page will load faster than the async call
-                _this.changeref.detectChanges();
             }
+            _this.changeref.detectChanges();
         }, function (error) {
             console.log('error is ', error);
         });
@@ -1215,37 +1208,33 @@ var SurveyComponent = (function () {
             // Initialize the questions
             _this.surveys[_this.selectedSurveyIndex].questions = [];
             // Iterate through the questions and push them one at a time
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 var question = {
-                    "question_id": response[i].question_id,
-                    "question_text": response[i].question_text,
-                    "question_type": response[i].question_type,
-                    "question_is_active": response[i].question_is_active,
+                    "question_id": response.body[i].question_id,
+                    "question_text": response.body[i].question_text,
+                    "question_type": response.body[i].question_type,
+                    "question_is_active": response.body[i].question_is_active,
                     options: []
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
-                _this.changeref.detectChanges();
             }
-            // Manually detect changes as the page will load faster than the async call
             _this.changeref.detectChanges();
             // Get the survey options based on the selectedSurveyId
             _this.surveyService.getSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
                 for (var j = 0; j < _this.surveys[_this.selectedSurveyIndex].questions.length; j++) {
-                    for (var k = 0; k < response.length; k++) {
+                    for (var k = 0; k < response.body.length; k++) {
                         var option = {
-                            "option_id": response[k].option_id,
-                            "option_text": response[k].option_text,
-                            "option_is_active": response[k].option_is_active,
-                            "question_id": response[k].question_id
+                            "option_id": response.body[k].option_id,
+                            "option_text": response.body[k].option_text,
+                            "option_is_active": response.body[k].option_is_active,
+                            "question_id": response.body[k].question_id
                         };
                         // If the question IDs match, push the option into the questions[j].options array
-                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
                             _this.surveys[_this.selectedSurveyIndex].questions[j].options.push(option);
                         }
                     }
-                    _this.changeref.detectChanges();
                 }
-                // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
             }, function (error) {
                 console.log('error is ', error);
@@ -1695,10 +1684,10 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(618);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__(400);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_topnavbar_topnavbar_component__ = __webpack_require__(405);
@@ -1711,7 +1700,7 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_exportRaw_exportRaw_component__ = __webpack_require__(171);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_not_found_not_found_component__ = __webpack_require__(175);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__services_survey_service__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_authentication_service__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_auth_guard_service__ = __webpack_require__(415);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_keys_pipe__ = __webpack_require__(414);
@@ -3055,7 +3044,7 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(168);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3066,7 +3055,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 // Http specifc header that is needed to post data to the database
@@ -3085,32 +3073,32 @@ var SurveyService = (function () {
     */
     // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {
-        return this.http.get('http://localhost:3000/api/activeSurveys');
+        return this.http.get('http://localhost:3000/api/activeSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all surveys
     SurveyService.prototype.getSurveys = function () {
-        return this.http.get('http://localhost:3000/api/surveys');
+        return this.http.get('http://localhost:3000/api/surveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyQuestions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all options given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyOptions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyResponses = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response' });
     };
     SurveyService.prototype.getLastQuestionId = function () {
-        return this.http.get('http://localhost:3000/api/getLastQuestionId');
+        return this.http.get('http://localhost:3000/api/getLastQuestionId', { observe: 'response' });
     };
     SurveyService.prototype.getLastOptionId = function () {
-        return this.http.get('http://localhost:3000/api/getLastOptionId');
+        return this.http.get('http://localhost:3000/api/getLastOptionId', { observe: 'response' });
     };
     SurveyService.prototype.getLastSurveyId = function () {
-        return this.http.get('http://localhost:3000/api/getLastSurveyId');
+        return this.http.get('http://localhost:3000/api/getLastSurveyId', { observe: 'response' });
     };
     /*
       Post functions

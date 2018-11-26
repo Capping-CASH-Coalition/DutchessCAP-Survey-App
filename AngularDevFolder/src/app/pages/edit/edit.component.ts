@@ -32,43 +32,43 @@ export class EditComponent implements OnInit {
    // initilaize a new blank survey form
    ngOnInit() {
       this.newSurveyForm();
-      this.surveyService.getSurveys().subscribe((response) => {
+      this.surveyService.getSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
-            for (let i = 0; i < response.length; i++) {
+            for (let i = 0; i < response.body.length; i++) {
                   let survey: SurveyInfo = {
-                        "survey_id": response[i].survey_id,
-                        "survey_name": response[i].survey_name,
-                        "date_created": response[i].date_created,
-                        "survey_is_active": response[i].survey_is_active
+                        "survey_id": response.body[i].survey_id,
+                        "survey_name": response.body[i].survey_name,
+                        "date_created": response.body[i].date_created,
+                        "survey_is_active": response.body[i].survey_is_active
                   };
     
                   this.surveys.push(survey);
                   // Get the survey questions by selectedSurveyId
-                  this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+                  this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
                         // Initialize the questions
                         this.surveys[i].questions = [];
                         // Iterate through the questions and push them one at a time
-                        for (let j = 0; j < response.length; j++) {
+                        for (let j = 0; j < response.body.length; j++) {
                               let question: Question = {
-                                    "question_id": response[j].question_id,
-                                    "question_text": response[j].question_text,
-                                    "question_type": response[j].question_type,
-                                    "question_is_active": response[j].question_is_active,
+                                    "question_id": response.body[j].question_id,
+                                    "question_text": response.body[j].question_text,
+                                    "question_type": response.body[j].question_type,
+                                    "question_is_active": response.body[j].question_is_active,
                                     options: []
                               };
                               this.surveys[i].questions.push(question);
                         }
                         
                         // Get the survey options based on the selectedSurveyId
-                        this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
+                        this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
 
                               for (let k = 0; k < this.surveys[i].questions.length; k++) {
-                                    for (let l = 0; l < response.length; l++) {
+                                    for (let l = 0; l < response.body.length; l++) {
                                           let option: Option = {
-                                                "option_id": response[l].option_id,
-                                                "option_text": response[l].option_text,
-                                                "option_is_active": response[l].option_is_active,
-                                                "question_id": response[l].question_id
+                                                "option_id": response.body[l].option_id,
+                                                "option_text": response.body[l].option_text,
+                                                "option_is_active": response.body[l].option_is_active,
+                                                "question_id": response.body[l].question_id
                                           };
                                           // If the question IDs match, push the option into the questions[j].options array
                                           if (this.surveys[i].questions[k].question_id == response[l].question_id) {
@@ -76,18 +76,12 @@ export class EditComponent implements OnInit {
                                           }
                                     }
                               }
-                              // Manually detect changes as the page will load faster than the async call
-                              this.changeref.detectChanges();
                         }, (error) => {
                               console.log('error is ', error)
                         }) 
-                        // Manually detect changes as the page will load faster than the async call
-                        this.changeref.detectChanges();
                   },(error) => {
                         console.log('error is ', error)
                   })
-                  // Manually detect changes as the page will load faster than the async call
-                  this.changeref.detectChanges();
             } 
       }, (error) => {
           console.log('error is ', error)
@@ -305,7 +299,6 @@ export class EditComponent implements OnInit {
       }
       console.log("Index: " + index);
       return index;
-      
    }
 
 } 

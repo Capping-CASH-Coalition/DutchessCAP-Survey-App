@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { HttpHeaders } from '@angular/common/http'
+import { Observable} from 'rxjs/Observable';
+import { catchError, retry } from 'rxjs/operators';
+import { HttpHeaders, HttpResponse, HttpClient, HttpErrorResponse } from '@angular/common/http'
+import { SurveyInfo } from 'app/models/surveyInfo.model';
+import { Response } from '../models/response.model'
 
 // Http specifc header that is needed to post data to the database
 const httpOptions = {
@@ -21,40 +23,40 @@ export class SurveyService {
   */
 
   // Function that will call the index.js route to get all active surveys
-  getActiveSurveys() {
-    return this.http.get<any>('http://localhost:3000/api/activeSurveys');
+  getActiveSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveys', { observe: 'response'});
   }
 
   // Function that will call the index.js route to get all surveys
-  getSurveys() {
-    return this.http.get<any>('http://localhost:3000/api/surveys');
+  getSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveys', { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
-  getSurveyQuestions(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id);
+  getSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all options given a specific survey_id as a parameter
-  getSurveyOptions(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id);
+  getSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
-  getSurveyResponses(survey_id) {
-    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id);
+  getSurveyResponses(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
   }
 
-  getLastQuestionId() {
-    return this.http.get<any>('http://localhost:3000/api/getLastQuestionId');
+  getLastQuestionId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastQuestionId', { observe: 'response'});
   }
   
-  getLastOptionId() {
-    return this.http.get<any>('http://localhost:3000/api/getLastOptionId');
+  getLastOptionId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastOptionId', { observe: 'response'});
   }
   
-  getLastSurveyId() {
-    return this.http.get<any>('http://localhost:3000/api/getLastSurveyId');
+  getLastSurveyId(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getLastSurveyId', { observe: 'response'});
   }
 
   /* 
@@ -62,23 +64,23 @@ export class SurveyService {
   */
   
   // Function that will call the index.js to post an individual survey response to a survey given a specific survey_id as a parameter
-  postSurveyResponse(response) {
-    return this.http.post<any>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+  postSurveyResponse(response): Observable<Response> {
+    return this.http.post<Response>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
-  postSurvey(survey_name) {
+  postSurvey(survey_name): Observable<any> {
     return this.http.post<any>('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
   }
 
-  postQuestion(question) {
+  postQuestion(question): Observable<any> {
     return this.http.post<any>('http://localhost:3000/api/postQuestion', question, httpOptions);
   }
 
-  postOption(option) {
+  postOption(option): Observable<any> {
     return this.http.post<any>('http://localhost:3000/api/postOption', option, httpOptions);
   }
 
-  postArchitecture(surveyComponent) {
+  postArchitecture(surveyComponent): Observable<any> {
     return this.http.post<any>('http://localhost:3000/api/postArchitecture', surveyComponent, httpOptions);
   }
 
@@ -86,20 +88,20 @@ export class SurveyService {
     Put/Update functions
   */
 
-  updateSurveyName(survey_name) {
+  updateSurveyName(survey_name): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyName', survey_name);
   }
 
   // Function that will call the index.js route to update a questions given the specific updates
-  updateSurveyQuestions(updates) {
+  updateSurveyQuestions(updates): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
   }
 
-  updateSurveyQuestion(question) {
+  updateSurveyQuestion(question): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);
   }
 
-  updateSurveyOption(option) {
+  updateSurveyOption(option): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
   }
 
@@ -110,5 +112,21 @@ export class SurveyService {
       end = new Date().getTime();
     }
   }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // return an observable with a user-facing error message
+    //return throwError(
+      //'Something bad happened; please try again later.');
+  };
 
 }

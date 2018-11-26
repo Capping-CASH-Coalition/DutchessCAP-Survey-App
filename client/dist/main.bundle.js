@@ -1,6 +1,6 @@
 webpackJsonp([1,5],{
 
-/***/ 108:
+/***/ 107:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -170,9 +170,8 @@ GraphService = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__globals__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(77);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EditComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -186,11 +185,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var EditComponent = (function () {
-    function EditComponent(_fb, globals, surveyService, changeref) {
+    function EditComponent(_fb, surveyService, changeref) {
         this._fb = _fb;
-        this.globals = globals;
         this.surveyService = surveyService;
         this.changeref = changeref;
         // Holds the dynamic survey variables for display
@@ -203,10 +200,10 @@ var EditComponent = (function () {
         this.surveyService.getSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created,
-                    "survey_is_active": response[i].survey_is_active
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    "survey_is_active": response.body[i].survey_is_active
                 };
                 _this.surveys.push(survey);
                 // Get the survey questions by selectedSurveyId
@@ -214,12 +211,12 @@ var EditComponent = (function () {
                     // Initialize the questions
                     _this.surveys[i].questions = [];
                     // Iterate through the questions and push them one at a time
-                    for (var j = 0; j < response.length; j++) {
+                    for (var j = 0; j < response.body.length; j++) {
                         var question = {
-                            "question_id": response[j].question_id,
-                            "question_text": response[j].question_text,
-                            "question_type": response[j].question_type,
-                            "question_is_active": response[j].question_is_active,
+                            "question_id": response.body[j].question_id,
+                            "question_text": response.body[j].question_text,
+                            "question_type": response.body[j].question_type,
+                            "question_is_active": response.body[j].question_is_active,
                             options: []
                         };
                         _this.surveys[i].questions.push(question);
@@ -227,12 +224,12 @@ var EditComponent = (function () {
                     // Get the survey options based on the selectedSurveyId
                     _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
                         for (var k = 0; k < _this.surveys[i].questions.length; k++) {
-                            for (var l = 0; l < response.length; l++) {
+                            for (var l = 0; l < response.body.length; l++) {
                                 var option = {
-                                    "option_id": response[l].option_id,
-                                    "option_text": response[l].option_text,
-                                    "option_is_active": response[l].option_is_active,
-                                    "question_id": response[l].question_id
+                                    "option_id": response.body[l].option_id,
+                                    "option_text": response.body[l].option_text,
+                                    "option_is_active": response.body[l].option_is_active,
+                                    "question_id": response.body[l].question_id
                                 };
                                 // If the question IDs match, push the option into the questions[j].options array
                                 if (_this.surveys[i].questions[k].question_id == response[l].question_id) {
@@ -240,21 +237,15 @@ var EditComponent = (function () {
                                 }
                             }
                         }
-                        // Manually detect changes as the page will load faster than the async call
-                        _this.changeref.detectChanges();
                     }, function (error) {
                         console.log('error is ', error);
                     });
-                    // Manually detect changes as the page will load faster than the async call
-                    _this.changeref.detectChanges();
                 }, function (error) {
                     console.log('error is ', error);
                 });
-                // Manually detect changes as the page will load faster than the async call
-                _this.changeref.detectChanges();
             };
             // Get 1 survey at a time and push into surveys array
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 _loop_1(i);
             }
         }, function (error) {
@@ -268,7 +259,8 @@ var EditComponent = (function () {
     // sets the survey form to a blank survey
     EditComponent.prototype.newSurveyForm = function () {
         this.survey = this._fb.group({
-            surveyName: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            survey_id: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            survey_name: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
             questions: this._fb.array([
                 this.initQuestion(),
             ])
@@ -276,53 +268,12 @@ var EditComponent = (function () {
         this.nameReadOnly = false;
         jQuery("#surveySelect").val(-1);
     };
-    // Used to update the formgroup from a given survey id
-    EditComponent.prototype.updateSurveyFormData = function (survey_id) {
-        var currSurvey;
-        this.nameReadOnly = true;
-        // loop through the surveys and set the current one to the one that mathches the id
-        this.surveys.forEach(function (s) {
-            currSurvey = s.survey_id == survey_id ? s : currSurvey;
-        });
-        // populate the survey form with proper data
-        this.survey = this._fb.group({
-            surveyName: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](currSurvey.survey_name),
-            questions: this._fb.array([])
-        });
-        // patch the questions nested array value with the new questions
-        this.patchFormQuestions(currSurvey.questions);
-    };
-    // used to update the questions of the form group qustions array
-    EditComponent.prototype.patchFormQuestions = function (questions) {
-        var _this = this;
-        var control = this.survey.controls['questions'];
-        questions.forEach(function (q) {
-            if (q.question_is_active) {
-                control.push(_this._fb.group({
-                    questionText: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_text),
-                    questionType: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_type),
-                    questionOptions: _this.patchFormOptions(q.options)
-                }));
-            }
-        });
-    };
-    // used to update the options of the nested form group options array
-    EditComponent.prototype.patchFormOptions = function (options) {
-        var _this = this;
-        var ops = new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormArray */]([]);
-        options.forEach(function (o) {
-            ops.push(_this._fb.group({
-                option: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](o.option_text)
-            }));
-        });
-        return ops;
-    };
     // create a new blank question
     EditComponent.prototype.initQuestion = function () {
         return this._fb.group({
-            questionText: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
-            questionType: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
-            questionOptions: this._fb.array([
+            question_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            question_type: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            options: this._fb.array([
                 this.initOption(),
             ])
         });
@@ -330,13 +281,21 @@ var EditComponent = (function () {
     // create a new blank option
     EditComponent.prototype.initOption = function () {
         return this._fb.group({
-            option: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('')
+            option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('')
         });
     };
     // add question to the form group array at the given index
     EditComponent.prototype.addQuestion = function (idx) {
         var control = this.survey.controls['questions'];
         control.insert(idx + 1, this.initQuestion());
+        // Initialize a new question
+        var newQuestion = {
+            "question_text": "",
+            "question_type": "",
+            options: [{
+                    "option_text": "",
+                }]
+        };
     };
     // remove question from the form group array at the given index
     EditComponent.prototype.removeQuestion = function (idx) {
@@ -344,18 +303,22 @@ var EditComponent = (function () {
         control.removeAt(idx);
     };
     // add option to the form group array at the given index
-    EditComponent.prototype.addOption = function (question) {
-        var control = question.controls.questionOptions;
+    EditComponent.prototype.addOption = function (question, questionIndex) {
+        var control = question.controls.options;
         control.push(this.initOption());
+        // Initialize a new option
+        var newOption = {
+            "option_text": ""
+        };
     };
     // remove option from the form group array at the given index
-    EditComponent.prototype.removeOption = function (question, j) {
-        var control = question.controls.questionOptions;
-        control.removeAt(j);
+    EditComponent.prototype.removeOption = function (question, optionIndex, questionIndex) {
+        var control = question.controls.options;
+        control.removeAt(optionIndex);
     };
     // checks the question type and returns boolean to display the options div
     EditComponent.prototype.showOptionsDiv = function (question) {
-        var questionType = question.controls.questionType.value;
+        var questionType = question.controls.question_type.value;
         var ret;
         switch (questionType.toString()) {
             case "select":
@@ -375,8 +338,125 @@ var EditComponent = (function () {
         }
         return ret;
     };
+    // Used to update the formgroup from a given survey id
+    EditComponent.prototype.updateSurveyFormData = function (survey_id) {
+        var currSurvey;
+        this.nameReadOnly = true;
+        // loop through the surveys and set the current one to the one that mathches the id
+        this.surveys.forEach(function (s) {
+            currSurvey = s.survey_id == survey_id ? s : currSurvey;
+        });
+        // populate the survey form with proper data
+        this.survey = this._fb.group({
+            survey_id: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](currSurvey.survey_id),
+            survey_name: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](currSurvey.survey_name),
+            questions: this._fb.array([])
+        });
+        // patch the questions nested array value with the new questions
+        this.patchFormQuestions(currSurvey.questions);
+    };
+    // used to update the questions of the form group qustions array
+    EditComponent.prototype.patchFormQuestions = function (questions) {
+        var _this = this;
+        var control = this.survey.controls['questions'];
+        questions.forEach(function (q) {
+            if (q.question_is_active) {
+                control.push(_this._fb.group({
+                    question_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_text),
+                    question_type: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_type),
+                    options: _this.patchFormOptions(q.options)
+                }));
+            }
+        });
+    };
+    // used to update the options of the nested form group options array
+    EditComponent.prototype.patchFormOptions = function (options) {
+        var _this = this;
+        var ops = new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormArray */]([]);
+        options.forEach(function (o) {
+            ops.push(_this._fb.group({
+                option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](o.option_text)
+            }));
+        });
+        return ops;
+    };
     EditComponent.prototype.save = function (formData) {
-        console.log(formData.value);
+        var _this = this;
+        // Get the survey index
+        var surveyIndex = this.getSurveyIndex(formData);
+        var questionId;
+        var optionId;
+        var surveyId;
+        // Check if its a new survey
+        console.log(surveyIndex);
+        if (surveyIndex == -1) {
+            var surveyName = { "survey_name": formData.survey_name };
+            this.surveyService.postSurvey(surveyName).subscribe();
+            this.surveyService.wait(50);
+            var _loop_2 = function (i) {
+                this_1.surveyService.wait(50);
+                var question = {
+                    "question_text": formData.questions[i].question_text,
+                    "question_type": formData.questions[i].question_type
+                };
+                this_1.surveyService.postQuestion(question).subscribe();
+                var _loop_3 = function (j) {
+                    this_1.surveyService.getLastQuestionId().subscribe(function (response) {
+                        questionId = response[0];
+                        var option = {
+                            "option_text": formData.questions[i].options[j].option_text,
+                            "question_id": questionId
+                        };
+                        _this.surveyService.wait(50);
+                        _this.surveyService.postOption(option).subscribe();
+                        _this.surveyService.getLastOptionId().subscribe(function (value) {
+                            optionId = value[0];
+                            _this.surveyService.getLastSurveyId().subscribe(function (data) {
+                                surveyId = data[0];
+                                var architecture = {
+                                    "survey_id": surveyId,
+                                    "question_id": questionId,
+                                    "option_id": optionId
+                                };
+                                _this.surveyService.wait(50);
+                                _this.surveyService.postArchitecture(architecture).subscribe();
+                            }, function (error) {
+                                console.log('error is ', error);
+                            });
+                        }, function (error) {
+                            console.log('error is ', error);
+                        });
+                    }, function (error) {
+                        console.log('error is ', error);
+                    });
+                    optionId++;
+                };
+                for (var j = 0; j < formData.questions[i].options.length; j++) {
+                    _loop_3(j);
+                }
+            };
+            var this_1 = this;
+            for (var i = 0; i < formData.questions.length; i++) {
+                _loop_2(i);
+            }
+        }
+        console.log(formData);
+    };
+    // Returns the surveyIndex that matches the formData.survey_id
+    EditComponent.prototype.getSurveyIndex = function (formData) {
+        var index;
+        for (var i = 0; i < this.surveys.length; i++) {
+            console.log("formData.survey_id: " + formData.survey_id);
+            console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
+            if (formData.survey_id == this.surveys[i].survey_id) {
+                index = i;
+            }
+            else {
+                index = -1;
+            }
+        }
+        console.log("Index: " + index);
+        return index;
     };
     return EditComponent;
 }());
@@ -385,12 +465,12 @@ EditComponent = __decorate([
         selector: 'app-edit',
         template: __webpack_require__(631),
         styles: [__webpack_require__(588)],
-        providers: [__WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */]]
+        providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _d || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
 ], EditComponent);
 
-var _a, _b, _c, _d;
+var _a, _b, _c;
 //# sourceMappingURL=edit.component.js.map
 
 /***/ }),
@@ -400,7 +480,7 @@ var _a, _b, _c, _d;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExportRawComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -531,9 +611,9 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__globals__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__globals__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphsComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -777,8 +857,8 @@ var _a, _b, _c;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -943,7 +1023,7 @@ var _a, _b;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InputComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -989,7 +1069,7 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(63);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NotFoundComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1082,17 +1162,16 @@ var SurveyComponent = (function () {
         var _this = this;
         this.surveyService.getActiveSurveys().subscribe(function (response) {
             // Get 1 survey at a time and push into surveys array
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 var survey = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created,
-                    "survey_is_active": response[i].survey_is_active
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    "survey_is_active": response.body[i].survey_is_active
                 };
                 _this.surveys.push(survey);
-                // Manually detect changes as the page will load faster than the async call
-                _this.changeref.detectChanges();
             }
+            _this.changeref.detectChanges();
         }, function (error) {
             console.log('error is ', error);
         });
@@ -1129,37 +1208,33 @@ var SurveyComponent = (function () {
             // Initialize the questions
             _this.surveys[_this.selectedSurveyIndex].questions = [];
             // Iterate through the questions and push them one at a time
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.body.length; i++) {
                 var question = {
-                    "question_id": response[i].question_id,
-                    "question_text": response[i].question_text,
-                    "question_type": response[i].question_type,
-                    "question_is_active": response[i].question_is_active,
+                    "question_id": response.body[i].question_id,
+                    "question_text": response.body[i].question_text,
+                    "question_type": response.body[i].question_type,
+                    "question_is_active": response.body[i].question_is_active,
                     options: []
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
-                _this.changeref.detectChanges();
             }
-            // Manually detect changes as the page will load faster than the async call
             _this.changeref.detectChanges();
             // Get the survey options based on the selectedSurveyId
             _this.surveyService.getSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
                 for (var j = 0; j < _this.surveys[_this.selectedSurveyIndex].questions.length; j++) {
-                    for (var k = 0; k < response.length; k++) {
+                    for (var k = 0; k < response.body.length; k++) {
                         var option = {
-                            "option_id": response[k].option_id,
-                            "option_text": response[k].option_text,
-                            "option_is_active": response[k].option_is_active,
-                            "question_id": response[k].question_id
+                            "option_id": response.body[k].option_id,
+                            "option_text": response.body[k].option_text,
+                            "option_is_active": response.body[k].option_is_active,
+                            "question_id": response.body[k].question_id
                         };
                         // If the question IDs match, push the option into the questions[j].options array
-                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
                             _this.surveys[_this.selectedSurveyIndex].questions[j].options.push(option);
                         }
                     }
-                    _this.changeref.detectChanges();
                 }
-                // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
             }, function (error) {
                 console.log('error is ', error);
@@ -1370,7 +1445,6 @@ __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dyna
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_survey_service__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__globals__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1383,12 +1457,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-
-var Responses = [{ survey_id: 1, question_id: 1, option_id: 1, response_text: "OMFG DUDE" },
-    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
-    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
-    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" },
-    { survey_id: 1, question_id: 1, option_id: 2, response_text: "Support clients/assist in identifying and accessing services" }];
 var Surveys = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
     { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
     { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
@@ -1518,336 +1586,9 @@ function wait(ms) {
     }
 }
 var AppComponent = (function () {
-    function AppComponent(surveyService, globals) {
+    function AppComponent(surveyService) {
         this.surveyService = surveyService;
-        this.globals = globals;
     }
-    AppComponent.prototype.getSurveys = function () {
-        var _this = this;
-        this.surveyService.getSurveys().subscribe(function (response) {
-            for (var i = 0; i < response.length; i++) {
-                var survey = {
-                    "survey_id": response[i].survey_id,
-                    "survey_name": response[i].survey_name,
-                    "date_created": response[i].date_created
-                };
-                _this.globals.surveys.push(survey);
-                console.log(_this.globals.surveys);
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-    };
-    AppComponent.prototype.getQuestions = function (id) {
-        var _this = this;
-        this.surveyService.getSurveyQuestions(id).subscribe(function (response) {
-            for (var j = 0; j < _this.globals.surveys.length; j++) {
-                for (var i = 0; i < response.length; i++) {
-                    var qArray = {
-                        "question_id": response[i].question_id,
-                        "question_text": response[i].question_text,
-                        "question_type": response[i].question_type,
-                        "question_is_active": response[i].question_is_active
-                    };
-                    if (_this.globals.surveys[j].survey_id == id) {
-                        _this.globals.surveys[j].questions.push(qArray);
-                        console.log(_this.globals.surveys[j].questions);
-                    }
-                }
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-    };
-    AppComponent.prototype.getOptions = function (id) {
-        var _this = this;
-        this.surveyService.getSurveyOptions(id).subscribe(function (response) {
-            for (var j = 0; j < _this.globals.surveys.length; j++) {
-                if (_this.globals.surveys[j].survey_id == id) {
-                    for (var k = 0; k < _this.globals.surveys[j].questions.length; k++) {
-                        for (var i = 0; i < response.length; i++) {
-                            var qArray = {
-                                "option_id": response[i].option_id,
-                                "option_text": response[i].option_text,
-                                "option_is_active": response[i].option_is_active,
-                                "question_id": response[i].question_id
-                            };
-                            if (_this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
-                                _this.globals.surveys[j].questions[k].options.push(qArray);
-                                console.log(_this.globals.surveys[j].questions[k].options);
-                            }
-                        }
-                    }
-                }
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-    };
-    AppComponent.prototype.getResponses = function (id) {
-        var _this = this;
-        this.surveyService.getSurveyResponses(id).subscribe(function (response) {
-            for (var j = 0; j < _this.globals.surveys.length; j++) {
-                if (_this.globals.surveys[j].survey_id == id) {
-                    for (var k = 0; k < _this.globals.surveys[j].questions.length; k++) {
-                        for (var i = 0; i < response.length; i++) {
-                            var rArray = {
-                                "response_id": response[i].response_id,
-                                "survey_id": response[i].survey_id,
-                                "question_id": response[i].question_id,
-                                "option_id": response[i].option_id,
-                                "response_text": response[i].response_text,
-                                "date_taken": response[i].date_taken
-                            };
-                            if (_this.globals.surveys[j].questions[k].question_id == response[i].question_id) {
-                                _this.globals.surveys[j].questions[k].responses.push(rArray);
-                                console.log(_this.globals.surveys[j].questions[k].responses);
-                            }
-                        }
-                    }
-                }
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-    };
-    AppComponent.prototype.ngOnInit = function () {
-        //this.getSurveys();
-        //this.getQuestions(1);
-        //this.getOptions(1);
-        //this.getResponses(1);
-        /*for(let j =0; j<Responses.length; j++){
-        this.surveyService.postSurveyResponse(Responses[j]).subscribe((response)=>{
-            this.responses = [];
-            //console.log('response is ', response);
-            for (let i = 0; i < response.length; i++) {
-               
-              let sArray =
-              {
-                "question_id": response[i].question_id,
-                "survey_id": response[i].survey_id,
-                "option_id": response[i].option_id,
-                "response_text": response[i].response_text
-                }
-                  ;
-                this.responses.push(sArray);
-                console.log(this.responses);
-            }
-            
-    },(error) => {
-            console.log('error is ', error)
-        })
-        }
-     this.surveyService.getQuestionLength().subscribe((response) => {
-       this.questionID = response[0];
-       this.surveyService.getOptionLength().subscribe((value) => {
-         this.optionID = value[0];
-         this.surveyService.getSurveyLength().subscribe((data) => {
-           this.surveyID = data[0];
-           this.surveyID = this.surveyID + 1;
-           let insertSurveyID = { "survey_name": FormValues.SurveyName };
-           this.surveyService.postSurveyID(insertSurveyID).subscribe((response) => {
-           }, (error) => {
-             console.log('error is ', error)
-           });
-           wait(50);
-           for (let j = 0; j < FormValues.questions.length; j++) {
-             this.questionID = this.questionID + 1;
-             wait(50);
-             let insertQuestionsArray = { "question_text": FormValues.questions[j].questionText, "question_type": FormValues.questions[j].questionType };
-             wait(50);
-             this.surveyService.postQuestionID(insertQuestionsArray).subscribe((response) => {
-             }, (error) => {
-               console.log('error is ', error)
-             });
-             for (let i = 0; i < FormValues.questions[j].questionOptions.length; i++) {
-               this.optionID = this.optionID + 1;
-               let insertOptionIDArray = { "option_text": FormValues.questions[j].questionOptions[i].option, "question_id": this.questionID }
-               wait(50);
-               this.surveyService.postOptionID(insertOptionIDArray).subscribe((response) => {
-               }, (error) => {
-                 console.log('error is ', error)
-               });
-               let insertArchitecturesArray = { "survey_id": this.surveyID, "question_id": this.questionID, "option_id": this.optionID };
-               wait(50);
-               this.surveyService.postArchitectures(insertArchitecturesArray).subscribe((response) => {
-               }, (error) => {
-                 console.log('error is ', error)
-               })
-             }
-           }
-         }, (error) => {
-           console.log('error is ', error)
-         })
-       }, (error) => {
-         console.log('error is ', error)
-       })
-     }, (error) => {
-       console.log('error is ', error)
-     })*/
-        /* function f(object: some)
-         this.surveyService.getQuestionLength().subscribe((response) => {
-           this.questionID = response[0];
-     
-           this.surveyService.getOptionLength().subscribe((value) => {
-             this.optionID = value[0];
-     
-             this.surveyService.getSurveyLength().subscribe((data) => {
-               this.surveyID = data[0];
-               for (let i = 0; FormValues1.questions.length; i++) {
-                 if (FormValues1.questions[i].questionID == "") {
-                   this.questionID = this.questionID + 1;
-                   let insertUpdateQuestion = { "question_text": FormValues1.questions[i].questionText, "question_type": FormValues1.questions[i].questionType };
-                   wait(50);
-                   this.surveyService.postQuestionID(insertUpdateQuestion).subscribe((response) => {
-                   }, (error) => {
-                     console.log('error is ', error)
-                   });
-                   for (let j = 0; FormValues1.questions[i].questionOptions.length; j++) {
-                     this.optionID = this.optionID + 1;
-                     let insertUpdateOption = { "option_text": FormValues1.questions[i].questionOptions[j].option, "question_id": this.questionID };
-                     this.surveyService.postOptionID(insertUpdateOption).subscribe((response) => {
-                     }, (error) => {
-                       console.log('error is ', error)
-                     });
-                     let insertUpdateArchitectures = { "survey_id": FormValues1.SurveyID, "question_id": this.questionID, "option_id": this.optionID };
-                     this.surveyService.postArchitectures(insertUpdateArchitectures).subscribe((response) => {
-                     }, (error) => {
-                       console.log('error is ', error)
-                     });
-                   }
-                 }
-                 if (FormValues1.questions[i].questionID != "") {
-                   let updateQuestion = {
-                     "question_id": FormValues1.questions[i].questionID, "question_text": FormValues1.questions[i].questionText, "question_is_active": FormValues1.questions[i].questionIsActive, "question_type": FormValues1.questions[i].questionType
-                   };
-                   this.surveyService.updateSurveyQuestion(updateQuestion).subscribe((response) => {
-                   }, (error) => {
-                     console.log('error is ', error)
-                   });
-                   for (let j = 0; FormValues1.questions[i].questionOptions.length; j++) {
-                     if (FormValues1.questions[i].questionOptions[j].optionID == "") {
-                       this.optionID = this.optionID + 1;
-                       let insertOption = { "option_text": FormValues1.questions[i].questionOptions[j].option, "question_id": FormValues1.questions[i].questionID };
-                       this.surveyService.postOptionID(insertOption).subscribe((response) => {
-                       }, (error) => {
-                         console.log('error is ', error)
-                       });
-                       let insertArchitectures = {
-                         "survey_id": FormValues1.SurveyID, "question_id": FormValues1.questions[i].questionID, "option_id": this.optionID
-                       }
-                       this.surveyService.postArchitectures(insertArchitectures).subscribe((response) => {
-                       }, (error) => {
-                         console.log('error is ', error)
-                       });
-                     }
-                     if (FormValues1.questions[i].questionOptions[j].optionID != "") {
-                       let insertOption = { "option_id": FormValues1.questions[i].questionOptions[j].optionID, "option_is_active": FormValues1.questions[i].questionOptions[j].option_is_active };
-                       this.surveyService.updateSurveyOption(insertOption).subscribe((response) => {
-                       }, (error) => {
-                         console.log('error is ', error)
-                       });
-                     }
-                   }
-                 }
-               }
-             }, (error) => {
-               console.log('error is ', error)
-             })
-           }, (error) => {
-             console.log('error is ', error)
-           })
-         }, (error) => {
-           console.log('error is ', error)
-         })*/
-        /*for(let j =0; j <Surveys.length; j++){
-        this.surveyService.postSurveyResponses(Su[j]).subscribe((response)=>{
-            this.surveys = [];
-            //console.log('response is ', response);
-            for (let i = 0; i < response.length; i++) {
-        
-                let lArray =
-                {
-                "question_id": response[i].question_id,
-                  "question_num": response[i].question_num,
-                  "question_text": response[i].question_text,
-                "question_is_active": response[i].question_is_active,
-                "question_type": response[i].question_type,
-                "option_id": response[i].option_id,
-                "option_num": response[i].option_num,
-                "option_text": response[i].option_text,
-                "option_is_active": response[i].option_is_active
-                
-               
-              }
-                  ;
-                this.surveys.push(lArray);
-        
-            }
-            console.log(this.surveys);
-        },(error) => {
-            console.log('error is ', error)
-        })
-        }
-        
-            for (let j = 0; j < Updates.length; j++) {
-              if (Updates[j].question_id = '') {
-                this.surveyService.insertSurveyQuestions(Updates[j]).subscribe((response) => {
-                  this.updates = [];
-                  //console.log('response is ', response);
-                  for (let i = 0; i < response.length; i++) {
-        
-                    let mArray =
-                    {
-                      "question_num": response[i].question_num,
-                      "question_text": response[i].question_text,
-                      "question_is_active": response[i].question_is_active,
-                      "question_type": response[i].question_type,
-                      "option_id": response[i].option_id,
-                      "option_num": response[i].option_num,
-                      "option_text": response[i].option_text,
-                      "option_is_active": response[i].option_is_active
-                    }
-                      ;
-                    this.updates.push(mArray);
-        
-                  }
-                  console.log(this.updates);
-                }, (error) => {
-                  console.log('error is ', error)
-                })
-              }
-              if (Updates[j].question_id != '') {
-                this.surveyService.updateSurveyQuestions(Updates[j]).subscribe((response) => {
-                  this.updates = [];
-                  //console.log('response is ', response);
-                  for (let i = 0; i < response.length; i++) {
-        
-                    let dArray =
-                    {
-                      "question_id": response[i].question_id,
-                      "question_num": response[i].question_num,
-                      "question_text": response[i].question_text,
-                      "question_is_active": response[i].question_is_active,
-                      "question_type": response[i].question_type,
-                      "option_id": response[i].option_id,
-                      "option_num": response[i].option_num,
-                      "option_text": response[i].option_text,
-                      "option_is_active": response[i].option_is_active,
-                      "response_id": response[i].response_id,
-                      "survey_id": response[i].survey_id
-                    }
-                      ;
-                    this.updates.push(dArray);
-        
-                  }
-                  console.log(this.updates);
-                }, (error) => {
-                  console.log('error is ', error)
-                })
-              }
-            }*/
-    };
     return AppComponent;
 }());
 AppComponent = __decorate([
@@ -1857,10 +1598,10 @@ AppComponent = __decorate([
         styles: [__webpack_require__(585)],
         providers: [__WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* Globals */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object])
 ], AppComponent);
 
-var _a, _b;
+var _a;
 //# sourceMappingURL=app.component.js.map
 
 /***/ }),
@@ -1940,13 +1681,13 @@ function smoothlyMenu() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(618);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__(400);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_topnavbar_topnavbar_component__ = __webpack_require__(405);
@@ -1959,7 +1700,7 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_exportRaw_exportRaw_component__ = __webpack_require__(171);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_not_found_not_found_component__ = __webpack_require__(175);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__services_survey_service__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_authentication_service__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_auth_guard_service__ = __webpack_require__(415);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_keys_pipe__ = __webpack_require__(414);
@@ -1972,7 +1713,7 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pipes_exceptQuestionId_pipe__ = __webpack_require__(406);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pipes_filterByQuestionActive_pipe__ = __webpack_require__(410);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__app_routes__ = __webpack_require__(403);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__globals__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__globals__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2140,7 +1881,7 @@ var appRoutes = [
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(63);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NavigationComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2537,7 +2278,7 @@ KeysPipe = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(76);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuardService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -2585,113 +2326,6 @@ var environment = {
     production: true
 };
 //# sourceMappingURL=environment.js.map
-
-/***/ }),
-
-/***/ 46:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Globals; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-var Globals = (function () {
-    function Globals() {
-        this.surveys = [
-            {
-                survey_id: 0,
-                survey_name: "Lindas Survey",
-                date_created: "2018-02-13",
-                questions: [
-                    {
-                        question_id: 0,
-                        question_text: "What is your favorite color?",
-                        question_type: "dropdown",
-                        question_active: true,
-                        options: [
-                            { option_id: 0, option_text: "Red", option_active: true },
-                            { option_id: 1, option_text: "White", option_active: true },
-                            { option_id: 2, option_text: "Pink", option_active: true },
-                            { option_id: 3, option_text: "Blue", option_active: true },
-                            { option_id: 4, option_text: "Yellow", option_active: false }
-                        ],
-                        responses: [
-                            { response_id: 0, response_text: "Red", date_taken: "2018-11-02" },
-                            { response_id: 1, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 2, response_text: "Pink", date_taken: "2018-11-02" },
-                            { response_id: 3, response_text: "Blue", date_taken: "2018-11-02" },
-                            { response_id: 4, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 5, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02" },
-                            { response_id: 7, response_text: "Blue", date_taken: "2018-11-02" },
-                            { response_id: 8, response_text: "Pink", date_taken: "2018-11-02" },
-                        ]
-                    },
-                    {
-                        question_id: 1,
-                        question_text: "What is your favorite City?",
-                        question_type: "mc",
-                        question_active: true,
-                        options: [
-                            { option_id: 5, option_text: "New York City", option_active: true },
-                            { option_id: 6, option_text: "Boston", option_active: true },
-                            { option_id: 7, option_text: "Washington", option_active: false },
-                            { option_id: 8, option_text: "Miami", option_active: true },
-                            { option_id: 9, option_text: "Poughkeepsie", option_active: true }
-                        ],
-                        responses: [
-                            { response_id: 9, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 10, response_text: "Boston", date_taken: "2018-11-02" },
-                            { response_id: 11, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 12, response_text: "Washington", date_taken: "2018-11-02" },
-                            { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
-                            { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
-                            { response_id: 15, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 16, response_text: "Miami", date_taken: "2018-11-02" },
-                            { response_id: 17, response_text: "Boston", date_taken: "2018-11-02" },
-                        ]
-                    },
-                    {
-                        question_id: 2,
-                        question_text: "Select the services that you need: ",
-                        question_type: "checkboxes",
-                        question_active: true,
-                        options: [
-                            { option_id: 10, option_text: "More Money", option_active: false },
-                            { option_id: 11, option_text: "More Time", option_active: true },
-                            { option_id: 12, option_text: "More Clothes", option_active: true },
-                            { option_id: 13, option_text: "Less capping work", option_active: true },
-                            { option_id: 14, option_text: "Less drinking", option_active: false }
-                        ],
-                        responses: [
-                            { response_id: 18, response_text: "More Time", date_taken: "2018-11-02" },
-                            { response_id: 19, response_text: "More Time", date_taken: "2018-11-02" },
-                            { response_id: 20, response_text: "More Money", date_taken: "2018-11-02" },
-                            { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02" },
-                            { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02" },
-                            { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02" },
-                            { response_id: 24, response_text: "More Money", date_taken: "2018-11-02" },
-                            { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02" },
-                            { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02" },
-                        ]
-                    }
-                ]
-            }
-        ];
-    }
-    return Globals;
-}());
-Globals = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
-], Globals);
-
-//# sourceMappingURL=globals.js.map
 
 /***/ }),
 
@@ -3169,7 +2803,7 @@ module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\
 /***/ 631:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-10 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n               <div class=\"col\">\n                  <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\n                    <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\n                    <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\n                      {{ s.survey_name }}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"col\">\n                  <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning btn-sm\">Create New Survey</button>\n                </div>\n            </div>\n            <hr>\n            <div class=\"feed-activity-list\">\n              <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey)\">\n                <div class=\"form-group\">\n                  <h2 style=\"font-weight:bold\">Survey Name</h2>\n                  <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"surveyName\"\n                    placeholder=\"Enter Survey Name\">\n                </div>\n                <!-- QUESTIONS -->\n                <div formArrayName=\"questions\">\n                  <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\n                    <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\n                      <h3> Question {{ i+1}}</h3>\n                      <div class=\"row\">\n                        <div class=\"col-lg-3\">\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <small class=\"text-muted\">Question Type</small>\n                            </div>\n                          </div>\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <!--TYPE GO HERE-->\n                              <select formControlName=\"questionType\" class=\"form-control form-control-sm\" required>\n                                <option value=\"\" disabled selected>Select question type:</option>\n                                <option value=\"select\">Dropdown</option>\n                                <option value=\"checkbox\">Checkboxes</option>\n                                <option value=\"radio\">Multiple Choice</option>\n                                <option value=\"text\">Textbox</option>\n                              </select>\n                            </div>\n                          </div>\n                        </div>\n                        <div class=\"col-lg-9\">\n                          <button *ngIf=\"survey.controls.questions.length > 1\" class='pull-right btn btn-lg' (click)='removeQuestion(i)'\n                            style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionRemove\" class=\"fas fa-minus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                      <div class=\"row\" style=\"margin-top:10px\">\n                        <div class=\"col-lg-12\">\n                          <small class=\"text-muted\">Question Prompt</small>\n                          <!--TEXT BOX GOES HERE-->\n                          <div class=\"form-group\">\n                            <textarea formControlName=\"questionText\" class=\"form-control\" id=\"exampleTextarea\" rows=\"2\"\n                              placeholder=\"Enter Question Prompt Here...\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\n                        <div class=\"col-lg-1\">\n                        </div>\n                        <div class=\"col-lg-5\">\n                          <!--OPTIONS GO HERE-->\n                          <div>\n                            <!-- SHOWING OPTIONS-->\n                            <small class=\"text-muted\">Add Options</small>\n                            <div formArrayName=\"questionOptions\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index\">\n                              <div class=\"row\">\n                                <div class=\"col-lg-10\">\n                                  <div [formGroupName]=\"j\">\n                                    <div class=\"form-group\">\n                                      <input type=\"text\" class=\"form-control\" placeholder=\"Enter Option\"\n                                        formControlName=\"option\">\n                                    </div>\n                                  </div>\n                                </div>\n                                <div class=\"col-lg-2\">\n                                  <span *ngIf=\"question.controls.questionOptions.length > 1\" (click)=\"removeOption(question, j)\"><i\n                                      class=\"fas fa-trash-alt\"></i></span>\n                                </div>\n                              </div>\n                              <button type=\"button\" class=\"btn btn-success btn-sm pull-right\" *ngIf=\"j == question.controls.questionOptions.length-1\"\n                                (click)=\"addOption(question)\" style=\"float: right\"><i class=\"fa fa-plus-circle\"></i>\n                                Add Option</button>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\">\n                        <div class=\"col-lg-12\">\n                          <button class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionAdd\" class=\"fa fa-plus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                    </div>\n                    <!--END OF FEED ELEMENT DIV-  -->\n                  </div>\n                  <!--END OF nfFor DIV-->\n                </div>\n                <!--END OF Form Array for Questions Div-->\n              </form>\n            </div>\n            <button type=\"button\" class=\"btn btn-primary btn-lg btn-block\">Save Survey</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-10 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n               <div class=\"col\">\n                  <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\n                    <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\n                    <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\n                      {{ s.survey_name }}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"col\">\n                  <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning btn-sm\">Create New Survey</button>\n                </div>\n            </div>\n            <hr>\n            <div class=\"feed-activity-list\">\n              <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey)\">\n                <div class=\"form-group\">\n                  <h2 style=\"font-weight:bold\">Survey Name</h2>\n                  <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"survey_name\"\n                    placeholder=\"Enter Survey Name\">\n                </div>\n                <!-- QUESTIONS -->\n                <div formArrayName=\"questions\">\n                  <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\n                    <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\n                      <h3> Question {{ i+1}}</h3>\n                      <div class=\"row\">\n                        <div class=\"col-lg-3\">\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <small class=\"text-muted\">Question Type</small>\n                            </div>\n                          </div>\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <!--TYPE GO HERE-->\n                              <select formControlName=\"question_type\" class=\"form-control form-control-sm\" required>\n                                <option value=\"\" disabled selected>Select question type:</option>\n                                <option value=\"select\">Dropdown</option>\n                                <option value=\"checkbox\">Checkboxes</option>\n                                <option value=\"radio\">Multiple Choice</option>\n                                <option value=\"text\">Textbox</option>\n                              </select>\n                            </div>\n                          </div>\n                        </div>\n                        <div class=\"col-lg-9\">\n                          <button *ngIf=\"survey.controls.questions.length > 1\" class='pull-right btn btn-lg' (click)='removeQuestion(i)'\n                            style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionRemove\" class=\"fas fa-minus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                      <div class=\"row\" style=\"margin-top:10px\">\n                        <div class=\"col-lg-12\">\n                          <small class=\"text-muted\">Question Prompt</small>\n                          <!--TEXT BOX GOES HERE-->\n                          <div class=\"form-group\">\n                            <textarea formControlName=\"question_text\" class=\"form-control\" id=\"exampleTextarea\" rows=\"2\"\n                              placeholder=\"Enter Question Prompt Here...\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\n                        <div class=\"col-lg-1\">\n                        </div>\n                        <div class=\"col-lg-5\">\n                          <!--OPTIONS GO HERE-->\n                          <div>\n                            <!-- SHOWING OPTIONS-->\n                            <small class=\"text-muted\">Add Options</small>\n                            <div formArrayName=\"options\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.options.controls; let j=index\">\n                              <div class=\"row\">\n                                <div class=\"col-lg-10\">\n                                  <div [formGroupName]=\"j\">\n                                    <div class=\"form-group\">\n                                      <input type=\"text\" class=\"form-control\" placeholder=\"Enter Option\"\n                                        formControlName=\"option_text\">\n                                    </div>\n                                  </div>\n                                </div>\n                                <div class=\"col-lg-2\">\n                                  <span *ngIf=\"question.controls.options.length > 1\" (click)=\"removeOption(question, j, i)\"><i\n                                      class=\"fas fa-trash-alt\"></i></span>\n                                </div>\n                              </div>\n                              <button type=\"button\" class=\"btn btn-success btn-sm pull-right\" *ngIf=\"j == question.controls.options.length-1\"\n                                (click)=\"addOption(question,i)\" style=\"float: right\"><i class=\"fa fa-plus-circle\"></i>\n                                Add Option</button>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\">\n                        <div class=\"col-lg-12\">\n                          <button class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionAdd\" class=\"fa fa-plus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                    </div>\n                    <!--END OF FEED ELEMENT DIV-  -->\n                  </div>\n                  <!--END OF nfFor DIV-->\n                </div>\n                <!--END OF Form Array for Questions Div-->\n              </form>\n            </div>\n            <button type=\"button\" class=\"btn btn-primary btn-lg btn-block\" (click)='save(survey.value)'>Save Survey</button>\n            <pre>Form Value: <br>{{survey.value | json}}</pre>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -3215,12 +2849,119 @@ module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container2\" s
 
 /***/ }),
 
+/***/ 64:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Globals; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var Globals = (function () {
+    function Globals() {
+        this.surveys = [
+            {
+                survey_id: 0,
+                survey_name: "Lindas Survey",
+                date_created: "2018-02-13",
+                questions: [
+                    {
+                        question_id: 0,
+                        question_text: "What is your favorite color?",
+                        question_type: "dropdown",
+                        question_active: true,
+                        options: [
+                            { option_id: 0, option_text: "Red", option_active: true },
+                            { option_id: 1, option_text: "White", option_active: true },
+                            { option_id: 2, option_text: "Pink", option_active: true },
+                            { option_id: 3, option_text: "Blue", option_active: true },
+                            { option_id: 4, option_text: "Yellow", option_active: false }
+                        ],
+                        responses: [
+                            { response_id: 0, response_text: "Red", date_taken: "2018-11-02" },
+                            { response_id: 1, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 2, response_text: "Pink", date_taken: "2018-11-02" },
+                            { response_id: 3, response_text: "Blue", date_taken: "2018-11-02" },
+                            { response_id: 4, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 5, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02" },
+                            { response_id: 7, response_text: "Blue", date_taken: "2018-11-02" },
+                            { response_id: 8, response_text: "Pink", date_taken: "2018-11-02" },
+                        ]
+                    },
+                    {
+                        question_id: 1,
+                        question_text: "What is your favorite City?",
+                        question_type: "mc",
+                        question_active: true,
+                        options: [
+                            { option_id: 5, option_text: "New York City", option_active: true },
+                            { option_id: 6, option_text: "Boston", option_active: true },
+                            { option_id: 7, option_text: "Washington", option_active: false },
+                            { option_id: 8, option_text: "Miami", option_active: true },
+                            { option_id: 9, option_text: "Poughkeepsie", option_active: true }
+                        ],
+                        responses: [
+                            { response_id: 9, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 10, response_text: "Boston", date_taken: "2018-11-02" },
+                            { response_id: 11, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 12, response_text: "Washington", date_taken: "2018-11-02" },
+                            { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
+                            { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
+                            { response_id: 15, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 16, response_text: "Miami", date_taken: "2018-11-02" },
+                            { response_id: 17, response_text: "Boston", date_taken: "2018-11-02" },
+                        ]
+                    },
+                    {
+                        question_id: 2,
+                        question_text: "Select the services that you need: ",
+                        question_type: "checkboxes",
+                        question_active: true,
+                        options: [
+                            { option_id: 10, option_text: "More Money", option_active: false },
+                            { option_id: 11, option_text: "More Time", option_active: true },
+                            { option_id: 12, option_text: "More Clothes", option_active: true },
+                            { option_id: 13, option_text: "Less capping work", option_active: true },
+                            { option_id: 14, option_text: "Less drinking", option_active: false }
+                        ],
+                        responses: [
+                            { response_id: 18, response_text: "More Time", date_taken: "2018-11-02" },
+                            { response_id: 19, response_text: "More Time", date_taken: "2018-11-02" },
+                            { response_id: 20, response_text: "More Money", date_taken: "2018-11-02" },
+                            { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02" },
+                            { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02" },
+                            { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02" },
+                            { response_id: 24, response_text: "More Money", date_taken: "2018-11-02" },
+                            { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02" },
+                            { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02" },
+                        ]
+                    }
+                ]
+            }
+        ];
+    }
+    return Globals;
+}());
+Globals = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
+], Globals);
+
+//# sourceMappingURL=globals.js.map
+
+/***/ }),
+
 /***/ 76:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(185);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_lock__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(417);
@@ -3303,7 +3044,7 @@ var _a;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(168);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3314,7 +3055,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 // Http specifc header that is needed to post data to the database
@@ -3333,38 +3073,32 @@ var SurveyService = (function () {
     */
     // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {
-        return this.http.get('http://localhost:3000/api/activeSurveys');
+        return this.http.get('http://localhost:3000/api/activeSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all surveys
     SurveyService.prototype.getSurveys = function () {
-        return this.http.get('http://localhost:3000/api/surveys');
+        return this.http.get('http://localhost:3000/api/surveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyQuestions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all options given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyOptions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyResponses = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id);
+        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response' });
     };
-    SurveyService.prototype.getSurveyID = function () {
-        return this.http.get('http://localhost:3000/api/getSurveyID');
+    SurveyService.prototype.getLastQuestionId = function () {
+        return this.http.get('http://localhost:3000/api/getLastQuestionId', { observe: 'response' });
     };
-    SurveyService.prototype.getQuestionLength = function () {
-        return this.http.get('http://localhost:3000/api/getQuestionLength');
+    SurveyService.prototype.getLastOptionId = function () {
+        return this.http.get('http://localhost:3000/api/getLastOptionId', { observe: 'response' });
     };
-    SurveyService.prototype.getOptionLength = function () {
-        return this.http.get('http://localhost:3000/api/getOptionLength');
-    };
-    SurveyService.prototype.getSurveyLength = function () {
-        return this.http.get('http://localhost:3000/api/getSurveyLength');
-    };
-    SurveyService.prototype.getOptionID = function () {
-        return this.http.get('http://localhost:3000/api/getOptionID');
+    SurveyService.prototype.getLastSurveyId = function () {
+        return this.http.get('http://localhost:3000/api/getLastSurveyId', { observe: 'response' });
     };
     /*
       Post functions
@@ -3373,30 +3107,40 @@ var SurveyService = (function () {
     SurveyService.prototype.postSurveyResponse = function (response) {
         return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
     };
-    SurveyService.prototype.postSurveyID = function (survey_name) {
-        return this.http.post('http://localhost:3000/api/postSurveyID', survey_name, httpOptions);
+    SurveyService.prototype.postSurvey = function (survey_name) {
+        return this.http.post('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
     };
-    SurveyService.prototype.postQuestionID = function (question) {
-        return this.http.post('http://localhost:3000/api/postQuestionID', question, httpOptions);
+    SurveyService.prototype.postQuestion = function (question) {
+        return this.http.post('http://localhost:3000/api/postQuestion', question, httpOptions);
     };
-    SurveyService.prototype.postOptionID = function (option) {
-        return this.http.post('http://localhost:3000/api/postOptionID', option, httpOptions);
+    SurveyService.prototype.postOption = function (option) {
+        return this.http.post('http://localhost:3000/api/postOption', option, httpOptions);
     };
-    SurveyService.prototype.postArchitectures = function (surveyComponent) {
-        return this.http.post('http://localhost:3000/api/postArchitectures', surveyComponent, httpOptions);
+    SurveyService.prototype.postArchitecture = function (surveyComponent) {
+        return this.http.post('http://localhost:3000/api/postArchitecture', surveyComponent, httpOptions);
     };
     /*
       Put/Update functions
     */
+    SurveyService.prototype.updateSurveyName = function (survey_name) {
+        return this.http.put('http://localhost:3000/api/updateSurveyName', survey_name);
+    };
     // Function that will call the index.js route to update a questions given the specific updates
     SurveyService.prototype.updateSurveyQuestions = function (updates) {
-        return this.http.post('http://localhost:3000/api/updateSurveyQuestions', updates);
+        return this.http.put('http://localhost:3000/api/updateSurveyQuestions', updates);
     };
     SurveyService.prototype.updateSurveyQuestion = function (question) {
         return this.http.put('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);
     };
     SurveyService.prototype.updateSurveyOption = function (option) {
         return this.http.put('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
+    };
+    SurveyService.prototype.wait = function (ms) {
+        var start = new Date().getTime();
+        var end = start;
+        while (end < start + ms) {
+            end = new Date().getTime();
+        }
     };
     return SurveyService;
 }());

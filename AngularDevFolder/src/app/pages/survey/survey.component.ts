@@ -63,20 +63,18 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
-    this.surveyService.getActiveSurveys().subscribe((response) => {
+    this.surveyService.getActiveSurveys().subscribe(response => {
         // Get 1 survey at a time and push into surveys array
-        for (let i = 0; i < response.length; i++) {
+        for (let i = 0; i < response.body.length; i++) {
           let survey: SurveyInfo = {
-                "survey_id": response[i].survey_id,
-                "survey_name": response[i].survey_name,
-                "date_created": response[i].date_created,
-                "survey_is_active": response[i].survey_is_active
+                "survey_id": response.body[i].survey_id,
+                "survey_name": response.body[i].survey_name,
+                "date_created": response.body[i].date_created,
+                "survey_is_active": response.body[i].survey_is_active
           };
-
           this.surveys.push(survey);
-          // Manually detect changes as the page will load faster than the async call
-          this.changeref.detectChanges();
         }
+        this.changeref.detectChanges();
     }, (error) => {
       console.log('error is ', error)
     })
@@ -111,43 +109,38 @@ export class SurveyComponent implements OnInit, DoCheck {
     // Generate unique user hash
     this.currentUser = this.generateUUID();
     // Get the survey questions by selectedSurveyId
-    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe((response)=>{
+    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(response => {
       // Initialize the questions
       this.surveys[this.selectedSurveyIndex].questions = [];
       // Iterate through the questions and push them one at a time
-      for (let i = 0; i < response.length; i++) {
+      for (let i = 0; i < response.body.length; i++) {
         let question: Question = {
-              "question_id": response[i].question_id,
-              "question_text": response[i].question_text,
-              "question_type": response[i].question_type,
-              "question_is_active": response[i].question_is_active,
+              "question_id": response.body[i].question_id,
+              "question_text": response.body[i].question_text,
+              "question_type": response.body[i].question_type,
+              "question_is_active": response.body[i].question_is_active,
               options: []
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
-        this.changeref.detectChanges();
       }
-      // Manually detect changes as the page will load faster than the async call
       this.changeref.detectChanges();
       
       // Get the survey options based on the selectedSurveyId
-      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe((response) => {
-
+      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe(response => {
         for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
-          for (let k = 0; k < response.length; k++) {
+          for (let k = 0; k < response.body.length; k++) {
             let option: Option = {
-                  "option_id": response[k].option_id,
-                  "option_text": response[k].option_text,
-                  "option_is_active": response[k].option_is_active,
-                  "question_id": response[k].question_id
+                  "option_id": response.body[k].option_id,
+                  "option_text": response.body[k].option_text,
+                  "option_is_active": response.body[k].option_is_active,
+                  "question_id": response.body[k].question_id
             };
             // If the question IDs match, push the option into the questions[j].options array
-            if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response[k].question_id) {
+            if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
               this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
             }
           }
-          this.changeref.detectChanges();
         }
-        // Manually detect changes as the page will load faster than the async call
         this.changeref.detectChanges();
       }, (error) => {
         console.log('error is ', error)

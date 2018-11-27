@@ -22,6 +22,9 @@ export class EditComponent implements OnInit {
    survey: FormGroup;
    // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
+   lastSurveyId: number = 0;
+   lastQuestionId: number = 0;
+   lastOptionId: number = 0;
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
 
@@ -43,6 +46,9 @@ export class EditComponent implements OnInit {
                   };
     
                   this.surveys.push(survey);
+                  this.lastSurveyId++;
+                  
+                  
                   // Get the survey questions by selectedSurveyId
                   this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
                         // Initialize the questions
@@ -57,6 +63,7 @@ export class EditComponent implements OnInit {
                                     options: []
                               };
                               this.surveys[i].questions.push(question);
+                              this.lastQuestionId++;
                         }
                         
                         // Get the survey options based on the selectedSurveyId
@@ -71,8 +78,9 @@ export class EditComponent implements OnInit {
                                                 "question_id": response.body[l].question_id
                                           };
                                           // If the question IDs match, push the option into the questions[j].options array
-                                          if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                          if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
                                                 this.surveys[i].questions[k].options.push(option);
+                                                this.lastOptionId++;
                                           }
                                     }
                               }
@@ -230,67 +238,58 @@ export class EditComponent implements OnInit {
    save(formData) {
       // Get the survey index
       let surveyIndex = this.getSurveyIndex(formData);
-      let questionId;
-      let optionId;
-      let surveyId;
       // Check if its a new survey
       console.log(surveyIndex);
-      if (surveyIndex == -1) {
-            let surveyName = { "survey_name": formData.survey_name };
-            this.surveyService.postSurvey(surveyName).subscribe();
-            this.surveyService.wait(50);
-            for (let i = 0; i < formData.questions.length; i++) {
-                  this.surveyService.wait(50);
-                  let question = { 
-                        "question_text": formData.questions[i].question_text, 
-                        "question_type": formData.questions[i].question_type 
-                  };
-                  this.surveyService.postQuestion(question).subscribe();
-                  for (let j = 0; j < formData.questions[i].options.length; j++) {
-                        this.surveyService.getLastQuestionId().subscribe((response) => {
-                              questionId = response[0];
-                              let option = { 
-                                    "option_text": formData.questions[i].options[j].option_text, 
-                                    "question_id": questionId 
-                              };
-                              this.surveyService.wait(50);
-                              this.surveyService.postOption(option).subscribe();
-                              this.surveyService.getLastOptionId().subscribe((value) => {
-                                    optionId = value[0];
-                                    this.surveyService.getLastSurveyId().subscribe((data) => {
-                                          surveyId = data[0];
-                                          let architecture = { 
-                                                "survey_id": surveyId, 
-                                                "question_id": questionId, 
-                                                "option_id": optionId 
-                                          };
-                                          this.surveyService.wait(50);
-                                          this.surveyService.postArchitecture(architecture).subscribe();
-                                    }, (error) => {
-                                          console.log('error is ', error)
-                                    })
-                              }, (error) => {
-                                    console.log('error is ', error)
-                              })
-                        }, (error) => {
-                              console.log('error is ', error)
-                        })
-                        optionId++;
-                        
-                        
-      
-                  }
-            }
-      }
-      console.log(formData);
+     if (surveyIndex == -1) {
+            let question;
+            let option;
+            let architecture;
+             this.lastSurveyId++;
+             let surveyName = { "survey_name": formData.survey_name };
+             this.surveyService.postSurvey(surveyName).subscribe();
+             
+             for (let i = 0; i < formData.questions.length; i++) {
+
+               question = {
+                 "question_text": formData.questions[i].question_text,
+                 "question_type": formData.questions[i].question_type
+               };
+
+               this.surveyService.postQuestion(question).subscribe();
+               this.lastQuestionId++;
+               this.surveyService.wait(50);
+               for (let j = 0; j < formData.questions[i].options.length; j++) {
+                 
+                 option = {
+                   "option_text": formData.questions[i].options[j].option_text,
+                   "question_id": this.lastQuestionId
+                 };
+   
+                 this.surveyService.postOption(option).subscribe();
+                 this.surveyService.wait(50);
+                 this.lastOptionId++;
+                 console.log("surveyId: " + this.lastSurveyId);
+                 console.log("questionId: " + this.lastQuestionId);
+                 console.log("optionId: " + this.lastOptionId);
+                 let architecture = {
+                   "survey_id": this.lastSurveyId,
+                   "question_id": this.lastQuestionId,
+                   "option_id": this.lastOptionId
+                 };
+
+                 this.surveyService.postArchitecture(architecture).subscribe();
+               }
+             }
+     }
+     console.log(formData);
    }
 
    // Returns the surveyIndex that matches the formData.survey_id
    getSurveyIndex(formData) {
       let index;
       for (let i = 0; i < this.surveys.length; i++) {
-            console.log("formData.survey_id: " + formData.survey_id);
-            console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
+            //console.log("formData.survey_id: " + formData.survey_id);
+            //console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
             if (formData.survey_id == this.surveys[i].survey_id) {
                   index = i;
             } else {

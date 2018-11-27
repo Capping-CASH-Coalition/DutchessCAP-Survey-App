@@ -192,6 +192,9 @@ var EditComponent = (function () {
         this.changeref = changeref;
         // Holds the dynamic survey variables for display
         this.surveys = [];
+        this.lastSurveyId = 0;
+        this.lastQuestionId = 0;
+        this.lastOptionId = 0;
     }
     // initilaize a new blank survey form
     EditComponent.prototype.ngOnInit = function () {
@@ -206,6 +209,7 @@ var EditComponent = (function () {
                     "survey_is_active": response.body[i].survey_is_active
                 };
                 _this.surveys.push(survey);
+                _this.lastSurveyId++;
                 // Get the survey questions by selectedSurveyId
                 _this.surveyService.getSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
                     // Initialize the questions
@@ -220,6 +224,7 @@ var EditComponent = (function () {
                             options: []
                         };
                         _this.surveys[i].questions.push(question);
+                        _this.lastQuestionId++;
                     }
                     // Get the survey options based on the selectedSurveyId
                     _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
@@ -232,8 +237,9 @@ var EditComponent = (function () {
                                     "question_id": response.body[l].question_id
                                 };
                                 // If the question IDs match, push the option into the questions[j].options array
-                                if (_this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                if (_this.surveys[i].questions[k].question_id == response.body[l].question_id) {
                                     _this.surveys[i].questions[k].options.push(option);
+                                    _this.lastOptionId++;
                                 }
                             }
                         }
@@ -381,63 +387,40 @@ var EditComponent = (function () {
         return ops;
     };
     EditComponent.prototype.save = function (formData) {
-        var _this = this;
         // Get the survey index
         var surveyIndex = this.getSurveyIndex(formData);
-        var questionId;
-        var optionId;
-        var surveyId;
         // Check if its a new survey
         console.log(surveyIndex);
         if (surveyIndex == -1) {
+            this.lastSurveyId++;
             var surveyName = { "survey_name": formData.survey_name };
             this.surveyService.postSurvey(surveyName).subscribe();
-            this.surveyService.wait(50);
-            var _loop_2 = function (i) {
-                this_1.surveyService.wait(50);
+            for (var i = 0; i < formData.questions.length; i++) {
                 var question = {
                     "question_text": formData.questions[i].question_text,
                     "question_type": formData.questions[i].question_type
                 };
-                this_1.surveyService.postQuestion(question).subscribe();
-                var _loop_3 = function (j) {
-                    this_1.surveyService.getLastQuestionId().subscribe(function (response) {
-                        questionId = response[0];
-                        var option = {
-                            "option_text": formData.questions[i].options[j].option_text,
-                            "question_id": questionId
-                        };
-                        _this.surveyService.wait(50);
-                        _this.surveyService.postOption(option).subscribe();
-                        _this.surveyService.getLastOptionId().subscribe(function (value) {
-                            optionId = value[0];
-                            _this.surveyService.getLastSurveyId().subscribe(function (data) {
-                                surveyId = data[0];
-                                var architecture = {
-                                    "survey_id": surveyId,
-                                    "question_id": questionId,
-                                    "option_id": optionId
-                                };
-                                _this.surveyService.wait(50);
-                                _this.surveyService.postArchitecture(architecture).subscribe();
-                            }, function (error) {
-                                console.log('error is ', error);
-                            });
-                        }, function (error) {
-                            console.log('error is ', error);
-                        });
-                    }, function (error) {
-                        console.log('error is ', error);
-                    });
-                    optionId++;
-                };
+                this.surveyService.postQuestion(question).subscribe();
+                this.lastQuestionId++;
+                this.surveyService.wait(50);
                 for (var j = 0; j < formData.questions[i].options.length; j++) {
-                    _loop_3(j);
+                    var option = {
+                        "option_text": formData.questions[i].options[j].option_text,
+                        "question_id": this.lastQuestionId
+                    };
+                    this.surveyService.postOption(option).subscribe();
+                    this.surveyService.wait(50);
+                    this.lastOptionId++;
+                    console.log("surveyId: " + this.lastSurveyId);
+                    console.log("questionId: " + this.lastQuestionId);
+                    console.log("optionId: " + this.lastOptionId);
+                    var architecture = {
+                        "survey_id": this.lastSurveyId,
+                        "question_id": this.lastQuestionId,
+                        "option_id": this.lastOptionId
+                    };
+                    this.surveyService.postArchitecture(architecture).subscribe();
                 }
-            };
-            var this_1 = this;
-            for (var i = 0; i < formData.questions.length; i++) {
-                _loop_2(i);
             }
         }
         console.log(formData);
@@ -446,8 +429,8 @@ var EditComponent = (function () {
     EditComponent.prototype.getSurveyIndex = function (formData) {
         var index;
         for (var i = 0; i < this.surveys.length; i++) {
-            console.log("formData.survey_id: " + formData.survey_id);
-            console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
+            //console.log("formData.survey_id: " + formData.survey_id);
+            //console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
             if (formData.survey_id == this.surveys[i].survey_id) {
                 index = i;
             }
@@ -1042,11 +1025,8 @@ var InputComponent = (function () {
     }
     ;
     InputComponent.prototype.ngOnInit = function () {
-        this.survey = this.globals.surveys[0];
     };
     InputComponent.prototype.updateSurvey = function (sid) {
-        this.survey = this.globals.surveys[sid];
-        console.log(this.survey);
     };
     return InputComponent;
 }());
@@ -3142,6 +3122,22 @@ var SurveyService = (function () {
             end = new Date().getTime();
         }
     };
+    SurveyService.prototype.handleError = function (error) {
+        if (error.error instanceof ErrorEvent) {
+            // A client-side or network error occurred. Handle it accordingly.
+            console.error('An error occurred:', error.error.message);
+        }
+        else {
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong,
+            console.error("Backend returned code " + error.status + ", " +
+                ("body was: " + error.error));
+        }
+        // return an observable with a user-facing error message
+        //return throwError(
+        //'Something bad happened; please try again later.');
+    };
+    ;
     return SurveyService;
 }());
 SurveyService = __decorate([

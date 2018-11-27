@@ -10,9 +10,6 @@ import { Option } from '../../models/option.model';
 import { SurveyInfo } from 'app/models/surveyInfo.model';
 import { ResponseOptions } from '@angular/http';
 import { SurveyResponses } from '../../models/surveyResponses.model'
-import { Observable } from 'rxjs/Observable';
-import { HttpHeaders, HttpResponse, HttpClient } from '@angular/common/http'
-
 
 @Component({
    selector: 'app-graphs',
@@ -44,7 +41,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    // contains the selected options
    selectedOptions: string[];
    // hold off on displaying div until this is true after data loaded
-   displayDiv = true;
+   displayDiv = false;
    // Holds the dynamic survey variables for display
    surveys: Array<SurveyResponses> = [];
 
@@ -84,6 +81,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                   console.log("After question push: ", this.surveys[i].questions);
                   this.changeref.detectChanges();
                }
+               
 
                // Get the survey options based on the selectedSurveyId
                this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
@@ -96,7 +94,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                            "question_id": response.body[l].question_id
                         };
                         // If the question IDs match, push the option into the questions[j].options array
-                        if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                        if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
                            this.surveys[i].questions[k].options.push(option);
                            this.changeref.detectChanges();
                         }
@@ -104,32 +102,44 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                   }
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
-               }, (error) => {
-                  console.log('error is ', error)
-               })
-               // Manually detect changes as the page will load faster than the async call
-               this.changeref.detectChanges();
 
-               // Get the survey responses based on the selectedSurveyId
-               this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe(response => {
-                  for (let m = 0; m < this.surveys[i].questions.length; m++) {
-                     for (let n = 0; n < response.body.length; n++) {
-                        let responseData: Response = {
-                           "question_id": response.body[n].question_id,
-                           "survey_id": response.body[n].survey_id,
-                           "option_id": response.body[n].option_id,
-                           "response_text": response.body[n].response_text,
-                           "survey_hash": response.body[n].survey_hash
-                        };
-                        // If the question IDs match, push the response into the questions[j].response array
-                        if (this.surveys[i].questions[m].question_id == response[n].question_id) {
-                           this.surveys[i].questions[m].responses.push(responseData);
-                           this.changeref.detectChanges();
+                  // Get the survey responses based on the selectedSurveyId
+                  this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe(response => {
+                        for (let m = 0; m < this.surveys[i].questions.length; m++) {
+                        for (let n = 0; n < response.body.length; n++) {
+                              let responseData: Response = {
+                              "question_id": response.body[n].question_id,
+                              "survey_id": response.body[n].survey_id,
+                              "option_id": response.body[n].option_id,
+                              "response_text": response.body[n].response_text,
+                              "survey_hash": response.body[n].survey_hash
+                              };
+                              // If the question IDs match, push the response into the questions[j].response array
+                              if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
+                              this.surveys[i].questions[m].responses.push(responseData);
+                              this.changeref.detectChanges();
+                              }
                         }
-                     }
-                  }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                        this.displayDiv = true;
+
+                        // init the options form
+                        this.initOptionsForm();
+                        // grab the updated selected options
+                        this.updateSelectedOptions();
+                        this.canvas = document.getElementById('graphCanvas');
+                        this.ctx = this.canvas.getContext('2d');
+                        // update the chart
+                        this.updateChart();
+                  }, (error) => {
+                        console.log('error is ', error)
+                  })
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
+
+               
                }, (error) => {
                   console.log('error is ', error)
                })
@@ -149,14 +159,9 @@ export class GraphsComponent implements AfterViewInit, OnInit {
           * OTHER ON INIT FUNCTIONS GO HERE 
           */
          
-         this.surveyService.wait(10);
+         //this.surveyService.wait(10000);
 
-         // init the options form
-         this.initOptionsForm();
-         // grab the updated selected options
-         this.updateSelectedOptions();
-         // update the chart
-         this.updateChart();
+         
 
       }, (error) => {
          console.log('error is ', error)
@@ -166,8 +171,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
 
    // after the HTML has loaded, init graph elements
    ngAfterViewInit() {
-      this.canvas = document.getElementById('graphCanvas');
-      this.ctx = this.canvas.getContext('2d');
+      
       // this.updateChart();
    }
 

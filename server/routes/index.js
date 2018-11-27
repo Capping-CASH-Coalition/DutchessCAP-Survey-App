@@ -156,87 +156,6 @@ router.get('/api/activeSurveys', (req, res, next) => {
     });
 });
 
-// Route that gets the last question_id in the questions table
-router.get('/api/getLastQuestionId', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // Created query that returns the question_id from the questions table. Used as a base value in a function within app.component.ts
-        const query = client.query('SELECT * FROM questions ORDER BY question_id DESC LIMIT 1');
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row.question_id);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
-});
-
-// Route that gets the last survey_id in the surveys table 
-router.get('/api/getLastSurveyId', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // Create query that returns the last survey_id in the surveys table. Used as a base value in a function within app.component.ts
-        const query = client.query('SELECT * FROM surveys ORDER BY survey_id DESC LIMIT 1');
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row.survey_id);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
-});
-
-// Route that gets the last option_id in the options table
-router.get('/api/getLastOptionId', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
-        // Create query that returns the last option_id in the options table. Used as a base value in a function within app.component.ts
-        const query = client.query('SELECT * FROM options ORDER BY option_id DESC LIMIT 1');
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row.option_id);
-        });
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-            return res.json(results);
-        });
-    });
-});
-
 /* 
     Post functions
 */
@@ -372,7 +291,10 @@ router.post('/api/postOption', (req, res, next) => {
 router.post('/api/postArchitecture', (req, res, next) => {
     //Array to hold results from query
     const results = [];
-    const data = { survey_id: req.body.survey_id, question_id: req.body.question_id, option_id: req.body.option_id }
+    const data = { 
+        survey_id: req.body.survey_id, 
+        question_id: req.body.question_id, 
+        option_id: req.body.option_id };
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -396,11 +318,11 @@ router.post('/api/postArchitecture', (req, res, next) => {
     Put/Update functions
 */
 
-router.put('/api/updateSurveyQuestion', (req, res, next) => {
+router.put('/api/updateSurveyQuestionActive', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Created array that will hold the data to be passed to the sql function
-    const data = { question_id: req.body.question_id, question_text: req.body.question_text, question_is_active: req.body.question_is_active, question_type: req.body.question_type };
+    const data = { question_id: req.body.question_id, question_is_active: req.body.question_is_active };
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -410,7 +332,7 @@ router.put('/api/updateSurveyQuestion', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that will update a specific question in the questions table given a question_id
-        const query = client.query('UPDATE questions set question_text = ($2), question_is_active = ($3), question_type = ($4) WHERE question_id = ($1)', [data.question_id, data.question_text, data.question_is_active, data.question_type]);
+        const query = client.query('UPDATE questions set question_is_active = ($2) WHERE question_id = ($1)', [data.question_id, data.question_is_active]);
 
 
         // Stream results back one row at a time

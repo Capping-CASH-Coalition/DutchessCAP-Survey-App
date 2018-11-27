@@ -264,14 +264,14 @@ export class EditComponent implements OnInit {
                    "option_text": formData.questions[i].options[j].option_text,
                    "question_id": this.lastQuestionId
                  };
-   
+                 this.surveyService.wait(50);
                  this.surveyService.postOption(option).subscribe();
                  this.surveyService.wait(50);
                  this.lastOptionId++;
                  console.log("surveyId: " + this.lastSurveyId);
                  console.log("questionId: " + this.lastQuestionId);
                  console.log("optionId: " + this.lastOptionId);
-                 let architecture = {
+                 architecture = {
                    "survey_id": this.lastSurveyId,
                    "question_id": this.lastQuestionId,
                    "option_id": this.lastOptionId
@@ -280,6 +280,15 @@ export class EditComponent implements OnInit {
                  this.surveyService.postArchitecture(architecture).subscribe();
                }
              }
+     } else {
+           // Check if questions have changed to active
+           for (let i = 0; i < this.survey[surveyIndex].questions.length; i++) {
+                 if (formData.questions[i].question_is_active !== 
+                     this.survey[surveyIndex].questions[i].question_is_active) {
+                        this.surveyService.updateSurveyQuestionActive(formData.questions[i]).subscribe();
+                 }
+           }
+
      }
      console.log(formData);
    }

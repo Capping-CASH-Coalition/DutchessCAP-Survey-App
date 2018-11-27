@@ -511,17 +511,14 @@ var EditComponent = (function () {
     // Returns the surveyIndex that matches the formData.survey_id
     EditComponent.prototype.getSurveyIndex = function (formData) {
         var index;
-        for (var i = 0; i < this.surveys.length; i++) {
-            //console.log("formData.survey_id: " + formData.survey_id);
-            //console.log("surveys " + i + " survey_id " + this.surveys[i].survey_id);
-            if (formData.survey_id == this.surveys[i].survey_id) {
-                index = i;
-            }
-            else {
-                index = -1;
-            }
+        console.log("formData.survey_id" + formData.survey_id);
+        if (formData.survey_id) {
+            index = formData.survey_id - 1;
         }
-        console.log("Index: " + index);
+        else {
+            index = -1;
+        }
+        console.log("index" + index);
         return index;
     };
     return EditComponent;

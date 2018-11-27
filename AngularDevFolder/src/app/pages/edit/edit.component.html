@@ -53,7 +53,7 @@
                           </div>
                         </div>
                         <div class="col-lg-9">
-                          <button *ngIf="survey.controls.questions.length > 1" class='pull-right btn btn-lg' (click)='removeQuestion(i)'
+                          <button type="button" *ngIf="survey.controls.questions.length > 1" class='pull-right btn btn-lg' (click)='removeQuestion(i)'
                             style='background-color:transparent;'>
                             <div>
                               <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
@@ -103,7 +103,7 @@
                       </div>
                       <div class="row">
                         <div class="col-lg-12">
-                          <button class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
+                          <button type="button" class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
                             <div>
                               <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
                             </div>
@@ -116,9 +116,10 @@
                   <!--END OF nfFor DIV-->
                 </div>
                 <!--END OF Form Array for Questions Div-->
+                <button type="submit" class="btn btn-primary btn-lg btn-block" (click)='save(survey.value)'>Save Survey</button>
               </form>
             </div>
-            <button type="button" class="btn btn-primary btn-lg btn-block" (click)='save(survey.value)'>Save Survey</button>
+            
             <pre>Form Value: <br>{{survey.value | json}}</pre>
           </div>
         </div>

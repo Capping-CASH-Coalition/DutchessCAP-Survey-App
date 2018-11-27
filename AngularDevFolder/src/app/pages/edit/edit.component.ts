@@ -235,15 +235,17 @@ export class EditComponent implements OnInit {
       return ops;
    }
 
+   // Saves/Uploads the selected formData to the database
    save(formData) {
       // Get the survey index
       let surveyIndex = this.getSurveyIndex(formData);
       // Check if its a new survey
       console.log(surveyIndex);
+      let question;
+      let option;
+      let architecture;
      if (surveyIndex == -1) {
-            let question;
-            let option;
-            let architecture;
+            
              this.lastSurveyId++;
              let surveyName = { "survey_name": formData.survey_name };
              this.surveyService.postSurvey(surveyName).subscribe();
@@ -280,15 +282,86 @@ export class EditComponent implements OnInit {
                  this.surveyService.postArchitecture(architecture).subscribe();
                }
              }
+      // If index is not -1, this is an existing survey
      } else {
-           // Check if questions have changed to active
-           for (let i = 0; i < this.survey[surveyIndex].questions.length; i++) {
+           for (let i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
+                 // // Check if questions active/inactive has changed, then update the database
                  if (formData.questions[i].question_is_active !== 
-                     this.survey[surveyIndex].questions[i].question_is_active) {
-                        this.surveyService.updateSurveyQuestionActive(formData.questions[i]).subscribe();
+                     this.surveys[surveyIndex].questions[i].question_is_active) {
+                        question = {
+                              "question_id": formData.questions[i].question_id,
+                              "question_is_active": formData.questions[i].question_is_active
+                        };
+                        this.surveyService.updateSurveyQuestionActive(question).subscribe();
+                 }
+                 // Check if options active/inactive has changed
+                 for (let j = 0; j < this.surveys[surveyIndex].questions[i].options.length; j++) {
+                        // If it has changed, update the database
+                        if (formData.questions[i].options[j].option_is_active !== 
+                              this.surveys[surveyIndex].questions[i].options[j].option_is_active) {
+                                    option = {
+                                          "option_id": formData.questions[i].options[j].option_id,
+                                          "option_is_active": formData.questions[i].options[j].option_is_active
+                                    };
+                              this.surveyService.updateSurveyQuestionActive(option).subscribe();
+                        }
+                 }
+                 // Check if there were options added
+                 if (this.surveys[surveyIndex].questions[i].options.length < formData.questions[i].options.length) {
+                       for (let m = this.surveys[surveyIndex].questions[i].options.length; m < formData.questions[i].options.length; m++) {
+                             this.lastOptionId++;
+                             option = {
+                                    "option_text": formData.questions[i].options[m].option_text,
+                                    "question_id": this.lastQuestionId
+                              };
+                              this.surveyService.postOption(option).subscribe();
+                              this.surveyService.wait(50);
+                              console.log("surveyId: " + this.surveys[surveyIndex].survey_id);
+                              console.log("questionId: " + this.surveys[surveyIndex].questions[i].question_id);
+                              console.log("optionId: " + this.lastOptionId);
+                              architecture = {
+                                    "survey_id": this.surveys[surveyIndex].survey_id,
+                                    "question_id": this.surveys[surveyIndex].questions[i].question_id,
+                                    "option_id": this.lastOptionId
+                              };
+
+                              this.surveyService.postArchitecture(architecture).subscribe();
+                       }
                  }
            }
+           // Check if there are new questions added
+           if (this.surveys[surveyIndex].questions.length < formData.questions.length) {
+                 for (let k = this.surveys[surveyIndex].questions.length; k < formData.questions.length; k++) {
+                        this.lastQuestionId++;
+                        question = {
+                              "question_text": formData.questions[k].question_text,
+                              "question_type": formData.questions[k].question_type
+                        };
+                        this.surveyService.postQuestion(question).subscribe();
+                        this.surveyService.wait(50);
 
+                        for (let l = 0; l < formData.questions[k].options.length; l++) {
+                              this.lastOptionId++;
+                              option = {
+                                    "option_text": formData.questions[k].options[l].option_text,
+                                    "question_id": this.lastQuestionId
+                              };
+                              this.surveyService.wait(50);
+                              this.surveyService.postOption(option).subscribe();
+                              this.surveyService.wait(50);
+                              console.log("surveyId: " + this.surveys[surveyIndex].survey_id);
+                              console.log("questionId: " + this.lastQuestionId);
+                              console.log("optionId: " + this.lastOptionId);
+                              architecture = {
+                                    "survey_id": this.surveys[surveyIndex].survey_id,
+                                    "question_id": this.lastQuestionId,
+                                    "option_id": this.lastOptionId
+                              };
+
+                              this.surveyService.postArchitecture(architecture).subscribe();
+                        }
+                 }
+           }
      }
      console.log(formData);
    }

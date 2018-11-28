@@ -7,12 +7,18 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const hsts = require('hsts');
 const port = 3000;
+// Server IP
 const hostname = '10.1.1.52';
+const http = require('http');
+const https = require('https');
+var app = express();
+// Swap http/https as needed for testing
+var server = http.createServer(app);
+
+server.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 // Require the index route
 const routes = require('./server/routes/index');
-
-const app = express();
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -63,5 +69,3 @@ app.use((err, req, res, next) => {
     error: {}
   });
 });
-
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));

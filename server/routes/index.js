@@ -20,7 +20,7 @@ router.get('/', (req, res, next) => {
 });
 
 // Route that gets all questions for a specified survey_id
-router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
+router.get('/api/activeSurveyQuestions/:survey_id', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Creates a variable for the passed parameter -- survey_id
@@ -47,8 +47,36 @@ router.get('/api/surveyQuestions/:survey_id', (req, res, next) => {
     });
 });
 
+// Route that gets all questions for a specified survey_id
+router.get('/api/allSurveyQuestions/:survey_id', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    // Creates a variable for the passed parameter -- survey_id
+    var survey_id = req.params.survey_id;
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // Created query that gets all questions for a specific survey_id. Links architectures, questions, & surveys tables
+        const query = client.query('SELECT DISTINCT questions.question_id, questions.question_text, questions.question_is_active, questions.question_type FROM questions, architectures, surveys WHERE surveys.survey_id = ($1) AND questions.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id ORDER BY questions.question_id ASC', [survey_id]);
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
+        });
+    });
+});
+
 // Route that gets all options for a specified survey_id
-router.get('/api/surveyOptions/:survey_id', (req, res, next) => {
+router.get('/api/activeSurveyOptions/:survey_id', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Creates a variable for the passed parameter -- survey_id
@@ -64,6 +92,35 @@ router.get('/api/surveyOptions/:survey_id', (req, res, next) => {
         }
         // Created query that returns all options for a specified survey_id. Links options, architectures, and surveys tables.
         const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM surveys, options, architectures WHERE options.option_is_active = true AND options.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY options.question_id, options.option_id ASC', [survey_id]);
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
+        });
+    });
+});
+
+// Route that gets all options for a specified survey_id
+router.get('/api/allSurveyOptions/:survey_id', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    // Creates a variable for the passed parameter -- survey_id
+    var survey_id = req.params.survey_id;
+
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // Created query that returns all options for a specified survey_id. Links options, architectures, and surveys tables.
+        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM surveys, options, architectures WHERE AND options.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY options.question_id, options.option_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);
@@ -105,7 +162,7 @@ router.get('/api/surveyResponses/:survey_id', (req, res, next) => {
 });
 
 // Route that gets all surveys 
-router.get('/api/surveys', (req, res, next) => {
+router.get('/api/allSurveys', (req, res, next) => {
     //Array to hold results from query
     const results = [];
     // Get a Postgres client from the connection pool
@@ -294,7 +351,8 @@ router.post('/api/postArchitecture', (req, res, next) => {
     const data = { 
         survey_id: req.body.survey_id, 
         question_id: req.body.question_id, 
-        option_id: req.body.option_id };
+        option_id: req.body.option_id 
+    };
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -323,6 +381,9 @@ router.put('/api/updateSurveyQuestionActive', (req, res, next) => {
     const results = [];
     // Created array that will hold the data to be passed to the sql function
     const data = { question_id: req.body.question_id, question_is_active: req.body.question_is_active };
+    console.log("qid: " + req.body.question_id);
+    console.log("qactive: " + req.body.question_is_active);
+    console.log("data qactive: " + data.question_is_active);
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -334,15 +395,9 @@ router.put('/api/updateSurveyQuestionActive', (req, res, next) => {
         // Created query that will update a specific question in the questions table given a question_id
         const query = client.query('UPDATE questions set question_is_active = ($2) WHERE question_id = ($1)', [data.question_id, data.question_is_active]);
 
-
-        // Stream results back one row at a time
-        query.on('row', (row) => {
-            results.push(row);
-        });
         // After all data is returned, close connection and return results
         query.on('end', () => {
             done();
-            return res.json(results);
         });
     });
 });

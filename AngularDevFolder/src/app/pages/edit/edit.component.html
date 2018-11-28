@@ -34,7 +34,7 @@
                       <h3> Question {{ i+1}}</h3>
                       <div class="row">
                           <div class="col-lg-12">
-                            <small class="text-muted">Active / Inactive</small>
+                            <small class="text-muted">Question Active / Inactive</small>
                           </div>
                       </div>
                       <select formControlName="question_is_active" class="form-control form-control-sm" required>
@@ -81,9 +81,8 @@
                           </div>
                         </div>
                       </div>
+                      
                       <div class="row" *ngIf="showOptionsDiv(question)">
-                        <div class="col-lg-1">
-                        </div>
                         <div class="col-lg-5">
                           <!--OPTIONS GO HERE-->
                           <div>
@@ -95,6 +94,16 @@
                               <div class="row">
                                 <div class="col-lg-10">
                                   <div [formGroupName]="j">
+                                      <div class="row">
+                                          <div class="col-lg-12">
+                                            <small class="text-muted">Option Active / Inactive</small>
+                                          </div>
+                                      </div>
+                                      <select formControlName="option_is_active" class="form-control form-control-sm" required>
+                                        <option value="" disabled selected>Select Active/Inactive</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                      </select>
                                     <div class="form-group">
                                       <input type="text" class="form-control" placeholder="Enter Option"
                                         formControlName="option_text">

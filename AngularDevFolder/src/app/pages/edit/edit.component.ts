@@ -118,6 +118,7 @@ export class EditComponent implements OnInit {
    // create a new blank question
    initQuestion() {
       return this._fb.group({
+         question_is_active: new FormControl(''),
          question_text: new FormControl(''),
          question_type: new FormControl(''),
          options: this._fb.array([
@@ -129,7 +130,9 @@ export class EditComponent implements OnInit {
    // create a new blank option
    initOption() {
       return this._fb.group({
+         option_is_active: new FormControl(''),
          option_text: new FormControl('')
+
       })
    }
 
@@ -137,14 +140,6 @@ export class EditComponent implements OnInit {
    addQuestion(idx: number) {
       const control = <FormArray>this.survey.controls['questions'];
       control.insert(idx + 1, this.initQuestion());
-      // Initialize a new question
-      let newQuestion = {
-            "question_text": "",
-            "question_type": "",
-            options: [{
-                  "option_text": "",
-            }]
-      };
    }
 
    // remove question from the form group array at the given index
@@ -157,10 +152,6 @@ export class EditComponent implements OnInit {
    addOption(question, questionIndex: number): void {
       const control = <FormArray>question.controls.options;
       control.push(this.initOption());
-      // Initialize a new option
-      let newOption = {
-            "option_text": ""
-      };
    }
 
    // remove option from the form group array at the given index
@@ -214,13 +205,12 @@ export class EditComponent implements OnInit {
    patchFormQuestions(questions: any[]) {
       const control = <FormArray>this.survey.controls['questions'];
       questions.forEach(q => {
-         if (q.question_is_active) {
             control.push(this._fb.group({
+               question_is_active: new FormControl(q.question_is_active),
                question_text: new FormControl(q.question_text),
                question_type: new FormControl(q.question_type),
                options: this.patchFormOptions(q.options)
             }));
-         }
       });
    }
 
@@ -229,6 +219,7 @@ export class EditComponent implements OnInit {
       let ops = new FormArray([]);
       options.forEach(o => {
          ops.push(this._fb.group({
+            option_is_active: new FormControl(o.option_is_active),
             option_text: new FormControl(o.option_text)
          }));
       });
@@ -357,6 +348,7 @@ export class EditComponent implements OnInit {
                                     "question_id": this.lastQuestionId,
                                     "option_id": this.lastOptionId
                               };
+                              this.surveyService.wait(50);
 
                               this.surveyService.postArchitecture(architecture).subscribe();
                         }

@@ -77,16 +77,12 @@ export class SurveyService {
   */
 
   // Function that will call the index.js route to update a questions given the specific updates
-  updateSurveyQuestions(updates): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
-  }
-
   updateSurveyQuestionActive(question): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestionActive', question, httpOptions);
   }
 
-  updateSurveyOption(option): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
+  updateSurveyOptionActive(option): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyOptionActive', option, httpOptions);
   }
 
   wait(ms): void {

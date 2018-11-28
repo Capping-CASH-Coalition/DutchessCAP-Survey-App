@@ -14,11 +14,10 @@ export class InputComponent implements OnInit {
    survey;
 
    ngOnInit() {
-      this.survey = this.globals.surveys[0];
+
    }
    
    updateSurvey(sid){
-      this.survey = this.globals.surveys[sid];
-      console.log(this.survey);
+
    }
 }

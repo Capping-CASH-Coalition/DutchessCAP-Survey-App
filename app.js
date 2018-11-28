@@ -4,6 +4,10 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const hsts = require('hsts');
+const port = 3000;
+const hostname = '10.1.1.52';
 
 // Require the index route
 const routes = require('./server/routes/index');
@@ -20,6 +24,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(helmet());
+app.use(hsts({
+  maxAge: 15552000
+}))
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
 // Use the routes that were declared
@@ -56,5 +64,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Make the app useable 
-module.exports = app;
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));

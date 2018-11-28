@@ -1,5 +1,8 @@
 <!-- Survey Landing/Home page -->
-<div class="container2" style="margin: 0 auto"  *ngIf="!showSurveyDiv">
+<div class="container" id="container2" style="margin: 0 auto"  *ngIf="!showSurveyDiv">
+    <button class="btn btn-default"id="loginBtn" *ngIf="!auth.isAuthenticated()" (click)="auth.login()">
+      Login
+    </button>
     <div class="row">
         <div class="col-md-7" id="bucket" >
             <div class="well well-sm">
@@ -26,22 +29,19 @@
 
 <!-- Actual survey with questions -->
 <div class="container" *ngIf="showSurveyDiv">
-    <button
-    *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
-    <div class="row">
       <div class="col-md-9" id="bucket">
         <div class="well well-sm">
           <div *ngFor="let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index">
-            <div *ngFor="let question of survey.questions | paginate: config">
+            <div *ngFor="let question of survey.questions | paginate: config; let k = index">
               <form class="form-horiziontal">
                 <fieldset>
                   <legend class="text-center header">{{ survey.survey_name }}</legend>
   
                   <div class="text-center header2">
-                    <h3> {{ j+1 }}. {{ question.question_text}} </h3>
+                    <h3> {{ k+1 }}. {{ question.question_text}} </h3>
                   </div>
 
-                  <div [ngSwitch]="question.question_type">
+                  <div [ngSwitch]="question.question_type" style="height:150px;">
   
                     <div class="form-group" id="dropdownStyle" *ngSwitchCase="'select'">
                       <div class="col-md-6" id="bucket">
@@ -115,5 +115,5 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    
+</div>

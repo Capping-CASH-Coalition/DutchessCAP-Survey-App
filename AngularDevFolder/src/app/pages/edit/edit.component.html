@@ -76,7 +76,7 @@
                           <small class="text-muted">Question Prompt</small>
                           <!--TEXT BOX GOES HERE-->
                           <div class="form-group">
-                            <textarea formControlName="question_text" class="form-control" id="exampleTextarea" rows="2"
+                            <textarea [readonly]="setReadOnly()" formControlName="question_text" class="form-control" id="exampleTextarea" rows="2"
                               placeholder="Enter Question Prompt Here..."></textarea>
                           </div>
                         </div>
@@ -105,7 +105,7 @@
                                         <option value="false">Inactive</option>
                                       </select>
                                     <div class="form-group">
-                                      <input type="text" class="form-control" placeholder="Enter Option"
+                                      <input [readonly]="setReadOnly()" type="text" class="form-control" placeholder="Enter Option"
                                         formControlName="option_text">
                                     </div>
                                   </div>

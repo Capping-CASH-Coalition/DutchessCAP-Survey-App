@@ -120,7 +120,7 @@ router.get('/api/allSurveyOptions/:survey_id', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that returns all options for a specified survey_id. Links options, architectures, and surveys tables.
-        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM surveys, options, architectures WHERE AND options.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY options.question_id, options.option_id ASC', [survey_id]);
+        const query = client.query('SELECT DISTINCT options.option_id, options.option_text, options.option_is_active, options.question_id FROM surveys, options, architectures WHERE options.question_id = architectures.question_id AND architectures.survey_id = surveys.survey_id AND surveys.survey_id = ($1) ORDER BY options.question_id, options.option_id ASC', [survey_id]);
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);

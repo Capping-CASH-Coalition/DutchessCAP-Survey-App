@@ -1,25 +1,122 @@
-import { OnInit, Component, AfterViewInit } from "@angular/core";
+import { OnInit, Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
 import { Globals } from "../../globals";
 import { GraphService } from '../../services/graph.service';
+import { SurveyService } from 'app/services/survey.service';
+import { SurveyInfo } from '../../models/surveyInfo.model';
+import { Question } from '../../models/question.model';
+import { Option } from '../../models/option.model';
+import { Responses } from '../../models/responseExport.model';
 
 @Component({
    selector: 'home',
    templateUrl: './home.component.html',
-   styleUrls: ['./home.component.css']
+   styleUrls: ['./home.component.css'],
+   providers: [SurveyService]
 })
 export class HomeComponent implements OnInit {
    constructor(
       public globals: Globals,
-      public graphService: GraphService) { }
-
-   ngOnInit() {
-   }
+      public graphService: GraphService,
+      public surveyService: SurveyService,
+      private changeref: ChangeDetectorRef 
+   ){ }
 
    canvas: any;
-   // canvas context
+      // canvas context
    ctx: any;
-   // chart object
+      // chart object
    chart: Chart = null;
+      // Holds the dynamic survey variables for display
+   surveys: Array<any> = [];
+
+   ngOnInit() {
+      this.surveyService.getSurveys().subscribe((response) => {
+         // Get 1 survey at a time and push into surveys array
+         for (let i = 0; i < response.length; i++) {
+               let survey: SurveyInfo = {
+                     "survey_id": response[i].survey_id,
+                     "survey_name": response[i].survey_name,
+                     "date_created": response[i].date_created,
+                     "survey_is_active": response[i].survey_is_active
+               };
+ 
+               this.surveys.push(survey);
+               // Get the survey questions by selectedSurveyId
+               this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+                     // Initialize the questions
+                     this.surveys[i].questions = [];
+                     // Iterate through the questions and push them one at a time
+                     for (let j = 0; j < response.length; j++) {
+                           let question: Question = {
+                                 "question_id": response[j].question_id,
+                                 "question_text": response[j].question_text,
+                                 "question_type": response[j].question_type,
+                                 "question_is_active": response[j].question_is_active,
+                                 options: []
+                           };
+                           this.surveys[i].questions.push(question);
+                     }
+                     
+                     // Get the survey options based on the selectedSurveyId
+                     this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
+
+                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                              for (let l = 0; l < response.length; l++) {
+                                    let option: Option = {
+                                          "option_id": response[l].option_id,
+                                          "option_text": response[l].option_text,
+                                          "option_is_active": response[l].option_is_active,
+                                          "question_id": response[l].question_id
+                                    };
+                                    // If the question IDs match, push the option into the questions[j].options array
+                                    if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                          this.surveys[i].questions[k].options.push(option);
+                                    }
+                              }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                     }, (error) => {
+                           console.log('error is ', error)
+                     })
+                     this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
+                           
+                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                           // initialize the responses
+                           this.surveys[i].questions[k].responses = [];
+                              for (let l = 0; l < response.length; l++) {
+                                    let response1: Responses = {
+                                          "response_id": response[l].response_id,
+                                          "survey_id": response[l].survey_id,
+                                          "question_id": response[l].question_id,
+                                          "option_id": response[l].option_id,
+                                          "response_text": response[l].response_text,
+                                          "date_taken": response[l].date_taken,
+                                          "survey_hash": response[l].survey_hash
+                                    };
+                                    // If the question IDs match, push the response into the questions[j].responses array
+                                    if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                          this.surveys[i].questions[k].responses.push(response1);
+                                    }
+                              }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                     }, (error) => {
+                           console.log('error is ', error)
+                     }) 
+                     // Manually detect changes as the page will load faster than the async call
+                     this.changeref.detectChanges();
+               },(error) => {
+                     console.log('error is ', error)
+               })
+               // Manually detect changes as the page will load faster than the async call
+               this.changeref.detectChanges();
+            } 
+         }, (error) => {
+            console.log('error is ', error)
+      })
+   }
 
    ngAfterViewInit() {
       this.canvas = document.getElementById('graphCanvas');
@@ -42,10 +139,10 @@ export class HomeComponent implements OnInit {
    // go through the surveys and get the info for the survey details card
    getSurveyInfo(): any[] {
       let surveyDetails: any[] = [];
-      this.globals.surveys.forEach(survey => {
+      this.surveys.forEach(survey => {
          let submissionCount = 0;
          // get the number of responses on each question of the survey
-         survey.responses.map(q => { submissionCount += q.responses.length });
+         survey.questions.map(q => { submissionCount += q.responses.length });
          // push details to array
          surveyDetails.push({
             name: survey.survey_name,
@@ -65,7 +162,7 @@ export class HomeComponent implements OnInit {
    
    mapDateData(val): Map<string, number> {
       let map = new Map();
-      let survey = this.globals.surveys[val];
+      let survey = this.surveys[val];
       let qid = survey.questions[0].question_id;
       survey.questions.forEach(question => {
          if (question.question_id == qid) {
@@ -83,7 +180,6 @@ export class HomeComponent implements OnInit {
                   }
                }
             });
-
          }
       });
       return map;
@@ -91,12 +187,10 @@ export class HomeComponent implements OnInit {
 
    mapDateDataSets(): any[] {
       let datasets: any[] = new Array();
-      // go through the checkboxes that are selected
-         // dsMap contains all the top question options labels with values 0
-         for(let v = 0; v < this.globals.surveys.length; v++){
+         for(let v = 0; v < this.surveys.length; v++){
             // push the dataset values
             datasets.push({
-               label: this.globals.surveys[v].survey_name,
+               label: this.surveys[v].survey_name,
                data: this.mapDataLast(v),
                borderColor: this.graphService.getColorByIndex(v),
                fill: false
@@ -110,7 +204,7 @@ export class HomeComponent implements OnInit {
       let a = Array.from(this.mapDateData(val).keys());
       let b = Array.from(this.mapDateData(val).values());
 
-      let survey = this.globals.surveys[val];
+      let survey = this.surveys[val];
 
       // Push the values with the labels to the datasets
       for(let r=0; r <= survey.questions[0].responses.length; r++){

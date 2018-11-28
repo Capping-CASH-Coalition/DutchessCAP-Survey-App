@@ -1,29 +1,144 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef,  } from '@angular/core';
 import { Globals } from '../../globals';
+import { SurveyService } from 'app/services/survey.service';
+import { SurveyInfo } from '../../models/surveyInfo.model';
+import { Question } from '../../models/question.model';
+import { Option } from '../../models/option.model';
+import { Responses } from '../../models/responseExport.model';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+
+
 
 @Component({
    selector: 'app-exportRaw',
    styleUrls: ['./exportRaw.component.css'],
    templateUrl: './exportRaw.component.html',
+   providers: [SurveyService]
+
 })
 export class ExportRawComponent implements OnInit {
    
-   constructor(public globals: Globals) {}
+   constructor(
+      public globals: Globals,
+      public surveyService: SurveyService,
+      private _fb: FormBuilder,
+      private changeref: ChangeDetectorRef
+
+      ) {}
 
    // datafeed that the table uses to populate data
    dataFeed: any[];
    // set the current survey and the date to filter by
    currSurvey: any;
    dateFilter: Date;
+   // declare the survey form group holding all the values for the form
+   survey: FormGroup;
+   // Holds the dynamic survey variables for display
+   surveys: Array<any> = [];
+   // used to determine if the survey name is readonly or not
+   nameReadOnly: boolean;
 
    ngOnInit() {
-      // set the current survey to the first survey in the  globals
-      this.currSurvey = this.globals.surveys[0];
-      // update the date value select to be the date created of the survey
-      this.updateDate(this.currSurvey.date_created);
-      // set the data feed to -1 which is all questions
-      this.updateDataFeed(-1);
+      this.surveyService.getSurveys().subscribe((response) => {
+         // Get 1 survey at a time and push into surveys array
+         for (let i = 0; i < response.length; i++) {
+               let survey: SurveyInfo = {
+                     "survey_id": response[i].survey_id,
+                     "survey_name": response[i].survey_name,
+                     "date_created": response[i].date_created,
+                     "survey_is_active": response[i].survey_is_active
+               };
+ 
+               this.surveys.push(survey);
+               // Get the survey questions by selectedSurveyId
+               this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+                     // Initialize the questions
+                     this.surveys[i].questions = [];
+                     // Iterate through the questions and push them one at a time
+                     for (let j = 0; j < response.length; j++) {
+                           let question: Question = {
+                                 "question_id": response[j].question_id,
+                                 "question_text": response[j].question_text,
+                                 "question_type": response[j].question_type,
+                                 "question_is_active": response[j].question_is_active,
+                                 options: []
+                           };
+                           this.surveys[i].questions.push(question);
+                     }
+                     
+                     // Get the survey options based on the selectedSurveyId
+                     this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
+
+                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                              for (let l = 0; l < response.length; l++) {
+                                    let option: Option = {
+                                          "option_id": response[l].option_id,
+                                          "option_text": response[l].option_text,
+                                          "option_is_active": response[l].option_is_active,
+                                          "question_id": response[l].question_id
+                                    };
+                                    // If the question IDs match, push the option into the questions[j].options array
+                                    if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                          this.surveys[i].questions[k].options.push(option);
+                                    }
+                              }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                     }, (error) => {
+                           console.log('error is ', error)
+                     })
+                     // Get the survey responses based on the selectedSurveyID
+                     this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
+                           
+                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                           this.surveys[i].questions[k].responses = [];
+                              for (let l = 0; l < response.length; l++) {
+                                    let response1: Responses = {
+                                          "response_id": response[l].response_id,
+                                          "survey_id": response[l].survey_id,
+                                          "question_id": response[l].question_id,
+                                          "option_id": response[l].option_id,
+                                          "response_text": response[l].response_text,
+                                          "date_taken": response[l].date_taken,
+                                          "survey_hash": response[l].survey_hash
+                                    };
+                                    // If the question IDs match, push the response into the questions[j].responses array
+                                    if (this.surveys[i].questions[k].question_id == response[l].question_id) {
+                                          this.surveys[i].questions[k].responses.push(response1);
+                                    }
+                              }
+                           }
+                           // Manually detect changes as the page will load faster than the async call
+                           this.changeref.detectChanges();
+                     }, (error) => {
+                           console.log('error is ', error)
+                     }) 
+                     // Manually detect changes as the page will load faster than the async call
+                     this.changeref.detectChanges();
+               },(error) => {
+                     console.log('error is ', error)
+               })
+               // Manually detect changes as the page will load faster than the async call
+               this.changeref.detectChanges();
+         } 
+   }, (error) => {
+       console.log('error is ', error)
+   })      
+   // set the current survey to the first survey in the  globals
+   this.currSurvey = this.globals.surveys[0];
+   // update the date value select to be the date created of the survey
+   this.updateDate(this.currSurvey.date_created);
+   // set the data feed to -1 which is all questions
+   this.updateDataFeed(-1);
    }
+
+
+   // sets the survey name to readonly based on the edit global
+   setReadOnly(): boolean {
+      return this.nameReadOnly;
+   }
+
 
    // set the date filter global from the survey
    updateDate(date) {
@@ -32,18 +147,18 @@ export class ExportRawComponent implements OnInit {
 
    // set the current survey from the given id 
    updateSurvey(id) {
-      this.currSurvey = this.globals.surveys[id];
+      this.currSurvey = this.surveys[id];
       // get questions from the current survey
       this.getQuestions();
       // update feed to -1 which is all questions
       this.updateDataFeed(-1);
    }
 
-   // get all the questions of th current survey, filtering out the inactive ones
+   // get all the questions of the current survey, filtering out the inactive ones
    getQuestions(): string[] {
       return this.currSurvey.questions.filter(
          (question: any) =>
-            question.question_active === true);
+            question.question_is_active === true);
    }
 
    // updates the datafeed from a given question
@@ -53,7 +168,7 @@ export class ExportRawComponent implements OnInit {
       // if the question = -1 then get all questions from the survey
       if (question_id == -1) {
          this.currSurvey.questions.forEach(question => {
-            if (question.question_active) {
+            if (question.question_is_active) {
                question.responses.forEach(response => {
                   this.dataFeed.push({
                      question: question.question_text,

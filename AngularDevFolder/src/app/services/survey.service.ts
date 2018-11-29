@@ -28,35 +28,37 @@ export class SurveyService {
   }
 
   // Function that will call the index.js route to get all surveys
-  getSurveys(): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveys', { observe: 'response'});
+  getAllSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveys', { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
-  getSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response'});
+  getActiveSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveyQuestions/' + survey_id, { observe: 'response'});
+  }
+
+  // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
+  getAllSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveyQuestions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all options given a specific survey_id as a parameter
-  getSurveyOptions(survey_id): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response'});
+  getActiveSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveyOptions/' + survey_id, { observe: 'response'});
   }
+
+  // Function that will call the index.js route to get all options given a specific survey_id as a parameter
+  getAllSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response'});
+  }
+
+  /* 
+    Post functions
+  */
   
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
   getSurveyResponses(survey_id): Observable<HttpResponse<any>> {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
-  }
-
-  getLastQuestionId(): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/getLastQuestionId', { observe: 'response'});
-  }
-  
-  getLastOptionId(): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/getLastOptionId', { observe: 'response'});
-  }
-  
-  getLastSurveyId(): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/getLastSurveyId', { observe: 'response'});
   }
 
   /* 
@@ -88,25 +90,16 @@ export class SurveyService {
     Put/Update functions
   */
 
-  updateSurveyName(survey_name): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyName', survey_name);
-  }
-
   // Function that will call the index.js route to update a questions given the specific updates
-  updateSurveyQuestions(updates): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestions', updates);
+  updateSurveyQuestionActive(question): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestionActive', question, httpOptions);
   }
 
-  updateSurveyQuestion(question): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestion', question, httpOptions);
+  updateSurveyOptionActive(option): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyOptionActive', option, httpOptions);
   }
 
-  updateSurveyOption(option): Observable<any> {
-    return this.http.put<any>('http://localhost:3000/api/updateSurveyOption', option, httpOptions);
-  }
-
-  wait(s): void {
-   let ms = s * 1000;
+  wait(ms): void {
     var start = new Date().getTime();
     var end = start;
     while (end < start + ms) {

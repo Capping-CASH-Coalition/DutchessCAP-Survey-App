@@ -10,7 +10,7 @@
                <div class="col">
                   <select class="form-control pull-left" id="surveySelect" (change)="updateSurveyFormData($event.target.value)">
                     <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
-                    <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
+                    <option *ngFor="let s of surveys" [value]="s.survey_id">
                       {{ s.survey_name }}
                     </option>
                   </select>
@@ -21,17 +21,38 @@
             </div>
             <hr>
             <div class="feed-activity-list">
-              <form [formGroup]="survey" novalidate (ngSubmit)="save(survey)">
+              <form [formGroup]="survey" novalidate (ngSubmit)="save(survey.value)">
                 <div class="form-group">
                   <h2 style="font-weight:bold">Survey Name</h2>
-                  <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="surveyName"
+                  <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="survey_name"
                     placeholder="Enter Survey Name">
                 </div>
                 <!-- QUESTIONS -->
                 <div formArrayName="questions">
                   <div *ngFor="let question of survey.controls.questions.controls; let i=index">
                     <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
-                      <h3> Question {{ i+1}}</h3>
+                      <div class="row">
+                        <div class="col-lg-9">
+                          <h3 style="float:left"> Question {{ i+1}}</h3>
+                        
+                          <button type="button" *ngIf="survey.controls.questions.length > 1" class="btn btn-danger btn-sm pull-right" (click)='removeQuestion(i)'
+                            style='float: right'>
+                            <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
+                            Remove Question
+                          </button>
+                        </div>
+                      </div>
+                        
+                      <div class="row">
+                          <div class="col-lg-12">
+                            <small class="text-muted">Question Active / Inactive</small>
+                          </div>
+                      </div>
+                      <select formControlName="question_is_active" class="form-control form-control-sm" required>
+                        <option value="" disabled selected>Select Active/Inactive</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                      </select>
                       <div class="row">
                         <div class="col-lg-3">
                           <div class="row">
@@ -42,71 +63,76 @@
                           <div class="row">
                             <div class="col-lg-12">
                               <!--TYPE GO HERE-->
-                              <select formControlName="questionType" class="form-control form-control-sm" required>
+                              <select formControlName="question_type" class="form-control form-control-sm" required>
                                 <option value="" disabled selected>Select question type:</option>
-                                <option value="dropdown">Dropdown</option>
-                                <option value="checkboxes">Checkboxes</option>
-                                <option value="mc">Multiple Choice</option>
+                                <option value="select">Dropdown</option>
+                                <option value="checkbox">Checkboxes</option>
+                                <option value="radio">Multiple Choice</option>
                                 <option value="text">Textbox</option>
                               </select>
                             </div>
                           </div>
                         </div>
-                        <div class="col-lg-9">
-                          <button *ngIf="survey.controls.questions.length > 1" class='pull-right btn btn-lg' (click)='removeQuestion(i)'
-                            style='background-color:transparent;'>
-                            <div>
-                              <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
-                            </div>
-                          </button>
-                        </div>
+                        
                       </div>
                       <div class="row" style="margin-top:10px">
                         <div class="col-lg-12">
                           <small class="text-muted">Question Prompt</small>
                           <!--TEXT BOX GOES HERE-->
                           <div class="form-group">
-                            <textarea formControlName="questionText" class="form-control" id="exampleTextarea" rows="2"
+                            <textarea [readonly]="setReadOnly()" formControlName="question_text" class="form-control" id="exampleTextarea" rows="2"
                               placeholder="Enter Question Prompt Here..."></textarea>
                           </div>
                         </div>
                       </div>
+                      
                       <div class="row" *ngIf="showOptionsDiv(question)">
-                        <div class="col-lg-1">
-                        </div>
                         <div class="col-lg-5">
                           <!--OPTIONS GO HERE-->
                           <div>
                             <!-- SHOWING OPTIONS-->
                             <small class="text-muted">Add Options</small>
-                            <div formArrayName="questionOptions" *ngFor="let option of survey.controls.questions.controls[i].controls.questionOptions.controls; let j=index">
+                            <div formArrayName="options" *ngFor="let option of survey.controls.questions.controls[i].controls.options.controls; let j=index">
+                                
                               <div class="row">
                                 <div class="col-lg-10">
                                   <div [formGroupName]="j">
+                                      <div class="row">
+                                          <div class="col-lg-12">
+                                            <small class="text-muted">Option Active / Inactive</small>
+                                          </div>
+                                      </div>
+                                      <select formControlName="option_is_active" class="form-control form-control-sm" required>
+                                        <option value="" disabled selected>Select Active/Inactive</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                      </select>
                                     <div class="form-group">
-                                      <input type="text" class="form-control" placeholder="Enter Option"
-                                        formControlName="option">
+                                      <input [readonly]="setReadOnly()" type="text" class="form-control" placeholder="Enter Option"
+                                        formControlName="option_text">
                                     </div>
                                   </div>
                                 </div>
                                 <div class="col-lg-2">
-                                  <span *ngIf="question.controls.questionOptions.length > 1" (click)="removeOption(question, j)"><i
-                                      class="fas fa-trash-alt"></i></span>
+                                  <button type="button" class="btn btn-danger btn-sm pull-right" *ngIf="question.controls.options.length > 1" 
+                                    (click)="removeOption(question, j, i)"><i class="fas fa-minus-circle"></i>
+                                    Remove Option
+                                  </button>
                                 </div>
                               </div>
-                              <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.questionOptions.length-1"
-                                (click)="addOption(question)" style="float: right"><i class="fa fa-plus-circle"></i>
-                                Add Option</button>
+                              <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.options.length-1"
+                                (click)="addOption(question,i)" style="float: right"><i class="fa fa-plus-circle"></i>
+                                Add Option
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-12">
-                          <button class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
-                            <div>
+                          <button type="button" class='pull-right btn btn-sm' (click)='addQuestion(i)' style='background-color:transparent;'>
                               <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
-                            </div>
+                              Add Question
                           </button>
                         </div>
                       </div>
@@ -116,9 +142,12 @@
                   <!--END OF nfFor DIV-->
                 </div>
                 <!--END OF Form Array for Questions Div-->
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Save Survey</button>
+
               </form>
             </div>
-            <button type="button" class="btn btn-primary btn-lg btn-block">Save Survey</button>
+            
+            <pre>Form Value: <br>{{survey.value | json}}</pre>
           </div>
         </div>
       </div>

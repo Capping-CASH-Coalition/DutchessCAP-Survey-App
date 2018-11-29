@@ -111,8 +111,8 @@
                                   </div>
                                 </div>
                                 <div class="col-lg-2">
-                                  <span *ngIf="question.controls.options.length > 1" (click)="removeOption(question, j, i)"><i
-                                      class="fas fa-trash-alt"></i></span>
+                                  <button *ngIf="question.controls.options.length > 1" (click)="removeOption(question, j, i)"><i
+                                      class="fas fa-trash-alt"></i></button>
                                 </div>
                               </div>
                               <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.options.length-1"

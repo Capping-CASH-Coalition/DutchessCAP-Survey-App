@@ -117,7 +117,7 @@ export class EditComponent implements OnInit {
    // create a new blank question
    initQuestion() {
       return this._fb.group({
-         question_is_active: new FormControl(true),
+         question_is_active: new FormControl({value: true, disabled: true}),
          question_text: new FormControl(''),
          question_type: new FormControl(''),
          options: this._fb.array([
@@ -129,7 +129,7 @@ export class EditComponent implements OnInit {
    // create a new blank option
    initOption() {
       return this._fb.group({
-         option_is_active: new FormControl(true),
+         option_is_active: new FormControl({value: true, disabled: true}),
          option_text: new FormControl('')
       })
    }
@@ -192,7 +192,7 @@ export class EditComponent implements OnInit {
       // populate the survey form with proper data
       this.survey = this._fb.group({
          survey_id: new FormControl(currSurvey.survey_id),
-         survey_name: new FormControl(currSurvey.survey_name),
+         survey_name: new FormControl({value: currSurvey.survey_name, disabled: true}),
          questions: this._fb.array([])
       });
       // patch the questions nested array value with the new questions
@@ -205,8 +205,8 @@ export class EditComponent implements OnInit {
       questions.forEach(q => {
             control.push(this._fb.group({
                question_is_active: new FormControl(q.question_is_active),
-               question_text: new FormControl(q.question_text),
-               question_type: new FormControl(q.question_type),
+               question_text: new FormControl({value: q.question_text, disabled: true}),
+               question_type: new FormControl({value: q.question_type, disabled: true}),
                options: this.patchFormOptions(q.options)
             }));
       });
@@ -218,7 +218,7 @@ export class EditComponent implements OnInit {
       options.forEach(o => {
          ops.push(this._fb.group({
             option_is_active: new FormControl(o.option_is_active),
-            option_text: new FormControl(o.option_text)
+            option_text: new FormControl({value: o.option_text, disabled: true})
          }));
       });
       return ops;

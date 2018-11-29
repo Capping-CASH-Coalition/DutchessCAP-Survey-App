@@ -1,6 +1,6 @@
 <div id="wrapper">
     <navigation></navigation>
-    <div id="page-wrapper" class="gray-bg">
+    <div *ngIf="showExportDiv" id="page-wrapper" class="gray-bg">
         <topnavbar></topnavbar>
 
         <div class="row wrapper border-bottom white-bg page-heading">
@@ -10,7 +10,7 @@
               <div class="form-group">
                 <label for="exampleFormControlSelect1">Survey</label>
                 <select class="form-control" id="exampleFormControlSelect1" (change)="updateSurvey($event.target.value)">
-                  <option *ngFor="let s of globals.surveys" value="{{s.survey_id}}">
+                  <option *ngFor="let s of surveys" value="{{s.survey_id}}">
                     {{ s.survey_name }}
                   </option>
                 </select>

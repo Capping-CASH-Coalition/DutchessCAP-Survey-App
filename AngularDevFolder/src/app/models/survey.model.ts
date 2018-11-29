@@ -1,5 +1,4 @@
 import { Question } from './question.model';
-import { Response} from './response.model';
 
 export class Survey {
     
@@ -7,6 +6,5 @@ export class Survey {
     survey_name: string;
     date_created: string;
     questions: Array<Question>;
-    responses: Array<Response>;
  
 }

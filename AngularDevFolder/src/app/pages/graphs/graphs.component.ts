@@ -1,7 +1,15 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { GraphService } from '../../services/graph.service'
-import { Globals } from '../../globals';
+import { Response } from '../../models/response.model';
+import { SurveyService } from '../../services/survey.service';
+import { Survey } from '../../models/survey.model';
+import { Question } from '../../models/question.model';
+import { QuestionResponses } from '../../models/questionResponses.model';
+import { Option } from '../../models/option.model';
+import { SurveyInfo } from 'app/models/surveyInfo.model';
+import { ResponseOptions } from '@angular/http';
+import { SurveyResponses } from '../../models/surveyResponses.model'
 
 @Component({
    selector: 'app-graphs',
@@ -13,8 +21,8 @@ export class GraphsComponent implements AfterViewInit, OnInit {
 
    constructor(
       public graphService: GraphService,
-      public globals: Globals,
-
+      private changeref: ChangeDetectorRef,
+      public surveyService: SurveyService,
       private fb: FormBuilder,
    ) { };
 
@@ -32,22 +40,140 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    chart: Chart = null;
    // contains the selected options
    selectedOptions: string[];
+   // hold off on displaying div until this is true after data loaded
+   displayDiv = false;
+   // Holds the dynamic survey variables for display
+   surveys: Array<SurveyResponses> = [];
 
-   ngOnInit() {
+   ngOnInit(): void {
       // init the chart form
       this.initChartForm();
-      // init the options form
-      this.initOptionsForm();
-      // grab the updated selected options
-      this.updateSelectedOptions();
+      // get the surveys and populated inner fields with inner get calls
+      this.surveyService.getSurveys().subscribe(response => {
+         // Get 1 survey at a time and push into surveys array
+         for (let i = 0; i < response.body.length; i++) {
+            let survey: SurveyResponses = {
+               "survey_id": response.body[i].survey_id,
+               "survey_name": response.body[i].survey_name,
+               "date_created": response.body[i].date_created,
+                questions: []
+            };
+            //this.surveys.push(survey);
+            this.surveys.push(survey);
+            this.changeref.detectChanges();
+            console.log("pushing in promise:", this.surveys);
+            // Get the survey questions by selectedSurveyId
+            this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
+               // Initialize the questions
+               this.surveys[i].questions = [];
+               // Iterate through the questions and push them one at a time
+               for (let j = 0; j < response.body.length; j++) {
+                  let question: QuestionResponses = {
+                     "question_id": response.body[j].question_id,
+                     "question_text": response.body[j].question_text,
+                     "question_type": response.body[j].question_type,
+                     "question_is_active": response.body[j].question_is_active,
+                     options: [],
+                     responses: []
+                  };
+                  //this.surveys[i].questions.push(question);
+                  this.surveys[i].questions.push(question);
+                  console.log("After question push: ", this.surveys[i].questions);
+                  this.changeref.detectChanges();
+               }
+               
+
+               // Get the survey options based on the selectedSurveyId
+               this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
+                  for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                     for (let l = 0; l < response.body.length; l++) {
+                        let option: Option = {
+                           "option_id": response.body[l].option_id,
+                           "option_text": response.body[l].option_text,
+                           "option_is_active": response.body[l].option_is_active,
+                           "question_id": response.body[l].question_id
+                        };
+                        // If the question IDs match, push the option into the questions[j].options array
+                        if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
+                           this.surveys[i].questions[k].options.push(option);
+                           this.changeref.detectChanges();
+                        }
+                     }
+                  }
+                  // Manually detect changes as the page will load faster than the async call
+                  this.changeref.detectChanges();
+
+                  // Get the survey responses based on the selectedSurveyId
+                  this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe(response => {
+                        for (let m = 0; m < this.surveys[i].questions.length; m++) {
+                        for (let n = 0; n < response.body.length; n++) {
+                              let responseData: Response = {
+                              "question_id": response.body[n].question_id,
+                              "survey_id": response.body[n].survey_id,
+                              "option_id": response.body[n].option_id,
+                              "response_text": response.body[n].response_text,
+                              "survey_hash": response.body[n].survey_hash
+                              };
+                              // If the question IDs match, push the response into the questions[j].response array
+                              if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
+                              this.surveys[i].questions[m].responses.push(responseData);
+                              this.changeref.detectChanges();
+                              }
+                        }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        this.changeref.detectChanges();
+                        this.displayDiv = true;
+
+                        // init the options form
+                        this.initOptionsForm();
+                        // grab the updated selected options
+                        this.updateSelectedOptions();
+                        this.canvas = document.getElementById('graphCanvas');
+                        this.ctx = this.canvas.getContext('2d');
+                        // update the chart
+                        this.updateChart();
+                  }, (error) => {
+                        console.log('error is ', error)
+                  })
+                  // Manually detect changes as the page will load faster than the async call
+                  this.changeref.detectChanges();
+
+               
+               }, (error) => {
+                  console.log('error is ', error)
+               })
+               // Manually detect changes as the page will load faster than the async call
+               this.changeref.detectChanges();
+
+            }, (error) => {
+               console.log('error is ', error)
+            })
+            // Manually detect changes as the page will load faster than the async call
+            this.changeref.detectChanges();
+         }
+         this.changeref.detectChanges();
+         console.log("After db load: ", this.surveys);
+
+         /*
+          * OTHER ON INIT FUNCTIONS GO HERE 
+          */
+         
+         //this.surveyService.wait(10000);
+
+         
+
+      }, (error) => {
+         console.log('error is ', error)
+      })
+
    }
 
    // after the HTML has loaded, init graph elements
    ngAfterViewInit() {
-      this.canvas = document.getElementById('graphCanvas');
-      this.ctx = this.canvas.getContext('2d');
-      this.updateChart();
-   };
+      
+      // this.updateChart();
+   }
 
    // init chart form
    initChartForm() {
@@ -59,16 +185,10 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
-   // set the single state button to disabled or not disabled
-   buttonStateSingle(): boolean {
-      return this.currentDatasetType == 'single' ? true : false;
-   }
-   // set the multiple state button to disabled or not disabled
-   buttonStateMultiple(): boolean {
-      return this.currentDatasetType == 'multiple' ? true : false;
-   }
-   // init the options with the subquestion id appropiately 
-   initOptionsForm() {
+    // init the options with the subquestion id appropiately 
+    initOptionsForm() {
+      console.log("Within initOptionsForm(): ", this.surveys);
+
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       controls[0].setValue(true); // Set the first checkbox to true (checked)
       this.optionsForm = this.fb.group({
@@ -76,10 +196,52 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       });
    }
 
+   // get the options of the sub questions with active options
+   getSubQuestionOptions(): any[] {
+      console.log("Within getSubQuestionOptions(): ", this.surveys);
+
+      let sid: number = this.chartForm.controls.surveyId.value;
+      let qid: number = this.chartForm.controls.subQuestionId.value;
+      let opsReturn;
+
+      console.log("Sid survey:");
+      console.log(this.surveys[sid]);
+      console.log("Question text: ");
+      console.log(this.surveys[sid].questions[0].question_text);
+
+      this.surveys[sid].questions.forEach(q => {
+         console.log("question: ", q);
+         if (q.question_id == qid) {
+            opsReturn = q.options
+               .filter((option: any) => option.option_is_active === true);
+         }
+      });
+      console.log("Ops return:", opsReturn);
+      return opsReturn;
+   }
+
+   // used when a change happens to update the chart
+   updateChart(): void {
+      // if the switch is on single, destroy the chart, get the new data, build it using graph service
+      if (this.currentDatasetType === 'single') {
+         let map: Map<string, number>;
+         this.destroyChart();
+         map = this.mapSingleData();
+         this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
+      }
+      // if the switch is on multiple, destroy the chart, create new Chart from graph service, build it
+      else {
+         this.updateSelectedOptions();
+         this.destroyChart();
+         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())
+         this.buildChart(c);
+      }
+   }
+
    // map the dataset for an individual dataset graph
    mapSingleData(): Map<string, number> {
       let map = new Map();
-      let survey = this.globals.surveys[this.chartForm.controls.surveyId.value];
+      let survey = this.surveys[this.chartForm.controls.surveyId.value];
       survey.questions.forEach(question => {
          // for each question, if the question id equals the one in the select value
          if (question.question_id == this.chartForm.controls.questionId.value) {
@@ -102,49 +264,36 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       return map;
    }
 
-   // used when a change happens to update the chart
-   updateChart(): void {
-      // if the switch is on single, destroy the chart, get the new data, build it using graph service
-      if (this.currentDatasetType === 'single') {
-         let map: Map<string, number>;
-         this.destroyChart();
-         map = this.mapSingleData();
-         this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
-      }
-      // if the switch is on multiple, destroy the chart, create new Chart from graph service, build it
-      else {
-         this.updateSelectedOptions();
-         console.log("Matrix selected");
-         this.destroyChart();
-         let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())
-         this.buildChart(c)
-
-      }
+   // update the selected options to only be the checked ones
+   updateSelectedOptions() {
+      const options = this.getSubQuestionOptions()
+      this.selectedOptions = this.optionsForm.value.options
+         .map((v, i) => v ? options[i].option_text : null)
+         .filter(v => v !== null);
    }
 
 
    mapTopLevelFilter(): Map<string, string> {
       let responseMap: Map<string, string> = new Map();
-      this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
-         if ( q.question_id == this.chartForm.controls.questionId.value ) {
-            q.responses.map( r => responseMap.set(r.hash_id, r.response_text));
+      this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
+         if (q.question_id == this.chartForm.controls.questionId.value) {
+            q.responses.map(r => responseMap.set(r.survey_hash, r.response_text));
          }
       });
       return responseMap;
    }
 
-   /** Matrix label map */
-   initMatrixLabelsMap() : Map<string, number> {
+   ///Matrix label map 
+   initMatrixLabelsMap(): Map<string, number> {
       let labelMap: Map<string, number> = new Map();
-      this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
-         if ( q.question_id == this.chartForm.controls.questionId.value ) {
+      this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
+         if (q.question_id == this.chartForm.controls.questionId.value) {
             // on every option, if the option is active, add to the label map, if not active then nothing happens
-            q.options.map( o => o.option_active ? labelMap.set(o.option_text, 0) : null);
+            q.options.map(o => o.option_is_active ? labelMap.set(o.option_text, 0) : null);
          }
       });
       return labelMap;
    }
-
 
    mapMatrixDataSets(): any[] {
       let questionMap: Map<string, string> = this.mapTopLevelFilter();
@@ -154,14 +303,14 @@ export class GraphsComponent implements AfterViewInit, OnInit {
          // dsMap contains all the top question options labels with values 0
          let dsMap = this.initMatrixLabelsMap();
          // Sub question responses loop
-         this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(sq => {
+         this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(sq => {
             if (sq.question_id == this.chartForm.controls.subQuestionId.value) {
                // loop through all the sub question responses
                sq.responses.forEach(r => {
                   // question map has hash id key of this response
-                  if (questionMap.has(r.hash_id)) {
+                  if (questionMap.has(r.survey_hash)) {
                      // key for new 'map'
-                     let k = questionMap.get(r.hash_id);
+                     let k = questionMap.get(r.survey_hash);
                      // if the resonse text equals the option then it coorelates
                      if (r.response_text == o) {
                         // make sure that the dataset map has the key
@@ -174,7 +323,7 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                            dsMap.set(k, count);
                         }
                      }
-                  } 
+                  }
                });
             }
          });
@@ -196,25 +345,6 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       }
    }
 
-   // update the dataset switch to single or multiple
-   updateMultipleDataSetForm(val) {
-      this.currentDatasetType = val;
-   }
-
-   // get the options of the sub questions with active options
-   getSubQuestionOptions(): any[] {
-      let sid: number = this.chartForm.controls.surveyId.value;
-      let qid: number = this.chartForm.controls.subQuestionId.value;
-      let opsReturn;
-      this.globals.surveys[sid].questions.forEach(q => {
-         if (q.question_id == qid) {
-            opsReturn = q.options
-               .filter((option: any) => option.option_active === true);
-         }
-      });
-      return opsReturn;
-   }
-
    // build the chart from the Chart data and update it on the canvas
    private buildChart(chartData: Chart): void {
       this.chart = chartData;
@@ -233,18 +363,19 @@ export class GraphsComponent implements AfterViewInit, OnInit {
       this.graphService.downloadChart(event, 'canvas');
    }
 
-   // update the selected options to only be the checked ones
-   updateSelectedOptions() {
-      const options = this.getSubQuestionOptions()
-      this.selectedOptions = this.optionsForm.value.options
-         .map((v, i) => v ? options[i].option_text : null)
-         .filter(v => v !== null);
+   // set the single state button to disabled or not disabled
+   buttonStateSingle(): boolean {
+      return this.currentDatasetType == 'single' ? true : false;
+   }
+   // set the multiple state button to disabled or not disabled
+   buttonStateMultiple(): boolean {
+      return this.currentDatasetType == 'multiple' ? true : false;
    }
 
-   graphOptionsModal(): void {
-      jQuery('#myModal').on('shown.bs.modal', function () {
-         jQuery('#myInput').trigger('focus')
-       })
+   // update the dataset switch to single or multiple
+   updateMultipleDataSetForm(val) {
+      this.currentDatasetType = val;
    }
+
 
 }

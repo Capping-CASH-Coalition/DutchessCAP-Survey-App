@@ -51,6 +51,10 @@ export class SurveyService {
   getAllSurveyOptions(survey_id): Observable<HttpResponse<any>> {
     return this.http.get<any>('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response'});
   }
+
+  /* 
+    Post functions
+  */
   
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
   getSurveyResponses(survey_id): Observable<HttpResponse<any>> {

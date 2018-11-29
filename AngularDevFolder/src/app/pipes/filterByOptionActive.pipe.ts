@@ -8,7 +8,7 @@ export class FilterByOptionActivePipe implements PipeTransform {
 
     transform(options : any): any[] {
         if (options) {
-            return options.filter((option: any) => option.option_active === true);
+            return options.filter((option: any) => option.option_is_active === true);
         }
     }
 }

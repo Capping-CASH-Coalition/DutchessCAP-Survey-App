@@ -689,31 +689,140 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var GraphsComponent = (function () {
-    function GraphsComponent(graphService, globals, fb) {
+    function GraphsComponent(graphService, changeref, surveyService, fb) {
         this.graphService = graphService;
-        this.globals = globals;
+        this.changeref = changeref;
+        this.surveyService = surveyService;
         this.fb = fb;
         // global to track which switch for the dataset
         this.currentDatasetType = 'single';
         // chart object
         this.chart = null;
+        // hold off on displaying div until this is true after data loaded
+        this.displayDiv = true;
+        this.displayQuestion = false;
+        // Holds the dynamic survey variables for display
+        this.surveys = [];
     }
     ;
     GraphsComponent.prototype.ngOnInit = function () {
+        var _this = this;
         // init the chart form
         this.initChartForm();
-        // init the options form
-        this.initOptionsForm();
-        // grab the updated selected options
-        this.updateSelectedOptions();
+        // get the surveys and populated inner fields with inner get calls
+        this.surveyService.getSurveys().subscribe(function (response) {
+            var _loop_1 = function (i) {
+                var survey = {
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    questions: []
+                };
+                //this.surveys.push(survey);
+                _this.surveys.push(survey);
+                _this.changeref.detectChanges();
+                console.log("pushing in promise:", _this.surveys);
+                // Get the survey questions by selectedSurveyId
+                _this.surveyService.getSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
+                    // Initialize the questions
+                    _this.surveys[i].questions = [];
+                    // Iterate through the questions and push them one at a time
+                    for (var j = 0; j < response.body.length; j++) {
+                        var question = {
+                            "question_id": response.body[j].question_id,
+                            "question_text": response.body[j].question_text,
+                            "question_type": response.body[j].question_type,
+                            "question_is_active": response.body[j].question_is_active,
+                            options: [],
+                            responses: []
+                        };
+                        //this.surveys[i].questions.push(question);
+                        _this.surveys[i].questions.push(question);
+                        console.log("After question push: ", _this.surveys[i].questions);
+                        _this.changeref.detectChanges();
+                    }
+                    // Get the survey options based on the selectedSurveyId
+                    _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
+                        for (var k = 0; k < _this.surveys[i].questions.length; k++) {
+                            for (var l = 0; l < response.body.length; l++) {
+                                var option = {
+                                    "option_id": response.body[l].option_id,
+                                    "option_text": response.body[l].option_text,
+                                    "option_is_active": response.body[l].option_is_active,
+                                    "question_id": response.body[l].question_id
+                                };
+                                // If the question IDs match, push the option into the questions[j].options array
+                                if (_this.surveys[i].questions[k].question_id == response.body[l].question_id) {
+                                    _this.surveys[i].questions[k].options.push(option);
+                                    _this.changeref.detectChanges();
+                                }
+                            }
+                        }
+                        // Manually detect changes as the page will load faster than the async call
+                        _this.changeref.detectChanges();
+                        // Get the survey responses based on the selectedSurveyId
+                        _this.surveyService.getSurveyResponses(_this.surveys[i].survey_id).subscribe(function (response) {
+                            for (var m = 0; m < _this.surveys[i].questions.length; m++) {
+                                for (var n = 0; n < response.body.length; n++) {
+                                    var responseData = {
+                                        "question_id": response.body[n].question_id,
+                                        "survey_id": response.body[n].survey_id,
+                                        "option_id": response.body[n].option_id,
+                                        "response_text": response.body[n].response_text,
+                                        "survey_hash": response.body[n].survey_hash
+                                    };
+                                    // If the question IDs match, push the response into the questions[j].response array
+                                    if (_this.surveys[i].questions[m].question_id == response.body[n].question_id) {
+                                        _this.surveys[i].questions[m].responses.push(responseData);
+                                        _this.changeref.detectChanges();
+                                    }
+                                }
+                            }
+                            // Manually detect changes as the page will load faster than the async call
+                            _this.changeref.detectChanges();
+                            _this.displayQuestion = true;
+                            // init the options form
+                            _this.initOptionsForm();
+                            // grab the updated selected options
+                            _this.updateSelectedOptions();
+                            _this.canvas = document.getElementById('graphCanvas');
+                            _this.ctx = _this.canvas.getContext('2d');
+                            // update the chart
+                            _this.updateChart();
+                        }, function (error) {
+                            console.log('error is ', error);
+                        });
+                        // Manually detect changes as the page will load faster than the async call
+                        _this.changeref.detectChanges();
+                    }, function (error) {
+                        console.log('error is ', error);
+                    });
+                    // Manually detect changes as the page will load faster than the async call
+                    _this.changeref.detectChanges();
+                }, function (error) {
+                    console.log('error is ', error);
+                });
+                // Manually detect changes as the page will load faster than the async call
+                _this.changeref.detectChanges();
+            };
+            // Get 1 survey at a time and push into surveys array
+            for (var i = 0; i < response.body.length; i++) {
+                _loop_1(i);
+            }
+            _this.changeref.detectChanges();
+            console.log("After db load: ", _this.surveys);
+            /*
+             * OTHER ON INIT FUNCTIONS GO HERE
+             */
+            //this.surveyService.wait(10000);
+        }, function (error) {
+            console.log('error is ', error);
+        });
     };
     // after the HTML has loaded, init graph elements
     GraphsComponent.prototype.ngAfterViewInit = function () {
-        this.canvas = document.getElementById('graphCanvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.updateChart();
+        // this.updateChart();
     };
-    ;
     // init chart form
     GraphsComponent.prototype.initChartForm = function () {
         this.chartForm = this.fb.group({
@@ -723,27 +832,56 @@ var GraphsComponent = (function () {
             subQuestionId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('1')
         });
     };
-    // set the single state button to disabled or not disabled
-    GraphsComponent.prototype.buttonStateSingle = function () {
-        return this.currentDatasetType == 'single' ? true : false;
-    };
-    // set the multiple state button to disabled or not disabled
-    GraphsComponent.prototype.buttonStateMultiple = function () {
-        return this.currentDatasetType == 'multiple' ? true : false;
-    };
     // init the options with the subquestion id appropiately 
     GraphsComponent.prototype.initOptionsForm = function () {
+        console.log("Within initOptionsForm(): ", this.surveys);
         var controls = this.getSubQuestionOptions().map(function (o) { return new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](false); });
         controls[0].setValue(true); // Set the first checkbox to true (checked)
         this.optionsForm = this.fb.group({
             options: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormArray */](controls)
         });
     };
+    // get the options of the sub questions with active options
+    GraphsComponent.prototype.getSubQuestionOptions = function () {
+        console.log("Within getSubQuestionOptions(): ", this.surveys);
+        var sid = this.chartForm.controls.surveyId.value;
+        var qid = this.chartForm.controls.subQuestionId.value;
+        var opsReturn;
+        console.log("Sid survey:");
+        console.log(this.surveys[sid]);
+        console.log("Question text: ");
+        console.log(this.surveys[sid].questions[0].question_text);
+        this.surveys[sid].questions.forEach(function (q) {
+            console.log("question: ", q);
+            if (q.question_id == qid) {
+                opsReturn = q.options
+                    .filter(function (option) { return option.option_is_active === true; });
+            }
+        });
+        console.log("Ops return:", opsReturn);
+        return opsReturn;
+    };
+    // used when a change happens to update the chart
+    GraphsComponent.prototype.updateChart = function () {
+        // if the switch is on single, destroy the chart, get the new data, build it using graph service
+        if (this.currentDatasetType === 'single') {
+            var map = void 0;
+            this.destroyChart();
+            map = this.mapSingleData();
+            this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
+        }
+        else {
+            this.updateSelectedOptions();
+            this.destroyChart();
+            var c = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData());
+            this.buildChart(c);
+        }
+    };
     // map the dataset for an individual dataset graph
     GraphsComponent.prototype.mapSingleData = function () {
         var _this = this;
         var map = new Map();
-        var survey = this.globals.surveys[this.chartForm.controls.surveyId.value];
+        var survey = this.surveys[this.chartForm.controls.surveyId.value];
         survey.questions.forEach(function (question) {
             // for each question, if the question id equals the one in the select value
             if (question.question_id == _this.chartForm.controls.questionId.value) {
@@ -764,41 +902,31 @@ var GraphsComponent = (function () {
         });
         return map;
     };
-    // used when a change happens to update the chart
-    GraphsComponent.prototype.updateChart = function () {
-        // if the switch is on single, destroy the chart, get the new data, build it using graph service
-        if (this.currentDatasetType === 'single') {
-            var map = void 0;
-            this.destroyChart();
-            map = this.mapSingleData();
-            this.buildChart(this.graphService.createSingleChart(this.ctx, this.chartForm.controls.chartType.value, map));
-        }
-        else {
-            this.updateSelectedOptions();
-            console.log("Matrix selected");
-            this.destroyChart();
-            var c = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData());
-            this.buildChart(c);
-        }
+    // update the selected options to only be the checked ones
+    GraphsComponent.prototype.updateSelectedOptions = function () {
+        var options = this.getSubQuestionOptions();
+        this.selectedOptions = this.optionsForm.value.options
+            .map(function (v, i) { return v ? options[i].option_text : null; })
+            .filter(function (v) { return v !== null; });
     };
     GraphsComponent.prototype.mapTopLevelFilter = function () {
         var _this = this;
         var responseMap = new Map();
-        this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
+        this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
             if (q.question_id == _this.chartForm.controls.questionId.value) {
-                q.responses.map(function (r) { return responseMap.set(r.hash_id, r.response_text); });
+                q.responses.map(function (r) { return responseMap.set(r.survey_hash, r.response_text); });
             }
         });
         return responseMap;
     };
-    /** Matrix label map */
+    ///Matrix label map 
     GraphsComponent.prototype.initMatrixLabelsMap = function () {
         var _this = this;
         var labelMap = new Map();
-        this.globals.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
+        this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
             if (q.question_id == _this.chartForm.controls.questionId.value) {
                 // on every option, if the option is active, add to the label map, if not active then nothing happens
-                q.options.map(function (o) { return o.option_active ? labelMap.set(o.option_text, 0) : null; });
+                q.options.map(function (o) { return o.option_is_active ? labelMap.set(o.option_text, 0) : null; });
             }
         });
         return labelMap;
@@ -812,14 +940,14 @@ var GraphsComponent = (function () {
             // dsMap contains all the top question options labels with values 0
             var dsMap = _this.initMatrixLabelsMap();
             // Sub question responses loop
-            _this.globals.surveys[_this.chartForm.controls.surveyId.value].questions.forEach(function (sq) {
+            _this.surveys[_this.chartForm.controls.surveyId.value].questions.forEach(function (sq) {
                 if (sq.question_id == _this.chartForm.controls.subQuestionId.value) {
                     // loop through all the sub question responses
                     sq.responses.forEach(function (r) {
                         // question map has hash id key of this response
-                        if (questionMap.has(r.hash_id)) {
+                        if (questionMap.has(r.survey_hash)) {
                             // key for new 'map'
-                            var k = questionMap.get(r.hash_id);
+                            var k = questionMap.get(r.survey_hash);
                             // if the resonse text equals the option then it coorelates
                             if (r.response_text == o) {
                                 // make sure that the dataset map has the key
@@ -852,23 +980,6 @@ var GraphsComponent = (function () {
             datasets: this.mapMatrixDataSets()
         };
     };
-    // update the dataset switch to single or multiple
-    GraphsComponent.prototype.updateMultipleDataSetForm = function (val) {
-        this.currentDatasetType = val;
-    };
-    // get the options of the sub questions with active options
-    GraphsComponent.prototype.getSubQuestionOptions = function () {
-        var sid = this.chartForm.controls.surveyId.value;
-        var qid = this.chartForm.controls.subQuestionId.value;
-        var opsReturn;
-        this.globals.surveys[sid].questions.forEach(function (q) {
-            if (q.question_id == qid) {
-                opsReturn = q.options
-                    .filter(function (option) { return option.option_active === true; });
-            }
-        });
-        return opsReturn;
-    };
     // build the chart from the Chart data and update it on the canvas
     GraphsComponent.prototype.buildChart = function (chartData) {
         this.chart = chartData;
@@ -884,17 +995,17 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.download = function (event) {
         this.graphService.downloadChart(event, 'canvas');
     };
-    // update the selected options to only be the checked ones
-    GraphsComponent.prototype.updateSelectedOptions = function () {
-        var options = this.getSubQuestionOptions();
-        this.selectedOptions = this.optionsForm.value.options
-            .map(function (v, i) { return v ? options[i].option_text : null; })
-            .filter(function (v) { return v !== null; });
+    // set the single state button to disabled or not disabled
+    GraphsComponent.prototype.buttonStateSingle = function () {
+        return this.currentDatasetType == 'single' ? true : false;
     };
-    GraphsComponent.prototype.graphOptionsModal = function () {
-        jQuery('#myModal').on('shown.bs.modal', function () {
-            jQuery('#myInput').trigger('focus');
-        });
+    // set the multiple state button to disabled or not disabled
+    GraphsComponent.prototype.buttonStateMultiple = function () {
+        return this.currentDatasetType == 'multiple' ? true : false;
+    };
+    // update the dataset switch to single or multiple
+    GraphsComponent.prototype.updateMultipleDataSetForm = function (val) {
+        this.currentDatasetType = val;
     };
     return GraphsComponent;
 }());
@@ -904,10 +1015,10 @@ GraphsComponent = __decorate([
         template: __webpack_require__(633),
         styles: [__webpack_require__(590)]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__globals__["a" /* Globals */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _d || Object])
 ], GraphsComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=graphs.component.js.map
 
 /***/ }),
@@ -2110,7 +2221,7 @@ var FilterByDatePipe = (function () {
     }
     FilterByDatePipe.prototype.transform = function (responses, date) {
         if (responses) {
-            return responses.filter(function (response) { return response.date >= date; });
+            return responses.filter(function (response) { return response.date_taken >= date; });
         }
     };
     return FilterByDatePipe;
@@ -2143,7 +2254,7 @@ var FilterByOptionActivePipe = (function () {
     }
     FilterByOptionActivePipe.prototype.transform = function (options) {
         if (options) {
-            return options.filter(function (option) { return option.option_active === true; });
+            return options.filter(function (option) { return option.option_is_active === true; });
         }
     };
     return FilterByOptionActivePipe;
@@ -2176,7 +2287,7 @@ var FilterByQuestionActivePipe = (function () {
     }
     FilterByQuestionActivePipe.prototype.transform = function (questions) {
         if (questions) {
-            return questions.filter(function (question) { return question.question_active === true; });
+            return questions.filter(function (question) { return question.question_is_active === true; });
         }
     };
     return FilterByQuestionActivePipe;
@@ -2874,7 +2985,7 @@ module.exports = "<div id=\"wrapper\">\n    <navigation></navigation>\n    <div 
 /***/ 633:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n\n    <div class=\"row wrapper border-bottom white-bg page-heading\">\n      <div class=\"row\">\n\n        <div class=\"col-lg-3\"style=\"margin-bottom: 500px\">\n          <br>\n          <form [formGroup]=\"chartForm\">\n            <div class=\"form-group\">\n\n              <div class=\"filterBlock\">\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\n                </div>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Chart Type</label>\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\n                    {{graph.view}}\n                  </option>\n                </select>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Select Survey</label>\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\n                  <option *ngFor=\"let survey of globals.surveys\" [value]=\"survey.survey_id\">\n                    {{survey.survey_name}}\n                  </option>\n                </select>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Select Question</label>\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\n                  <option *ngFor=\"let question of globals.surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion\"\n                    [value]=\"question.question_id\">\n                    {{question.question_text}}\n                  </option>\n                </select>\n              </div>\n\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\n                <div class=\"filterBlock\">\n                  <label for=\"graphType\">Select Sub Question</label>\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateChart()\">\n                    <option *ngFor=\"let question of globals.surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\n                      [value]=\"question.question_id\">\n                      {{question.question_text}}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"optionsDiv\">\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\n                      <div class=\"col-lg-12\">\n                         <li>\n                           <input type=\"checkbox\" [formControlName]=\"i\">\n                           <span class=\"spanOption\">{{option.option_text}}</span>\n                        </li>\n                      </div>\n                     </ul>\n                  </form>\n                </div>\n              </div>\n              <div class=\"btnBlock\">\n               <hr>\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\n                  <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\n                    <i class=\"fas fa-download\"></i>\n                    Export Graph\n                  </a>\n                </button>\n              </div>\n\n            </div>\n          </form>\n        </div>\n\n        <div class=\"col-lg-8\">\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\n        </div>\n\n        <div class=\"col-lg-1\">\n\n        </div>\n\n      </div>\n\n\n    </div>\n  </div>\n</div>\n"
+module.exports = "<div *ngIf=\"displayQuestion\" id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n\n    \n    <pre>SurveyId: <br>{{surveys[0].survey_id}}</pre>\n    <pre>formControl surveyId: <br>{{chartForm.controls.surveyId.value}}</pre>\n\n    <div *ngIf=\"displayDiv\" class=\"row wrapper border-bottom white-bg page-heading\">\n      <div class=\"row\">\n\n        <div class=\"col-lg-3\"style=\"margin-bottom: 500px\">\n          <br>\n          <form [formGroup]=\"chartForm\">\n            <div class=\"form-group\">\n\n              <div class=\"filterBlock\">\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\n                </div>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Chart Type</label>\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\n                    {{graph.view}}\n                  </option>\n                </select>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Select Survey</label>\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\n                    {{survey.survey_name}}\n                  </option>\n                </select>\n              </div>\n\n              <div class=\"filterBlock\">\n                <label for=\"graphType\">Select Question</label>\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion\"\n                    [value]=\"question.question_id\">\n                    {{question.question_text}}\n                  </option>\n                </select>\n              </div>\n\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\n                <div class=\"filterBlock\">\n                  <label for=\"graphType\">Select Sub Question</label>\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateChart()\">\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\n                      [value]=\"question.question_id\">\n                      {{question.question_text}}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"optionsDiv\">\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\n                      <div class=\"col-lg-12\">\n                         <li>\n                           <input type=\"checkbox\" [formControlName]=\"i\">\n                           <span class=\"spanOption\">{{option.option_text}}</span>\n                        </li>\n                      </div>\n                     </ul>\n                  </form>\n                </div>\n              </div>\n              <div class=\"btnBlock\">\n               <hr>\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\n                  <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\n                    <i class=\"fas fa-download\"></i>\n                    Export Graph\n                  </a>\n                </button>\n              </div>\n\n            </div>\n          </form>\n        </div>\n\n        <div class=\"col-lg-8\">\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\n        </div>\n\n        <div class=\"col-lg-1\">\n\n        </div>\n\n      </div>\n\n\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -2903,6 +3014,113 @@ module.exports = "<div id=\"notfound\">\n\t<div class=\"notfound\">\n\t\t<div cl
 /***/ (function(module, exports) {
 
 module.exports = "<!-- Survey Landing/Home page -->\n<div class=\"container\" id=\"container2\" style=\"margin: 0 auto\"  *ngIf=\"!showSurveyDiv\">\n    <button class=\"btn btn-default\"id=\"loginBtn\" *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">\n      Login\n    </button>\n    <div class=\"row\">\n        <div class=\"col-md-7\" id=\"bucket\" >\n            <div class=\"well well-sm\">\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\n               \n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\n\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\n                        <option disabled selected>-Please Select a Survey-</option>\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\n                    </select>\n                    \n                    <div class=\"form-group\">\n                        <div class=\"col-md-12 text-center\">\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\n                        </div>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Actual survey with questions -->\n<div class=\"container\" *ngIf=\"showSurveyDiv\">\n      <div class=\"col-md-9\" id=\"bucket\">\n        <div class=\"well well-sm\">\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\n            <div *ngFor=\"let question of survey.questions | paginate: config; let k = index\">\n              <form class=\"form-horiziontal\">\n                <fieldset>\n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\n  \n                  <div class=\"text-center header2\">\n                    <h3> {{ k+1 }}. {{ question.question_text}} </h3>\n                  </div>\n\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px;\">\n  \n                    <div class=\"form-group\" id=\"dropdownStyle\" *ngSwitchCase=\"'select'\">\n                      <div class=\"col-md-6\" id=\"bucket\">\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\n                            (change)=\"optionSelect($event, $event.target.value, 'select')\">\n                            <option disabled selected>-Please Select an Option-</option>\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\n                              {{ option.option_text }}\n                            </option>\n                          </select>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-check\" *ngSwitchCase=\"'checkbox'\" id=\"checkboxStyle\">\n                        <div class=\"col-md-6\" id=\"bucket\">\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\n                            (change)=\"optionSelect($event, $event.target.value, 'checkbox')\">\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\" *ngSwitchCase=\"'text'\" id=\"textStyle\">\n                        <div class=\"col-md-6\" id=\"bucket\">\n                          <div class=\"form-check-label\">\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\n                          </div>\n                      </div>\n                    </div>\n  \n                    <div class=\"form-group\" *ngSwitchCase=\"'radio'\" id=\"radioStyle\">\n                      <div class=\"col-md-6\" id=\"bucket\">\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'radio')\">\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\n                            {{ option.option_text }}\n                          </div>\n                      </div>\n                    </div>\n  \n                  </div>\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\n                    <div class=\"custom-pagination\">\n                      <ul>\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\n                            Previous </button>\n                          </span>\n  \n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\n                          </li>\n                        </span>\n  \n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\n                            Next </button>\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\n                            Submit </button>\n                          </span>\n                      </ul>\n                    </div>\n                  </pagination-template>\n                </fieldset>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    \n</div>"
+
+/***/ }),
+
+/***/ 64:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Globals; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var Globals = (function () {
+    function Globals() {
+        this.surveys = [
+            {
+                survey_id: 0,
+                survey_name: "Lindas Survey",
+                date_created: "2018-02-13",
+                questions: [
+                    {
+                        question_id: 0,
+                        question_text: "What is your favorite color?",
+                        question_type: "dropdown",
+                        question_active: true,
+                        options: [
+                            { option_id: 0, option_text: "Red", option_active: true },
+                            { option_id: 1, option_text: "White", option_active: true },
+                            { option_id: 2, option_text: "Pink", option_active: true },
+                            { option_id: 3, option_text: "Blue", option_active: true },
+                            { option_id: 4, option_text: "Yellow", option_active: false }
+                        ],
+                        responses: [
+                            { response_id: 0, response_text: "Red", date_taken: "2018-11-02" },
+                            { response_id: 1, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 2, response_text: "Pink", date_taken: "2018-11-02" },
+                            { response_id: 3, response_text: "Blue", date_taken: "2018-11-02" },
+                            { response_id: 4, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 5, response_text: "White", date_taken: "2018-11-02" },
+                            { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02" },
+                            { response_id: 7, response_text: "Blue", date_taken: "2018-11-02" },
+                            { response_id: 8, response_text: "Pink", date_taken: "2018-11-02" },
+                        ]
+                    },
+                    {
+                        question_id: 1,
+                        question_text: "What is your favorite City?",
+                        question_type: "mc",
+                        question_active: true,
+                        options: [
+                            { option_id: 5, option_text: "New York City", option_active: true },
+                            { option_id: 6, option_text: "Boston", option_active: true },
+                            { option_id: 7, option_text: "Washington", option_active: false },
+                            { option_id: 8, option_text: "Miami", option_active: true },
+                            { option_id: 9, option_text: "Poughkeepsie", option_active: true }
+                        ],
+                        responses: [
+                            { response_id: 9, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 10, response_text: "Boston", date_taken: "2018-11-02" },
+                            { response_id: 11, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 12, response_text: "Washington", date_taken: "2018-11-02" },
+                            { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
+                            { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
+                            { response_id: 15, response_text: "New York City", date_taken: "2018-11-02" },
+                            { response_id: 16, response_text: "Miami", date_taken: "2018-11-02" },
+                            { response_id: 17, response_text: "Boston", date_taken: "2018-11-02" },
+                        ]
+                    },
+                    {
+                        question_id: 2,
+                        question_text: "Select the services that you need: ",
+                        question_type: "checkboxes",
+                        question_active: true,
+                        options: [
+                            { option_id: 10, option_text: "More Money", option_active: false },
+                            { option_id: 11, option_text: "More Time", option_active: true },
+                            { option_id: 12, option_text: "More Clothes", option_active: true },
+                            { option_id: 13, option_text: "Less capping work", option_active: true },
+                            { option_id: 14, option_text: "Less drinking", option_active: false }
+                        ],
+                        responses: [
+                            { response_id: 18, response_text: "More Time", date_taken: "2018-11-02" },
+                            { response_id: 19, response_text: "More Time", date_taken: "2018-11-02" },
+                            { response_id: 20, response_text: "More Money", date_taken: "2018-11-02" },
+                            { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02" },
+                            { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02" },
+                            { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02" },
+                            { response_id: 24, response_text: "More Money", date_taken: "2018-11-02" },
+                            { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02" },
+                            { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02" },
+                        ]
+                    }
+                ]
+            }
+        ];
+    }
+    return Globals;
+}());
+Globals = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
+], Globals);
+
+//# sourceMappingURL=globals.js.map
 
 /***/ }),
 

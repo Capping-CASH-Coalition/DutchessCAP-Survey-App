@@ -11,4 +11,5 @@ export class FilterByQuestionActivePipe implements PipeTransform {
             return questions.filter((question: any) => question.question_is_active === true);
         }
     }
+
 }

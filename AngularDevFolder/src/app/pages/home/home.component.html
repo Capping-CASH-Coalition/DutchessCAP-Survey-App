@@ -2,17 +2,17 @@
   <navigation></navigation>
   <div id="page-wrapper" class="gray-bg">
     <topnavbar></topnavbar>
-    <div class="col-lg-3 margin-top-20">
+    <div  *ngIf="showHomeDiv" class="col-lg-3 margin-top-20">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
           <h5>Survey Details</h5>
         </div>
         <div class="ibox-content">
-          <div class="feed-activity-list">
+          <div *ngIf="showInfo" class="feed-activity-list">
             <div *ngFor="let info of getSurveyInfo()">
-               <div class="feed-element margin-top-5">
-                <span *ngIf="info.status" class="label label-primary pull-right">Active</span>
-                <span *ngIf="! info.status" class="label label-warning pull-right">Inactive</span>
+               <div class="feed-element margin-top-5" (click)="updateActiveSurvey($event.target.value)">
+                <button type="button" *ngIf="info.status" value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
+                <button type="button" *ngIf="! info.status" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
                 <strong>{{info.name}}</strong>
                 <div class="margin-top-5">
                   <div> Date Created: <small class="text-muted pull-right">{{info.date}}</small></div>
@@ -27,7 +27,7 @@
     <div class="col-lg-9 margin-top-20">
       <div class="ibox-content">
         <canvas id="graphCanvas" width="1000" height="670"></canvas>
-      </div>
+      </div >
     </div>
   </div>
 </div>

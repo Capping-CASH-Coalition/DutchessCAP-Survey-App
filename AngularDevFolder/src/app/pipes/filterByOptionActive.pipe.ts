@@ -11,4 +11,5 @@ export class FilterByOptionActivePipe implements PipeTransform {
             return options.filter((option: any) => option.option_is_active === true);
         }
     }
+
 }

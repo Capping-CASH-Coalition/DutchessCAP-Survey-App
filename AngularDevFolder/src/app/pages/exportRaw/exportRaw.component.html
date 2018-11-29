@@ -1,6 +1,6 @@
 <div id="wrapper">
     <navigation></navigation>
-    <div id="page-wrapper" class="gray-bg">
+    <div *ngIf="showExportDiv" id="page-wrapper" class="gray-bg">
         <topnavbar></topnavbar>
 
         <div class="row wrapper border-bottom white-bg page-heading">
@@ -10,14 +10,14 @@
               <div class="form-group">
                 <label for="exampleFormControlSelect1">Survey</label>
                 <select class="form-control" id="exampleFormControlSelect1" (change)="updateSurvey($event.target.value)">
-                  <option *ngFor="let survey of globals.surveys" value="{{survey.survey_id}}">
-                    {{ survey.survey_name }}
+                  <option *ngFor="let s of surveys" value="{{s.survey_id}}">
+                    {{ s.survey_name }}
                   </option>
                 </select>
               </div>
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-lg-4">
               <div class="form-group">
                 <label for="exampleFormControlSelect1">Survey Question</label>
                 <select class="form-control" id="exampleFormControlSelect1" (change)="updateDataFeed($event.target.value)">
@@ -29,10 +29,17 @@
               </div>
             </div>
 
-            <div class="col-lg-3">
+            <div class="col-lg-2">
               <div class="form-group">
-                <label for="exampleFormControlSelect1">As of Date</label>
-                <input class="form-control" type="date" value="{{ dateFilter }}" (change)="updateDate($event.target.value)">
+                <label for="exampleFormControlSelect1">Start Date</label>
+                <input class="form-control" type="date" value="{{ dateFilterStart }}" (change)="updateDate($event.target.value)">
+              </div>
+            </div>
+
+            <div class="col-lg-2">
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">End Date</label>
+                <input class="form-control" type="date" value="{{ dateFilterEnd }}" (change)="updateDateUpper($event.target.value)">
               </div>
             </div>
 
@@ -70,10 +77,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let response of dataFeed | filter: searchText | filterByDate: dateFilter">
+                  <tr *ngFor="let response of dataFeed | filter: searchText | filterByDate: dateFilterStart:dateFilterEnd">
                     <th> {{ response.question }} </th>
                     <td> {{ response.response }}</td>
-                    <td class="colDates"> {{ response.date }}</td>
+                    <td class="colDates"> {{ response.date_taken }}</td>
                   </tr>
                 </tbody>
               </table>

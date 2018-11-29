@@ -60,4 +60,5 @@ export class AuthenticationService {
   isAuthenticated() {
     return tokenNotExpired();
   }
+
 }

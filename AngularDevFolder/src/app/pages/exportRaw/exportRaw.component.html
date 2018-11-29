@@ -73,7 +73,7 @@
                   <tr *ngFor="let response of dataFeed | filter: searchText | filterByDate: dateFilter">
                     <th> {{ response.question }} </th>
                     <td> {{ response.response }}</td>
-                    <td class="colDates"> {{ response.date }}</td>
+                    <td class="colDates"> {{ response.date_taken }}</td>
                   </tr>
                 </tbody>
               </table>

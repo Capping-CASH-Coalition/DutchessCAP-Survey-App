@@ -178,7 +178,7 @@ export class ExportRawComponent implements OnInit {
                      question: question.question_text,
                      question_id: question.question_id,
                      response: response.response_text,
-                     date: response.date_taken
+                     date_taken: response.date_taken
                   })
                });
             }
@@ -193,7 +193,7 @@ export class ExportRawComponent implements OnInit {
                      question: question.question_text,
                      question_id: question.question_id,
                      response: response.response_text,
-                     date: response.date_taken
+                     date_taken: response.date_taken
                   })
                });
             }

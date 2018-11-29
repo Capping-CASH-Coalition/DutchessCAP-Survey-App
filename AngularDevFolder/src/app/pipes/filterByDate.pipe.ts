@@ -8,7 +8,7 @@ export class FilterByDatePipe implements PipeTransform {
 
     transform(responses : any, date: Date): any[] {
         if (responses) {
-            return responses.filter((response: any) => response.date >= date);
+            return responses.filter((response: any) => response.date_taken >= date);
         }
     }
 }

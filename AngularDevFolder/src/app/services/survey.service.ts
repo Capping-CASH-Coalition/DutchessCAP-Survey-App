@@ -47,6 +47,10 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
   }
 
+  getDistinctSurveyHash(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/getDistinctSurveyHash/' + survey_id, { observe: 'response' });
+  }
+
   /* 
     Post functions
   */
@@ -77,6 +81,10 @@ export class SurveyService {
   */
 
   // Function that will call the index.js route to update a questions given the specific updates
+  updateSurveyActive(survey): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyActive', survey, httpOptions);
+  }
+
   updateSurveyQuestionActive(question): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestionActive', question, httpOptions);
   }

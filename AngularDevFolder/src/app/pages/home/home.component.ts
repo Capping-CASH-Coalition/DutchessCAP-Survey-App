@@ -29,8 +29,11 @@ export class HomeComponent implements OnInit {
       // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
    showHomeDiv: boolean = false;
+   showInfo: boolean = false;
 
    ngOnInit() {
+      this.canvas = document.getElementById('graphCanvas');
+      this.ctx = this.canvas.getContext('2d');
       this.surveyService.getSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
@@ -57,59 +60,42 @@ export class HomeComponent implements OnInit {
                            };
                            this.surveys[i].questions.push(question);
                      }
-                     
-                     // Get the survey options based on the selectedSurveyId
-                     this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
-
-                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
-                              for (let l = 0; l < response.body.length; l++) {
-                                    let option: Option = {
-                                          "option_id": response.body[l].option_id,
-                                          "option_text": response.body[l].option_text,
-                                          "option_is_active": response.body[l].option_is_active,
-                                          "question_id": response.body[l].question_id
-                                    };
-                                    // If the question IDs match, push the option into the questions[j].options array
-                                    if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
-                                          this.surveys[i].questions[k].options.push(option);
-                                    }
-                              }
-                        }
+                  
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
+                        this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
+                           
+                           for (let k = 0; k < this.surveys[i].questions.length; k++) {
+                              // initialize the responses
+                              this.surveys[i].questions[k].responses = [];
+                                 for (let l = 0; l < response.body.length; l++) {
+                                       let response1: Responses = {
+                                             "response_id": response.body[l].response_id,
+                                             "survey_id": response.body[l].survey_id,
+                                             "question_id": response.body[l].question_id,
+                                             "option_id": response.body[l].option_id,
+                                             "response_text": response.body[l].response_text,
+                                             "date_taken": response.body[l].date_taken.split(" ")[0],
+                                             "survey_hash": response.body[l].survey_hash
+                                       };
+                                       // If the question IDs match, push the response into the questions[j].responses array
+                                       if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
+                                             this.surveys[i].questions[k].responses.push(response1);
+                                       }
+                                 }
+                           }
+                           
+                           // Manually detect changes as the page will load faster than the async call
+                           this.changeref.detectChanges();
+                           if(i == this.surveys.length -1){
+                           this.showHomeDiv = true;
+                           this.showInfo = true;
+                           this.updateChart();
+                           }
                      }, (error) => {
                            console.log('error is ', error)
                      })
-                     this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
-                           
-                        for (let k = 0; k < this.surveys[i].questions.length; k++) {
-                           // initialize the responses
-                           this.surveys[i].questions[k].responses = [];
-                              for (let l = 0; l < response.body.length; l++) {
-                                    let response1: Responses = {
-                                          "response_id": response.body[l].response_id,
-                                          "survey_id": response.body[l].survey_id,
-                                          "question_id": response.body[l].question_id,
-                                          "option_id": response.body[l].option_id,
-                                          "response_text": response.body[l].response_text,
-                                          "date_taken": response.body[l].date_taken.split(" ")[0],
-                                          "survey_hash": response.body[l].survey_hash
-                                    };
-                                    // If the question IDs match, push the response into the questions[j].responses array
-                                    if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
-                                          this.surveys[i].questions[k].responses.push(response1);
-                                    }
-                              }
-                        }
-                        // Manually detect changes as the page will load faster than the async call
-                        this.changeref.detectChanges();
-                        this.showHomeDiv = true;
-                        this.canvas = document.getElementById('graphCanvas');
-                        this.ctx = this.canvas.getContext('2d');
-                        this.updateChart();
-                     }, (error) => {
-                           console.log('error is ', error)
-                     }) 
+               
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
                },(error) => {
@@ -125,6 +111,30 @@ export class HomeComponent implements OnInit {
 
    ngAfterViewInit() {
    };
+
+   updateActiveSurvey(val): void {
+      
+      if(this.surveys[val].survey_is_active == true){
+         if(confirm("Are you sure you want to change the survey to inactive")){
+         this.surveys[val].survey_is_active = false;
+            let survey = {
+               "survey_id": this.surveys[val].survey_id,
+               "survey_is_active": this.surveys[val].survey_is_active
+            }
+         this.surveyService.updateSurveyActive(survey).subscribe();
+         }
+      }
+      else if(this.surveys[val].survey_is_active == false){
+         if(confirm("Are you sure you want to change the survey to active")){
+         this.surveys[val].survey_is_active = true;
+            let survey = {
+               "survey_id": this.surveys[val].survey_id,
+               "survey_is_active": this.surveys[val].survey_is_active
+            }
+         this.surveyService.updateSurveyActive(survey).subscribe();
+         }
+      }
+   }
 
    updateChart(): void {
       this.destroyChart();
@@ -147,6 +157,7 @@ export class HomeComponent implements OnInit {
          survey.questions.map(q => { submissionCount += q.responses.length });
          // push details to array
          surveyDetails.push({
+            survey_id: survey.survey_id,
             name: survey.survey_name,
             date: survey.date_created,
             status: survey.survey_is_active,

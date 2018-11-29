@@ -8,7 +8,7 @@ export class FilterByQuestionActivePipe implements PipeTransform {
 
     transform(questions : any): any[] {
         if (questions) {
-            return questions.filter((question: any) => question.question_active === true);
+            return questions.filter((question: any) => question.question__is_active === true);
         }
     }
 }

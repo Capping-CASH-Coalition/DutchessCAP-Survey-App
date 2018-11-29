@@ -19,7 +19,8 @@ export class GraphsComponent implements OnInit {
       public graphService: GraphService,
       private changeref: ChangeDetectorRef,
       public surveyService: SurveyService,
-      private fb: FormBuilder) { };
+      private fb: FormBuilder,
+   ) { };
 
    // global to track which switch for the dataset
    currentDatasetType: string = 'single';
@@ -39,10 +40,10 @@ export class GraphsComponent implements OnInit {
    displayDiv = false;
    // Holds the dynamic survey variables for display
    surveys: Array<SurveyResponses> = [];
+   // sub question options global
+   subQuestionOptions: any[] = [];
 
    ngOnInit(): void {
-      this.canvas = document.getElementById('graphCanvas');
-      this.ctx = this.canvas.getContext('2d');
       // init the chart form
       this.initChartForm();
       // get the surveys and populated inner fields with inner get calls
@@ -53,10 +54,11 @@ export class GraphsComponent implements OnInit {
                "survey_id": response.body[i].survey_id,
                "survey_name": response.body[i].survey_name,
                "date_created": response.body[i].date_created,
-                questions: []
+               questions: []
             };
             //this.surveys.push(survey);
             this.surveys.push(survey);
+            // Manually detect changes as the page will load faster than the async call
             this.changeref.detectChanges();
             // Get the survey questions by selectedSurveyId
             this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
@@ -74,9 +76,9 @@ export class GraphsComponent implements OnInit {
                   };
                   //this.surveys[i].questions.push(question);
                   this.surveys[i].questions.push(question);
+                  // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
                }
-               
 
                // Get the survey options based on the selectedSurveyId
                this.surveyService.getAllSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
@@ -91,6 +93,7 @@ export class GraphsComponent implements OnInit {
                         // If the question IDs match, push the option into the questions[j].options array
                         if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
                            this.surveys[i].questions[k].options.push(option);
+                           // Manually detect changes as the page will load faster than the async call
                            this.changeref.detectChanges();
                         }
                      }
@@ -100,53 +103,66 @@ export class GraphsComponent implements OnInit {
 
                   // Get the survey responses based on the selectedSurveyId
                   this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe(response => {
-                        for (let m = 0; m < this.surveys[i].questions.length; m++) {
-                              for (let n = 0; n < response.body.length; n++) {
-                                    let responseData: Response = {
-                                    "question_id": response.body[n].question_id,
-                                    "survey_id": response.body[n].survey_id,
-                                    "option_id": response.body[n].option_id,
-                                    "response_text": response.body[n].response_text,
-                                    "survey_hash": response.body[n].survey_hash
-                                    };
-                                    // If the question IDs match, push the response into the questions[j].response array
-                                    if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
-                                    this.surveys[i].questions[m].responses.push(responseData);
-                                    this.changeref.detectChanges();
-                                    }
-                              }
+
+                     for (let m = 0; m < this.surveys[i].questions.length; m++) {
+                        for (let n = 0; n < response.body.length; n++) {
+                           let responseData: Response = {
+                              "question_id": response.body[n].question_id,
+                              "survey_id": response.body[n].survey_id,
+                              "option_id": response.body[n].option_id,
+                              "response_text": response.body[n].response_text,
+                              "survey_hash": response.body[n].survey_hash
+                           };
+                           // If the question IDs match, push the response into the questions[j].response array
+                           if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
+                              this.surveys[i].questions[m].responses.push(responseData);
+                              // Manually detect changes as the page will load faster than the async call
+                              this.changeref.detectChanges();
+                           }
                         }
-                        // Manually detect changes as the page will load faster than the async call
-                        this.changeref.detectChanges();
-                        if (i == this.surveys.length - 1) {
-                              this.displayDiv = true;
-                              // init the options form
-                              this.initOptionsForm();
-                              // grab the updated selected options
-                              this.updateSelectedOptions();
-                              // update the chart
-                              this.updateChart();
-                        }
+                     }
+                     // Manually detect changes as the page will load faster than the async call
+                     this.changeref.detectChanges();
+                     if (i == this.surveys.length - 1) {
+                        // set the display to be true after the page has loaded
+                        this.displayDiv = true;
+                        // init the options form
+                        this.initOptionsForm();
+                        // grab the updated selected options
+                        this.updateSelectedOptions();
+                        // html canvas elemnt to context that ChartJS can work with
+                        this.canvas = document.getElementById('graphCanvas');
+                        this.ctx = this.canvas.getContext('2d');
+                        // update the chart visually
+                        this.updateChart();
+
+                     }
+
                   }, (error) => {
-                        console.log('error is ', error)
+                     console.log('error is ', error)
                   })
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
+
                }, (error) => {
                   console.log('error is ', error)
                })
                // Manually detect changes as the page will load faster than the async call
                this.changeref.detectChanges();
+
             }, (error) => {
                console.log('error is ', error)
             })
             // Manually detect changes as the page will load faster than the async call
             this.changeref.detectChanges();
          }
+         // Manually detect changes as the page will load faster than the async call
          this.changeref.detectChanges();
+
       }, (error) => {
          console.log('error is ', error)
       })
+
    }
 
    // init chart form
@@ -159,10 +175,9 @@ export class GraphsComponent implements OnInit {
       });
    }
 
-    // init the options with the subquestion id appropiately 
-    initOptionsForm() {
+   // init the options with the subquestion id appropiately 
+   initOptionsForm() {
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
-      controls[0].setValue(true); // Set the first checkbox to true (checked)
       this.optionsForm = this.fb.group({
          options: new FormArray(controls)
       });
@@ -173,14 +188,13 @@ export class GraphsComponent implements OnInit {
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
       let opsReturn;
-
+      console.log("sirvey: ", this.surveys[sid]);
       this.surveys[sid].questions.forEach(q => {
          if (q.question_id == qid) {
             opsReturn = q.options
                .filter((option: any) => option.option_is_active === true);
          }
       });
-
       return opsReturn;
    }
 
@@ -200,6 +214,12 @@ export class GraphsComponent implements OnInit {
          let c: Chart = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData())
          this.buildChart(c);
       }
+   }
+
+   // update the options being listed
+   updateSubQuestionOptions(): void {
+      // resets the options form to be all false when a new question is selected
+      this.initOptionsForm();
    }
 
    // map the dataset for an individual dataset graph
@@ -292,10 +312,13 @@ export class GraphsComponent implements OnInit {
             }
          });
          // push the dataset values
+         let color = this.graphService.getColorByIndex(index, this.chartForm.controls.chartType.value);
          datasets.push({
             label: o,
             data: Array.from(dsMap.values()),
-            backgroundColor: this.graphService.getColorByIndex(index)
+            backgroundColor: color,
+            fill: this.chartForm.controls.chartType.value != 'line' ? true : false,
+            borderColor: color
          })
       });
       return datasets;
@@ -338,7 +361,14 @@ export class GraphsComponent implements OnInit {
 
    // update the dataset switch to single or multiple
    updateMultipleDataSetForm(val) {
+      // if multiple datasets, set default to bar
+      if (val == 'multiple') {
+         this.chartForm.controls.chartType.setValue('bar');
+      }
+      // set the global value for current dataset type
       this.currentDatasetType = val;
+      // update chart accordingly to filters
+      this.updateChart();
    }
 
 

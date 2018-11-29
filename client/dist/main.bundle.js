@@ -26,7 +26,8 @@ var GraphService = (function () {
             { val: 'line', view: 'Line' },
             { val: 'radar', view: 'Radar' },
         ];
-        this.colors = [
+        // solid colors for charts
+        this.solidColors = [
             'rgba(054, 162, 235, 1)',
             'rgba(255, 099, 132, 1)',
             'rgba(255, 206, 086, 1)',
@@ -57,7 +58,45 @@ var GraphService = (function () {
             'rgba(255, 127, 000, 1)',
             'rgba(255, 174, 185, 1)'
         ];
-        this.linearChartOptions = {
+        // transparent colors for radar chart and overlapping datasets
+        this.transparentColors = [
+            'rgba(054, 162, 235, 0.4)',
+            'rgba(255, 099, 132, 0.4)',
+            'rgba(255, 206, 086, 0.4)',
+            'rgba(075, 192, 192, 0.4)',
+            'rgba(153, 102, 255, 0.4)',
+            'rgba(255, 159, 064, 0.4)',
+            'rgba(046, 139, 087, 0.4)',
+            'rgba(082, 139, 139, 0.4)',
+            'rgba(070, 130, 180, 0.4)',
+            'rgba(147, 112, 219, 0.4)',
+            'rgba(205, 092, 092, 0.4)',
+            'rgba(219, 112, 219, 0.4)',
+            'rgba(255, 231, 186, 0.4)',
+            'rgba(178, 223, 238, 0.4)',
+            'rgba(072, 209, 204, 0.4)',
+            'rgba(238, 180, 180, 0.4)',
+            'rgba(153, 050, 204, 0.4)',
+            'rgba(102, 205, 170, 0.4)',
+            'rgba(230, 238, 000, 0.4)',
+            'rgba(255, 193, 037, 0.4)',
+            'rgba(000, 178, 238, 0.4)',
+            'rgba(255, 159, 064, 0.4)',
+            'rgba(230, 207, 161, 0.4)',
+            'rgba(205, 197, 191, 0.4)',
+            'rgba(202, 255, 112, 0.4)',
+            'rgba(255, 127, 080, 0.4)',
+            'rgba(205, 051, 051, 0.4)',
+            'rgba(255, 127, 000, 0.4)',
+            'rgba(255, 174, 185, 0.4)'
+        ];
+        /**
+         *  Chart Options
+         */
+        this.pieChartOptions = {
+            responsive: false,
+        };
+        this.barChartOptions = {
             responsive: false,
             scales: {
                 yAxes: [{
@@ -67,24 +106,52 @@ var GraphService = (function () {
                     }]
             }
         };
-        this.radialChartOptions = {
+        this.doughnutChartOptions = {
+            responsive: false,
+        };
+        this.lineChartOptions = {
+            responsive: false,
+            scales: {
+                yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+            }
+        };
+        this.polarAreaChartOptions = {
+            responsive: false,
+        };
+        this.radarChartOptions = {
+            responsive: false,
+        };
+        this.defaultOptions = {
             responsive: false,
         };
     }
+    // creates a sinng dataset chart
     GraphService.prototype.createSingleChart = function (context, chartType, map) {
         return new __WEBPACK_IMPORTED_MODULE_1_chart_js__["Chart"](context, {
             type: chartType,
             data: {
                 labels: Array.from(map.keys()),
-                datasets: [{
-                        label: 'Total',
-                        data: Array.from(map.values()),
-                        backgroundColor: this.getColors()
-                    }]
+                datasets: this.createDataset(map, chartType)
             },
             options: this.getOptions(chartType)
         });
     };
+    // creates dataset for singlechart
+    GraphService.prototype.createDataset = function (data, chartType) {
+        return [{
+                label: 'Total',
+                data: Array.from(data.values()),
+                backgroundColor: this.getColors(chartType),
+                fill: chartType != 'line' ? true : false,
+                borderColor: this.getColors(chartType),
+                lineTension: chartType != 'line' ? 0 : 1
+            }];
+    };
+    // creates a matrix chart for mutiple datasets
     GraphService.prototype.createMatrixChart = function (context, chartType, matrixData) {
         return new __WEBPACK_IMPORTED_MODULE_1_chart_js__["Chart"](context, {
             type: chartType,
@@ -92,16 +159,12 @@ var GraphService = (function () {
             options: this.getOptions(chartType)
         });
     };
+    // date chart
     GraphService.prototype.createDateChart = function (context, chartType, matrixData) {
         return new __WEBPACK_IMPORTED_MODULE_1_chart_js__["Chart"](context, {
             type: chartType,
             data: matrixData,
             options: {
-                elements: {
-                    line: {
-                        tension: 0
-                    }
-                },
                 responsive: true,
                 title: {
                     display: true,
@@ -128,27 +191,60 @@ var GraphService = (function () {
             }
         });
     };
+    // returns the graph types
     GraphService.prototype.getGraphTypes = function () {
         return this.graphTypes;
     };
-    GraphService.prototype.getColors = function () {
-        return this.colors;
-    };
-    GraphService.prototype.getColorByIndex = function (i) {
-        if (i > this.colors.length) {
-            console.log("color out of bounds");
-            return null;
+    // returns colors based off of chart type
+    GraphService.prototype.getColors = function (chartType) {
+        if (chartType == "radar") {
+            return this.transparentColors;
         }
         else {
-            return this.colors[i];
+            return this.solidColors;
         }
     };
-    GraphService.prototype.getOptions = function (chartType) {
-        if (chartType == 'bar' || chartType == 'line')
-            return this.linearChartOptions;
-        else
-            return this.radialChartOptions;
+    // returns a color by index, if not enough then
+    GraphService.prototype.getColorByIndex = function (i, chartType) {
+        var colors;
+        if (i > this.getColors(chartType).length) {
+            // if the colors overflow the current chart colors, move to other color dataset and subtract index to be in scope
+            if (chartType == 'bar') {
+                colors = this.getColors('line');
+                return colors[i - this.getColors('line').length + 2];
+            }
+            else {
+                colors = this.getColors('bar');
+                return colors[i - this.getColors('bar').length + 2];
+            }
+        }
+        else {
+            colors = this.getColors(chartType);
+            return colors[i];
+        }
     };
+    // sets the options for the chart based off of type
+    GraphService.prototype.getOptions = function (chartType) {
+        switch (chartType) {
+            case 'pie':
+                return this.pieChartOptions;
+            case 'bar':
+                return this.barChartOptions;
+            case 'doughnut':
+                return this.doughnutChartOptions;
+            case 'polarArea':
+                return this.polarAreaChartOptions;
+            case 'line':
+                return this.lineChartOptions;
+            case 'radar':
+                return this.radarChartOptions;
+            default:
+                return this.defaultOptions;
+        }
+    };
+    /**
+     *  downloads the chart
+     */
     GraphService.prototype.downloadChart = function (event, canvas) {
         var anchor = event.target;
         var can = document.getElementsByTagName(canvas)[0];
@@ -842,12 +938,12 @@ var GraphsComponent = (function () {
         this.displayDiv = false;
         // Holds the dynamic survey variables for display
         this.surveys = [];
+        // sub question options global
+        this.subQuestionOptions = [];
     }
     ;
     GraphsComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.canvas = document.getElementById('graphCanvas');
-        this.ctx = this.canvas.getContext('2d');
         // init the chart form
         this.initChartForm();
         // get the surveys and populated inner fields with inner get calls
@@ -861,6 +957,7 @@ var GraphsComponent = (function () {
                 };
                 //this.surveys.push(survey);
                 _this.surveys.push(survey);
+                // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
                 // Get the survey questions by selectedSurveyId
                 _this.surveyService.getAllSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
@@ -878,6 +975,7 @@ var GraphsComponent = (function () {
                         };
                         //this.surveys[i].questions.push(question);
                         _this.surveys[i].questions.push(question);
+                        // Manually detect changes as the page will load faster than the async call
                         _this.changeref.detectChanges();
                     }
                     // Get the survey options based on the selectedSurveyId
@@ -893,6 +991,7 @@ var GraphsComponent = (function () {
                                 // If the question IDs match, push the option into the questions[j].options array
                                 if (_this.surveys[i].questions[k].question_id == response.body[l].question_id) {
                                     _this.surveys[i].questions[k].options.push(option);
+                                    // Manually detect changes as the page will load faster than the async call
                                     _this.changeref.detectChanges();
                                 }
                             }
@@ -913,6 +1012,7 @@ var GraphsComponent = (function () {
                                     // If the question IDs match, push the response into the questions[j].response array
                                     if (_this.surveys[i].questions[m].question_id == response.body[n].question_id) {
                                         _this.surveys[i].questions[m].responses.push(responseData);
+                                        // Manually detect changes as the page will load faster than the async call
                                         _this.changeref.detectChanges();
                                     }
                                 }
@@ -920,12 +1020,16 @@ var GraphsComponent = (function () {
                             // Manually detect changes as the page will load faster than the async call
                             _this.changeref.detectChanges();
                             if (i == _this.surveys.length - 1) {
+                                // set the display to be true after the page has loaded
                                 _this.displayDiv = true;
                                 // init the options form
                                 _this.initOptionsForm();
                                 // grab the updated selected options
                                 _this.updateSelectedOptions();
-                                // update the chart
+                                // html canvas elemnt to context that ChartJS can work with
+                                _this.canvas = document.getElementById('graphCanvas');
+                                _this.ctx = _this.canvas.getContext('2d');
+                                // update the chart visually
                                 _this.updateChart();
                             }
                         }, function (error) {
@@ -948,6 +1052,7 @@ var GraphsComponent = (function () {
             for (var i = 0; i < response.body.length; i++) {
                 _loop_1(i);
             }
+            // Manually detect changes as the page will load faster than the async call
             _this.changeref.detectChanges();
         }, function (error) {
             console.log('error is ', error);
@@ -965,7 +1070,6 @@ var GraphsComponent = (function () {
     // init the options with the subquestion id appropiately 
     GraphsComponent.prototype.initOptionsForm = function () {
         var controls = this.getSubQuestionOptions().map(function (o) { return new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](false); });
-        controls[0].setValue(true); // Set the first checkbox to true (checked)
         this.optionsForm = this.fb.group({
             options: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormArray */](controls)
         });
@@ -975,6 +1079,7 @@ var GraphsComponent = (function () {
         var sid = this.chartForm.controls.surveyId.value;
         var qid = this.chartForm.controls.subQuestionId.value;
         var opsReturn;
+        console.log("sirvey: ", this.surveys[sid]);
         this.surveys[sid].questions.forEach(function (q) {
             if (q.question_id == qid) {
                 opsReturn = q.options
@@ -998,6 +1103,11 @@ var GraphsComponent = (function () {
             var c = this.graphService.createMatrixChart(this.ctx, this.chartForm.controls.chartType.value, this.matrixGraphData());
             this.buildChart(c);
         }
+    };
+    // update the options being listed
+    GraphsComponent.prototype.updateSubQuestionOptions = function () {
+        // resets the options form to be all false when a new question is selected
+        this.initOptionsForm();
     };
     // map the dataset for an individual dataset graph
     GraphsComponent.prototype.mapSingleData = function () {
@@ -1087,10 +1197,13 @@ var GraphsComponent = (function () {
                 }
             });
             // push the dataset values
+            var color = _this.graphService.getColorByIndex(index, _this.chartForm.controls.chartType.value);
             datasets.push({
                 label: o,
                 data: Array.from(dsMap.values()),
-                backgroundColor: _this.graphService.getColorByIndex(index)
+                backgroundColor: color,
+                fill: _this.chartForm.controls.chartType.value != 'line' ? true : false,
+                borderColor: color
             });
         });
         return datasets;
@@ -1127,7 +1240,14 @@ var GraphsComponent = (function () {
     };
     // update the dataset switch to single or multiple
     GraphsComponent.prototype.updateMultipleDataSetForm = function (val) {
+        // if multiple datasets, set default to bar
+        if (val == 'multiple') {
+            this.chartForm.controls.chartType.setValue('bar');
+        }
+        // set the global value for current dataset type
         this.currentDatasetType = val;
+        // update chart accordingly to filters
+        this.updateChart();
     };
     return GraphsComponent;
 }());
@@ -1351,8 +1471,8 @@ var HomeComponent = (function () {
             datasets.push({
                 label: this.surveys[v].survey_name,
                 data: this.mapDataForSurvey(v),
-                backgroundColor: this.graphService.getColorByIndex(v),
-                borderColor: this.graphService.getColorByIndex(v),
+                backgroundColor: this.graphService.getColorByIndex(v, 'date'),
+                borderColor: this.graphService.getColorByIndex(v, 'date'),
                 fill: false
             });
         }
@@ -3344,7 +3464,7 @@ module.exports = "<div id=\"wrapper\">\r\n    <navigation></navigation>\r\n    <
 /***/ 633:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n\r\n    <div  class=\"row wrapper border-bottom white-bg page-heading\">\r\n      <div class=\"row\">\r\n\r\n        <div *ngIf=\"displayDiv\" class=\"col-lg-3\"style=\"margin-bottom: 500px\">\r\n          <br>\r\n          <form [formGroup]=\"chartForm\">\r\n            <div class=\"form-group\">\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                </div>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Chart Type</label>\r\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                    {{graph.view}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Survey</label>\r\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                    {{survey.survey_name}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Question</label>\r\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion\"\r\n                    [value]=\"question.question_id\">\r\n                    {{question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                <div class=\"filterBlock\">\r\n                  <label for=\"graphType\">Select Sub Question</label>\r\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateChart()\">\r\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                      [value]=\"question.question_id\">\r\n                      {{question.question_text}}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"optionsDiv\">\r\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                      <div class=\"col-lg-12\">\r\n                         <li>\r\n                           <input type=\"checkbox\" [formControlName]=\"i\">\r\n                           <span class=\"spanOption\">{{option.option_text}}</span>\r\n                        </li>\r\n                      </div>\r\n                     </ul>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n              <div class=\"btnBlock\">\r\n               <hr>\r\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\r\n                  <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\r\n                    <i class=\"fas fa-download\"></i>\r\n                    Export Graph\r\n                  </a>\r\n                </button>\r\n              </div>\r\n\r\n            </div>\r\n          </form>\r\n        </div>\r\n\r\n        <div class=\"col-lg-8\">\r\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n        </div>\r\n\r\n        <div class=\"col-lg-1\">\r\n\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n   <navigation></navigation>\r\n   <div id=\"page-wrapper\" class=\"gray-bg\">\r\n     <topnavbar></topnavbar>\r\n \r\n     <div *ngIf=\"displayDiv\" class=\"row wrapper border-bottom white-bg page-heading\">\r\n       <div class=\"row\">\r\n \r\n         <div class=\"col-lg-3\"style=\"margin-bottom: 500px\">\r\n           <br>\r\n           <form [formGroup]=\"chartForm\">\r\n             <div class=\"form-group\">\r\n \r\n               <div class=\"filterBlock\">\r\n                 <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                 <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                   <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                   <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                 </div>\r\n               </div>\r\n \r\n               <div class=\"filterBlock\">\r\n                 <label for=\"graphType\">Chart Type</label>\r\n                 <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                   <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                     {{graph.view}}\r\n                   </option>\r\n                 </select>\r\n               </div>\r\n \r\n               <div class=\"filterBlock\">\r\n                 <label for=\"graphType\">Select Survey</label>\r\n                 <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                   <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                     {{survey.survey_name}}\r\n                   </option>\r\n                 </select>\r\n               </div>\r\n \r\n               <div class=\"filterBlock\">\r\n                 <label for=\"graphType\">Select Question</label>\r\n                 <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                   <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion\"\r\n                     [value]=\"question.question_id\">\r\n                     {{question.question_text}}\r\n                   </option>\r\n                 </select>\r\n               </div>\r\n \r\n               <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                 <div class=\"filterBlock\">\r\n                   <label for=\"graphType\">Select Sub Question</label>\r\n                   <select class=\"form-control\" formControlName=\"subQuestionId\" (change)=\"updateSubQuestionOptions()\" required>\r\n                     <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                       [value]=\"question.question_id\">\r\n                       {{question.question_text}}\r\n                     </option>\r\n                   </select>\r\n                 </div>\r\n                 <div class=\"optionsDiv\">\r\n                   <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                     <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                     <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                       <div class=\"col-lg-12\">\r\n                          <li>\r\n                            <input type=\"checkbox\" [formControlName]=\"i\">\r\n                            <span class=\"spanOption\">{{option.option_text}}</span>\r\n                         </li>\r\n                       </div>\r\n                      </ul>\r\n                   </form>\r\n                 </div>\r\n               </div>\r\n               <div class=\"btnBlock\">\r\n                <hr>\r\n                 <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\r\n                   <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\r\n                     <i class=\"fas fa-download\"></i>\r\n                     Export Graph\r\n                   </a>\r\n                 </button>\r\n               </div>\r\n \r\n             </div>\r\n           </form>\r\n         </div>\r\n \r\n         <div class=\"col-lg-8\">\r\n           <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n         </div>\r\n \r\n         <div class=\"col-lg-1\">\r\n \r\n         </div>\r\n \r\n       </div>\r\n \r\n \r\n     </div>\r\n   </div>\r\n </div>\r\n\r\n"
 
 /***/ }),
 

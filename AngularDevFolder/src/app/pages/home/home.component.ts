@@ -88,9 +88,9 @@ export class HomeComponent implements OnInit {
                            // Manually detect changes as the page will load faster than the async call
                            this.changeref.detectChanges();
                            if(i == this.surveys.length -1){
-                           this.showHomeDiv = true;
-                           this.showInfo = true;
-                           this.updateChart();
+                              this.showHomeDiv = true;
+                              this.showInfo = true;
+                              this.updateChart();
                            }
                      }, (error) => {
                            console.log('error is ', error)
@@ -210,8 +210,8 @@ export class HomeComponent implements OnInit {
             datasets.push({
                label: this.surveys[v].survey_name,
                data: this.mapDataForSurvey(v),
-               backgroundColor: this.graphService.getColorByIndex(v),
-               borderColor: this.graphService.getColorByIndex(v),
+               backgroundColor: this.graphService.getColorByIndex(v, 'date'),
+               borderColor: this.graphService.getColorByIndex(v, 'date'),
                fill: false
             })
          };

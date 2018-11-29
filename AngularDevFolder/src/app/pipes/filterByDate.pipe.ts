@@ -11,4 +11,5 @@ export class FilterByDatePipe implements PipeTransform {
             return responses.filter((response: any) => response.date_taken >= date);
         }
     }
+  
 }

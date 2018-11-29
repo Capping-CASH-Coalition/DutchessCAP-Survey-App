@@ -28,27 +28,33 @@ export class SurveyService {
   }
 
   // Function that will call the index.js route to get all surveys
-  getSurveys(): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveys', { observe: 'response'});
+  getAllSurveys(): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveys', { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
-  getSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response'});
+  getActiveSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveyQuestions/' + survey_id, { observe: 'response'});
+  }
+
+  // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
+  getAllSurveyQuestions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveyQuestions/' + survey_id, { observe: 'response'});
   }
   
   // Function that will call the index.js route to get all options given a specific survey_id as a parameter
-  getSurveyOptions(survey_id): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response'});
+  getActiveSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/activeSurveyOptions/' + survey_id, { observe: 'response'});
   }
-  
+
+  // Function that will call the index.js route to get all options given a specific survey_id as a parameter
+  getAllSurveyOptions(survey_id): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response'});
+  }
+
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
   getSurveyResponses(survey_id): Observable<HttpResponse<any>> {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
-  }
-
-  getDistinctSurveyHash(survey_id): Observable<HttpResponse<any>> {
-    return this.http.get<any>('http://localhost:3000/api/getDistinctSurveyHash/' + survey_id, { observe: 'response' });
   }
 
   /* 
@@ -60,8 +66,8 @@ export class SurveyService {
     return this.http.post<Response>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
-  postSurvey(survey_name): Observable<any> {
-    return this.http.post<any>('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
+  postNewSurvey(survey): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postNewSurvey', survey, httpOptions);
   }
 
   postQuestion(question): Observable<any> {
@@ -85,6 +91,7 @@ export class SurveyService {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyActive', survey, httpOptions);
   }
 
+  // Function that will call the index.js route to update a questions given the specific updates
   updateSurveyQuestionActive(question): Observable<any> {
     return this.http.put<any>('http://localhost:3000/api/updateSurveyQuestionActive', question, httpOptions);
   }

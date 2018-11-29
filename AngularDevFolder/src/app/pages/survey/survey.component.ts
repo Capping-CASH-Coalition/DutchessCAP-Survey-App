@@ -109,7 +109,7 @@ export class SurveyComponent implements OnInit, DoCheck {
     // Generate unique user hash
     this.currentUser = this.generateUUID();
     // Get the survey questions by selectedSurveyId
-    this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(response => {
+    this.surveyService.getActiveSurveyQuestions(this.selectedSurveyId).subscribe(response => {
       // Initialize the questions
       this.surveys[this.selectedSurveyIndex].questions = [];
       // Iterate through the questions and push them one at a time
@@ -126,7 +126,7 @@ export class SurveyComponent implements OnInit, DoCheck {
       this.changeref.detectChanges();
       
       // Get the survey options based on the selectedSurveyId
-      this.surveyService.getSurveyOptions(this.selectedSurveyId).subscribe(response => {
+      this.surveyService.getActiveSurveyOptions(this.selectedSurveyId).subscribe(response => {
         for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
           for (let k = 0; k < response.body.length; k++) {
             let option: Option = {

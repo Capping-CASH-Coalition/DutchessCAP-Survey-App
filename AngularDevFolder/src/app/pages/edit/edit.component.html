@@ -31,7 +31,18 @@
                 <div formArrayName="questions">
                   <div *ngFor="let question of survey.controls.questions.controls; let i=index">
                     <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
-                      <h3> Question {{ i+1}}</h3>
+                      <div class="row">
+                        <div class="col-lg-9">
+                          <h3 style="float:left"> Question {{ i+1}}</h3>
+                        
+                          <button type="button" *ngIf="survey.controls.questions.length > 1" class="btn btn-danger btn-sm pull-right" (click)='removeQuestion(i)'
+                            style='float: right'>
+                            <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
+                            Remove Question
+                          </button>
+                        </div>
+                      </div>
+                        
                       <div class="row">
                           <div class="col-lg-12">
                             <small class="text-muted">Question Active / Inactive</small>
@@ -62,14 +73,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-lg-9">
-                          <button type="button" *ngIf="survey.controls.questions.length > 1" class='pull-right btn btn-lg' (click)='removeQuestion(i)'
-                            style='background-color:transparent;'>
-                            <div>
-                              <i id="btnQuestionRemove" class="fas fa-minus-circle"></i>
-                            </div>
-                          </button>
-                        </div>
+                        
                       </div>
                       <div class="row" style="margin-top:10px">
                         <div class="col-lg-12">
@@ -90,7 +94,6 @@
                             <small class="text-muted">Add Options</small>
                             <div formArrayName="options" *ngFor="let option of survey.controls.questions.controls[i].controls.options.controls; let j=index">
                                 
-                              
                               <div class="row">
                                 <div class="col-lg-10">
                                   <div [formGroupName]="j">
@@ -111,23 +114,25 @@
                                   </div>
                                 </div>
                                 <div class="col-lg-2">
-                                  <button *ngIf="question.controls.options.length > 1" (click)="removeOption(question, j, i)"><i
-                                      class="fas fa-trash-alt"></i></button>
+                                  <button type="button" class="btn btn-danger btn-sm pull-right" *ngIf="question.controls.options.length > 1" 
+                                    (click)="removeOption(question, j, i)"><i class="fas fa-minus-circle"></i>
+                                    Remove Option
+                                  </button>
                                 </div>
                               </div>
                               <button type="button" class="btn btn-success btn-sm pull-right" *ngIf="j == question.controls.options.length-1"
                                 (click)="addOption(question,i)" style="float: right"><i class="fa fa-plus-circle"></i>
-                                Add Option</button>
+                                Add Option
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-12">
-                          <button type="button" class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>
-                            <div>
+                          <button type="button" class='pull-right btn btn-sm' (click)='addQuestion(i)' style='background-color:transparent;'>
                               <i id="btnQuestionAdd" class="fa fa-plus-circle"></i>
-                            </div>
+                              Add Question
                           </button>
                         </div>
                       </div>

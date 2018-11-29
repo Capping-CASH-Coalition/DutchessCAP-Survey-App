@@ -47,7 +47,7 @@ export class ExportRawComponent implements OnInit {
                let survey: SurveyInfo = {
                      "survey_id": response.body[i].survey_id,
                      "survey_name": response.body[i].survey_name,
-                     "date_created": response.body[i].date_created,
+                     "date_created": response.body[i].date_created.split(" ")[0],
                      "survey_is_active": response.body[i].survey_is_active
                };
  
@@ -102,7 +102,7 @@ export class ExportRawComponent implements OnInit {
                                           "question_id": response.body[l].question_id,
                                           "option_id": response.body[l].option_id,
                                           "response_text": response.body[l].response_text,
-                                          "date_taken": response.body[l].date_taken,
+                                          "date_taken": response.body[l].date_taken.split(" ")[0],
                                           "survey_hash": response.body[l].survey_hash
                                     };
                                     // If the question IDs match, push the response into the questions[j].responses array

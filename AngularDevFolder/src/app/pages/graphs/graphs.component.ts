@@ -1,14 +1,10 @@
-import { Component, AfterViewInit, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { GraphService } from '../../services/graph.service'
 import { Response } from '../../models/response.model';
 import { SurveyService } from '../../services/survey.service';
-import { Survey } from '../../models/survey.model';
-import { Question } from '../../models/question.model';
 import { QuestionResponses } from '../../models/questionResponses.model';
 import { Option } from '../../models/option.model';
-import { SurveyInfo } from 'app/models/surveyInfo.model';
-import { ResponseOptions } from '@angular/http';
 import { SurveyResponses } from '../../models/surveyResponses.model'
 
 @Component({
@@ -17,14 +13,13 @@ import { SurveyResponses } from '../../models/surveyResponses.model'
    styleUrls: ['./graphs.component.css']
 })
 
-export class GraphsComponent implements AfterViewInit, OnInit {
+export class GraphsComponent implements OnInit {
 
    constructor(
       public graphService: GraphService,
       private changeref: ChangeDetectorRef,
       public surveyService: SurveyService,
-      private fb: FormBuilder,
-   ) { };
+      private fb: FormBuilder) { };
 
    // global to track which switch for the dataset
    currentDatasetType: string = 'single';
@@ -46,10 +41,12 @@ export class GraphsComponent implements AfterViewInit, OnInit {
    surveys: Array<SurveyResponses> = [];
 
    ngOnInit(): void {
+      this.canvas = document.getElementById('graphCanvas');
+      this.ctx = this.canvas.getContext('2d');
       // init the chart form
       this.initChartForm();
       // get the surveys and populated inner fields with inner get calls
-      this.surveyService.getSurveys().subscribe(response => {
+      this.surveyService.getAllSurveys().subscribe(response => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
             let survey: SurveyResponses = {
@@ -61,9 +58,8 @@ export class GraphsComponent implements AfterViewInit, OnInit {
             //this.surveys.push(survey);
             this.surveys.push(survey);
             this.changeref.detectChanges();
-            console.log("pushing in promise:", this.surveys);
             // Get the survey questions by selectedSurveyId
-            this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
+            this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
                // Initialize the questions
                this.surveys[i].questions = [];
                // Iterate through the questions and push them one at a time
@@ -78,13 +74,12 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                   };
                   //this.surveys[i].questions.push(question);
                   this.surveys[i].questions.push(question);
-                  console.log("After question push: ", this.surveys[i].questions);
                   this.changeref.detectChanges();
                }
                
 
                // Get the survey options based on the selectedSurveyId
-               this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
+               this.surveyService.getAllSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
                   for (let k = 0; k < this.surveys[i].questions.length; k++) {
                      for (let l = 0; l < response.body.length; l++) {
                         let option: Option = {
@@ -106,46 +101,42 @@ export class GraphsComponent implements AfterViewInit, OnInit {
                   // Get the survey responses based on the selectedSurveyId
                   this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe(response => {
                         for (let m = 0; m < this.surveys[i].questions.length; m++) {
-                        for (let n = 0; n < response.body.length; n++) {
-                              let responseData: Response = {
-                              "question_id": response.body[n].question_id,
-                              "survey_id": response.body[n].survey_id,
-                              "option_id": response.body[n].option_id,
-                              "response_text": response.body[n].response_text,
-                              "survey_hash": response.body[n].survey_hash
-                              };
-                              // If the question IDs match, push the response into the questions[j].response array
-                              if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
-                              this.surveys[i].questions[m].responses.push(responseData);
-                              this.changeref.detectChanges();
+                              for (let n = 0; n < response.body.length; n++) {
+                                    let responseData: Response = {
+                                    "question_id": response.body[n].question_id,
+                                    "survey_id": response.body[n].survey_id,
+                                    "option_id": response.body[n].option_id,
+                                    "response_text": response.body[n].response_text,
+                                    "survey_hash": response.body[n].survey_hash
+                                    };
+                                    // If the question IDs match, push the response into the questions[j].response array
+                                    if (this.surveys[i].questions[m].question_id == response.body[n].question_id) {
+                                    this.surveys[i].questions[m].responses.push(responseData);
+                                    this.changeref.detectChanges();
+                                    }
                               }
-                        }
                         }
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
-                        this.displayDiv = true;
-
-                        // init the options form
-                        this.initOptionsForm();
-                        // grab the updated selected options
-                        this.updateSelectedOptions();
-                        this.canvas = document.getElementById('graphCanvas');
-                        this.ctx = this.canvas.getContext('2d');
-                        // update the chart
-                        this.updateChart();
+                        if (i == this.surveys.length - 1) {
+                              this.displayDiv = true;
+                              // init the options form
+                              this.initOptionsForm();
+                              // grab the updated selected options
+                              this.updateSelectedOptions();
+                              // update the chart
+                              this.updateChart();
+                        }
                   }, (error) => {
                         console.log('error is ', error)
                   })
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
-
-               
                }, (error) => {
                   console.log('error is ', error)
                })
                // Manually detect changes as the page will load faster than the async call
                this.changeref.detectChanges();
-
             }, (error) => {
                console.log('error is ', error)
             })
@@ -153,26 +144,9 @@ export class GraphsComponent implements AfterViewInit, OnInit {
             this.changeref.detectChanges();
          }
          this.changeref.detectChanges();
-         console.log("After db load: ", this.surveys);
-
-         /*
-          * OTHER ON INIT FUNCTIONS GO HERE 
-          */
-         
-         //this.surveyService.wait(10000);
-
-         
-
       }, (error) => {
          console.log('error is ', error)
       })
-
-   }
-
-   // after the HTML has loaded, init graph elements
-   ngAfterViewInit() {
-      
-      // this.updateChart();
    }
 
    // init chart form
@@ -187,8 +161,6 @@ export class GraphsComponent implements AfterViewInit, OnInit {
 
     // init the options with the subquestion id appropiately 
     initOptionsForm() {
-      console.log("Within initOptionsForm(): ", this.surveys);
-
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       controls[0].setValue(true); // Set the first checkbox to true (checked)
       this.optionsForm = this.fb.group({
@@ -198,25 +170,17 @@ export class GraphsComponent implements AfterViewInit, OnInit {
 
    // get the options of the sub questions with active options
    getSubQuestionOptions(): any[] {
-      console.log("Within getSubQuestionOptions(): ", this.surveys);
-
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
       let opsReturn;
 
-      console.log("Sid survey:");
-      console.log(this.surveys[sid]);
-      console.log("Question text: ");
-      console.log(this.surveys[sid].questions[0].question_text);
-
       this.surveys[sid].questions.forEach(q => {
-         console.log("question: ", q);
          if (q.question_id == qid) {
             opsReturn = q.options
                .filter((option: any) => option.option_is_active === true);
          }
       });
-      console.log("Ops return:", opsReturn);
+
       return opsReturn;
    }
 

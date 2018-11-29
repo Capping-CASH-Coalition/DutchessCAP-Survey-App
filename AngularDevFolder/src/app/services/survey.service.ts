@@ -52,10 +52,6 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response'});
   }
 
-  /* 
-    Post functions
-  */
-  
   // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
   getSurveyResponses(survey_id): Observable<HttpResponse<any>> {
     return this.http.get<any>('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response'});
@@ -70,8 +66,8 @@ export class SurveyService {
     return this.http.post<Response>('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
   }
 
-  postSurvey(survey_name): Observable<any> {
-    return this.http.post<any>('http://localhost:3000/api/postSurvey', survey_name, httpOptions);
+  postNewSurvey(survey): Observable<any> {
+    return this.http.post<any>('http://localhost:3000/api/postNewSurvey', survey, httpOptions);
   }
 
   postQuestion(question): Observable<any> {
@@ -89,6 +85,11 @@ export class SurveyService {
   /* 
     Put/Update functions
   */
+
+  // Function that will call the index.js route to update a questions given the specific updates
+  updateSurveyActive(survey): Observable<any> {
+    return this.http.put<any>('http://localhost:3000/api/updateSurveyActive', survey, httpOptions);
+  }
 
   // Function that will call the index.js route to update a questions given the specific updates
   updateSurveyQuestionActive(question): Observable<any> {

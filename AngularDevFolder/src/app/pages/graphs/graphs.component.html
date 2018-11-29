@@ -3,10 +3,10 @@
   <div id="page-wrapper" class="gray-bg">
     <topnavbar></topnavbar>
 
-    <div *ngIf="displayDiv" class="row wrapper border-bottom white-bg page-heading">
+    <div  class="row wrapper border-bottom white-bg page-heading">
       <div class="row">
 
-        <div class="col-lg-3"style="margin-bottom: 500px">
+        <div *ngIf="displayDiv" class="col-lg-3"style="margin-bottom: 500px">
           <br>
           <form [formGroup]="chartForm">
             <div class="form-group">

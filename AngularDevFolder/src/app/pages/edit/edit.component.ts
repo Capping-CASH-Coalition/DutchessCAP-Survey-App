@@ -22,11 +22,16 @@ export class EditComponent implements OnInit {
    survey: FormGroup;
    // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
+   currentQuestionScope: number;
+   currentOptionScope: Array<number>;
    lastSurveyId: number = 0;
    lastQuestionId: number = 0;
    lastOptionId: number = 0;
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
+   // is new survey?
+   isNewSurvey: boolean;
+   modal;
 
    constructor(private _fb: FormBuilder,
                public surveyService: SurveyService,
@@ -34,6 +39,8 @@ export class EditComponent implements OnInit {
 
    // initilaize a new blank survey form
    ngOnInit() {
+      // Get the modal
+      this.modal = document.getElementById('success');
       this.newSurveyForm();
       this.surveyService.getAllSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
@@ -47,7 +54,6 @@ export class EditComponent implements OnInit {
     
                   this.surveys.push(survey);
                   this.lastSurveyId++;
-                  
                   
                   // Get the survey questions by selectedSurveyId
                   this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
@@ -103,6 +109,10 @@ export class EditComponent implements OnInit {
 
    // sets the survey form to a blank survey
    newSurveyForm() {
+      this.isNewSurvey = true;
+      this.currentQuestionScope = -1;
+      this.currentOptionScope = [-1];
+      
       this.survey = this._fb.group({
             survey_id: new FormControl(''),
             survey_name: new FormControl(''),
@@ -150,12 +160,18 @@ export class EditComponent implements OnInit {
    addOption(question, questionIndex: number): void {
       const control = <FormArray>question.controls.options;
       control.push(this.initOption());
+      if (this.isNewSurvey) {
+            this.currentOptionScope.push(-1);
+      }
    }
 
    // remove option from the form group array at the given index
    removeOption(question, optionIndex: number, questionIndex: number) {
       const control = <FormArray>question.controls.options;
       control.removeAt(optionIndex);
+      if (this.isNewSurvey) {
+            this.currentOptionScope.pop();
+      }
    }
 
    // checks the question type and returns boolean to display the options div
@@ -183,6 +199,7 @@ export class EditComponent implements OnInit {
 
    // Used to update the formgroup from a given survey id
    updateSurveyFormData(survey_id) {
+      this.isNewSurvey = false;
       let currSurvey;
       this.nameReadOnly = true;
       // loop through the surveys and set the current one to the one that mathches the id
@@ -196,7 +213,9 @@ export class EditComponent implements OnInit {
          questions: this._fb.array([])
       });
       // patch the questions nested array value with the new questions
+      this.currentOptionScope = [];
       this.patchFormQuestions(currSurvey.questions);
+      this.currentQuestionScope = currSurvey.questions.length - 1;
    }
 
    // used to update the questions of the form group qustions array
@@ -221,6 +240,7 @@ export class EditComponent implements OnInit {
             option_text: new FormControl({value: o.option_text, disabled: true})
          }));
       });
+      this.currentOptionScope.push(options.length - 1);
       return ops;
    }
 
@@ -233,45 +253,47 @@ export class EditComponent implements OnInit {
       let question;
       let option;
       let architecture;
-     if (surveyIndex == -1) {
+      if (surveyIndex == -1) {
             
-             this.lastSurveyId++;
-             let surveyName = { "survey_name": formData.survey_name };
-             this.surveyService.postSurvey(surveyName).subscribe();
-             
-             for (let i = 0; i < formData.questions.length; i++) {
+            //this.lastSurveyId++;
+            //let surveyName = { "survey_name": formData.survey_name };
+            this.surveyService.postNewSurvey(formData).subscribe();
+             /*
+            for (let i = 0; i < formData.questions.length; i++) {
 
-               question = {
-                 "question_text": formData.questions[i].question_text,
-                 "question_type": formData.questions[i].question_type
-               };
+                  question = {
+                        "question_text": formData.questions[i].question_text,
+                        "question_type": formData.questions[i].question_type
+                  };
 
-               this.surveyService.postQuestion(question).subscribe();
-               this.lastQuestionId++;
-               this.surveyService.wait(50);
-               for (let j = 0; j < formData.questions[i].options.length; j++) {
+                  this.surveyService.postQuestion(question).subscribe();
+                  this.lastQuestionId++;
+                  this.surveyService.wait(50);
+                  for (let j = 0; j < formData.questions[i].options.length; j++) {
                  
-                 option = {
-                   "option_text": formData.questions[i].options[j].option_text,
-                   "question_id": this.lastQuestionId
-                 };
-                 this.surveyService.wait(50);
-                 this.surveyService.postOption(option).subscribe();
-                 this.surveyService.wait(50);
-                 this.lastOptionId++;
-                 console.log("surveyId: " + this.lastSurveyId);
-                 console.log("questionId: " + this.lastQuestionId);
-                 console.log("optionId: " + this.lastOptionId);
-                 architecture = {
-                   "survey_id": this.lastSurveyId,
-                   "question_id": this.lastQuestionId,
-                   "option_id": this.lastOptionId
-                 };
+                        option = {
+                              "option_text": formData.questions[i].options[j].option_text,
+                              "question_id": this.lastQuestionId
+                        };
 
-                 this.surveyService.postArchitecture(architecture).subscribe();
-               }
-             }
+                        this.surveyService.wait(50);
+                        this.surveyService.postOption(option).subscribe();
+                        this.surveyService.wait(50);
+                        this.lastOptionId++;
+                        console.log("surveyId: " + this.lastSurveyId);
+                        console.log("questionId: " + this.lastQuestionId);
+                        console.log("optionId: " + this.lastOptionId);
+                        architecture = {
+                              "survey_id": this.lastSurveyId,
+                              "question_id": this.lastQuestionId,
+                              "option_id": this.lastOptionId
+                        };
+
+                        this.surveyService.postArchitecture(architecture).subscribe();
+                  }
+            }
       // If index is not -1, this is an existing survey
+      */
      } else {
            for (let i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
                  // // Check if questions active/inactive has changed, then update the database
@@ -373,6 +395,17 @@ export class EditComponent implements OnInit {
       }
       console.log("index" + index);
       return index;
+   }
+
+   // When user clicks save survey, display modal
+   openModal(): void {
+      this.modal.style.display = "block";
+   }
+
+   // When user clicks X, close the modal and refresh the page to see changes
+   closeModal(): void {
+      this.modal.style.display = "none";
+      window.location.reload();
    }
 
 } 

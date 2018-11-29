@@ -4,10 +4,16 @@ var router = express.Router();
 const pg = require('pg');
 const path = require('path');
 // This string is what allows index.js to connect to the database. It is the name of the server://nameOfOwnerOfDatabase:password@host:portNumber/nameOfDatabase
+
 //const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
-// Change postgres url to full server. current url is for local on Gary's
+
+// stephens
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
+
+// Brians
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
+
+// Garys
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
 /* 
@@ -175,7 +181,7 @@ router.get('/api/allSurveys', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         // Created query that gets all active surveys
-        const query = client.query('SELECT * FROM surveys');
+        const query = client.query('SELECT * FROM surveys ORDER BY survey_id ASC');
         // Stream results back one row at a time
         query.on('row', (row) => {
             results.push(row);

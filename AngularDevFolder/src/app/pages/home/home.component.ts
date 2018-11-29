@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
    ngOnInit() {
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
-      this.surveyService.getSurveys().subscribe((response) => {
+      this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
                let survey: SurveyInfo = {
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
  
                this.surveys.push(survey);
                // Get the survey questions by selectedSurveyId
-               this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+               this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
                      // Initialize the questions
                      this.surveys[i].questions = [];
                      // Iterate through the questions and push them one at a time

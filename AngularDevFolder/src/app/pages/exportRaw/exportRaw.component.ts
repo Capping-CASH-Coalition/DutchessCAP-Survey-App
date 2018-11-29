@@ -42,7 +42,7 @@ export class ExportRawComponent implements OnInit {
    showExportDiv: boolean = false;
 
    ngOnInit() {
-      this.surveyService.getSurveys().subscribe((response) => {
+      this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
                let survey: SurveyInfo = {
@@ -54,7 +54,7 @@ export class ExportRawComponent implements OnInit {
  
                this.surveys.push(survey);
                // Get the survey questions by selectedSurveyId
-               this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
+               this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
                      // Initialize the questions
                      this.surveys[i].questions = [];
                      // Iterate through the questions and push them one at a time
@@ -70,7 +70,7 @@ export class ExportRawComponent implements OnInit {
                      }
                      
                      // Get the survey options based on the selectedSurveyId
-                     this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
+                     this.surveyService.getAllSurveyOptions(this.surveys[i].survey_id).subscribe((response) => {
 
                         for (let k = 0; k < this.surveys[i].questions.length; k++) {
                               for (let l = 0; l < response.body.length; l++) {

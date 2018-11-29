@@ -6,9 +6,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 export class FilterByDatePipe implements PipeTransform {
 
-    transform(responses : any, date: Date): any[] {
+    transform(responses : any, date: Date, date1: Date): any[] {
         if (responses) {
-            return responses.filter((response: any) => response.date_taken >= date);
+            return responses.filter((response: any) => response.date_taken >= date && response.date_taken <= date1);
         }
     }
   

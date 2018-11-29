@@ -30,9 +30,10 @@ export class ExportRawComponent implements OnInit {
    dataFeed: any[];
    // set the current survey and the date to filter by
    currSurvey: any;
-   dateFilter: Date;
-   // declare the survey form group holding all the values for the form
-   survey: FormGroup;
+   // Lower date limit for the survey date taken
+   dateFilterStart: Date;
+   // Upper date limit for the survey date taken
+   dateFilterEnd: Date;
    // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
    // used to determine if the survey name is readonly or not
@@ -118,6 +119,8 @@ export class ExportRawComponent implements OnInit {
                            this.currSurvey = this.surveys[0];
                             // update the date value select to be the date created of the survey
                            this.updateDate(this.currSurvey.date_created);
+                           // update the upper date limit with the latest response on the current survey
+                           this.updateDateUpper(this.currSurvey.questions[0].responses[this.currSurvey.questions[0].responses.length - 1].date_taken);
                            // set the data feed to -1 which is all questions
                            this.updateDataFeed(-1);
 
@@ -146,7 +149,12 @@ export class ExportRawComponent implements OnInit {
 
    // set the date filter global from the survey
    updateDate(date) {
-      this.dateFilter = date;
+      this.dateFilterStart = date;
+   }
+
+   // set the upper date filter global from the survey
+   updateDateUpper(date) {
+      this.dateFilterEnd = date;
    }
 
    // set the current survey from the given id 
@@ -234,5 +242,6 @@ export class ExportRawComponent implements OnInit {
       }
       // Download CSV file
       this.downloadCSV(csv.join("\n"));
+      console.log("This is the csv: " + csv.join("\n"))
    }
 }

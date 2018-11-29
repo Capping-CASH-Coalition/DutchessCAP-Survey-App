@@ -112,10 +112,11 @@ export class HomeComponent implements OnInit {
    ngAfterViewInit() {
    };
 
+   // Updates survey, changing it's active status
    updateActiveSurvey(val): void {
-      
+      // Checks if survey is currently active
       if(this.surveys[val].survey_is_active == true){
-         if(confirm("Are you sure you want to change the survey to inactive")){
+         if(confirm("Are you sure you want to change the survey to inactive?")){
          this.surveys[val].survey_is_active = false;
             let survey = {
                "survey_id": this.surveys[val].survey_id,
@@ -124,8 +125,9 @@ export class HomeComponent implements OnInit {
          this.surveyService.updateSurveyActive(survey).subscribe();
          }
       }
+      // Checks if survey is currently inactive
       else if(this.surveys[val].survey_is_active == false){
-         if(confirm("Are you sure you want to change the survey to active")){
+         if(confirm("Are you sure you want to change the survey to active?")){
          this.surveys[val].survey_is_active = true;
             let survey = {
                "survey_id": this.surveys[val].survey_id,
@@ -136,6 +138,7 @@ export class HomeComponent implements OnInit {
       }
    }
 
+   // Builds chart with survey date data
    updateChart(): void {
       this.destroyChart();
       let c: Chart = this.graphService.createDateChart(this.ctx, "line", this.DateGraphData())
@@ -173,6 +176,7 @@ export class HomeComponent implements OnInit {
       this.chart.update();
    }
    
+   // Map a surveys dates and count how much surveys were taken per that date
    mapDateData(val): Map<string, number> {
       let map = new Map();
       let survey = this.surveys[val];
@@ -197,14 +201,16 @@ export class HomeComponent implements OnInit {
       });
       return map;
    }
-
+   
+   // Push all the surveys information into a datasets array
    mapDateDataSets(): any[] {
       let datasets: any[] = new Array();
          for(let v = 0; v < this.surveys.length; v++){
             // push the dataset values
             datasets.push({
                label: this.surveys[v].survey_name,
-               data: this.mapDataLast(v),
+               data: this.mapDataForSurvey(v),
+               backgroundColor: this.graphService.getColorByIndex(v),
                borderColor: this.graphService.getColorByIndex(v),
                fill: false
             })
@@ -212,7 +218,8 @@ export class HomeComponent implements OnInit {
       return datasets;
    }
 
-   mapDataLast(val): any[] {
+   // Push all the current surveys date data to data array
+   mapDataForSurvey(val): any[] {
       let data: any[] = new Array();
       let a = Array.from(this.mapDateData(val).keys());
       let b = Array.from(this.mapDateData(val).values());
@@ -221,7 +228,6 @@ export class HomeComponent implements OnInit {
 
       // Push the values with the labels to the datasets
       for(let r=0; r <= survey.questions[0].responses.length; r++){
-
          data.push({
             x: a[r],
             y: b[r]
@@ -239,6 +245,7 @@ export class HomeComponent implements OnInit {
       }
    }
 
+   // Get date from exactly one year ago to make sure that only surveys taken in the past year are graphed
    private getDateYearAgo(): any {
       let today = new Date();
       let d = today.getDate();
@@ -246,7 +253,6 @@ export class HomeComponent implements OnInit {
       let yyyy = today.getFullYear() - 1;
       let mm: string;
       let dd: string;
-
       if(d < 10) {
          dd = '0' + d;
       }
@@ -259,9 +265,7 @@ export class HomeComponent implements OnInit {
       else{
          mm = '' + m;
       }
-
       let today1 = new Date(yyyy + '-' + mm + '-' + dd);
-
       return today1;
    }
    

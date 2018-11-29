@@ -35,7 +35,7 @@ export class EditComponent implements OnInit {
    // initilaize a new blank survey form
    ngOnInit() {
       this.newSurveyForm();
-      this.surveyService.getSurveys().subscribe(response => {
+      this.surveyService.getAllSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
             for (let i = 0; i < response.body.length; i++) {
                   let survey: SurveyInfo = {
@@ -50,7 +50,7 @@ export class EditComponent implements OnInit {
                   
                   
                   // Get the survey questions by selectedSurveyId
-                  this.surveyService.getSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
+                  this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe(response => {
                         // Initialize the questions
                         this.surveys[i].questions = [];
                         // Iterate through the questions and push them one at a time
@@ -67,7 +67,7 @@ export class EditComponent implements OnInit {
                         }
                         
                         // Get the survey options based on the selectedSurveyId
-                        this.surveyService.getSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
+                        this.surveyService.getAllSurveyOptions(this.surveys[i].survey_id).subscribe(response => {
 
                               for (let k = 0; k < this.surveys[i].questions.length; k++) {
                                     for (let l = 0; l < response.body.length; l++) {
@@ -94,7 +94,6 @@ export class EditComponent implements OnInit {
       }, (error) => {
           console.log('error is ', error)
       })
-
    }
    
    // sets the survey name to readonly based on the edit global
@@ -118,7 +117,7 @@ export class EditComponent implements OnInit {
    // create a new blank question
    initQuestion() {
       return this._fb.group({
-         question_is_active: new FormControl(''),
+         question_is_active: new FormControl({value: true, disabled: true}),
          question_text: new FormControl(''),
          question_type: new FormControl(''),
          options: this._fb.array([
@@ -130,9 +129,8 @@ export class EditComponent implements OnInit {
    // create a new blank option
    initOption() {
       return this._fb.group({
-         option_is_active: new FormControl(''),
+         option_is_active: new FormControl({value: true, disabled: true}),
          option_text: new FormControl('')
-
       })
    }
 
@@ -194,7 +192,7 @@ export class EditComponent implements OnInit {
       // populate the survey form with proper data
       this.survey = this._fb.group({
          survey_id: new FormControl(currSurvey.survey_id),
-         survey_name: new FormControl(currSurvey.survey_name),
+         survey_name: new FormControl({value: currSurvey.survey_name, disabled: true}),
          questions: this._fb.array([])
       });
       // patch the questions nested array value with the new questions
@@ -207,8 +205,8 @@ export class EditComponent implements OnInit {
       questions.forEach(q => {
             control.push(this._fb.group({
                question_is_active: new FormControl(q.question_is_active),
-               question_text: new FormControl(q.question_text),
-               question_type: new FormControl(q.question_type),
+               question_text: new FormControl({value: q.question_text, disabled: true}),
+               question_type: new FormControl({value: q.question_type, disabled: true}),
                options: this.patchFormOptions(q.options)
             }));
       });
@@ -220,7 +218,7 @@ export class EditComponent implements OnInit {
       options.forEach(o => {
          ops.push(this._fb.group({
             option_is_active: new FormControl(o.option_is_active),
-            option_text: new FormControl(o.option_text)
+            option_text: new FormControl({value: o.option_text, disabled: true})
          }));
       });
       return ops;
@@ -277,21 +275,27 @@ export class EditComponent implements OnInit {
      } else {
            for (let i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
                  // // Check if questions active/inactive has changed, then update the database
+                  console.log("qactive: " + formData.questions[i].question_is_active);
                  if (formData.questions[i].question_is_active !== 
                      this.surveys[surveyIndex].questions[i].question_is_active) {
                         question = {
-                              "question_id": formData.questions[i].question_id,
+                              "question_id": this.surveys[surveyIndex].questions[i].question_id,
                               "question_is_active": formData.questions[i].question_is_active
                         };
+                        console.log("question.isactive: " + question.question_is_active);
                         this.surveyService.updateSurveyQuestionActive(question).subscribe();
                  }
                  // Check if options active/inactive has changed
                  for (let j = 0; j < this.surveys[surveyIndex].questions[i].options.length; j++) {
+                        if (formData.questions[i].options[j].option_is_active === "true" || formData.questions[i].options[j].option_is_active === "false") {
+                              let bool = JSON.parse(formData.questions[i].options[j].option_is_active);
+                              formData.questions[i].options[j].option_is_active = bool;
+                        }
                         // If it has changed, update the database
                         if (formData.questions[i].options[j].option_is_active !== 
                               this.surveys[surveyIndex].questions[i].options[j].option_is_active) {
                                     option = {
-                                          "option_id": formData.questions[i].options[j].option_id,
+                                          "option_id": this.surveys[surveyIndex].questions[i].options[j].option_id,
                                           "option_is_active": formData.questions[i].options[j].option_is_active
                                     };
                               this.surveyService.updateSurveyQuestionActive(option).subscribe();

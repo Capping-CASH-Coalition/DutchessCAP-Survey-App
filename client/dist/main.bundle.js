@@ -200,7 +200,7 @@ var EditComponent = (function () {
     EditComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.newSurveyForm();
-        this.surveyService.getSurveys().subscribe(function (response) {
+        this.surveyService.getAllSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
                     "survey_id": response.body[i].survey_id,
@@ -211,7 +211,7 @@ var EditComponent = (function () {
                 _this.surveys.push(survey);
                 _this.lastSurveyId++;
                 // Get the survey questions by selectedSurveyId
-                _this.surveyService.getSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
+                _this.surveyService.getAllSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
                     // Initialize the questions
                     _this.surveys[i].questions = [];
                     // Iterate through the questions and push them one at a time
@@ -227,7 +227,7 @@ var EditComponent = (function () {
                         _this.lastQuestionId++;
                     }
                     // Get the survey options based on the selectedSurveyId
-                    _this.surveyService.getSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
+                    _this.surveyService.getAllSurveyOptions(_this.surveys[i].survey_id).subscribe(function (response) {
                         for (var k = 0; k < _this.surveys[i].questions.length; k++) {
                             for (var l = 0; l < response.body.length; l++) {
                                 var option = {
@@ -277,7 +277,7 @@ var EditComponent = (function () {
     // create a new blank question
     EditComponent.prototype.initQuestion = function () {
         return this._fb.group({
-            question_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            question_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: true, disabled: true }),
             question_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
             question_type: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
             options: this._fb.array([
@@ -288,7 +288,7 @@ var EditComponent = (function () {
     // create a new blank option
     EditComponent.prototype.initOption = function () {
         return this._fb.group({
-            option_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](''),
+            option_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: true, disabled: true }),
             option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('')
         });
     };
@@ -345,7 +345,7 @@ var EditComponent = (function () {
         // populate the survey form with proper data
         this.survey = this._fb.group({
             survey_id: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](currSurvey.survey_id),
-            survey_name: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](currSurvey.survey_name),
+            survey_name: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: currSurvey.survey_name, disabled: true }),
             questions: this._fb.array([])
         });
         // patch the questions nested array value with the new questions
@@ -358,8 +358,8 @@ var EditComponent = (function () {
         questions.forEach(function (q) {
             control.push(_this._fb.group({
                 question_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_is_active),
-                question_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_text),
-                question_type: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](q.question_type),
+                question_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: q.question_text, disabled: true }),
+                question_type: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: q.question_type, disabled: true }),
                 options: _this.patchFormOptions(q.options)
             }));
         });
@@ -371,7 +371,7 @@ var EditComponent = (function () {
         options.forEach(function (o) {
             ops.push(_this._fb.group({
                 option_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](o.option_is_active),
-                option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](o.option_text)
+                option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: o.option_text, disabled: true })
             }));
         });
         return ops;
@@ -422,21 +422,27 @@ var EditComponent = (function () {
         else {
             for (var i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
                 // // Check if questions active/inactive has changed, then update the database
+                console.log("qactive: " + formData.questions[i].question_is_active);
                 if (formData.questions[i].question_is_active !==
                     this.surveys[surveyIndex].questions[i].question_is_active) {
                     question = {
-                        "question_id": formData.questions[i].question_id,
+                        "question_id": this.surveys[surveyIndex].questions[i].question_id,
                         "question_is_active": formData.questions[i].question_is_active
                     };
+                    console.log("question.isactive: " + question.question_is_active);
                     this.surveyService.updateSurveyQuestionActive(question).subscribe();
                 }
                 // Check if options active/inactive has changed
                 for (var j = 0; j < this.surveys[surveyIndex].questions[i].options.length; j++) {
+                    if (formData.questions[i].options[j].option_is_active === "true" || formData.questions[i].options[j].option_is_active === "false") {
+                        var bool = JSON.parse(formData.questions[i].options[j].option_is_active);
+                        formData.questions[i].options[j].option_is_active = bool;
+                    }
                     // If it has changed, update the database
                     if (formData.questions[i].options[j].option_is_active !==
                         this.surveys[surveyIndex].questions[i].options[j].option_is_active) {
                         option = {
-                            "option_id": formData.questions[i].options[j].option_id,
+                            "option_id": this.surveys[surveyIndex].questions[i].options[j].option_id,
                             "option_is_active": formData.questions[i].options[j].option_is_active
                         };
                         this.surveyService.updateSurveyQuestionActive(option).subscribe();
@@ -1255,7 +1261,7 @@ var SurveyComponent = (function () {
         // Generate unique user hash
         this.currentUser = this.generateUUID();
         // Get the survey questions by selectedSurveyId
-        this.surveyService.getSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
+        this.surveyService.getActiveSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
             // Initialize the questions
             _this.surveys[_this.selectedSurveyIndex].questions = [];
             // Iterate through the questions and push them one at a time
@@ -1271,7 +1277,7 @@ var SurveyComponent = (function () {
             }
             _this.changeref.detectChanges();
             // Get the survey options based on the selectedSurveyId
-            _this.surveyService.getSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
+            _this.surveyService.getActiveSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
                 for (var j = 0; j < _this.surveys[_this.selectedSurveyIndex].questions.length; j++) {
                     for (var k = 0; k < response.body.length; k++) {
                         var option = {
@@ -2442,7 +2448,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, "#btnQuestionAdd {\n    color: green;\n }\n \n #btnQuestionRemove {\n    color: #eb494e\n }\n \n a:hover { \n    background-color: yellow;\n }\n \n .btnBar{\n    padding-left: 15px;\n    padding-right: 15px;\n    padding-top: 15px;\n }\n \n #surveySelect{\n    width: 300px;\n }\n \n #ctr {\n    margin-left: 13%;\n }", ""]);
+exports.push([module.i, "#btnQuestionAdd {\n    color: green;\n }\n \n a:hover { \n    background-color: yellow;\n }\n \n .btnBar{\n    padding-left: 15px;\n    padding-right: 15px;\n    padding-top: 15px;\n }\n \n #surveySelect{\n    width: 300px;\n }\n \n #ctr {\n    margin-left: 13%;\n }", ""]);
 
 // exports
 
@@ -2854,7 +2860,7 @@ module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\
 /***/ 631:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-10 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n               <div class=\"col\">\n                  <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\n                    <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\n                    <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\n                      {{ s.survey_name }}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"col\">\n                  <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning btn-sm\">Create New Survey</button>\n                </div>\n            </div>\n            <hr>\n            <div class=\"feed-activity-list\">\n              <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey.value)\">\n                <div class=\"form-group\">\n                  <h2 style=\"font-weight:bold\">Survey Name</h2>\n                  <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"survey_name\"\n                    placeholder=\"Enter Survey Name\">\n                </div>\n                <!-- QUESTIONS -->\n                <div formArrayName=\"questions\">\n                  <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\n                    <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\n                      <h3> Question {{ i+1}}</h3>\n                      <div class=\"row\">\n                          <div class=\"col-lg-12\">\n                            <small class=\"text-muted\">Active / Inactive</small>\n                          </div>\n                      </div>\n                      <select formControlName=\"question_is_active\" class=\"form-control form-control-sm\" required>\n                        <option value=\"\" disabled selected>Select Active/Inactive</option>\n                        <option value=\"true\">Active</option>\n                        <option value=\"false\">Inactive</option>\n                      </select>\n                      <div class=\"row\">\n                        <div class=\"col-lg-3\">\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <small class=\"text-muted\">Question Type</small>\n                            </div>\n                          </div>\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <!--TYPE GO HERE-->\n                              <select formControlName=\"question_type\" class=\"form-control form-control-sm\" required>\n                                <option value=\"\" disabled selected>Select question type:</option>\n                                <option value=\"select\">Dropdown</option>\n                                <option value=\"checkbox\">Checkboxes</option>\n                                <option value=\"radio\">Multiple Choice</option>\n                                <option value=\"text\">Textbox</option>\n                              </select>\n                            </div>\n                          </div>\n                        </div>\n                        <div class=\"col-lg-9\">\n                          <button type=\"button\" *ngIf=\"survey.controls.questions.length > 1\" class='pull-right btn btn-lg' (click)='removeQuestion(i)'\n                            style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionRemove\" class=\"fas fa-minus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                      <div class=\"row\" style=\"margin-top:10px\">\n                        <div class=\"col-lg-12\">\n                          <small class=\"text-muted\">Question Prompt</small>\n                          <!--TEXT BOX GOES HERE-->\n                          <div class=\"form-group\">\n                            <textarea formControlName=\"question_text\" class=\"form-control\" id=\"exampleTextarea\" rows=\"2\"\n                              placeholder=\"Enter Question Prompt Here...\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\n                        <div class=\"col-lg-1\">\n                        </div>\n                        <div class=\"col-lg-5\">\n                          <!--OPTIONS GO HERE-->\n                          <div>\n                            <!-- SHOWING OPTIONS-->\n                            <small class=\"text-muted\">Add Options</small>\n                            <div formArrayName=\"options\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.options.controls; let j=index\">\n                              \n                              \n                              <div class=\"row\">\n                                <div class=\"col-lg-10\">\n                                  <div [formGroupName]=\"j\">\n                                    <div class=\"form-group\">\n                                      <input type=\"text\" class=\"form-control\" placeholder=\"Enter Option\"\n                                        formControlName=\"option_text\">\n                                    </div>\n                                  </div>\n                                </div>\n                                <div class=\"col-lg-2\">\n                                  <span *ngIf=\"question.controls.options.length > 1\" (click)=\"removeOption(question, j, i)\"><i\n                                      class=\"fas fa-trash-alt\"></i></span>\n                                </div>\n                              </div>\n                              <button type=\"button\" class=\"btn btn-success btn-sm pull-right\" *ngIf=\"j == question.controls.options.length-1\"\n                                (click)=\"addOption(question,i)\" style=\"float: right\"><i class=\"fa fa-plus-circle\"></i>\n                                Add Option</button>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\">\n                        <div class=\"col-lg-12\">\n                          <button type=\"button\" class='pull-right btn btn-lg' (click)='addQuestion(i)' style='background-color:transparent;'>\n                            <div>\n                              <i id=\"btnQuestionAdd\" class=\"fa fa-plus-circle\"></i>\n                            </div>\n                          </button>\n                        </div>\n                      </div>\n                    </div>\n                    <!--END OF FEED ELEMENT DIV-  -->\n                  </div>\n                  <!--END OF nfFor DIV-->\n                </div>\n                <!--END OF Form Array for Questions Div-->\n                <button type=\"submit\" class=\"btn btn-primary btn-lg btn-block\">Save Survey</button>\n              </form>\n            </div>\n            \n            <pre>Form Value: <br>{{survey.value | json}}</pre>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n"
+module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-10 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n               <div class=\"col\">\n                  <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\n                    <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\n                    <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\n                      {{ s.survey_name }}\n                    </option>\n                  </select>\n                </div>\n                <div class=\"col\">\n                  <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning btn-sm\">Create New Survey</button>\n                </div>\n            </div>\n            <hr>\n            <div class=\"feed-activity-list\">\n              <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey.value)\">\n                <div class=\"form-group\">\n                  <h2 style=\"font-weight:bold\">Survey Name</h2>\n                  <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"survey_name\"\n                    placeholder=\"Enter Survey Name\">\n                </div>\n                <!-- QUESTIONS -->\n                <div formArrayName=\"questions\">\n                  <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\n                    <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\n                      <div class=\"row\">\n                        <div class=\"col-lg-9\">\n                          <h3 style=\"float:left\"> Question {{ i+1}}</h3>\n                        \n                          <button type=\"button\" *ngIf=\"survey.controls.questions.length > 1\" class=\"btn btn-danger btn-sm pull-right\" (click)='removeQuestion(i)'\n                            style='float: right'>\n                            <i id=\"btnQuestionRemove\" class=\"fas fa-minus-circle\"></i>\n                            Remove Question\n                          </button>\n                        </div>\n                      </div>\n                        \n                      <div class=\"row\">\n                          <div class=\"col-lg-12\">\n                            <small class=\"text-muted\">Question Active / Inactive</small>\n                          </div>\n                      </div>\n                      <select formControlName=\"question_is_active\" class=\"form-control form-control-sm\" required>\n                        <option value=\"\" disabled selected>Select Active/Inactive</option>\n                        <option value=\"true\">Active</option>\n                        <option value=\"false\">Inactive</option>\n                      </select>\n                      <div class=\"row\">\n                        <div class=\"col-lg-3\">\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <small class=\"text-muted\">Question Type</small>\n                            </div>\n                          </div>\n                          <div class=\"row\">\n                            <div class=\"col-lg-12\">\n                              <!--TYPE GO HERE-->\n                              <select formControlName=\"question_type\" class=\"form-control form-control-sm\" required>\n                                <option value=\"\" disabled selected>Select question type:</option>\n                                <option value=\"select\">Dropdown</option>\n                                <option value=\"checkbox\">Checkboxes</option>\n                                <option value=\"radio\">Multiple Choice</option>\n                                <option value=\"text\">Textbox</option>\n                              </select>\n                            </div>\n                          </div>\n                        </div>\n                        \n                      </div>\n                      <div class=\"row\" style=\"margin-top:10px\">\n                        <div class=\"col-lg-12\">\n                          <small class=\"text-muted\">Question Prompt</small>\n                          <!--TEXT BOX GOES HERE-->\n                          <div class=\"form-group\">\n                            <textarea [readonly]=\"setReadOnly()\" formControlName=\"question_text\" class=\"form-control\" id=\"exampleTextarea\" rows=\"2\"\n                              placeholder=\"Enter Question Prompt Here...\"></textarea>\n                          </div>\n                        </div>\n                      </div>\n                      \n                      <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\n                        <div class=\"col-lg-5\">\n                          <!--OPTIONS GO HERE-->\n                          <div>\n                            <!-- SHOWING OPTIONS-->\n                            <small class=\"text-muted\">Add Options</small>\n                            <div formArrayName=\"options\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.options.controls; let j=index\">\n                                \n                              <div class=\"row\">\n                                <div class=\"col-lg-10\">\n                                  <div [formGroupName]=\"j\">\n                                      <div class=\"row\">\n                                          <div class=\"col-lg-12\">\n                                            <small class=\"text-muted\">Option Active / Inactive</small>\n                                          </div>\n                                      </div>\n                                      <select formControlName=\"option_is_active\" class=\"form-control form-control-sm\" required>\n                                        <option value=\"\" disabled selected>Select Active/Inactive</option>\n                                        <option value=\"true\">Active</option>\n                                        <option value=\"false\">Inactive</option>\n                                      </select>\n                                    <div class=\"form-group\">\n                                      <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" placeholder=\"Enter Option\"\n                                        formControlName=\"option_text\">\n                                    </div>\n                                  </div>\n                                </div>\n                                <div class=\"col-lg-2\">\n                                  <button type=\"button\" class=\"btn btn-danger btn-sm pull-right\" *ngIf=\"question.controls.options.length > 1\" \n                                    (click)=\"removeOption(question, j, i)\"><i class=\"fas fa-minus-circle\"></i>\n                                    Remove Option\n                                  </button>\n                                </div>\n                              </div>\n                              <button type=\"button\" class=\"btn btn-success btn-sm pull-right\" *ngIf=\"j == question.controls.options.length-1\"\n                                (click)=\"addOption(question,i)\" style=\"float: right\"><i class=\"fa fa-plus-circle\"></i>\n                                Add Option\n                              </button>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                      <div class=\"row\">\n                        <div class=\"col-lg-12\">\n                          <button type=\"button\" class='pull-right btn btn-sm' (click)='addQuestion(i)' style='background-color:transparent;'>\n                              <i id=\"btnQuestionAdd\" class=\"fa fa-plus-circle\"></i>\n                              Add Question\n                          </button>\n                        </div>\n                      </div>\n                    </div>\n                    <!--END OF FEED ELEMENT DIV-  -->\n                  </div>\n                  <!--END OF nfFor DIV-->\n                </div>\n                <!--END OF Form Array for Questions Div-->\n                <button type=\"submit\" class=\"btn btn-primary btn-lg btn-block\">Save Survey</button>\n\n              </form>\n            </div>\n            \n            <pre>Form Value: <br>{{survey.value | json}}</pre>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -3042,7 +3048,7 @@ var AuthenticationService = (function () {
                 primaryColor: '#DFA612'
             },
             auth: {
-                redirectUrl: 'http://localhost:4200/home',
+                redirectUrl: 'http://localhost:3000/#/home',
                 responseType: 'token id_token',
                 audience: "https://dutchesscap.auth0.com/userinfo",
                 params: {
@@ -3127,16 +3133,24 @@ var SurveyService = (function () {
         return this.http.get('http://localhost:3000/api/activeSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all surveys
-    SurveyService.prototype.getSurveys = function () {
-        return this.http.get('http://localhost:3000/api/surveys', { observe: 'response' });
+    SurveyService.prototype.getAllSurveys = function () {
+        return this.http.get('http://localhost:3000/api/allSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
-    SurveyService.prototype.getSurveyQuestions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyQuestions/' + survey_id, { observe: 'response' });
+    SurveyService.prototype.getActiveSurveyQuestions = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/activeSurveyQuestions/' + survey_id, { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
+    SurveyService.prototype.getAllSurveyQuestions = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/allSurveyQuestions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all options given a specific survey_id as a parameter
-    SurveyService.prototype.getSurveyOptions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyOptions/' + survey_id, { observe: 'response' });
+    SurveyService.prototype.getActiveSurveyOptions = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/activeSurveyOptions/' + survey_id, { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all options given a specific survey_id as a parameter
+    SurveyService.prototype.getAllSurveyOptions = function (survey_id) {
+        return this.http.get('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyResponses = function (survey_id) {

@@ -13,7 +13,7 @@ export class AuthenticationService {
           primaryColor: '#DFA612'
       },
       auth: {
-        redirectUrl: 'http://localhost:4200/home',
+        redirectUrl: 'http://localhost:3000/#/home',
         responseType: 'token id_token',
         audience: `https://dutchesscap.auth0.com/userinfo`,
         params: {

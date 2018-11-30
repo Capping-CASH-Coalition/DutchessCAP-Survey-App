@@ -6,15 +6,17 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const hsts = require('hsts');
-const port = 3000;
+const port = 8888;
 // Server IP
 const hostname = '10.1.1.52';
+// Swap between these 2 for testing
 const http = require('http');
 const https = require('https');
 var app = express();
 // Swap http/https as needed for testing
 var server = http.createServer(app);
 
+// Add hostname to server.listen on server
 server.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 // Require the index route

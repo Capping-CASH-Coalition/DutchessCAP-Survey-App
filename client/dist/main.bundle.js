@@ -2894,64 +2894,64 @@ var SurveyService = (function () {
     */
     // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {
-        return this.http.get('http://localhost:3000/api/activeSurveys', { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/activeSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all surveys
     SurveyService.prototype.getAllSurveys = function () {
-        return this.http.get('http://localhost:3000/api/allSurveys', { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/allSurveys', { observe: 'response' });
     };
     // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getActiveSurveyQuestions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/activeSurveyQuestions/' + survey_id, { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/activeSurveyQuestions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all questions given a specific survey_id as a parameter
     SurveyService.prototype.getAllSurveyQuestions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/allSurveyQuestions/' + survey_id, { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/allSurveyQuestions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all options given a specific survey_id as a parameter
     SurveyService.prototype.getActiveSurveyOptions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/activeSurveyOptions/' + survey_id, { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/activeSurveyOptions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all options given a specific survey_id as a parameter
     SurveyService.prototype.getAllSurveyOptions = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/allSurveyOptions/' + survey_id, { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/allSurveyOptions/' + survey_id, { observe: 'response' });
     };
     // Function that will call the index.js route to get all responses given a specific survey_id as a parameter
     SurveyService.prototype.getSurveyResponses = function (survey_id) {
-        return this.http.get('http://localhost:3000/api/surveyResponses/' + survey_id, { observe: 'response' });
+        return this.http.get('http://localhost:8888/api/surveyResponses/' + survey_id, { observe: 'response' });
     };
     /*
       Post functions
     */
     // Function that will call the index.js to post an individual survey response to a survey given a specific survey_id as a parameter
     SurveyService.prototype.postSurveyResponse = function (response) {
-        return this.http.post('http://localhost:3000/api/postSurveyResponse', response, httpOptions);
+        return this.http.post('http://localhost:8888/api/postSurveyResponse', response, httpOptions);
     };
     SurveyService.prototype.postNewSurvey = function (survey) {
-        return this.http.post('http://localhost:3000/api/postNewSurvey', survey, httpOptions);
+        return this.http.post('http://localhost:8888/api/postNewSurvey', survey, httpOptions);
     };
     SurveyService.prototype.postQuestion = function (question) {
-        return this.http.post('http://localhost:3000/api/postQuestion', question, httpOptions);
+        return this.http.post('http://localhost:8888/api/postQuestion', question, httpOptions);
     };
     SurveyService.prototype.postOption = function (option) {
-        return this.http.post('http://localhost:3000/api/postOption', option, httpOptions);
+        return this.http.post('http://localhost:8888/api/postOption', option, httpOptions);
     };
     SurveyService.prototype.postArchitecture = function (surveyComponent) {
-        return this.http.post('http://localhost:3000/api/postArchitecture', surveyComponent, httpOptions);
+        return this.http.post('http://localhost:8888/api/postArchitecture', surveyComponent, httpOptions);
     };
     /*
       Put/Update functions
     */
     // Function that will call the index.js route to update a questions given the specific updates
     SurveyService.prototype.updateSurveyActive = function (survey) {
-        return this.http.put('http://localhost:3000/api/updateSurveyActive', survey, httpOptions);
+        return this.http.put('http://localhost:8888/api/updateSurveyActive', survey, httpOptions);
     };
     // Function that will call the index.js route to update a questions given the specific updates
     SurveyService.prototype.updateSurveyQuestionActive = function (question) {
-        return this.http.put('http://localhost:3000/api/updateSurveyQuestionActive', question, httpOptions);
+        return this.http.put('http://localhost:8888/api/updateSurveyQuestionActive', question, httpOptions);
     };
     SurveyService.prototype.updateSurveyOptionActive = function (option) {
-        return this.http.put('http://localhost:3000/api/updateSurveyOptionActive', option, httpOptions);
+        return this.http.put('http://localhost:8888/api/updateSurveyOptionActive', option, httpOptions);
     };
     SurveyService.prototype.wait = function (ms) {
         var start = new Date().getTime();

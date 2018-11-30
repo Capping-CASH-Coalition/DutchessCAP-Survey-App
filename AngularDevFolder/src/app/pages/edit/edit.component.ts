@@ -408,4 +408,19 @@ export class EditComponent implements OnInit {
       window.location.reload();
    }
 
+   // Updates the options active status
+   updateOptionActiveStatus(question, option, bool) {
+      if (! this.isNewSurvey) {
+         const control = <FormGroup>question.controls.options.at(option);
+         control.patchValue({option_is_active: bool});
+      }
+   }
+
+   updateQuestionActiveStatus(question, bool) {
+      if (! this.isNewSurvey) {
+         const control = <FormGroup>question;
+         control.patchValue({question_is_active: bool});
+      }
+   }
+
 } 

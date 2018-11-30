@@ -123,7 +123,7 @@ export class GraphsComponent implements OnInit {
                      }
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
-                     if (i == this.surveys.length - 1) {
+                     //if (i == this.surveys.length - 1) {
                         // set the display to be true after the page has loaded
                         this.displayDiv = true;
                         // init the options form
@@ -136,7 +136,7 @@ export class GraphsComponent implements OnInit {
                         // update the chart visually
                         this.updateChart();
 
-                     }
+                   //  }
 
                   }, (error) => {
                      console.log('error is ', error)
@@ -188,7 +188,6 @@ export class GraphsComponent implements OnInit {
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
       let opsReturn;
-      console.log("sirvey: ", this.surveys[sid]);
       this.surveys[sid].questions.forEach(q => {
          if (q.question_id == qid) {
             opsReturn = q.options

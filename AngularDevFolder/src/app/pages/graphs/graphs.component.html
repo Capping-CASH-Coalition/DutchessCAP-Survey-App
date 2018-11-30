@@ -50,7 +50,7 @@
               <div id="multipleDataSets" *ngIf="currentDatasetType != 'single'">
                 <div class="filterBlock">
                   <label for="graphType">Select Sub Question</label>
-                  <select class="form-control" formControlName="subQuestionId" required (change)="updateChart()">
+                  <select class="form-control" formControlName="subQuestionId" required (change)="updateSubQuestionOptions()">
                     <option *ngFor="let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion"
                       [value]="question.question_id">
                       {{question.question_text}}

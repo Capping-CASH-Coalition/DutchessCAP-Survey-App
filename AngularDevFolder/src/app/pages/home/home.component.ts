@@ -46,7 +46,6 @@ export class HomeComponent implements OnInit {
                "survey_is_active": response.body[i].survey_is_active,
                "response_count": response.body[i].response_count
             };
-            console.log(survey);
             this.surveyDetails.push(survey);
          }
 
@@ -66,11 +65,6 @@ export class HomeComponent implements OnInit {
       }, (error) => {
          console.log('error is ', error)
       })
-
-
-
-
-
 
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
@@ -153,13 +147,13 @@ export class HomeComponent implements OnInit {
     // Updates survey, changing it's active status
     updateActiveSurvey(survey_id): void {
       let survey = {
-         "survey_id": this.surveyDetails[survey_id].survey_id,
-         "survey_is_active": this.surveyDetails[survey_id].survey_is_active
+         "survey_id": this.surveyDetails[survey_id - 1].survey_id,
+         "survey_is_active": this.surveyDetails[survey_id - 1].survey_is_active
       }
       // Checks if survey is currently active
-      if(this.surveyDetails[survey_id].survey_is_active){
+      if(this.surveyDetails[survey_id - 1].survey_is_active){
          if(confirm("Are you sure you want to change the survey to inactive?")){
-            this.surveyDetails[survey_id].survey_is_active = false;
+            this.surveyDetails[survey_id - 1].survey_is_active = false;
             survey.survey_is_active = false;
             this.surveyService.updateSurveyActive(survey).subscribe();
          }
@@ -167,7 +161,7 @@ export class HomeComponent implements OnInit {
       // Checks if survey is currently inactive
       else {
          if(confirm("Are you sure you want to change the survey to active?")){
-            this.surveyDetails[survey_id].survey_is_active = true;
+            this.surveyDetails[survey_id - 1].survey_is_active = true;
             survey.survey_is_active = true;
             this.surveyService.updateSurveyActive(survey).subscribe();
          }

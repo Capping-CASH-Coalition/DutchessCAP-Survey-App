@@ -169,9 +169,9 @@ export class GraphsComponent implements OnInit {
    initChartForm() {
       this.chartForm = this.fb.group({
          chartType: new FormControl('pie'),
-         surveyId: new FormControl('0'),
-         questionId: new FormControl('0'),
-         subQuestionId: new FormControl('1')
+         surveyId: new FormControl('1'),
+         questionId: new FormControl('1'),
+         subQuestionId: new FormControl('2')
       });
    }
 
@@ -188,7 +188,7 @@ export class GraphsComponent implements OnInit {
       let sid: number = this.chartForm.controls.surveyId.value;
       let qid: number = this.chartForm.controls.subQuestionId.value;
       let opsReturn;
-      this.surveys[sid].questions.forEach(q => {
+      this.surveys[sid - 1].questions.forEach(q => {
          if (q.question_id == qid) {
             opsReturn = q.options
                .filter((option: any) => option.option_is_active === true);
@@ -224,7 +224,7 @@ export class GraphsComponent implements OnInit {
    // map the dataset for an individual dataset graph
    mapSingleData(): Map<string, number> {
       let map = new Map();
-      let survey = this.surveys[this.chartForm.controls.surveyId.value];
+      let survey = this.surveys[this.chartForm.controls.surveyId.value - 1];
       survey.questions.forEach(question => {
          // for each question, if the question id equals the one in the select value
          if (question.question_id == this.chartForm.controls.questionId.value) {
@@ -258,7 +258,7 @@ export class GraphsComponent implements OnInit {
 
    mapTopLevelFilter(): Map<string, string> {
       let responseMap: Map<string, string> = new Map();
-      this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
+      this.surveys[this.chartForm.controls.surveyId.value - 1].questions.forEach(q => {
          if (q.question_id == this.chartForm.controls.questionId.value) {
             q.responses.map(r => responseMap.set(r.survey_hash, r.response_text));
          }
@@ -269,7 +269,7 @@ export class GraphsComponent implements OnInit {
    ///Matrix label map 
    initMatrixLabelsMap(): Map<string, number> {
       let labelMap: Map<string, number> = new Map();
-      this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(q => {
+      this.surveys[this.chartForm.controls.surveyId.value - 1].questions.forEach(q => {
          if (q.question_id == this.chartForm.controls.questionId.value) {
             // on every option, if the option is active, add to the label map, if not active then nothing happens
             q.options.map(o => o.option_is_active ? labelMap.set(o.option_text, 0) : null);
@@ -286,7 +286,7 @@ export class GraphsComponent implements OnInit {
          // dsMap contains all the top question options labels with values 0
          let dsMap = this.initMatrixLabelsMap();
          // Sub question responses loop
-         this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(sq => {
+         this.surveys[this.chartForm.controls.surveyId.value - 1].questions.forEach(sq => {
             if (sq.question_id == this.chartForm.controls.subQuestionId.value) {
                // loop through all the sub question responses
                sq.responses.forEach(r => {

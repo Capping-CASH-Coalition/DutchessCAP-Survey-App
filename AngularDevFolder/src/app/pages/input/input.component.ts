@@ -82,6 +82,7 @@ export class InputComponent implements OnInit {
             if (this.selectedSurveyId == this.surveys[i].survey_id) {
                 this.selectedSurveyIndex = i;
             }
+            this.surveys[i].questions = [];
         }
         
         // Once the selected surveyID is done, this will populate the data using the selected ID

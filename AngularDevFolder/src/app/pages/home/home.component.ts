@@ -3,7 +3,7 @@ import { Globals } from "../../globals";
 import { GraphService } from '../../services/graph.service';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
-import { Question } from '../../models/question.model';
+import { QuestionResponses } from '../../models/questionResponses.model';
 import { SurveyDetails } from '../../models/surveyDetails.model';
 import { Responses } from '../../models/responseExport.model';
 
@@ -83,12 +83,13 @@ export class HomeComponent implements OnInit {
                      this.surveys[i].questions = [];
                      // Iterate through the questions and push them one at a time
                      for (let j = 0; j < response.body.length; j++) {
-                           let question: Question = {
+                           let question: QuestionResponses = {
                                  "question_id": response.body[j].question_id,
                                  "question_text": response.body[j].question_text,
                                  "question_type": response.body[j].question_type,
                                  "question_is_active": response.body[j].question_is_active,
-                                 options: []
+                                 options: [],
+                                 responses: []
                            };
                            this.surveys[i].questions.push(question);
                      }
@@ -98,8 +99,6 @@ export class HomeComponent implements OnInit {
                         this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
                            
                            for (let k = 0; k < this.surveys[i].questions.length; k++) {
-                              // initialize the responses
-                              this.surveys[i].questions[k].responses = [];
                                  for (let l = 0; l < response.body.length; l++) {
                                        let response1: Responses = {
                                              "response_id": response.body[l].response_id,

@@ -54,9 +54,11 @@
                               </div>
                             </div>
                             <div *ngSwitchCase="'text'">
-                              <label class="form-check-label"></label>
-                              <textarea class="form-control" (change)='valueChanges(survey.survey_id, question.question_id, -1, question.response)'
-                                [(ngModel)]="question.response" [ngModelOptions]="{standalone: true}" rows="3"></textarea>
+                              <div *ngFor="let option of question.options">
+                                <label class="form-check-label"></label>
+                                <textarea class="form-control" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'
+                                  [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows="3"></textarea>
+                              </div>
                             </div>
                             <div *ngSwitchCase="'radio'">
                               <div *ngFor="let option of question.options">

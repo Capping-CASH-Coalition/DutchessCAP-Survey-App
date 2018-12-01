@@ -23,6 +23,11 @@ export class SurveyService {
   */
 
   // Function that will call the index.js route to get all active surveys
+  getAllSurveysInfo(): Observable<HttpResponse<any>> {
+   return this.http.get<any>('http://localhost:8888/api/allSurveyInfo', { observe: 'response'});
+ }
+
+  // Function that will call the index.js route to get all active surveys
   getActiveSurveys(): Observable<HttpResponse<any>> {
     return this.http.get<any>('http://localhost:8888/api/activeSurveys', { observe: 'response'});
   }

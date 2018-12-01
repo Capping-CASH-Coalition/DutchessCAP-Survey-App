@@ -9,14 +9,14 @@
         </div>
         <div class="ibox-content">
           <div *ngIf="showInfo" class="feed-activity-list">
-            <div *ngFor="let info of getSurveyInfo()">
+            <div *ngFor="let info of surveyDetails">
                <div class="feed-element margin-top-5" (click)="updateActiveSurvey($event.target.value)">
-                <button type="button" *ngIf="info.status" value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
-                <button type="button" *ngIf="! info.status" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
-                <strong>{{info.name}}</strong>
+                <button type="button" *ngIf="info.survey_is_active" value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
+                <button type="button" *ngIf="! info.survey_is_active" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
+                <strong>{{info.survey_name}}</strong>
                 <div class="margin-top-5">
-                  <div> Date Created: <small class="text-muted pull-right">{{info.date}}</small></div>
-                  <div> Submissions: <small class="text-muted pull-right">{{info.submissions}}</small></div>
+                  <div> Date Created: <small class="text-muted pull-right">{{info.date_created}}</small></div>
+                  <div> Submissions: <small class="text-muted pull-right">{{info.response_count}}</small></div>
                 </div>
               </div>
             </div>

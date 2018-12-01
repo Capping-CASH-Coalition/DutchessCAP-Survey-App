@@ -1311,11 +1311,27 @@ var HomeComponent = (function () {
         this.surveys = [];
         this.showHomeDiv = false;
         this.showInfo = false;
+        this.surveyDetails = [];
     }
     HomeComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.canvas = document.getElementById('graphCanvas');
         this.ctx = this.canvas.getContext('2d');
+        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
+            for (var i = 0; i < response.body.length; i++) {
+                var survey = {
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created.split(" ")[0],
+                    "survey_is_active": response.body[i].survey_is_active,
+                    "response_count": response.body[i].response_count
+                };
+                console.log(survey);
+                _this.surveyDetails.push(survey);
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
         this.surveyService.getAllSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
@@ -1392,25 +1408,23 @@ var HomeComponent = (function () {
     };
     ;
     // Updates survey, changing it's active status
-    HomeComponent.prototype.updateActiveSurvey = function (val) {
+    HomeComponent.prototype.updateActiveSurvey = function (survey_id) {
+        var survey = {
+            "survey_id": this.surveyDetails[survey_id].survey_id,
+            "survey_is_active": this.surveyDetails[survey_id].survey_is_active
+        };
         // Checks if survey is currently active
-        if (this.surveys[val].survey_is_active == true) {
+        if (this.surveyDetails[survey_id].survey_is_active) {
             if (confirm("Are you sure you want to change the survey to inactive?")) {
-                this.surveys[val].survey_is_active = false;
-                var survey = {
-                    "survey_id": this.surveys[val].survey_id,
-                    "survey_is_active": this.surveys[val].survey_is_active
-                };
+                this.surveyDetails[survey_id].survey_is_active = false;
+                survey.survey_is_active = false;
                 this.surveyService.updateSurveyActive(survey).subscribe();
             }
         }
-        else if (this.surveys[val].survey_is_active == false) {
+        else {
             if (confirm("Are you sure you want to change the survey to active?")) {
-                this.surveys[val].survey_is_active = true;
-                var survey = {
-                    "survey_id": this.surveys[val].survey_id,
-                    "survey_is_active": this.surveys[val].survey_is_active
-                };
+                this.surveyDetails[survey_id].survey_is_active = true;
+                survey.survey_is_active = true;
                 this.surveyService.updateSurveyActive(survey).subscribe();
             }
         }
@@ -2893,6 +2907,10 @@ var SurveyService = (function () {
       Get functions
     */
     // Function that will call the index.js route to get all active surveys
+    SurveyService.prototype.getAllSurveysInfo = function () {
+        return this.http.get('http://localhost:8888/api/allSurveyInfo', { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {
         return this.http.get('http://localhost:8888/api/activeSurveys', { observe: 'response' });
     };
@@ -3483,7 +3501,7 @@ module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div 
 /***/ 634:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of getSurveyInfo()\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"updateActiveSurvey($event.target.value)\">\r\n                <button type=\"button\" *ngIf=\"info.status\" value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"button\" *ngIf=\"! info.status\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.submissions}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"updateActiveSurvey($event.target.value)\">\r\n                <button type=\"button\" *ngIf=\"info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"button\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 

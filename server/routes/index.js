@@ -194,6 +194,32 @@ router.get('/api/allSurveys', (req, res, next) => {
     });
 });
 
+// Route that gets all survey info
+router.get('/api/allSurveyInfo', (req, res, next) => {
+   //Array to hold results from query
+   const results = [];
+   // Get a Postgres client from the connection pool
+   pg.connect(connectionString, (err, client, done) => {
+       // Handle connection errors
+       if (err) {
+           done();
+           console.log(err);
+           return res.status(500).json({ success: false, data: err });
+       }
+       // Created query that gets all survey info
+       const query = client.query('SELECT s.survey_id, s.survey_name, s.date_created, s.survey_is_active, COUNT( DISTINCT r.survey_hash) as response_count FROM responses r INNER JOIN surveys s ON r.survey_id = s.survey_id GROUP BY s.survey_id');
+       // Stream results back one row at a time
+       query.on('row', (row) => {
+           results.push(row);
+       });
+       // After all data is returned, close connection and return results
+       query.on('end', () => {
+           done();
+           return res.json(results);
+       });
+   });
+});
+
 // Route that gets all active surveys 
 router.get('/api/activeSurveys', (req, res, next) => {
     //Array to hold results from query

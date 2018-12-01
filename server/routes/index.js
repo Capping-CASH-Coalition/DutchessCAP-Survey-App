@@ -220,6 +220,32 @@ router.get('/api/allSurveyInfo', (req, res, next) => {
    });
 });
 
+// Route that gets all submissions per date for the past 1 YEAR
+router.get('/api/surveySubmissionsOverTime', (req, res, next) => {
+   //Array to hold results from query
+   const results = [];
+   // Get a Postgres client from the connection pool
+   pg.connect(connectionString, (err, client, done) => {
+       // Handle connection errors
+       if (err) {
+           done();
+           console.log(err);
+           return res.status(500).json({ success: false, data: err });
+       }
+       // Created query that gets all survey info
+       const query = client.query("SELECT survey_id, date_taken, COUNT( DISTINCT survey_hash ) FROM responses WHERE date_taken >= CURRENT_DATE - INTERVAL '1 year' GROUP BY date_taken, survey_id");
+       // Stream results back one row at a time
+       query.on('row', (row) => {
+           results.push(row);
+       });
+       // After all data is returned, close connection and return results
+       query.on('end', () => {
+           done();
+           return res.json(results);
+       });
+   });
+});
+
 // Route that gets all active surveys 
 router.get('/api/activeSurveys', (req, res, next) => {
     //Array to hold results from query

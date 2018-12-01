@@ -1332,6 +1332,17 @@ var HomeComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
+        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
+            for (var i = 0; i < response.body.length; i++) {
+                var submissions = {
+                    "survey_id": response.body[i].survey_id,
+                    //"date_taken": response.body[i].date_taken.split(" ")[0],
+                    "count": response.body[i].count
+                };
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
         this.surveyService.getAllSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
@@ -2909,6 +2920,10 @@ var SurveyService = (function () {
     // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getAllSurveysInfo = function () {
         return this.http.get('http://localhost:8888/api/allSurveyInfo', { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all active surveys
+    SurveyService.prototype.getSurveySubmissionsOverTime = function () {
+        return this.http.get('http://localhost:8888/api/surveySubmissionsOverTime', { observe: 'response' });
     };
     // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {

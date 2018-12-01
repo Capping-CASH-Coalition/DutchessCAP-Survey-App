@@ -54,6 +54,21 @@ export class HomeComponent implements OnInit {
          console.log('error is ', error)
       })
 
+      this.surveyService.getAllSurveysInfo().subscribe((response) => {
+         for (let i = 0; i < response.body.length; i++) {
+            let submissions: any = {
+               "survey_id": response.body[i].survey_id,
+               //"date_taken": response.body[i].date_taken.split(" ")[0],
+               "count": response.body[i].count
+            };
+         }
+
+      }, (error) => {
+         console.log('error is ', error)
+      })
+
+
+
 
 
 

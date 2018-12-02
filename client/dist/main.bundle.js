@@ -1195,9 +1195,9 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.initChartForm = function () {
         this.chartForm = this.fb.group({
             chartType: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('pie'),
-            surveyId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('0'),
-            questionId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('0'),
-            subQuestionId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('1')
+            surveyId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('1'),
+            questionId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('1'),
+            subQuestionId: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('2')
         });
     };
     // init the options with the subquestion id appropiately 
@@ -1212,7 +1212,7 @@ var GraphsComponent = (function () {
         var sid = this.chartForm.controls.surveyId.value;
         var qid = this.chartForm.controls.subQuestionId.value;
         var opsReturn;
-        this.surveys[sid].questions.forEach(function (q) {
+        this.surveys[sid - 1].questions.forEach(function (q) {
             if (q.question_id == qid) {
                 opsReturn = q.options
                     .filter(function (option) { return option.option_is_active === true; });
@@ -1245,7 +1245,7 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.mapSingleData = function () {
         var _this = this;
         var map = new Map();
-        var survey = this.surveys[this.chartForm.controls.surveyId.value];
+        var survey = this.surveys[this.chartForm.controls.surveyId.value - 1];
         survey.questions.forEach(function (question) {
             // for each question, if the question id equals the one in the select value
             if (question.question_id == _this.chartForm.controls.questionId.value) {
@@ -1276,7 +1276,7 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.mapTopLevelFilter = function () {
         var _this = this;
         var responseMap = new Map();
-        this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
+        this.surveys[this.chartForm.controls.surveyId.value - 1].questions.forEach(function (q) {
             if (q.question_id == _this.chartForm.controls.questionId.value) {
                 q.responses.map(function (r) { return responseMap.set(r.survey_hash, r.response_text); });
             }
@@ -1287,7 +1287,7 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.initMatrixLabelsMap = function () {
         var _this = this;
         var labelMap = new Map();
-        this.surveys[this.chartForm.controls.surveyId.value].questions.forEach(function (q) {
+        this.surveys[this.chartForm.controls.surveyId.value - 1].questions.forEach(function (q) {
             if (q.question_id == _this.chartForm.controls.questionId.value) {
                 // on every option, if the option is active, add to the label map, if not active then nothing happens
                 q.options.map(function (o) { return o.option_is_active ? labelMap.set(o.option_text, 0) : null; });
@@ -1304,7 +1304,7 @@ var GraphsComponent = (function () {
             // dsMap contains all the top question options labels with values 0
             var dsMap = _this.initMatrixLabelsMap();
             // Sub question responses loop
-            _this.surveys[_this.chartForm.controls.surveyId.value].questions.forEach(function (sq) {
+            _this.surveys[_this.chartForm.controls.surveyId.value - 1].questions.forEach(function (sq) {
                 if (sq.question_id == _this.chartForm.controls.subQuestionId.value) {
                     // loop through all the sub question responses
                     sq.responses.forEach(function (r) {
@@ -1428,11 +1428,37 @@ var HomeComponent = (function () {
         this.surveys = [];
         this.showHomeDiv = false;
         this.showInfo = false;
+        this.surveyDetails = [];
     }
     HomeComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.canvas = document.getElementById('graphCanvas');
         this.ctx = this.canvas.getContext('2d');
+        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
+            for (var i = 0; i < response.body.length; i++) {
+                var survey = {
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created.split(" ")[0],
+                    "survey_is_active": response.body[i].survey_is_active,
+                    "response_count": response.body[i].response_count
+                };
+                _this.surveyDetails.push(survey);
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
+        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
+            for (var i = 0; i < response.body.length; i++) {
+                var submissions = {
+                    "survey_id": response.body[i].survey_id,
+                    //"date_taken": response.body[i].date_taken.split(" ")[0],
+                    "count": response.body[i].count
+                };
+            }
+        }, function (error) {
+            console.log('error is ', error);
+        });
         this.surveyService.getAllSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
@@ -1506,25 +1532,23 @@ var HomeComponent = (function () {
         });
     };
     // Updates survey, changing it's active status
-    HomeComponent.prototype.updateActiveSurvey = function (val) {
+    HomeComponent.prototype.updateActiveSurvey = function (survey_id) {
+        var survey = {
+            "survey_id": this.surveyDetails[survey_id - 1].survey_id,
+            "survey_is_active": this.surveyDetails[survey_id - 1].survey_is_active
+        };
         // Checks if survey is currently active
-        if (this.surveys[val].survey_is_active == true) {
+        if (this.surveyDetails[survey_id - 1].survey_is_active) {
             if (confirm("Are you sure you want to change the survey to inactive?")) {
-                this.surveys[val].survey_is_active = false;
-                var survey = {
-                    "survey_id": this.surveys[val].survey_id,
-                    "survey_is_active": this.surveys[val].survey_is_active
-                };
+                this.surveyDetails[survey_id - 1].survey_is_active = false;
+                survey.survey_is_active = false;
                 this.surveyService.updateSurveyActive(survey).subscribe();
             }
         }
-        else if (this.surveys[val].survey_is_active == false) {
+        else {
             if (confirm("Are you sure you want to change the survey to active?")) {
-                this.surveys[val].survey_is_active = true;
-                var survey = {
-                    "survey_id": this.surveys[val].survey_id,
-                    "survey_is_active": this.surveys[val].survey_is_active
-                };
+                this.surveyDetails[survey_id - 1].survey_is_active = true;
+                survey.survey_is_active = true;
                 this.surveyService.updateSurveyActive(survey).subscribe();
             }
         }
@@ -1671,7 +1695,8 @@ var _a, _b, _c;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InputComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1682,16 +1707,180 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+//import { Globals } from '../../globals';
+
 
 
 var InputComponent = (function () {
-    function InputComponent(globals) {
-        this.globals = globals;
+    function InputComponent(surveyService, changeref, auth) {
+        this.surveyService = surveyService;
+        this.changeref = changeref;
+        this.auth = auth;
+        // Array that holds all survey structuring data
+        this.surveys = [];
+        // Fills when multiple choices are selected by updateResponses()
+        this.checkboxChoices = [];
+        // Pushes/pops when user selects next or previous
+        this.surveyData = [];
     }
-    ;
+    // On component initialization, get the survey ids, names, and date created
     InputComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.surveyService.getAllSurveys().subscribe(function (response) {
+            // Get 1 survey at a time and push into surveys array
+            for (var i = 0; i < response.body.length; i++) {
+                var survey = {
+                    "survey_id": response.body[i].survey_id,
+                    "survey_name": response.body[i].survey_name,
+                    "date_created": response.body[i].date_created,
+                    questions: [],
+                };
+                _this.surveys.push(survey);
+            }
+            _this.changeref.detectChanges();
+        }, function (error) {
+            console.log('error is ', error);
+        });
+        //Generates UUID on initialization and sets it to currentUser
+        this.currentUser = this.generateUUID();
     };
-    InputComponent.prototype.updateSurvey = function (sid) {
+    // This continuously checks if the user is authenticated
+    InputComponent.prototype.ngDoCheck = function () {
+        // If authenticated, redirect to the home dashboard
+        if (!this.auth.isAuthenticated) {
+            //this.router.navigate(['home']);
+        }
+    };
+    //when a user clicks an option from the dropdown menu
+    InputComponent.prototype.surveySelect = function (value) {
+        var _this = this;
+        this.selectedSurveyId = value;
+        for (var i = 0; i < this.surveys.length; i++) {
+            if (this.selectedSurveyId == this.surveys[i].survey_id) {
+                this.selectedSurveyIndex = i;
+            }
+        }
+        // Once the selected surveyID is done, this will populate the data using the selected ID
+        this.surveyService.getAllSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
+            // Initialize the questions
+            // this.surveys[this.selectedSurveyIndex].questions = [];
+            // Iterate through the questions and push them one at a time
+            for (var i = 0; i < response.body.length; i++) {
+                var question = {
+                    "question_id": response.body[i].question_id,
+                    "question_text": response.body[i].question_text,
+                    "question_type": response.body[i].question_type,
+                    "question_is_active": response.body[i].question_is_active,
+                    options: []
+                };
+                _this.surveys[_this.selectedSurveyIndex].questions.push(question);
+            }
+            //  console.log(this.surveys[this.selectedSurveyIndex]);
+            _this.changeref.detectChanges();
+            // Get the survey options based on the selectedSurveyId
+            _this.surveyService.getAllSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
+                for (var j = 0; j < _this.surveys[_this.selectedSurveyIndex].questions.length; j++) {
+                    for (var k = 0; k < response.body.length; k++) {
+                        var option = {
+                            "option_id": response.body[k].option_id,
+                            "option_text": response.body[k].option_text,
+                            "option_is_active": response.body[k].option_is_active,
+                            "question_id": response.body[k].question_id
+                        };
+                        // If the question IDs match, push the option into the questions[j].options array
+                        if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
+                            _this.surveys[_this.selectedSurveyIndex].questions[j].options.push(option);
+                            // console.log(this.surveys[this.selectedSurveyIndex].questions[j].options[k]);
+                        }
+                    }
+                }
+                _this.changeref.detectChanges();
+            }, function (error) {
+                console.log('error is ', error);
+            });
+        }, function (error) {
+            console.log('error is ', error);
+        });
+    };
+    // Deals with Radio/Text/Select and grabs correct values for DB
+    InputComponent.prototype.valueChanges = function (survey_id, question_id, option_id, option_text) {
+        //Checks for multiple options, runs for SELECT type
+        if (typeof option_id == 'object') {
+            // option is an array, filter the correct option id to get correlating option_text
+            var options = option_id.filter(function (option) { return option.option_id == option_text; });
+            option_id = options[0].option_id;
+            option_text = options[0].option_text;
+        }
+        // Creates response object to be able to model for
+        var response = {
+            'survey_id': survey_id,
+            'question_id': question_id,
+            'option_id': option_id,
+            'response_text': option_text,
+            'survey_hash': this.currentUser
+        };
+        // gets the question index in the surveys.questions array from the question id
+        var question_index = this.surveys[this.selectedSurveyId - 1].questions.findIndex(function (i) { return i.question_id === question_id; });
+        //sets the current question response model based off values passed through
+        this.surveys[this.selectedSurveyId - 1].questions[question_index].responseModel = [response];
+    };
+    //Updates response array based on checked box
+    InputComponent.prototype.updateCheckbox = function (currentQuestion, content, isChecked, option_id, survey_id) {
+        //Checks to see if current question has response, if not make a response array for that Q  
+        if (!currentQuestion.response) {
+            currentQuestion.response = [];
+            currentQuestion.responseModel = [];
+        }
+        //If Checkbox is checked, push the content of the checked box to response array
+        if (isChecked) {
+            currentQuestion.response.push(content); //Pushes value selected into response array
+            var response = {
+                survey_id: survey_id,
+                question_id: currentQuestion.question_id,
+                option_id: option_id,
+                response_text: content,
+                survey_hash: this.currentUser
+            };
+            currentQuestion.responseModel.push(response);
+        }
+        else {
+            var index = currentQuestion.response.findIndex(function (o) { return o === content; });
+            var temp = currentQuestion.responseModel.filter(function (item) { return item.option_id != option_id; });
+            currentQuestion.responseModel = temp;
+            currentQuestion.response.splice(index, 1);
+        }
+    };
+    //Submit Button Functionality
+    InputComponent.prototype.save = function () {
+        var _this = this;
+        //Takes the responsemodel from each question and pushes it to the surveyData object
+        // console.log(this.surveys[this.selectedSurveyId - 1]);
+        this.surveys[this.selectedSurveyId - 1].questions.forEach(function (element) {
+            _this.surveyData = _this.surveyData.concat(element.responseModel);
+        });
+        // Uncleaned surveyData Array
+        console.log(this.surveyData);
+        // Takes surveyData array and cleans it of undefined values in array
+        this.surveyData = this.surveyData.filter(function (element) {
+            return element !== undefined;
+        });
+        // Cleaned surveyData Array
+        console.log(this.surveyData);
+        // Post the surveyData array to the API
+        this.surveyService.postSurveyResponse(this.surveyData).subscribe();
+        // Function to reload the page once submitted, this makes it so they can't submit it multiple times
+        //window.location.reload();
+    };
+    InputComponent.prototype.generateUUID = function () {
+        var d = new Date().getTime();
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            d += performance.now(); //use high-precision timer if available
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
     };
     return InputComponent;
 }());
@@ -1699,12 +1888,14 @@ InputComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-input',
         template: __webpack_require__(635),
-        styles: [__webpack_require__(592)]
+        styles: [__webpack_require__(592)],
+        changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush,
+        providers: [__WEBPACK_IMPORTED_MODULE_2__services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _c || Object])
 ], InputComponent);
 
-var _a;
+var _a, _b, _c;
 //# sourceMappingURL=input.component.js.map
 
 /***/ }),
@@ -3007,6 +3198,14 @@ var SurveyService = (function () {
       Get functions
     */
     // Function that will call the index.js route to get all active surveys
+    SurveyService.prototype.getAllSurveysInfo = function () {
+        return this.http.get('http://localhost:8888/api/allSurveyInfo', { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all active surveys
+    SurveyService.prototype.getSurveySubmissionsOverTime = function () {
+        return this.http.get('http://localhost:8888/api/surveySubmissionsOverTime', { observe: 'response' });
+    };
+    // Function that will call the index.js route to get all active surveys
     SurveyService.prototype.getActiveSurveys = function () {
         return this.http.get('http://localhost:8888/api/activeSurveys', { observe: 'response' });
     };
@@ -3597,14 +3796,14 @@ module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div 
 /***/ 634:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of getSurveyInfo()\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"updateActiveSurvey($event.target.value)\">\r\n                <button type=\"button\" *ngIf=\"info.status\" value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"button\" *ngIf=\"! info.status\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.submissions}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"updateActiveSurvey($event.target.value)\">\r\n                <button type=\"button\" *ngIf=\"info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"button\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
 /***/ 635:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n      <navigation></navigation>\r\n      <div id=\"page-wrapper\" class=\"gray-bg\">\r\n        <topnavbar></topnavbar>\r\n        <div id=\"ctr\">\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-11 ibox float-e-margins\">\r\n              <div class=\"ibox-content\">\r\n                <div class=\"row justify-content-between btnBar\">\r\n                  <div class=\"col\">\r\n                    <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurvey($event.target.value)\">\r\n                      <option *ngFor=\"let s of globals.surveys\" [value]=\"s.survey_id\">\r\n                        {{ s.survey_name }}\r\n                      </option>\r\n                    </select>\r\n                  </div>\r\n                  <div class=\"col\">\r\n                    <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\">\r\n                      <i class=\"fas fa-database\"></i>\r\n                      Add to Database\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n                <hr>\r\n                <div class=\"feed-activity-list\">\r\n                  <form>\r\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions | ActiveQuestions; let i = index \">\r\n                      <div class=\"col-lg-4\" style=\"margin-left:40px\">\r\n                        <span class=\"spanQuestion\"> {{ i+1 }} . <span class=\"spanQuestionText\">{{ question.question_text }}</span></span>\r\n                      </div>\r\n                      <div class=\"col-lg-7\">\r\n                        <div [ngSwitch]=\"question.question_type\">\r\n    \r\n                          <div *ngSwitchCase=\"'dropdown'\">\r\n                            <select class=\"form-control\" id=\"questionType\">\r\n                              <option *ngFor=\"let option of question.options\">\r\n                                {{ option.option_text }}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div *ngSwitchCase=\"'checkboxes'\">\r\n                            <div *ngFor=\"let option of question.options\" id=\"divCheckboxOptionText\">\r\n                              <label class=\"form-check-label\">\r\n                                <input class=\"form-check-input\" type=\"checkbox\" value=\"option.option_text\">\r\n                                <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                              </label>\r\n                            </div>\r\n                          </div>\r\n                          <div *ngSwitchCase=\"'text'\">\r\n                            <label class=\"form-check-label\"></label>\r\n                            <textarea class=\"form-control\" id=\"textArea\" rows=\"3\"></textarea>\r\n                          </div>\r\n                          <div *ngSwitchCase=\"'mc'\">\r\n                            <div *ngFor=\"let option of question.options\">\r\n                              <label class=\"check-label\">\r\n                                <input type=\"radio\" class=\"form-check-input\" name=\"optionsRadios\">\r\n                                <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                              </label>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>"
+module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-11 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n              <div class=\"col\">\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"surveySelect($event.target.value)\">\n                  <option disabled selected>-Please Select a Survey-</option>\n                  <option *ngFor=\"let activeSurveys of surveys\" value=\"{{activeSurveys.survey_id}}\">\n                    {{ activeSurveys.survey_name }}\n                  </option>\n                </select>\n              </div>\n              <div class=\"col\">\n                <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\" (click)='save()'>\n                  <i class=\"fas fa-database\"></i>\n                  Save\n                </button>\n              </div>\n            </div>\n            <div class=\"feed-activity-list\">\n              <form>\n                <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\n                  <div>\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions; let k = index\">\n                      <div>\n                        <div class=\"col-lg-4\" style=\"margin-left:40px\">\n                          <span class=\"spanQuestion\"> {{ k+1 }} . <span class=\"spanQuestionText\">{{\n                              question.question_text\n                              }}</span></span>\n                        </div>\n                        <div class=\"col-lg-7\">\n                          <div [ngSwitch]=\"question.question_type\">\n\n                            <div *ngSwitchCase=\"'select'\">\n                              <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\n                                class=\"form-control\">\n                                <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\n                                  {{ option.option_text }}\n                                </option>\n                              </select>\n                            </div>\n                            <div *ngSwitchCase=\"'checkbox'\">\n                              <div *ngFor=\"let option of question.options; let j = index\">\n                                <label class=\"form-check-label\">\n                                  <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\n                                    type=\"checkbox\" [value]=\"option.option_text\">\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\n                                </label>\n                              </div>\n                            </div>\n                            <div *ngSwitchCase=\"'text'\">\n                              <label class=\"form-check-label\"></label>\n                              <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, -1, question.response)'\n                                [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" rows=\"3\"></textarea>\n                            </div>\n                            <div *ngSwitchCase=\"'radio'\">\n                              <div *ngFor=\"let option of question.options\">\n                                <label class=\"check-label\">\n                                  <!--  [(ngModel)]=\"surveys.responses[k]\"-->\n                                  <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\n                                    [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\n                                    [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\n                                </label>\n                              </div>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n              </form>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 

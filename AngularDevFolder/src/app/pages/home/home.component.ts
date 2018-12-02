@@ -2,7 +2,8 @@ import { OnInit, Component, ChangeDetectorRef } from "@angular/core";
 import { GraphService } from '../../services/graph.service';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
-import { Question } from '../../models/question.model';
+import { QuestionResponses } from '../../models/questionResponses.model';
+import { SurveyDetails } from '../../models/surveyDetails.model';
 import { Responses } from '../../models/responseExport.model';
 
 @Component({
@@ -28,9 +29,46 @@ export class HomeComponent implements OnInit {
    showHomeDiv: boolean = false;
    showInfo: boolean = false;
 
+   surveyDetails: Array<SurveyDetails> = [];
+   currSurveyID: number = 0;
+   modal;
+
    ngOnInit() {
+      
+      // Get the modal
+      this.modal = document.getElementById('success');
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
+
+      this.surveyService.getAllSurveysInfo().subscribe((response) => {
+         for (let i = 0; i < response.body.length; i++) {
+            let survey: SurveyDetails = {
+               "survey_id": response.body[i].survey_id,
+               "survey_name": response.body[i].survey_name,
+               "date_created": response.body[i].date_created.split(" ")[0],
+               "survey_is_active": response.body[i].survey_is_active,
+               "response_count": response.body[i].response_count
+            };
+            this.surveyDetails.push(survey);
+         }
+
+      }, (error) => {
+         console.log('error is ', error)
+      })
+
+      this.surveyService.getAllSurveysInfo().subscribe((response) => {
+         for (let i = 0; i < response.body.length; i++) {
+            let submissions: any = {
+               "survey_id": response.body[i].survey_id,
+               //"date_taken": response.body[i].date_taken.split(" ")[0],
+               "count": response.body[i].count
+            };
+         }
+
+      }, (error) => {
+         console.log('error is ', error)
+      })
+
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
@@ -48,25 +86,24 @@ export class HomeComponent implements OnInit {
                      this.surveys[i].questions = [];
                      // Iterate through the questions and push them one at a time
                      for (let j = 0; j < response.body.length; j++) {
-                           let question: Question = {
+                           let question: QuestionResponses = {
                                  "question_id": response.body[j].question_id,
                                  "question_text": response.body[j].question_text,
                                  "question_type": response.body[j].question_type,
                                  "question_is_active": response.body[j].question_is_active,
-                                 options: []
+                                 options: [],
+                                 responses: []
                            };
                            this.surveys[i].questions.push(question);
                      }
-                  
+                        
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
                         this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
                            
                            for (let k = 0; k < this.surveys[i].questions.length; k++) {
-                              // initialize the responses
-                              this.surveys[i].questions[k].responses = [];
                                  for (let l = 0; l < response.body.length; l++) {
-                                       let response1: Responses = {
+                                       let responseData: Responses = {
                                              "response_id": response.body[l].response_id,
                                              "survey_id": response.body[l].survey_id,
                                              "question_id": response.body[l].question_id,
@@ -77,7 +114,7 @@ export class HomeComponent implements OnInit {
                                        };
                                        // If the question IDs match, push the response into the questions[j].responses array
                                        if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
-                                             this.surveys[i].questions[k].responses.push(response1);
+                                             this.surveys[i].questions[k].responses.push(responseData);
                                        }
                                  }
                            }
@@ -105,30 +142,30 @@ export class HomeComponent implements OnInit {
       })
    }
 
-   // Updates survey, changing it's active status
-   updateActiveSurvey(val): void {
+   ngAfterViewInit() {
+   };
+
+    // Updates survey, changing it's active status
+    updateActiveSurvey(): void {
+      let survey = {
+         "survey_id": this.surveyDetails[this.currSurveyID - 1].survey_id,
+         "survey_is_active": this.surveyDetails[this.currSurveyID - 1].survey_is_active
+      }
+
       // Checks if survey is currently active
-      if(this.surveys[val].survey_is_active == true){
-         if(confirm("Are you sure you want to change the survey to inactive?")){
-         this.surveys[val].survey_is_active = false;
-            let survey = {
-               "survey_id": this.surveys[val].survey_id,
-               "survey_is_active": this.surveys[val].survey_is_active
-            }
-         this.surveyService.updateSurveyActive(survey).subscribe();
-         }
+      if(this.surveyDetails[this.currSurveyID - 1].survey_is_active){
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = false;
+            survey.survey_is_active = false;
+            this.surveyService.updateSurveyActive(survey).subscribe();
       }
       // Checks if survey is currently inactive
-      else if(this.surveys[val].survey_is_active == false){
-         if(confirm("Are you sure you want to change the survey to active?")){
-         this.surveys[val].survey_is_active = true;
-            let survey = {
-               "survey_id": this.surveys[val].survey_id,
-               "survey_is_active": this.surveys[val].survey_is_active
-            }
-         this.surveyService.updateSurveyActive(survey).subscribe();
-         }
+      else {
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = true;
+            survey.survey_is_active = true;
+            this.surveyService.updateSurveyActive(survey).subscribe();
       }
+      this.modal.style.display = "none";
+      window.location.reload();
    }
 
    // Builds chart with survey date data
@@ -225,7 +262,6 @@ export class HomeComponent implements OnInit {
             x: a[r],
             y: b[r]
          })
-
       }
       return data
    }
@@ -260,6 +296,17 @@ export class HomeComponent implements OnInit {
       }
       let today1 = new Date(yyyy + '-' + mm + '-' + dd);
       return today1;
+   }  
+
+   // When user clicks save survey, display modal
+   openModal(id): void {
+      this.currSurveyID = id;
+      this.modal.style.display = "block";
    }
-   
+
+   // When user clicks X, close the modal and refresh the page to see changes
+   closeModal(): void {
+      this.modal.style.display = "none";
+      window.location.reload();
+   }
 }

@@ -1,71 +1,88 @@
 <div id="wrapper">
-      <navigation></navigation>
-      <div id="page-wrapper" class="gray-bg">
-        <topnavbar></topnavbar>
-        <div id="ctr">
-          <div class="row">
-            <div class="col-lg-11 ibox float-e-margins">
-              <div class="ibox-content">
-                <div class="row justify-content-between btnBar">
-                  <div class="col">
-                    <select class="form-control pull-left" id="surveySelect" (change)="updateSurvey($event.target.value)">
-                      <option *ngFor="let s of globals.surveys" [value]="s.survey_id">
-                        {{ s.survey_name }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="col">
-                    <button type="button" class="btn btn-primary pull-right btn-sm">
-                      <i class="fas fa-database"></i>
-                      Add to Database
-                    </button>
-                  </div>
-                </div>
-                <hr>
-                <div class="feed-activity-list">
-                  <form>
-                    <div class="row form-group" *ngFor="let question of survey.questions | ActiveQuestions; let i = index ">
-                      <div class="col-lg-4" style="margin-left:40px">
-                        <span class="spanQuestion"> {{ i+1 }} . <span class="spanQuestionText">{{ question.question_text }}</span></span>
-                      </div>
-                      <div class="col-lg-7">
-                        <div [ngSwitch]="question.question_type">
-    
-                          <div *ngSwitchCase="'dropdown'">
-                            <select class="form-control" id="questionType">
-                              <option *ngFor="let option of question.options">
-                                {{ option.option_text }}
-                              </option>
-                            </select>
-                          </div>
-                          <div *ngSwitchCase="'checkboxes'">
-                            <div *ngFor="let option of question.options" id="divCheckboxOptionText">
-                              <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" value="option.option_text">
-                                <span class="spanOption">{{ option.option_text }}</span>
-                              </label>
+  <navigation></navigation>
+  <div id="page-wrapper" class="gray-bg">
+    <topnavbar></topnavbar>
+    <div id="ctr">
+      <div class="row">
+        <div class="col-lg-11 ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="row justify-content-between btnBar">
+              <div class="col">
+                <select class="form-control pull-left" id="surveySelect" (change)="surveySelect($event.target.value)">
+                  <option disabled selected>-Please Select a Survey-</option>
+                  <option *ngFor="let activeSurveys of surveys" value="{{activeSurveys.survey_id}}">
+                    {{ activeSurveys.survey_name }}
+                  </option>
+                </select>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary pull-right btn-sm" (click)='save()'>
+                  <i class="fas fa-database"></i>
+                  Save
+                </button>
+              </div>
+            </div>
+            <div class="feed-activity-list">
+              <form>
+                <div *ngFor="let survey of surveys | filterBySurveyID: selectedSurveyId">
+                  <div>
+                    <div class="row form-group" *ngFor="let question of survey.questions; let k = index">
+                      <div>
+                        <div class="col-lg-4" style="margin-left:40px">
+                          <span class="spanQuestion"> {{ k+1 }} . <span class="spanQuestionText">{{
+                              question.question_text
+                              }}</span></span>
+                        </div>
+                        <div class="col-lg-7">
+                          <div [ngSwitch]="question.question_type">
+
+                            <div *ngSwitchCase="'select'">
+                              <select [(ngModel)]="question.response" [ngModelOptions]="{standalone: true}" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'
+                                class="form-control">
+                                <option *ngFor="let option of question.options" [value]="option.option_id">
+                                  {{ option.option_text }}
+                                </option>
+                              </select>
                             </div>
-                          </div>
-                          <div *ngSwitchCase="'text'">
-                            <label class="form-check-label"></label>
-                            <textarea class="form-control" id="textArea" rows="3"></textarea>
-                          </div>
-                          <div *ngSwitchCase="'mc'">
-                            <div *ngFor="let option of question.options">
-                              <label class="check-label">
-                                <input type="radio" class="form-check-input" name="optionsRadios">
-                                <span class="spanOption">{{ option.option_text }}</span>
-                              </label>
+                            <div *ngSwitchCase="'checkbox'">
+                              <div *ngFor="let option of question.options; let j = index">
+                                <label class="form-check-label">
+                                  <input class="form-check-input" (change)="updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)"
+                                    type="checkbox" [value]="option.option_text">
+                                  <span class="spanOption">{{ option.option_text }}</span>
+                                </label>
+                              </div>
+                            </div>
+                            <div *ngSwitchCase="'text'">
+                              <div *ngFor="let option of question.options">
+                                <label class="form-check-label"></label>
+                                <textarea class="form-control" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'
+                                  [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows="3"></textarea>
+                              </div>
+                            </div>
+                            <div *ngSwitchCase="'radio'">
+                              <div *ngFor="let option of question.options">
+                                <label class="check-label">
+                                  <!--  [(ngModel)]="surveys.responses[k]"-->
+                                  <input type="radio" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'
+                                    [(ngModel)]="question.response" [ngModelOptions]="{standalone: true}" class="form-check-input"
+                                    [name]="'radio'+question.question_id" [value]="option.option_text">
+                                  <span class="spanOption">{{ option.option_text }}</span>
+                                </label>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </form>
+                  </div>
                 </div>
-              </div>
+              </form>
+
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>

@@ -9,25 +9,47 @@
         </div>
         <div class="ibox-content">
           <div *ngIf="showInfo" class="feed-activity-list">
-            <div *ngFor="let info of getSurveyInfo()">
-               <div class="feed-element margin-top-5" (click)="updateActiveSurvey($event.target.value)">
-                <button type="button" *ngIf="info.status" value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
-                <button type="button" *ngIf="! info.status" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
-                <strong>{{info.name}}</strong>
+            <div *ngFor="let info of surveyDetails">
+               <div class="feed-element margin-top-5" (click)="openModal($event.target.value)">
+                <button type="submit" *ngIf="info.survey_is_active"  value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
+                <button type="submit" *ngIf="! info.survey_is_active" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
+                <strong>{{info.survey_name}}</strong>
                 <div class="margin-top-5">
-                  <div> Date Created: <small class="text-muted pull-right">{{info.date}}</small></div>
-                  <div> Submissions: <small class="text-muted pull-right">{{info.submissions}}</small></div>
+                  <div> Date Created: <small class="text-muted pull-right">{{info.date_created}}</small></div>
+                  <div> Submissions: <small class="text-muted pull-right">{{info.response_count}}</small></div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="filterBlock">
+            <div class="btn-group w-100" id="deepGraphSwitch" role="group" (click)="updateChart()" required>
+              <button type="button" class="btnGroupSwitch btn btn-success">Refresh Chart</button>
+            </div>
+          </div>
         </div>
+        
       </div>
     </div>
     <div class="col-lg-9 margin-top-20">
       <div class="ibox-content">
         <canvas id="graphCanvas" width="1000" height="670"></canvas>
       </div >
+    </div>
+    <div id="success" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <p class="checker">Are you sure you want to change the activity status of this survey?</p>
+          <div class="row">
+            <div class="col-lg-5">
+              <span (click)="updateActiveSurvey()" class="close">Yes</span>
+            </div>
+            <div class="col-lg-2">
+              <span (click)="closeModal()" class="close">No</span>
+            </div>
+          </div>
+        </div>
+
     </div>
   </div>
 </div>

@@ -32,8 +32,13 @@ export class HomeComponent implements OnInit {
    showInfo: boolean = false;
 
    surveyDetails: Array<SurveyDetails> = [];
+   currSurveyID: number = 0;
+   modal;
 
    ngOnInit() {
+      
+      // Get the modal
+      this.modal = document.getElementById('success');
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
 
@@ -93,14 +98,14 @@ export class HomeComponent implements OnInit {
                            };
                            this.surveys[i].questions.push(question);
                      }
-                  
+                        
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
                         this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
                            
                            for (let k = 0; k < this.surveys[i].questions.length; k++) {
                                  for (let l = 0; l < response.body.length; l++) {
-                                       let response1: Responses = {
+                                       let responseData: Responses = {
                                              "response_id": response.body[l].response_id,
                                              "survey_id": response.body[l].survey_id,
                                              "question_id": response.body[l].question_id,
@@ -111,7 +116,7 @@ export class HomeComponent implements OnInit {
                                        };
                                        // If the question IDs match, push the response into the questions[j].responses array
                                        if (this.surveys[i].questions[k].question_id == response.body[l].question_id) {
-                                             this.surveys[i].questions[k].responses.push(response1);
+                                             this.surveys[i].questions[k].responses.push(responseData);
                                        }
                                  }
                            }
@@ -144,27 +149,25 @@ export class HomeComponent implements OnInit {
    };
 
     // Updates survey, changing it's active status
-    updateActiveSurvey(survey_id): void {
+    updateActiveSurvey(): void {
       let survey = {
-         "survey_id": this.surveyDetails[survey_id - 1].survey_id,
-         "survey_is_active": this.surveyDetails[survey_id - 1].survey_is_active
+         "survey_id": this.surveyDetails[this.currSurveyID - 1].survey_id,
+         "survey_is_active": this.surveyDetails[this.currSurveyID - 1].survey_is_active
       }
       // Checks if survey is currently active
-      if(this.surveyDetails[survey_id - 1].survey_is_active){
-         if(confirm("Are you sure you want to change the survey to inactive?")){
-            this.surveyDetails[survey_id - 1].survey_is_active = false;
+      if(this.surveyDetails[this.currSurveyID - 1].survey_is_active){
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = false;
             survey.survey_is_active = false;
             this.surveyService.updateSurveyActive(survey).subscribe();
-         }
       }
       // Checks if survey is currently inactive
       else {
-         if(confirm("Are you sure you want to change the survey to active?")){
-            this.surveyDetails[survey_id - 1].survey_is_active = true;
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = true;
             survey.survey_is_active = true;
             this.surveyService.updateSurveyActive(survey).subscribe();
-         }
       }
+      this.modal.style.display = "none";
+      window.location.reload();
    }
 
    // Builds chart with survey date data
@@ -261,7 +264,6 @@ export class HomeComponent implements OnInit {
             x: a[r],
             y: b[r]
          })
-
       }
       return data
    }
@@ -296,6 +298,17 @@ export class HomeComponent implements OnInit {
       }
       let today1 = new Date(yyyy + '-' + mm + '-' + dd);
       return today1;
+   }  
+
+   // When user clicks save survey, display modal
+   openModal(id): void {
+      this.currSurveyID = id;
+      this.modal.style.display = "block";
    }
-   
+
+   // When user clicks X, close the modal and refresh the page to see changes
+   closeModal(): void {
+      this.modal.style.display = "none";
+      window.location.reload();
+   }
 }

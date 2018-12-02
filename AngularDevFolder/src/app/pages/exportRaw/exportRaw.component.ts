@@ -159,7 +159,7 @@ export class ExportRawComponent implements OnInit {
 
    // set the current survey from the given id 
    updateSurvey(id) {
-      this.currSurvey = this.surveys[id];
+      this.currSurvey = this.surveys[id - 1];
       // get questions from the current survey
       this.getQuestions();
       // update feed to -1 which is all questions

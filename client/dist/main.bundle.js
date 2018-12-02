@@ -1,11 +1,11 @@
 webpackJsonp([1,5],{
 
-/***/ 107:
+/***/ 106:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_chart_js__ = __webpack_require__(481);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_chart_js__ = __webpack_require__(480);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_chart_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_chart_js__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -261,12 +261,12 @@ GraphService = __decorate([
 
 /***/ }),
 
-/***/ 170:
+/***/ 169:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(105);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EditComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -388,6 +388,7 @@ var EditComponent = (function () {
     };
     // create a new blank option
     EditComponent.prototype.initOption = function () {
+        this.currentOptionScope.push(-1);
         return this._fb.group({
             option_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: true, disabled: true }),
             option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]('')
@@ -458,8 +459,9 @@ var EditComponent = (function () {
         });
         // patch the questions nested array value with the new questions
         this.currentOptionScope = [];
-        this.patchFormQuestions(currSurvey.questions);
+        //this.patchFormQuestions(currSurvey.questions);
         this.currentQuestionScope = currSurvey.questions.length - 1;
+        this.patchFormQuestions(currSurvey.questions);
     };
     // used to update the questions of the form group qustions array
     EditComponent.prototype.patchFormQuestions = function (questions) {
@@ -481,7 +483,7 @@ var EditComponent = (function () {
         options.forEach(function (o) {
             ops.push(_this._fb.group({
                 option_is_active: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */](o.option_is_active),
-                option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: o.option_text, disabled: true })
+                option_text: new __WEBPACK_IMPORTED_MODULE_1__angular_forms__["c" /* FormControl */]({ value: o.option_text, disabled: true }),
             }));
         });
         this.currentOptionScope.push(options.length - 1);
@@ -497,45 +499,7 @@ var EditComponent = (function () {
         var option;
         var architecture;
         if (surveyIndex == -1) {
-            //this.lastSurveyId++;
-            //let surveyName = { "survey_name": formData.survey_name };
             this.surveyService.postNewSurvey(formData).subscribe();
-            /*
-           for (let i = 0; i < formData.questions.length; i++) {
-
-                 question = {
-                       "question_text": formData.questions[i].question_text,
-                       "question_type": formData.questions[i].question_type
-                 };
-
-                 this.surveyService.postQuestion(question).subscribe();
-                 this.lastQuestionId++;
-                 this.surveyService.wait(50);
-                 for (let j = 0; j < formData.questions[i].options.length; j++) {
-                
-                       option = {
-                             "option_text": formData.questions[i].options[j].option_text,
-                             "question_id": this.lastQuestionId
-                       };
-
-                       this.surveyService.wait(50);
-                       this.surveyService.postOption(option).subscribe();
-                       this.surveyService.wait(50);
-                       this.lastOptionId++;
-                       console.log("surveyId: " + this.lastSurveyId);
-                       console.log("questionId: " + this.lastQuestionId);
-                       console.log("optionId: " + this.lastOptionId);
-                       architecture = {
-                             "survey_id": this.lastSurveyId,
-                             "question_id": this.lastQuestionId,
-                             "option_id": this.lastOptionId
-                       };
-
-                       this.surveyService.postArchitecture(architecture).subscribe();
-                 }
-           }
-     // If index is not -1, this is an existing survey
-     */
         }
         else {
             for (var i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
@@ -663,8 +627,8 @@ var EditComponent = (function () {
 EditComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-edit',
-        template: __webpack_require__(631),
-        styles: [__webpack_require__(588)],
+        template: __webpack_require__(630),
+        styles: [__webpack_require__(587)],
         providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
@@ -675,14 +639,12 @@ var _a, _b, _c;
 
 /***/ }),
 
-/***/ 171:
+/***/ 170:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_forms__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExportRawComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -695,13 +657,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-
-
 var ExportRawComponent = (function () {
-    function ExportRawComponent(globals, surveyService, _fb, changeref) {
-        this.globals = globals;
+    function ExportRawComponent(surveyService, changeref) {
         this.surveyService = surveyService;
-        this._fb = _fb;
         this.changeref = changeref;
         // Holds the dynamic survey variables for display
         this.surveys = [];
@@ -818,7 +776,7 @@ var ExportRawComponent = (function () {
     };
     // set the current survey from the given id 
     ExportRawComponent.prototype.updateSurvey = function (id) {
-        this.currSurvey = this.surveys[id];
+        this.currSurvey = this.surveys[id - 1];
         // get questions from the current survey
         this.getQuestions();
         // update feed to -1 which is all questions
@@ -903,25 +861,25 @@ var ExportRawComponent = (function () {
 ExportRawComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-exportRaw',
-        styles: [__webpack_require__(589)],
-        template: __webpack_require__(632),
-        providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
+        styles: [__webpack_require__(588)],
+        template: __webpack_require__(631),
+        providers: [__WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_forms__["e" /* FormBuilder */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _d || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _b || Object])
 ], ExportRawComponent);
 
-var _a, _b, _c, _d;
+var _a, _b;
 //# sourceMappingURL=exportRaw.component.js.map
 
 /***/ }),
 
-/***/ 172:
+/***/ 171:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(76);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(105);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphsComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1266,8 +1224,8 @@ var GraphsComponent = (function () {
 GraphsComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-graphs',
-        template: __webpack_require__(633),
-        styles: [__webpack_require__(590)]
+        template: __webpack_require__(632),
+        styles: [__webpack_require__(589)]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["e" /* FormBuilder */]) === "function" && _d || Object])
 ], GraphsComponent);
@@ -1277,14 +1235,13 @@ var _a, _b, _c, _d;
 
 /***/ }),
 
-/***/ 173:
+/***/ 172:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_graph_service__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1298,10 +1255,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var HomeComponent = (function () {
-    function HomeComponent(globals, graphService, surveyService, changeref) {
-        this.globals = globals;
+    function HomeComponent(graphService, surveyService, changeref) {
         this.graphService = graphService;
         this.surveyService = surveyService;
         this.changeref = changeref;
@@ -1312,9 +1267,12 @@ var HomeComponent = (function () {
         this.showHomeDiv = false;
         this.showInfo = false;
         this.surveyDetails = [];
+        this.currSurveyID = 0;
     }
     HomeComponent.prototype.ngOnInit = function () {
         var _this = this;
+        // Get the modal
+        this.modal = document.getElementById('success');
         this.canvas = document.getElementById('graphCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.surveyService.getAllSurveysInfo().subscribe(function (response) {
@@ -1362,7 +1320,8 @@ var HomeComponent = (function () {
                             "question_text": response.body[j].question_text,
                             "question_type": response.body[j].question_type,
                             "question_is_active": response.body[j].question_is_active,
-                            options: []
+                            options: [],
+                            responses: []
                         };
                         _this.surveys[i].questions.push(question);
                     }
@@ -1370,10 +1329,8 @@ var HomeComponent = (function () {
                     _this.changeref.detectChanges();
                     _this.surveyService.getSurveyResponses(_this.surveys[i].survey_id).subscribe(function (response) {
                         for (var k = 0; k < _this.surveys[i].questions.length; k++) {
-                            // initialize the responses
-                            _this.surveys[i].questions[k].responses = [];
                             for (var l = 0; l < response.body.length; l++) {
-                                var response1 = {
+                                var responseData = {
                                     "response_id": response.body[l].response_id,
                                     "survey_id": response.body[l].survey_id,
                                     "question_id": response.body[l].question_id,
@@ -1384,7 +1341,7 @@ var HomeComponent = (function () {
                                 };
                                 // If the question IDs match, push the response into the questions[j].responses array
                                 if (_this.surveys[i].questions[k].question_id == response.body[l].question_id) {
-                                    _this.surveys[i].questions[k].responses.push(response1);
+                                    _this.surveys[i].questions[k].responses.push(responseData);
                                 }
                             }
                         }
@@ -1393,7 +1350,6 @@ var HomeComponent = (function () {
                         if (i == _this.surveys.length - 1) {
                             _this.showHomeDiv = true;
                             _this.showInfo = true;
-                            _this.updateChart();
                         }
                     }, function (error) {
                         console.log('error is ', error);
@@ -1415,29 +1371,29 @@ var HomeComponent = (function () {
         });
     };
     HomeComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        setTimeout(function () { _this.updateChart(); }, 600);
     };
     ;
     // Updates survey, changing it's active status
-    HomeComponent.prototype.updateActiveSurvey = function (survey_id) {
+    HomeComponent.prototype.updateActiveSurvey = function () {
         var survey = {
-            "survey_id": this.surveyDetails[survey_id - 1].survey_id,
-            "survey_is_active": this.surveyDetails[survey_id - 1].survey_is_active
+            "survey_id": this.surveyDetails[this.currSurveyID - 1].survey_id,
+            "survey_is_active": this.surveyDetails[this.currSurveyID - 1].survey_is_active
         };
         // Checks if survey is currently active
-        if (this.surveyDetails[survey_id - 1].survey_is_active) {
-            if (confirm("Are you sure you want to change the survey to inactive?")) {
-                this.surveyDetails[survey_id - 1].survey_is_active = false;
-                survey.survey_is_active = false;
-                this.surveyService.updateSurveyActive(survey).subscribe();
-            }
+        if (this.surveyDetails[this.currSurveyID - 1].survey_is_active) {
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = false;
+            survey.survey_is_active = false;
+            this.surveyService.updateSurveyActive(survey).subscribe();
         }
         else {
-            if (confirm("Are you sure you want to change the survey to active?")) {
-                this.surveyDetails[survey_id - 1].survey_is_active = true;
-                survey.survey_is_active = true;
-                this.surveyService.updateSurveyActive(survey).subscribe();
-            }
+            this.surveyDetails[this.currSurveyID - 1].survey_is_active = true;
+            survey.survey_is_active = true;
+            this.surveyService.updateSurveyActive(survey).subscribe();
         }
+        this.modal.style.display = "none";
+        window.location.reload();
     };
     // Builds chart with survey date data
     HomeComponent.prototype.updateChart = function () {
@@ -1559,29 +1515,39 @@ var HomeComponent = (function () {
         var today1 = new Date(yyyy + '-' + mm + '-' + dd);
         return today1;
     };
+    // When user clicks save survey, display modal
+    HomeComponent.prototype.openModal = function (id) {
+        this.currSurveyID = id;
+        this.modal.style.display = "block";
+    };
+    // When user clicks X, close the modal and refresh the page to see changes
+    HomeComponent.prototype.closeModal = function () {
+        this.modal.style.display = "none";
+        window.location.reload();
+    };
     return HomeComponent;
 }());
 HomeComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'home',
-        template: __webpack_require__(634),
-        styles: [__webpack_require__(591)],
-        providers: [__WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */]]
+        template: __webpack_require__(633),
+        styles: [__webpack_require__(590)],
+        providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* Globals */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_app_services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _d || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
 ], HomeComponent);
 
-var _a, _b, _c, _d;
+var _a, _b, _c;
 //# sourceMappingURL=home.component.js.map
 
 /***/ }),
 
-/***/ 174:
+/***/ 173:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(46);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InputComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1604,6 +1570,7 @@ var InputComponent = (function () {
         this.auth = auth;
         // Array that holds all survey structuring data
         this.surveys = [];
+        this.selectedSurveyName = "";
         // Fills when multiple choices are selected by updateResponses()
         this.checkboxChoices = [];
         // Pushes/pops when user selects next or previous
@@ -1612,6 +1579,8 @@ var InputComponent = (function () {
     // On component initialization, get the survey ids, names, and date created
     InputComponent.prototype.ngOnInit = function () {
         var _this = this;
+        // Get the modal
+        this.modal = document.getElementById('success');
         this.surveyService.getAllSurveys().subscribe(function (response) {
             // Get 1 survey at a time and push into surveys array
             for (var i = 0; i < response.body.length; i++) {
@@ -1630,6 +1599,10 @@ var InputComponent = (function () {
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
     };
+    InputComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        setTimeout(function () { _this.surveySelect(_this.surveys[0].survey_id); }, 1000);
+    };
     // This continuously checks if the user is authenticated
     InputComponent.prototype.ngDoCheck = function () {
         // If authenticated, redirect to the home dashboard
@@ -1645,7 +1618,10 @@ var InputComponent = (function () {
             if (this.selectedSurveyId == this.surveys[i].survey_id) {
                 this.selectedSurveyIndex = i;
             }
+            this.surveys[i].questions = [];
         }
+        // Sets default survey name and updates on select
+        this.selectedSurveyName = this.surveys[this.selectedSurveyIndex].survey_name;
         // Once the selected surveyID is done, this will populate the data using the selected ID
         this.surveyService.getAllSurveyQuestions(this.selectedSurveyId).subscribe(function (response) {
             // Initialize the questions
@@ -1768,13 +1744,25 @@ var InputComponent = (function () {
             return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
     };
+    // When user clicks save survey, display modal
+    InputComponent.prototype.openModal = function () {
+        var _this = this;
+        this.modal.style.display = "block";
+        if (this.modal.style.display == "block") {
+            setTimeout(function () { _this.closeModal(); }, 3000);
+        }
+    };
+    // When user clicks X, close the modal and refresh the page to see changes
+    InputComponent.prototype.closeModal = function () {
+        window.location.reload();
+    };
     return InputComponent;
 }());
 InputComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-input',
-        template: __webpack_require__(635),
-        styles: [__webpack_require__(592)],
+        template: __webpack_require__(634),
+        styles: [__webpack_require__(591)],
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush,
         providers: [__WEBPACK_IMPORTED_MODULE_2__services_survey_service__["a" /* SurveyService */]]
     }),
@@ -1786,11 +1774,11 @@ var _a, _b, _c;
 
 /***/ }),
 
-/***/ 175:
+/***/ 174:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NotFoundComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1813,8 +1801,8 @@ var NotFoundComponent = (function () {
 NotFoundComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-not-found',
-        template: __webpack_require__(636),
-        styles: [__webpack_require__(593)]
+        template: __webpack_require__(635),
+        styles: [__webpack_require__(592)]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object])
 ], NotFoundComponent);
@@ -1824,13 +1812,13 @@ var _a;
 
 /***/ }),
 
-/***/ 176:
+/***/ 175:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_survey_service__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(65);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2112,8 +2100,8 @@ var SurveyComponent = (function () {
 SurveyComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-survey',
-        template: __webpack_require__(637),
-        styles: [__webpack_require__(594)],
+        template: __webpack_require__(636),
+        styles: [__webpack_require__(593)],
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush,
         providers: [__WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]]
     }),
@@ -2125,7 +2113,7 @@ var _a, _b, _c;
 
 /***/ }),
 
-/***/ 389:
+/***/ 388:
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -2134,20 +2122,20 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 389;
+webpackEmptyContext.id = 388;
 
 
 /***/ }),
 
-/***/ 390:
+/***/ 389:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(398);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(402);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(416);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(397);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(401);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(415);
 
 
 
@@ -2161,12 +2149,11 @@ __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dyna
 
 /***/ }),
 
-/***/ 400:
+/***/ 399:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_survey_service__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2178,157 +2165,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-
-var Surveys = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
-    { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
-    { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
-    { survey_id: 2, question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
-    { survey_id: 2, question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
-var Updates = [{ survey_id: 2, question_id: 1, question_num: 1, question_text: "What services do you need?", question_is_active: "true", question_type: "checkbox", option_id: 1, option_num: 1, option_text: "money", option_is_active: "true" },
-    { survey_id: 2, question_id: 2, question_num: 2, question_text: "What city are you from?", question_type: "select", option_id: 2, option_num: 1, option_text: "Beacon", option_is_active: "true" },
-    { survey_id: 2, question_id: 3, question_num: 3, question_text: "Additional comments:", question_type: "text", option_id: 3, option_num: 1, option_text: "nope", option_is_active: "true" },
-    { survey_id: 2, question_id: 4, question_num: 4, question_text: "How can this survey be better?", question_type: "text", option_id: 4, option_num: 1, option_text: "by being over", option_is_active: "true" },
-    { survey_id: 2, question_id: 5, question_num: 5, question_text: "In a few words, describe capping:", question_type: "text", option_id: 5, option_num: 1, option_text: "a class you must take to graduate and gain experience", option_is_active: "true" }];
-var FormValues = {
-    SurveyName: "Lindas Survey",
-    questions: [
-        {
-            questionText: "What is your favorite City?",
-            questionType: "mc",
-            questionOptions: [
-                {
-                    option: "New York City"
-                },
-                {
-                    option: "Boston"
-                },
-                {
-                    option: "Washington"
-                },
-                {
-                    option: "Miami"
-                },
-                {
-                    option: "Poughkeepsie"
-                }
-            ]
-        },
-        {
-            questionText: "Select the services that ou need: ",
-            questionType: "checkboxes",
-            questionOptions: [
-                {
-                    option: "More Money"
-                },
-                {
-                    option: "More Time"
-                },
-                {
-                    option: "More Clothes"
-                },
-                {
-                    option: "Less Capping Work"
-                }
-            ]
-        }
-    ]
-};
-var FormValues1 = {
-    SurveyID: 1,
-    SurveyName: "Lindas Survey",
-    questions: [
-        {
-            questionID: 5,
-            questionText: "What is your favorite City?",
-            questionIsActive: true,
-            questionType: "mc",
-            questionOptions: [
-                {
-                    optionID: 5,
-                    option: "New York City",
-                    option_is_active: true
-                },
-                {
-                    optionID: 7,
-                    option: "Boston",
-                    option_is_active: true
-                },
-                {
-                    optionID: 8,
-                    option: "Washington",
-                    option_is_active: true
-                },
-                {
-                    optionID: "",
-                    option: "Miami",
-                    option_is_active: true
-                },
-                {
-                    optionID: 10,
-                    option: "Poughkeepsie",
-                    option_is_active: true
-                }
-            ]
-        },
-        {
-            questionID: "",
-            questionText: "Select the services that ou need: ",
-            questionIsActive: true,
-            questionType: "checkboxes",
-            questionOptions: [
-                {
-                    optionID: 1,
-                    option: "More Money",
-                    option_is_active: true
-                },
-                {
-                    optionID: 2,
-                    option: "More Time",
-                    option_is_active: false
-                },
-                {
-                    optionID: 3,
-                    option: "More Clothes",
-                    option_is_active: true
-                },
-                {
-                    optionID: "",
-                    option: "Less Capping Work",
-                    option_is_active: true
-                }
-            ]
-        }
-    ]
-};
-function wait(ms) {
-    var start = new Date().getTime();
-    var end = start;
-    while (end < start + ms) {
-        end = new Date().getTime();
-    }
-}
 var AppComponent = (function () {
-    function AppComponent(surveyService) {
-        this.surveyService = surveyService;
+    function AppComponent() {
     }
     return AppComponent;
 }());
 AppComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-root',
-        template: __webpack_require__(628),
-        styles: [__webpack_require__(585)],
-        providers: [__WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]]
+        template: __webpack_require__(627),
+        styles: [__webpack_require__(584)],
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_survey_service__["a" /* SurveyService */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [])
 ], AppComponent);
 
-var _a;
 //# sourceMappingURL=app.component.js.map
 
 /***/ }),
 
-/***/ 401:
+/***/ 400:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2399,43 +2254,42 @@ function smoothlyMenu() {
 
 /***/ }),
 
-/***/ 402:
+/***/ 401:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(167);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(76);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(618);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__(400);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_topnavbar_topnavbar_component__ = __webpack_require__(405);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_navigation_navigation_component__ = __webpack_require__(404);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_home_home_component__ = __webpack_require__(173);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_graphs_graphs_component__ = __webpack_require__(172);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_survey_survey_component__ = __webpack_require__(176);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__pages_input_input_component__ = __webpack_require__(174);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__pages_edit_edit_component__ = __webpack_require__(170);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_exportRaw_exportRaw_component__ = __webpack_require__(171);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_not_found_not_found_component__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(105);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(617);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__(399);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_topnavbar_topnavbar_component__ = __webpack_require__(404);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_navigation_navigation_component__ = __webpack_require__(403);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_home_home_component__ = __webpack_require__(172);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_graphs_graphs_component__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_survey_survey_component__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__pages_input_input_component__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__pages_edit_edit_component__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_exportRaw_exportRaw_component__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_not_found_not_found_component__ = __webpack_require__(174);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__services_survey_service__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_authentication_service__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_auth_guard_service__ = __webpack_require__(415);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_keys_pipe__ = __webpack_require__(414);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__pipes_filterQuestionId_pipe__ = __webpack_require__(411);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__pipes_filterByOptionActive_pipe__ = __webpack_require__(409);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__pipes_filterByDate_pipe__ = __webpack_require__(408);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__pipes_filter_pipe__ = __webpack_require__(407);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__pipes_filterSurvey_pipe__ = __webpack_require__(412);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pipes_graphableQuestion_pipe__ = __webpack_require__(413);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pipes_exceptQuestionId_pipe__ = __webpack_require__(406);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pipes_filterByQuestionActive_pipe__ = __webpack_require__(410);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__app_routes__ = __webpack_require__(403);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__globals__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_graph_service__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_authentication_service__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_auth_guard_service__ = __webpack_require__(414);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_keys_pipe__ = __webpack_require__(413);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__pipes_filterQuestionId_pipe__ = __webpack_require__(410);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__pipes_filterByOptionActive_pipe__ = __webpack_require__(408);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__pipes_filterByDate_pipe__ = __webpack_require__(407);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__pipes_filter_pipe__ = __webpack_require__(406);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__pipes_filterSurvey_pipe__ = __webpack_require__(411);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pipes_graphableQuestion_pipe__ = __webpack_require__(412);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pipes_exceptQuestionId_pipe__ = __webpack_require__(405);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pipes_filterByQuestionActive_pipe__ = __webpack_require__(409);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__app_routes__ = __webpack_require__(402);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2478,7 +2332,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 // Custom imports
-
 
 var AppModule = (function () {
     function AppModule() {
@@ -2526,7 +2379,6 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_19__services_graph_service__["a" /* GraphService */],
             __WEBPACK_IMPORTED_MODULE_20__services_authentication_service__["a" /* AuthenticationService */],
             __WEBPACK_IMPORTED_MODULE_21__services_auth_guard_service__["a" /* AuthGuardService */],
-            __WEBPACK_IMPORTED_MODULE_32__globals__["a" /* Globals */],
             { provide: __WEBPACK_IMPORTED_MODULE_5__angular_common__["b" /* LocationStrategy */], useClass: __WEBPACK_IMPORTED_MODULE_5__angular_common__["c" /* HashLocationStrategy */] }
         ],
         // Bootstrap is the first component loaded in the project
@@ -2538,17 +2390,17 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 403:
+/***/ 402:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_home_home_component__ = __webpack_require__(173);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_graphs_graphs_component__ = __webpack_require__(172);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_input_input_component__ = __webpack_require__(174);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_survey_survey_component__ = __webpack_require__(176);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_edit_edit_component__ = __webpack_require__(170);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_exportRaw_exportRaw_component__ = __webpack_require__(171);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_not_found_not_found_component__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_home_home_component__ = __webpack_require__(172);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_graphs_graphs_component__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_input_input_component__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_survey_survey_component__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_edit_edit_component__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_exportRaw_exportRaw_component__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_not_found_not_found_component__ = __webpack_require__(174);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return appRoutes; });
 
 
@@ -2598,11 +2450,11 @@ var appRoutes = [
 
 /***/ }),
 
-/***/ 404:
+/***/ 403:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NavigationComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -2629,8 +2481,8 @@ var NavigationComponent = (function () {
 NavigationComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'navigation',
-        template: __webpack_require__(629),
-        styles: [__webpack_require__(586)]
+        template: __webpack_require__(628),
+        styles: [__webpack_require__(585)]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object])
 ], NavigationComponent);
@@ -2640,13 +2492,13 @@ var _a;
 
 /***/ }),
 
-/***/ 405:
+/***/ 404:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_helpers__ = __webpack_require__(401);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_helpers__ = __webpack_require__(400);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(65);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TopnavbarComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2674,8 +2526,8 @@ var TopnavbarComponent = (function () {
 TopnavbarComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'topnavbar',
-        template: __webpack_require__(630),
-        styles: [__webpack_require__(587)]
+        template: __webpack_require__(629),
+        styles: [__webpack_require__(586)]
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object])
 ], TopnavbarComponent);
@@ -2685,11 +2537,11 @@ var _a;
 
 /***/ }),
 
-/***/ 406:
+/***/ 405:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExceptQuestionIdPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2718,11 +2570,11 @@ ExceptQuestionIdPipe = __decorate([
 
 /***/ }),
 
-/***/ 407:
+/***/ 406:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2757,11 +2609,11 @@ FilterPipe = __decorate([
 
 /***/ }),
 
-/***/ 408:
+/***/ 407:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterByDatePipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2790,11 +2642,11 @@ FilterByDatePipe = __decorate([
 
 /***/ }),
 
-/***/ 409:
+/***/ 408:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterByOptionActivePipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2823,11 +2675,11 @@ FilterByOptionActivePipe = __decorate([
 
 /***/ }),
 
-/***/ 410:
+/***/ 409:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterByQuestionActivePipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2856,11 +2708,11 @@ FilterByQuestionActivePipe = __decorate([
 
 /***/ }),
 
-/***/ 411:
+/***/ 410:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterByQuestionIDPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2889,11 +2741,11 @@ FilterByQuestionIDPipe = __decorate([
 
 /***/ }),
 
-/***/ 412:
+/***/ 411:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FilterBySurveyIdPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2922,11 +2774,11 @@ FilterBySurveyIdPipe = __decorate([
 
 /***/ }),
 
-/***/ 413:
+/***/ 412:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphableQuestionPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2955,11 +2807,11 @@ GraphableQuestionPipe = __decorate([
 
 /***/ }),
 
-/***/ 414:
+/***/ 413:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return KeysPipe; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2995,13 +2847,13 @@ KeysPipe = __decorate([
 
 /***/ }),
 
-/***/ 415:
+/***/ 414:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(65);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuardService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3039,7 +2891,7 @@ var _a, _b;
 
 /***/ }),
 
-/***/ 416:
+/***/ 415:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3055,8 +2907,8 @@ var environment = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(167);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3187,7 +3039,7 @@ var _a;
 
 /***/ }),
 
-/***/ 585:
+/***/ 584:
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(23)();
@@ -3196,6 +3048,24 @@ exports = module.exports = __webpack_require__(23)();
 
 // module
 exports.push([module.i, "#footer {\n   background-color:white; \n   text-align: center; \n   padding: 5px;\n}", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ 585:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(23)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
 
 // exports
 
@@ -3231,7 +3101,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "#btnQuestionAdd {\r\n    color: green;\r\n }\r\n \r\n a:hover { \r\n    background-color: yellow;\r\n }\r\n \r\n .btnBar{\r\n    padding-left: 15px;\r\n    padding-right: 15px;\r\n    padding-top: 15px;\r\n }\r\n \r\n #surveySelect{\r\n    width: 300px;\r\n }\r\n \r\n #ctr {\r\n    margin-left: 13%;\r\n }\r\n\r\n  /* The Modal (background) */\r\n.modal {\r\n    display: none; /* Hidden by default */\r\n    position: fixed; /* Stay in place */\r\n    z-index: 1; /* Sit on top */\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%; /* Full width */\r\n    height: 100%; /* Full height */\r\n    overflow: auto; /* Enable scroll if needed */\r\n    background-color: rgb(0,0,0); /* Fallback color */\r\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n   background-color: #fefefe;\r\n   margin: 15% auto; /* 15% from the top and centered */\r\n   padding: 30px;\r\n   border: 1px solid #888;\r\n   width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n.saved {\r\n   font-size: 28px;\r\n   text-align: center;\r\n}\r\n\r\n\r\n.questionActiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n.questionInactiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n\r\n#questionHeader {\r\n   margin-right: 30px;\r\n}\r\n\r\n.hide{\r\n   display: \"none\";\r\n}\r\n", ""]);
 
 // exports
 
@@ -3249,7 +3119,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, "#btnQuestionAdd {\r\n    color: green;\r\n }\r\n \r\n a:hover { \r\n    background-color: yellow;\r\n }\r\n \r\n .btnBar{\r\n    padding-left: 15px;\r\n    padding-right: 15px;\r\n    padding-top: 15px;\r\n }\r\n \r\n #surveySelect{\r\n    width: 300px;\r\n }\r\n \r\n #ctr {\r\n    margin-left: 13%;\r\n }\r\n\r\n  /* The Modal (background) */\r\n.modal {\r\n    display: none; /* Hidden by default */\r\n    position: fixed; /* Stay in place */\r\n    z-index: 1; /* Sit on top */\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%; /* Full width */\r\n    height: 100%; /* Full height */\r\n    overflow: auto; /* Enable scroll if needed */\r\n    background-color: rgb(0,0,0); /* Fallback color */\r\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n    background-color: #fefefe;\r\n    margin: 15% auto; /* 15% from the top and centered */\r\n    padding: 20px;\r\n    border: 1px solid #888;\r\n    width: 80%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n/* The Close Button */\r\n.close {\r\n    color: #aaa;\r\n    float: right;\r\n    font-size: 28px;\r\n    font-weight: bold;\r\n}\r\n\r\n.close:hover,\r\n.close:focus {\r\n    color: black;\r\n    text-decoration: none;\r\n    cursor: pointer;\r\n}\r\n\r\n.questionActiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n.questionInactiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n\r\n#questionHeader {\r\n   margin-right: 30px;\r\n}\r\n", ""]);
+exports.push([module.i, ".colQuestions{\r\n   width: 35%\r\n}\r\n\r\n.colResponses{\r\n   width: 53%\r\n}\r\n\r\n.colDates{\r\n   width: 12%;\r\n   text-align: right;\r\n}\r\n\r\n.btnExport{\r\n   margin-top: 23px;\r\n}\r\n\r\n.divSearchRow {\r\n   margin-bottom: 15px;\r\n}\r\n", ""]);
 
 // exports
 
@@ -3267,7 +3137,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".colQuestions{\r\n   width: 35%\r\n}\r\n\r\n.colResponses{\r\n   width: 53%\r\n}\r\n\r\n.colDates{\r\n   width: 12%;\r\n   text-align: right;\r\n}\r\n\r\n.btnExport{\r\n   margin-top: 23px;\r\n}\r\n\r\n.divSearchRow {\r\n   margin-bottom: 15px;\r\n}\r\n", ""]);
+exports.push([module.i, ".filterBlock {\r\n   margin-top: 30px;\r\n}\r\n\r\n.divExportBtn {\r\n   margin-top: 60px;\r\n}\r\n\r\n.optionsDiv {\r\n   margin-top: 10px;\r\n}\r\n\r\n.optionsLabel {\r\n   padding-left: 10px;\r\n   margin-bottom: 10px;\r\n}\r\n\r\n.spanOption{\r\n   margin-left: 15px;\r\n   font-weight: 400;\r\n}\r\n\r\n.optionsList {\r\n   margin-top: 10px;\r\n   list-style: none;\r\n}\r\n\r\n.btnBlock {\r\n   margin-top: 30px;\r\n}\r\n\r\n#multipleDataSets{\r\n   margin-bottom: 20px;\r\n}\r\n\r\n.btnGroupSwitch {\r\n   padding-left:32px; \r\n   padding-right:32px;\r\n}\r\n\r\n\r\nli {\r\n   margin-bottom: 5px;\r\n}", ""]);
 
 // exports
 
@@ -3285,7 +3155,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".filterBlock {\r\n   margin-top: 30px;\r\n}\r\n\r\n.divExportBtn {\r\n   margin-top: 60px;\r\n}\r\n\r\n.optionsDiv {\r\n   margin-top: 10px;\r\n}\r\n\r\n.optionsLabel {\r\n   padding-left: 10px;\r\n   margin-bottom: 10px;\r\n}\r\n\r\n.spanOption{\r\n   margin-left: 15px;\r\n   font-weight: 400;\r\n}\r\n\r\n.optionsList {\r\n   margin-top: 10px;\r\n   list-style: none;\r\n}\r\n\r\n.btnBlock {\r\n   margin-top: 30px;\r\n}\r\n\r\n#multipleDataSets{\r\n   margin-bottom: 20px;\r\n}\r\n\r\n.btnGroupSwitch {\r\n   padding-left:32px; \r\n   padding-right:32px;\r\n}\r\n\r\n\r\nli {\r\n   margin-bottom: 5px;\r\n}", ""]);
+exports.push([module.i, ".margin-top-5 {\r\n   margin-top: 5px;\r\n}\r\n\r\n.margin-top-20 {\r\n   margin-top: 20px;\r\n}\r\n\r\n.modal {\r\n   display: none; /* Hidden by default */\r\n   position: fixed; /* Stay in place */\r\n   z-index: 1; /* Sit on top */\r\n   left: 0;\r\n   top: 0;\r\n   width: 100%; /* Full width */\r\n   height: 100%; /* Full height */\r\n   overflow: auto; /* Enable scroll if needed */\r\n   background-color: rgb(0,0,0); /* Fallback color */\r\n   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n   background-color: #fefefe;\r\n   margin: 15% auto; /* 15% from the top and centered */\r\n   padding: 30px;\r\n   border: 1px solid #888;\r\n   width: 54%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n/* The Close Button */\r\n.close {\r\n    color: rgb(66, 60, 60);\r\n    float: center;\r\n    font-size: 28px;\r\n    font-weight: bold;\r\n}\r\n\r\n\r\n.close:focus {\r\n    color: black;\r\n    text-decoration: none;\r\n    cursor: pointer;\r\n}\r\n\r\n.checker {\r\n   font-size: 28px;\r\n}", ""]);
 
 // exports
 
@@ -3303,7 +3173,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".margin-top-5 {\r\n   margin-top: 5px;\r\n}\r\n\r\n.margin-top-20 {\r\n   margin-top: 20px;\r\n}\r\n", ""]);
+exports.push([module.i, ".spanOption{\r\n   margin-left: 15px;\r\n   font-weight: 400;\r\n}\r\n\r\n.spanQuestionText{\r\n   margin-left:5px\r\n}\r\n\r\n.spanQuestion{\r\n   font-weight: 600;\r\n   font-size: 14px;\r\n}\r\n\r\n.btnBar{\r\n   padding-left: 15px;\r\n   padding-right: 15px;\r\n   padding-top: 15px;\r\n}\r\n\r\n#surveySelect{\r\n   width: 300px;\r\n}\r\n\r\n#ctr {\r\n   margin-left: 7%;\r\n}\r\n\r\n /* The Modal (background) */\r\n .modal {\r\n   display: none; /* Hidden by default */\r\n   position: fixed; /* Stay in place */\r\n   z-index: 1; /* Sit on top */\r\n   left: 0;\r\n   top: 0;\r\n   width: 100%; /* Full width */\r\n   height: 100%; /* Full height */\r\n   overflow: auto; /* Enable scroll if needed */\r\n   background-color: rgb(0,0,0); /* Fallback color */\r\n   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n   background-color: #fefefe;\r\n   margin: 15% auto; /* 15% from the top and centered */\r\n   padding: 30px;\r\n   border: 1px solid #888;\r\n   width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n.saved {\r\n   font-size: 28px;\r\n   text-align: center;\r\n}\r\n", ""]);
 
 // exports
 
@@ -3321,7 +3191,7 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, ".spanOption{\r\n   margin-left: 15px;\r\n   font-weight: 400;\r\n}\r\n\r\n.spanQuestionText{\r\n   margin-left:5px\r\n}\r\n\r\n.spanQuestion{\r\n   font-weight: 600;\r\n   font-size: 14px;\r\n}\r\n\r\n.btnBar{\r\n   padding-left: 15px;\r\n   padding-right: 15px;\r\n   padding-top: 15px;\r\n}\r\n\r\n#surveySelect{\r\n   width: 300px;\r\n}\r\n\r\n#ctr {\r\n   margin-left: 7%;\r\n}\r\n", ""]);
+exports.push([module.i, "* {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  body {\r\n    padding: 0;\r\n    margin: 0;\r\n  }\r\n  \r\n  #notfound {\r\n    position: relative;\r\n    height: 100vh;\r\n    background-color: #fafbfd;\r\n  }\r\n  \r\n  #notfound .notfound {\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    transform: translate(-50%, -50%);\r\n  }\r\n  \r\n  .notfound {\r\n    max-width: 520px;\r\n    width: 100%;\r\n    text-align: center;\r\n  }\r\n  \r\n  .notfound .notfound-bg {\r\n    position: absolute;\r\n    left: 0px;\r\n    right: 0px;\r\n    top: 50%;\r\n    transform: translateY(-50%);\r\n    z-index: -1;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div {\r\n    width: 100%;\r\n    background: #fff;\r\n    border-radius: 90px;\r\n    height: 125px;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(1) {\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(2) {\r\n    transform: scale(1.3);\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n    position: relative;\r\n    z-index: 10;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(3) {\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n    position: relative;\r\n    z-index: 90;\r\n  }\r\n  \r\n  .notfound h1 {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 86px;\r\n    text-transform: uppercase;\r\n    font-weight: 700;\r\n    margin-top: 0;\r\n    margin-bottom: 8px;\r\n    color: #151515;\r\n  }\r\n  \r\n  .notfound h2 {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 26px;\r\n    margin: 0;\r\n    font-weight: 700;\r\n    color: #151515;\r\n  }\r\n  \r\n  .notfound a {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 14px;\r\n    text-decoration: none;\r\n    text-transform: uppercase;\r\n    background: #18e06f;\r\n    display: inline-block;\r\n    padding: 15px 30px;\r\n    border-radius: 5px;\r\n    color: #fff;\r\n    font-weight: 700;\r\n    margin-top: 20px;\r\n  }\r\n  \r\n  @media only screen and (max-width: 767px) {\r\n      .notfound .notfound-bg {\r\n        width: 287px;\r\n        margin: auto;\r\n      }\r\n  \r\n      .notfound .notfound-bg > div {\r\n        height: 85px;\r\n    }\r\n  }\r\n  \r\n  @media only screen and (max-width: 480px) {\r\n    .notfound h1 {\r\n      font-size: 68px;\r\n    }\r\n  \r\n    .notfound h2 {\r\n      font-size: 18px;\r\n    }\r\n  }\r\n  ", ""]);
 
 // exports
 
@@ -3339,24 +3209,6 @@ exports = module.exports = __webpack_require__(23)();
 
 
 // module
-exports.push([module.i, "* {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  body {\r\n    padding: 0;\r\n    margin: 0;\r\n  }\r\n  \r\n  #notfound {\r\n    position: relative;\r\n    height: 100vh;\r\n    background-color: #fafbfd;\r\n  }\r\n  \r\n  #notfound .notfound {\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    transform: translate(-50%, -50%);\r\n  }\r\n  \r\n  .notfound {\r\n    max-width: 520px;\r\n    width: 100%;\r\n    text-align: center;\r\n  }\r\n  \r\n  .notfound .notfound-bg {\r\n    position: absolute;\r\n    left: 0px;\r\n    right: 0px;\r\n    top: 50%;\r\n    transform: translateY(-50%);\r\n    z-index: -1;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div {\r\n    width: 100%;\r\n    background: #fff;\r\n    border-radius: 90px;\r\n    height: 125px;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(1) {\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(2) {\r\n    transform: scale(1.3);\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n    position: relative;\r\n    z-index: 10;\r\n  }\r\n  \r\n  .notfound .notfound-bg > div:nth-child(3) {\r\n    box-shadow: 5px 5px 0px 0px #f3f3f3;\r\n    position: relative;\r\n    z-index: 90;\r\n  }\r\n  \r\n  .notfound h1 {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 86px;\r\n    text-transform: uppercase;\r\n    font-weight: 700;\r\n    margin-top: 0;\r\n    margin-bottom: 8px;\r\n    color: #151515;\r\n  }\r\n  \r\n  .notfound h2 {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 26px;\r\n    margin: 0;\r\n    font-weight: 700;\r\n    color: #151515;\r\n  }\r\n  \r\n  .notfound a {\r\n    font-family: 'Quicksand', sans-serif;\r\n    font-size: 14px;\r\n    text-decoration: none;\r\n    text-transform: uppercase;\r\n    background: #18e06f;\r\n    display: inline-block;\r\n    padding: 15px 30px;\r\n    border-radius: 5px;\r\n    color: #fff;\r\n    font-weight: 700;\r\n    margin-top: 20px;\r\n  }\r\n  \r\n  @media only screen and (max-width: 767px) {\r\n      .notfound .notfound-bg {\r\n        width: 287px;\r\n        margin: auto;\r\n      }\r\n  \r\n      .notfound .notfound-bg > div {\r\n        height: 85px;\r\n    }\r\n  }\r\n  \r\n  @media only screen and (max-width: 480px) {\r\n    .notfound h1 {\r\n      font-size: 68px;\r\n    }\r\n  \r\n    .notfound h2 {\r\n      font-size: 18px;\r\n    }\r\n  }\r\n  ", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
-
-/***/ }),
-
-/***/ 594:
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(23)();
-// imports
-
-
-// module
 exports.push([module.i, ".header {\r\n    color: #36A0FF;\r\n    font-size: 27px;\r\n    padding: 10px;\r\n}\r\n\r\n.header2 {\r\n    font-size: 20px;\r\n}\r\n\r\n.header3 {\r\n    color: #36A0FF;\r\n    font-size: 15px;\r\n    padding: 10px;\r\n    margin-bottom:30px;\r\n}\r\n\r\n.pages{\r\n    margin-left:290px;\r\n}\r\n\r\n.pageNumbers {\r\n    list-style-type: none;\r\n    display:inline;\r\n}\r\n\r\n.custom-pagination{\r\n    display:inline-block;\r\n}\r\n\r\n.pagination{\r\n    display: inline;\r\n}\r\n\r\n.pageNumberActive {\r\n    color: black;\r\n    list-style-type: none;\r\n    display:inline;\r\n}\r\n\r\n.inline {\r\n    display:inline-block;\r\n    margin-right:5px;\r\n}\r\n\r\n.container-fluid{\r\n    width:100%;    \r\n}\r\n\r\n.container {\r\n    height: 100%;\r\n    margin: 0 auto;\r\n}\r\n\r\n#container2 {\r\n    height: 90%;\r\n}\r\n\r\n#bucket{ \r\n    margin-left: auto;\r\n    margin-right: auto;\r\n    text-align: center;\r\n    float: none;\r\n    padding-top: 1%;\r\n}\r\n\r\n.bigicon {\r\n    font-size: 35px;\r\n    color: #36A0FF;\r\n}\r\n\r\n#btn {\r\n    margin-top: 1%;\r\n}\r\n\r\n.form-group {\r\n    margin: -10px;\r\n}\r\n\r\n#divCheckboxOptionText {\r\n    transform: translateX(39%);\r\n    text-align: left;\r\n}\r\n\r\n#radioBoxOptionText {\r\n    transform: translateX(39%);\r\n    text-align: left;\r\n}\r\n\r\n#radioStyle {\r\n    transform: translateX(50%);\r\n}\r\n\r\n#dropdownStyle {\r\n    float: none;\r\n    margin: auto 0;\r\n    width:250px;\r\n    transform: translateX(25%);\r\n}\r\n\r\n#multiplechoiceStyle{\r\n    transform: translateX(50%);\r\n}\r\n\r\n.btn {\r\n    width: 80px;\r\n}\r\n\r\n#loginBtn {\r\n    position: absolute;\r\n    top: 0;\r\n    right: 0;\r\n    margin-top: 5px;\r\n    margin-right: 5px;\r\n}", ""]);
 
 // exports
@@ -3367,256 +3219,256 @@ module.exports = module.exports.toString();
 
 /***/ }),
 
-/***/ 616:
+/***/ 615:
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 214,
-	"./af.js": 214,
-	"./ar": 221,
-	"./ar-dz": 215,
-	"./ar-dz.js": 215,
-	"./ar-kw": 216,
-	"./ar-kw.js": 216,
-	"./ar-ly": 217,
-	"./ar-ly.js": 217,
-	"./ar-ma": 218,
-	"./ar-ma.js": 218,
-	"./ar-sa": 219,
-	"./ar-sa.js": 219,
-	"./ar-tn": 220,
-	"./ar-tn.js": 220,
-	"./ar.js": 221,
-	"./az": 222,
-	"./az.js": 222,
-	"./be": 223,
-	"./be.js": 223,
-	"./bg": 224,
-	"./bg.js": 224,
-	"./bm": 225,
-	"./bm.js": 225,
-	"./bn": 226,
-	"./bn.js": 226,
-	"./bo": 227,
-	"./bo.js": 227,
-	"./br": 228,
-	"./br.js": 228,
-	"./bs": 229,
-	"./bs.js": 229,
-	"./ca": 230,
-	"./ca.js": 230,
-	"./cs": 231,
-	"./cs.js": 231,
-	"./cv": 232,
-	"./cv.js": 232,
-	"./cy": 233,
-	"./cy.js": 233,
-	"./da": 234,
-	"./da.js": 234,
-	"./de": 237,
-	"./de-at": 235,
-	"./de-at.js": 235,
-	"./de-ch": 236,
-	"./de-ch.js": 236,
-	"./de.js": 237,
-	"./dv": 238,
-	"./dv.js": 238,
-	"./el": 239,
-	"./el.js": 239,
-	"./en-au": 240,
-	"./en-au.js": 240,
-	"./en-ca": 241,
-	"./en-ca.js": 241,
-	"./en-gb": 242,
-	"./en-gb.js": 242,
-	"./en-ie": 243,
-	"./en-ie.js": 243,
-	"./en-il": 244,
-	"./en-il.js": 244,
-	"./en-nz": 245,
-	"./en-nz.js": 245,
-	"./eo": 246,
-	"./eo.js": 246,
-	"./es": 249,
-	"./es-do": 247,
-	"./es-do.js": 247,
-	"./es-us": 248,
-	"./es-us.js": 248,
-	"./es.js": 249,
-	"./et": 250,
-	"./et.js": 250,
-	"./eu": 251,
-	"./eu.js": 251,
-	"./fa": 252,
-	"./fa.js": 252,
-	"./fi": 253,
-	"./fi.js": 253,
-	"./fo": 254,
-	"./fo.js": 254,
-	"./fr": 257,
-	"./fr-ca": 255,
-	"./fr-ca.js": 255,
-	"./fr-ch": 256,
-	"./fr-ch.js": 256,
-	"./fr.js": 257,
-	"./fy": 258,
-	"./fy.js": 258,
-	"./gd": 259,
-	"./gd.js": 259,
-	"./gl": 260,
-	"./gl.js": 260,
-	"./gom-latn": 261,
-	"./gom-latn.js": 261,
-	"./gu": 262,
-	"./gu.js": 262,
-	"./he": 263,
-	"./he.js": 263,
-	"./hi": 264,
-	"./hi.js": 264,
-	"./hr": 265,
-	"./hr.js": 265,
-	"./hu": 266,
-	"./hu.js": 266,
-	"./hy-am": 267,
-	"./hy-am.js": 267,
-	"./id": 268,
-	"./id.js": 268,
-	"./is": 269,
-	"./is.js": 269,
-	"./it": 270,
-	"./it.js": 270,
-	"./ja": 271,
-	"./ja.js": 271,
-	"./jv": 272,
-	"./jv.js": 272,
-	"./ka": 273,
-	"./ka.js": 273,
-	"./kk": 274,
-	"./kk.js": 274,
-	"./km": 275,
-	"./km.js": 275,
-	"./kn": 276,
-	"./kn.js": 276,
-	"./ko": 277,
-	"./ko.js": 277,
-	"./ky": 278,
-	"./ky.js": 278,
-	"./lb": 279,
-	"./lb.js": 279,
-	"./lo": 280,
-	"./lo.js": 280,
-	"./lt": 281,
-	"./lt.js": 281,
-	"./lv": 282,
-	"./lv.js": 282,
-	"./me": 283,
-	"./me.js": 283,
-	"./mi": 284,
-	"./mi.js": 284,
-	"./mk": 285,
-	"./mk.js": 285,
-	"./ml": 286,
-	"./ml.js": 286,
-	"./mn": 287,
-	"./mn.js": 287,
-	"./mr": 288,
-	"./mr.js": 288,
-	"./ms": 290,
-	"./ms-my": 289,
-	"./ms-my.js": 289,
-	"./ms.js": 290,
-	"./mt": 291,
-	"./mt.js": 291,
-	"./my": 292,
-	"./my.js": 292,
-	"./nb": 293,
-	"./nb.js": 293,
-	"./ne": 294,
-	"./ne.js": 294,
-	"./nl": 296,
-	"./nl-be": 295,
-	"./nl-be.js": 295,
-	"./nl.js": 296,
-	"./nn": 297,
-	"./nn.js": 297,
-	"./pa-in": 298,
-	"./pa-in.js": 298,
-	"./pl": 299,
-	"./pl.js": 299,
-	"./pt": 301,
-	"./pt-br": 300,
-	"./pt-br.js": 300,
-	"./pt.js": 301,
-	"./ro": 302,
-	"./ro.js": 302,
-	"./ru": 303,
-	"./ru.js": 303,
-	"./sd": 304,
-	"./sd.js": 304,
-	"./se": 305,
-	"./se.js": 305,
-	"./si": 306,
-	"./si.js": 306,
-	"./sk": 307,
-	"./sk.js": 307,
-	"./sl": 308,
-	"./sl.js": 308,
-	"./sq": 309,
-	"./sq.js": 309,
-	"./sr": 311,
-	"./sr-cyrl": 310,
-	"./sr-cyrl.js": 310,
-	"./sr.js": 311,
-	"./ss": 312,
-	"./ss.js": 312,
-	"./sv": 313,
-	"./sv.js": 313,
-	"./sw": 314,
-	"./sw.js": 314,
-	"./ta": 315,
-	"./ta.js": 315,
-	"./te": 316,
-	"./te.js": 316,
-	"./tet": 317,
-	"./tet.js": 317,
-	"./tg": 318,
-	"./tg.js": 318,
-	"./th": 319,
-	"./th.js": 319,
-	"./tl-ph": 320,
-	"./tl-ph.js": 320,
-	"./tlh": 321,
-	"./tlh.js": 321,
-	"./tr": 322,
-	"./tr.js": 322,
-	"./tzl": 323,
-	"./tzl.js": 323,
-	"./tzm": 325,
-	"./tzm-latn": 324,
-	"./tzm-latn.js": 324,
-	"./tzm.js": 325,
-	"./ug-cn": 326,
-	"./ug-cn.js": 326,
-	"./uk": 327,
-	"./uk.js": 327,
-	"./ur": 328,
-	"./ur.js": 328,
-	"./uz": 330,
-	"./uz-latn": 329,
-	"./uz-latn.js": 329,
-	"./uz.js": 330,
-	"./vi": 331,
-	"./vi.js": 331,
-	"./x-pseudo": 332,
-	"./x-pseudo.js": 332,
-	"./yo": 333,
-	"./yo.js": 333,
-	"./zh-cn": 334,
-	"./zh-cn.js": 334,
-	"./zh-hk": 335,
-	"./zh-hk.js": 335,
-	"./zh-tw": 336,
-	"./zh-tw.js": 336
+	"./af": 213,
+	"./af.js": 213,
+	"./ar": 220,
+	"./ar-dz": 214,
+	"./ar-dz.js": 214,
+	"./ar-kw": 215,
+	"./ar-kw.js": 215,
+	"./ar-ly": 216,
+	"./ar-ly.js": 216,
+	"./ar-ma": 217,
+	"./ar-ma.js": 217,
+	"./ar-sa": 218,
+	"./ar-sa.js": 218,
+	"./ar-tn": 219,
+	"./ar-tn.js": 219,
+	"./ar.js": 220,
+	"./az": 221,
+	"./az.js": 221,
+	"./be": 222,
+	"./be.js": 222,
+	"./bg": 223,
+	"./bg.js": 223,
+	"./bm": 224,
+	"./bm.js": 224,
+	"./bn": 225,
+	"./bn.js": 225,
+	"./bo": 226,
+	"./bo.js": 226,
+	"./br": 227,
+	"./br.js": 227,
+	"./bs": 228,
+	"./bs.js": 228,
+	"./ca": 229,
+	"./ca.js": 229,
+	"./cs": 230,
+	"./cs.js": 230,
+	"./cv": 231,
+	"./cv.js": 231,
+	"./cy": 232,
+	"./cy.js": 232,
+	"./da": 233,
+	"./da.js": 233,
+	"./de": 236,
+	"./de-at": 234,
+	"./de-at.js": 234,
+	"./de-ch": 235,
+	"./de-ch.js": 235,
+	"./de.js": 236,
+	"./dv": 237,
+	"./dv.js": 237,
+	"./el": 238,
+	"./el.js": 238,
+	"./en-au": 239,
+	"./en-au.js": 239,
+	"./en-ca": 240,
+	"./en-ca.js": 240,
+	"./en-gb": 241,
+	"./en-gb.js": 241,
+	"./en-ie": 242,
+	"./en-ie.js": 242,
+	"./en-il": 243,
+	"./en-il.js": 243,
+	"./en-nz": 244,
+	"./en-nz.js": 244,
+	"./eo": 245,
+	"./eo.js": 245,
+	"./es": 248,
+	"./es-do": 246,
+	"./es-do.js": 246,
+	"./es-us": 247,
+	"./es-us.js": 247,
+	"./es.js": 248,
+	"./et": 249,
+	"./et.js": 249,
+	"./eu": 250,
+	"./eu.js": 250,
+	"./fa": 251,
+	"./fa.js": 251,
+	"./fi": 252,
+	"./fi.js": 252,
+	"./fo": 253,
+	"./fo.js": 253,
+	"./fr": 256,
+	"./fr-ca": 254,
+	"./fr-ca.js": 254,
+	"./fr-ch": 255,
+	"./fr-ch.js": 255,
+	"./fr.js": 256,
+	"./fy": 257,
+	"./fy.js": 257,
+	"./gd": 258,
+	"./gd.js": 258,
+	"./gl": 259,
+	"./gl.js": 259,
+	"./gom-latn": 260,
+	"./gom-latn.js": 260,
+	"./gu": 261,
+	"./gu.js": 261,
+	"./he": 262,
+	"./he.js": 262,
+	"./hi": 263,
+	"./hi.js": 263,
+	"./hr": 264,
+	"./hr.js": 264,
+	"./hu": 265,
+	"./hu.js": 265,
+	"./hy-am": 266,
+	"./hy-am.js": 266,
+	"./id": 267,
+	"./id.js": 267,
+	"./is": 268,
+	"./is.js": 268,
+	"./it": 269,
+	"./it.js": 269,
+	"./ja": 270,
+	"./ja.js": 270,
+	"./jv": 271,
+	"./jv.js": 271,
+	"./ka": 272,
+	"./ka.js": 272,
+	"./kk": 273,
+	"./kk.js": 273,
+	"./km": 274,
+	"./km.js": 274,
+	"./kn": 275,
+	"./kn.js": 275,
+	"./ko": 276,
+	"./ko.js": 276,
+	"./ky": 277,
+	"./ky.js": 277,
+	"./lb": 278,
+	"./lb.js": 278,
+	"./lo": 279,
+	"./lo.js": 279,
+	"./lt": 280,
+	"./lt.js": 280,
+	"./lv": 281,
+	"./lv.js": 281,
+	"./me": 282,
+	"./me.js": 282,
+	"./mi": 283,
+	"./mi.js": 283,
+	"./mk": 284,
+	"./mk.js": 284,
+	"./ml": 285,
+	"./ml.js": 285,
+	"./mn": 286,
+	"./mn.js": 286,
+	"./mr": 287,
+	"./mr.js": 287,
+	"./ms": 289,
+	"./ms-my": 288,
+	"./ms-my.js": 288,
+	"./ms.js": 289,
+	"./mt": 290,
+	"./mt.js": 290,
+	"./my": 291,
+	"./my.js": 291,
+	"./nb": 292,
+	"./nb.js": 292,
+	"./ne": 293,
+	"./ne.js": 293,
+	"./nl": 295,
+	"./nl-be": 294,
+	"./nl-be.js": 294,
+	"./nl.js": 295,
+	"./nn": 296,
+	"./nn.js": 296,
+	"./pa-in": 297,
+	"./pa-in.js": 297,
+	"./pl": 298,
+	"./pl.js": 298,
+	"./pt": 300,
+	"./pt-br": 299,
+	"./pt-br.js": 299,
+	"./pt.js": 300,
+	"./ro": 301,
+	"./ro.js": 301,
+	"./ru": 302,
+	"./ru.js": 302,
+	"./sd": 303,
+	"./sd.js": 303,
+	"./se": 304,
+	"./se.js": 304,
+	"./si": 305,
+	"./si.js": 305,
+	"./sk": 306,
+	"./sk.js": 306,
+	"./sl": 307,
+	"./sl.js": 307,
+	"./sq": 308,
+	"./sq.js": 308,
+	"./sr": 310,
+	"./sr-cyrl": 309,
+	"./sr-cyrl.js": 309,
+	"./sr.js": 310,
+	"./ss": 311,
+	"./ss.js": 311,
+	"./sv": 312,
+	"./sv.js": 312,
+	"./sw": 313,
+	"./sw.js": 313,
+	"./ta": 314,
+	"./ta.js": 314,
+	"./te": 315,
+	"./te.js": 315,
+	"./tet": 316,
+	"./tet.js": 316,
+	"./tg": 317,
+	"./tg.js": 317,
+	"./th": 318,
+	"./th.js": 318,
+	"./tl-ph": 319,
+	"./tl-ph.js": 319,
+	"./tlh": 320,
+	"./tlh.js": 320,
+	"./tr": 321,
+	"./tr.js": 321,
+	"./tzl": 322,
+	"./tzl.js": 322,
+	"./tzm": 324,
+	"./tzm-latn": 323,
+	"./tzm-latn.js": 323,
+	"./tzm.js": 324,
+	"./ug-cn": 325,
+	"./ug-cn.js": 325,
+	"./uk": 326,
+	"./uk.js": 326,
+	"./ur": 327,
+	"./ur.js": 327,
+	"./uz": 329,
+	"./uz-latn": 328,
+	"./uz-latn.js": 328,
+	"./uz.js": 329,
+	"./vi": 330,
+	"./vi.js": 330,
+	"./x-pseudo": 331,
+	"./x-pseudo.js": 331,
+	"./yo": 332,
+	"./yo.js": 332,
+	"./zh-cn": 333,
+	"./zh-cn.js": 333,
+	"./zh-hk": 334,
+	"./zh-hk.js": 334,
+	"./zh-tw": 335,
+	"./zh-tw.js": 335
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -3632,197 +3484,90 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 616;
+webpackContext.id = 615;
 
 
 /***/ }),
 
-/***/ 628:
+/***/ 627:
 /***/ (function(module, exports) {
 
 module.exports = "<router-outlet></router-outlet>\n"
 
 /***/ }),
 
-/***/ 629:
+/***/ 628:
 /***/ (function(module, exports) {
 
 module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"navigation\">\n    <div class=\"sidebar-collapse\">\n        <ul class=\"nav metismenu\" id=\"side-menu\">\n            <li class=\"nav-header\">\n                <div class=\"dropdown profile-element\">\n                    <span>\n                        <img alt=\"image\" class=\"img-rectangle\" width=\"165px\"\n                             src=\"./assets/img/dutchess-cap.png\" />\n                    </span>\n                </div>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('home')}\">\n                <a [routerLink]=\"['/home']\"><i class=\"fas fa-home\"></i> <span class=\"nav-label\">Home</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('graphs')}\">\n               <a [routerLink]=\"['/graphs']\"><i class=\"fas fa-chart-line\"></i> <span class=\"nav-label\">Graph Designer</span></a>\n           </li>\n            <li [ngClass]=\"{active: activeRoute('input')}\">\n                <a [routerLink]=\"['/input']\"><i class=\"fas fa-user-edit\"></i> <span class=\"nav-label\">Input Survey Manually</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('exportRaw')}\">\n                <a [routerLink]=\"['/exportRaw']\"><i class=\"fas fa-table\"></i> <span class=\"nav-label\">Query/Export Data</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('edit')}\">\n                  <a [routerLink]=\"['/edit']\"><i class=\"fas fa-edit\"></i> <span class=\"nav-label\">Edit Survey</span></a>\n            </li>\n        </ul>\n    </div>\n</nav>"
 
 /***/ }),
 
-/***/ 630:
+/***/ 629:
 /***/ (function(module, exports) {
 
 module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" style=\"margin-bottom: 0\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.isAuthenticated()\"\n                    (click)=\"auth.logout()\" style=\"font-size:12px\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n"
 
 /***/ }),
 
-/***/ 631:
+/***/ 630:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div id=\"ctr\">\r\n      <div class=\"row\">\r\n        <div class=\"col-lg-10 ibox float-e-margins\">\r\n          <div class=\"ibox-content\">\r\n            <div class=\"row justify-content-between btnBar\">\r\n              <div class=\"col\">\r\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\r\n                  <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\r\n                  <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\r\n                    {{ s.survey_name }}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n              <div class=\"col\">\r\n                <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning\">\r\n                  Create New Survey\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <hr>\r\n            <div class=\"feed-activity-list\">\r\n              <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey.value)\">\r\n                <div class=\"form-group\">\r\n                  <h2 style=\"font-weight:bold\">Survey Name</h2>\r\n                  <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"survey_name\"\r\n                    placeholder=\"Enter Survey Name\">\r\n                </div>\r\n                <!-- QUESTIONS -->\r\n                <div formArrayName=\"questions\">\r\n                  <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\r\n                    <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\r\n                      <div class=\"row\">\r\n                        <div class=\"col-lg-12\">\r\n                          <div row>\r\n                            <h3 class=\"pull-left\" id=\"questionHeader\">Question {{ i+1}}</h3>\r\n                            <button type=\"button\" (click)=\"updateQuestionActiveStatus(question, false)\" *ngIf=\"survey.controls.questions.controls[i].controls.question_is_active.value\"\r\n                              value=\"true\" class=\"label label-primary\">Active</button>\r\n                            <button type=\"button\" (click)=\"updateQuestionActiveStatus(question, true)\" *ngIf=\"! survey.controls.questions.controls[i].controls.question_is_active.value\"\r\n                              value=\"false\" class=\"label label-warning\">Inactive</button>\r\n                            <button type=\"button\" *ngIf=\"survey.controls.questions.length > 1 && i > currentQuestionScope\"\r\n                              class=\"btn btn-danger btn-sm pull-right\" (click)='removeQuestion(i)'> <i id=\"btnQuestionRemove\"\r\n                                class=\"fas fa-minus-circle\"></i></button>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                      <div class=\"row\">\r\n                        <div class=\"col-lg-3\">\r\n                          <div class=\"row\">\r\n                            <div class=\"col-lg-12\">\r\n                              <small class=\"text-muted\">Question Type</small>\r\n                            </div>\r\n                          </div>\r\n                          <div class=\"row\">\r\n                            <div class=\"col-lg-12\">\r\n                              <!--TYPE GO HERE-->\r\n                              <select formControlName=\"question_type\" class=\"form-control form-control-sm\" required>\r\n                                <option value=\"\" disabled selected>Select question type:</option>\r\n                                <option value=\"select\">Dropdown</option>\r\n                                <option value=\"checkbox\">Checkboxes</option>\r\n                                <option value=\"radio\">Multiple Choice</option>\r\n                                <option value=\"text\">Textbox</option>\r\n                              </select>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                      <div class=\"row\" style=\"margin-top:10px\">\r\n                        <div class=\"col-lg-12\">\r\n                          <small class=\"text-muted\">Question Prompt</small>\r\n                          <!--TEXT BOX GOES HERE-->\r\n                          <div class=\"form-group\">\r\n                            <textarea formControlName=\"question_text\" [readonly]=\"setReadOnly()\" class=\"form-control\"\r\n                              id=\"exampleTextarea\" rows=\"2\" placeholder=\"Enter Question Prompt Here...\">\r\n                            </textarea>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n\r\n                      <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\r\n                        <div class=\"col-lg-6\">\r\n                          <!--OPTIONS GO HERE-->\r\n                          <!-- SHOWING OPTIONS-->\r\n                          <div formArrayName=\"options\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.options.controls; let j=index\">\r\n\r\n                            <div class=\"row\">\r\n                              <div class=\"col-lg-10\">\r\n                                <h3 style=\"font-weight:lighter\" class=\"pull-left\">Option {{ j+1}}</h3>\r\n                                <button type=\"button\" (click)=\"updateOptionActiveStatus(question, j, false)\" *ngIf=\"survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value\"\r\n                                  value=\"true\" class=\"label label-primary pull-right\">Active</button>\r\n                                <button type=\"button\" (click)=\"updateOptionActiveStatus(question, j, true)\" *ngIf=\"! survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value\"\r\n                                  value=\"false\" class=\"label label-warning pull-right\">Inactive</button>\r\n                              </div>\r\n                            </div>\r\n\r\n                            <div class=\"row\">\r\n                              <div class=\"col-lg-12\">\r\n                                <div [formGroupName]=\"j\">\r\n                                  <div class=\"form-group\">\r\n                                    <div class=\"row\">\r\n                                      <div class=\"col-lg-10\">\r\n                                        <input formControlName=\"option_text\" [readonly]=\"setReadOnly()\" type=\"text\"\r\n                                          class=\"form-control\" placeholder=\"Enter Option\">\r\n                                      </div>\r\n                                      <div class=\"col-lg-2\">\r\n                                        <button type=\"button\" class=\"btn btn-danger btn-sm pull-right\" *ngIf=\"question.controls.options.length > 1  &&  j > currentOptionScope[i] \"\r\n                                          (click)=\"removeOption(question, j, i)\"><i class=\"fas fa-minus-circle\"></i></button>\r\n                                      </div>\r\n                                    </div>\r\n                                  </div>\r\n                                </div>\r\n                              </div>\r\n                            </div>\r\n\r\n                            <div class=\"row\">\r\n                              <div class=\"col-lg-10\">\r\n                                <button type=\"button\" class=\"btn btn-primary btn-block pull-right \" *ngIf=\"j == question.controls.options.length - 1 && j >= currentOptionScope[i]\"\r\n                                  (click)=\"addOption(question,i)\"><i class=\"fa fa-plus-circle\"></i>\r\n                                </button>\r\n                              </div>\r\n                            </div>\r\n\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                      <div class=\"row\">\r\n                        <div class=\"col-lg-12\">\r\n                          <button type=\"button\" class=\"btn btn-primary btn-sm pull-right\" *ngIf='i >= currentQuestionScope'\r\n                            (click)='addQuestion(i)'><i class=\"fa fa-plus-circle\"></i>\r\n                          </button>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                    <!--END OF FEED ELEMENT DIV-  -->\r\n                  </div>\r\n                  <!--END OF ngFor DIV-->\r\n                </div>\r\n                <!--END OF Form Array for Questions Div-->\r\n                <button type=\"submit\" id=\"save\" (click)=\"openModal()\" class=\"btn btn-success btn-lg btn-block\">\r\n                  Save Survey\r\n                </button>\r\n\r\n              </form>\r\n              <div id=\"success\" class=\"modal\">\r\n\r\n                <!-- Modal content -->\r\n                <div class=\"modal-content\">\r\n                  <span (click)=\"closeModal()\" class=\"close\">&times;</span>\r\n                  <p>Saved Successfully!</p>\r\n                </div>\r\n\r\n              </div>\r\n            </div>\r\n\r\n            <pre>Form Value: <br>{{survey.value | json}}</pre>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n    <navigation></navigation>\r\n    <div id=\"page-wrapper\" class=\"gray-bg\">\r\n      <topnavbar></topnavbar>\r\n      <div id=\"ctr\">\r\n        <div class=\"row\">\r\n          <div class=\"col-lg-10 ibox float-e-margins\">\r\n            <div class=\"ibox-content\">\r\n              <div class=\"row justify-content-between btnBar\">\r\n                <div class=\"col\">\r\n                  <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"updateSurveyFormData($event.target.value)\">\r\n                    <option value=\"-1\" disabled selected>Select survey to edit or create a new one!</option>\r\n                    <option *ngFor=\"let s of surveys\" [value]=\"s.survey_id\">\r\n                      {{ s.survey_name }}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"col\">\r\n                  <button type=\"button\" (click)=\"newSurveyForm()\" class=\"pull-right btn btn-warning\">\r\n                    Create New Survey\r\n                  </button>\r\n                </div>\r\n              </div>\r\n              <hr>\r\n              <div class=\"feed-activity-list\">\r\n                <form [formGroup]=\"survey\" novalidate (ngSubmit)=\"save(survey.value)\">\r\n                  <div class=\"form-group\">\r\n                    <h2 style=\"font-weight:bold\">Survey Name</h2>\r\n                    <input [readonly]=\"setReadOnly()\" type=\"text\" class=\"form-control\" formControlName=\"survey_name\"\r\n                      placeholder=\"Enter Survey Name\">\r\n                  </div>\r\n                  <!-- QUESTIONS -->\r\n                  <div formArrayName=\"questions\">\r\n                    <div *ngFor=\"let question of survey.controls.questions.controls; let i=index\">\r\n                      <div [formGroupName]=\"i\" class=\"feed-element\" style=\"margin-bottom:10px\">\r\n                        <div class=\"row\">\r\n                          <div class=\"col-lg-12\">\r\n                            <div row>\r\n                              <h3 class=\"pull-left\" id=\"questionHeader\">Question {{ i+1}}</h3>\r\n                              <button type=\"button\" (click)=\"updateQuestionActiveStatus(question, false)\" *ngIf=\"survey.controls.questions.controls[i].controls.question_is_active.value\"\r\n                                value=\"true\" class=\"label label-primary\">Active</button>\r\n                              <button type=\"button\" (click)=\"updateQuestionActiveStatus(question, true)\" *ngIf=\"! survey.controls.questions.controls[i].controls.question_is_active.value\"\r\n                                value=\"false\" class=\"label label-warning\">Inactive</button>\r\n                              <button type=\"button\" *ngIf=\"survey.controls.questions.length > 1 && i > currentQuestionScope\"\r\n                                class=\"btn btn-danger btn-sm pull-right\" (click)='removeQuestion(i)'> <i id=\"btnQuestionRemove\"\r\n                                  class=\"fas fa-minus-circle\"></i></button>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                        <div class=\"row\">\r\n                          <div class=\"col-lg-3\">\r\n                            <div class=\"row\">\r\n                              <div class=\"col-lg-12\">\r\n                                <small class=\"text-muted\">Question Type</small>\r\n                              </div>\r\n                            </div>\r\n                            <div class=\"row\">\r\n                              <div class=\"col-lg-12\">\r\n                                <!--TYPE GO HERE-->\r\n                                <select formControlName=\"question_type\" class=\"form-control form-control-sm\" required>\r\n                                  <option value=\"\" disabled selected>Select question type:</option>\r\n                                  <option value=\"select\">Dropdown</option>\r\n                                  <option value=\"checkbox\">Checkboxes</option>\r\n                                  <option value=\"radio\">Multiple Choice</option>\r\n                                  <option value=\"text\">Textbox</option>\r\n                                </select>\r\n                              </div>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                        <div class=\"row\" style=\"margin-top:10px\">\r\n                          <div class=\"col-lg-12\">\r\n                            <small class=\"text-muted\">Question Prompt</small>\r\n                            <!--TEXT BOX GOES HERE-->\r\n                            <div class=\"form-group\">\r\n                              <textarea formControlName=\"question_text\" class=\"form-control\"\r\n                                id=\"exampleTextarea\" rows=\"2\" placeholder=\"Enter Question Prompt Here...\">\r\n                              </textarea>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n  \r\n                        <div class=\"row\" *ngIf=\"showOptionsDiv(question)\">\r\n                          <div class=\"col-lg-6\">\r\n                            <!--OPTIONS GO HERE-->\r\n                            <!-- SHOWING OPTIONS-->\r\n                            <div formArrayName=\"options\" *ngFor=\"let option of survey.controls.questions.controls[i].controls.options.controls; let j=index\">\r\n  \r\n                              <div class=\"row\">\r\n                                <div class=\"col-lg-10\">\r\n                                  <h3 style=\"font-weight:lighter\" class=\"pull-left\">Option {{ j+1}}</h3>\r\n                                  <button type=\"button\" (click)=\"updateOptionActiveStatus(question, j, false)\" *ngIf=\"survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value\"\r\n                                    value=\"true\" class=\"label label-primary pull-right\">Active</button>\r\n                                  <button type=\"button\" (click)=\"updateOptionActiveStatus(question, j, true)\" *ngIf=\"! survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value\"\r\n                                    value=\"false\" class=\"label label-warning pull-right\">Inactive</button>\r\n                                </div>\r\n                              </div>\r\n  \r\n                              <div class=\"row\">\r\n                                <div class=\"col-lg-12\">\r\n                                  <div [formGroupName]=\"j\">\r\n                                    <div class=\"form-group\">\r\n                                      <div class=\"row\">\r\n                                        <div class=\"col-lg-10\">\r\n                                          <input formControlName=\"option_text\" type=\"text\"\r\n                                            class=\"form-control\" placeholder=\"Enter Option\">\r\n                                        </div>\r\n                                        <div class=\"col-lg-2\">\r\n                                          <button type=\"button\" class=\"btn btn-danger btn-sm pull-right\" *ngIf=\"question.controls.options.length > 1  &&  j > currentOptionScope[i] \"\r\n                                            (click)=\"removeOption(question, j, i)\"><i class=\"fas fa-minus-circle\"></i></button>\r\n                                        </div>\r\n                                      </div>\r\n                                    </div>\r\n                                  </div>\r\n                                </div>\r\n                              </div>\r\n  \r\n                              <div class=\"row\">\r\n                                <div class=\"col-lg-10\">\r\n                                  <button type=\"button\" class=\"btn btn-primary btn-block pull-right \" *ngIf=\"j == question.controls.options.length - 1\"\r\n                                    (click)=\"addOption(question,i)\"><i class=\"fa fa-plus-circle\"></i> \r\n                                  </button>\r\n                                </div>\r\n                              </div>\r\n  \r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                        <div class=\"row\">\r\n                          <div class=\"col-lg-12\">\r\n                            <button type=\"button\" class=\"btn btn-primary btn-sm pull-right\" *ngIf='i >= currentQuestionScope'\r\n                              (click)='addQuestion(i)'><i class=\"fa fa-plus-circle\"></i>\r\n                            </button>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                      <!--END OF FEED ELEMENT DIV-  -->\r\n                    </div>\r\n                    <!--END OF ngFor DIV-->\r\n                  </div>\r\n                  <!--END OF Form Array for Questions Div-->\r\n                  <button type=\"submit\" id=\"save\" (click)=\"openModal()\" class=\"btn btn-success btn-lg btn-block\">\r\n                    Save Survey\r\n                  </button>\r\n  \r\n                </form>\r\n                <div id=\"success\" class=\"modal\">\r\n  \r\n                  <!-- Modal content -->\r\n                  <div class=\"modal-content\">\r\n                    <span (click)=\"closeModal()\" class=\"close\">&times;</span>\r\n                    <p>Saved Successfully!</p>\r\n                  </div>\r\n  \r\n                </div>\r\n              </div>\r\n  \r\n              <pre>Form Value: <br>{{survey.value | json}}</pre>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  "
 
 /***/ }),
 
-/***/ 632:
+/***/ 631:
 /***/ (function(module, exports) {
 
 module.exports = "<div id=\"wrapper\">\r\n    <navigation></navigation>\r\n    <div *ngIf=\"showExportDiv\" id=\"page-wrapper\" class=\"gray-bg\">\r\n        <topnavbar></topnavbar>\r\n\r\n        <div class=\"row wrapper border-bottom white-bg page-heading\">\r\n          <div class=\"row\" style=\"margin-top:30px\">\r\n\r\n            <div class=\"col-lg-2\">\r\n              <div class=\"form-group\">\r\n                <label for=\"exampleFormControlSelect1\">Survey</label>\r\n                <select class=\"form-control\" id=\"exampleFormControlSelect1\" (change)=\"updateSurvey($event.target.value)\">\r\n                  <option *ngFor=\"let s of surveys\" value=\"{{s.survey_id}}\">\r\n                    {{ s.survey_name }}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n            </div>\r\n\r\n            <div class=\"col-lg-4\">\r\n              <div class=\"form-group\">\r\n                <label for=\"exampleFormControlSelect1\">Survey Question</label>\r\n                <select class=\"form-control\" id=\"exampleFormControlSelect1\" (change)=\"updateDataFeed($event.target.value)\">\r\n                  <option value=\"-1\">All Questions</option>\r\n                  <option *ngFor=\"let question of getQuestions()\" value=\"{{ question.question_id }}\">\r\n                    {{ question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n            </div>\r\n\r\n            <div class=\"col-lg-2\">\r\n              <div class=\"form-group\">\r\n                <label for=\"exampleFormControlSelect1\">Start Date</label>\r\n                <input class=\"form-control\" type=\"date\" value=\"{{ dateFilterStart }}\" (change)=\"updateDate($event.target.value)\">\r\n              </div>\r\n            </div>\r\n\r\n            <div class=\"col-lg-2\">\r\n              <div class=\"form-group\">\r\n                <label for=\"exampleFormControlSelect1\">End Date</label>\r\n                <input class=\"form-control\" type=\"date\" value=\"{{ dateFilterEnd }}\" (change)=\"updateDateUpper($event.target.value)\">\r\n              </div>\r\n            </div>\r\n\r\n            <div class=\"col-lg-2\">\r\n              <button type=\"button\" class=\"btn btn-primary btn-block btn-sm btnExport\" (click)=\"exportTableToCSV('table.csv')\"><i\r\n                  class=\"fas fa-download\"></i> Export Table</button>\r\n            </div>\r\n\r\n          </div>\r\n\r\n          <div class=\"row divSearchRow\">\r\n\r\n            <div class=\"col-lg-12\">\r\n              <div class=\"input-group\">\r\n                <input type=\"text\" class=\"form-control\" [(ngModel)]=\"searchText\" placeholder=\"Filter Responses By Keyword\">\r\n                <div class=\"input-group-btn\">\r\n                  <button class=\"btn btn-default\" type=\"submit\">\r\n                    <i class=\"glyphicon glyphicon-search\"></i>\r\n                  </button>\r\n                </div>\r\n              </div>\r\n            </div>\r\n\r\n          </div>\r\n\r\n          <div class=\"row \">\r\n\r\n            <div class=\"col-lg-12\">\r\n              <table id=\"tableResponses\" class=\"table table-hover table-sm\">\r\n                <thead>\r\n                  <tr>\r\n                    <th class=\"colQuestions\">Question</th>\r\n                    <th class=\"colResponses\">Response</th>\r\n                    <th class=\"colDates\">Date Submitted</th>\r\n                  </tr>\r\n                </thead>\r\n                <tbody>\r\n                  <tr *ngFor=\"let response of dataFeed | filter: searchText | filterByDate: dateFilterStart:dateFilterEnd\">\r\n                    <th> {{ response.question }} </th>\r\n                    <td> {{ response.response }}</td>\r\n                    <td class=\"colDates\"> {{ response.date_taken }}</td>\r\n                  </tr>\r\n                </tbody>\r\n              </table>\r\n            </div>\r\n\r\n          </div> \r\n        </div>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
+/***/ 632:
+/***/ (function(module, exports) {
+
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n\r\n    <div  class=\"row wrapper border-bottom white-bg page-heading\">\r\n      <div class=\"row\">\r\n\r\n        <div *ngIf=\"displayDiv\" class=\"col-lg-3\"style=\"margin-bottom: 500px\">\r\n          <br>\r\n          <form [formGroup]=\"chartForm\">\r\n            <div class=\"form-group\">\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                </div>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Chart Type</label>\r\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                    {{graph.view}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Survey</label>\r\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                    {{survey.survey_name}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Question</label>\r\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | GraphableQuestion\"\r\n                    [value]=\"question.question_id\">\r\n                    {{question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                <div class=\"filterBlock\">\r\n                  <label for=\"graphType\">Select Sub Question</label>\r\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateSubQuestionOptions()\">\r\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                      [value]=\"question.question_id\">\r\n                      {{question.question_text}}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"optionsDiv\">\r\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                      <div class=\"col-lg-12\">\r\n                         <li>\r\n                           <input type=\"checkbox\" [formControlName]=\"i\">\r\n                           <span class=\"spanOption\">{{option.option_text}}</span>\r\n                        </li>\r\n                      </div>\r\n                     </ul>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n              <div class=\"btnBlock\">\r\n               <hr>\r\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\r\n                  <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\r\n                    <i class=\"fas fa-download\"></i>\r\n                    Export Graph\r\n                  </a>\r\n                </button>\r\n              </div>\r\n\r\n            </div>\r\n          </form>\r\n        </div>\r\n\r\n        <div class=\"col-lg-8\">\r\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n        </div>\r\n\r\n        <div class=\"col-lg-1\">\r\n\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+
+/***/ }),
+
 /***/ 633:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n\r\n    <div  class=\"row wrapper border-bottom white-bg page-heading\">\r\n      <div class=\"row\">\r\n\r\n        <div *ngIf=\"displayDiv\" class=\"col-lg-3\"style=\"margin-bottom: 500px\">\r\n          <br>\r\n          <form [formGroup]=\"chartForm\">\r\n            <div class=\"form-group\">\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                </div>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Chart Type</label>\r\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                    {{graph.view}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Survey</label>\r\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                    {{survey.survey_name}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Question</label>\r\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | GraphableQuestion\"\r\n                    [value]=\"question.question_id\">\r\n                    {{question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                <div class=\"filterBlock\">\r\n                  <label for=\"graphType\">Select Sub Question</label>\r\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateSubQuestionOptions()\">\r\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                      [value]=\"question.question_id\">\r\n                      {{question.question_text}}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"optionsDiv\">\r\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                      <div class=\"col-lg-12\">\r\n                         <li>\r\n                           <input type=\"checkbox\" [formControlName]=\"i\">\r\n                           <span class=\"spanOption\">{{option.option_text}}</span>\r\n                        </li>\r\n                      </div>\r\n                     </ul>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n              <div class=\"btnBlock\">\r\n               <hr>\r\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\r\n                  <a href=\"graphs\" (click)=\"download($event)\" style=\"color:white\">\r\n                    <i class=\"fas fa-download\"></i>\r\n                    Export Graph\r\n                  </a>\r\n                </button>\r\n              </div>\r\n\r\n            </div>\r\n          </form>\r\n        </div>\r\n\r\n        <div class=\"col-lg-8\">\r\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n        </div>\r\n\r\n        <div class=\"col-lg-1\">\r\n\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"openModal($event.target.value)\">\r\n                <button type=\"submit\" *ngIf=\"info.survey_is_active\"  value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"submit\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n          <div class=\"filterBlock\">\r\n            <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateChart()\" required>\r\n              <button type=\"button\" class=\"btnGroupSwitch btn btn-success\">Refresh Chart</button>\r\n            </div>\r\n          </div>\r\n        </div>\r\n        \r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n        <!-- Modal content -->\r\n        <div class=\"modal-content\">\r\n          <p class=\"checker\">Are you sure you want to change the activity status of this survey?</p>\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-5\">\r\n              <span (click)=\"updateActiveSurvey()\" class=\"close\">Yes</span>\r\n            </div>\r\n            <div class=\"col-lg-2\">\r\n              <span (click)=\"closeModal()\" class=\"close\">No</span>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
 /***/ 634:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\" (click)=\"updateActiveSurvey($event.target.value)\">\r\n                <button type=\"button\" *ngIf=\"info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"button\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div id=\"ctr\">\r\n      <div class=\"row\">\r\n        <div class=\"col-lg-11 ibox float-e-margins\">\r\n          <div class=\"ibox-content\">\r\n            <div class=\"row justify-content-between btnBar\">\r\n              <div class=\"col\">\r\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"surveySelect($event.target.value)\">\r\n                  <option disabled selected>-Please Select a Survey-</option>\r\n                  <option *ngFor=\"let activeSurveys of surveys\" value=\"{{activeSurveys.survey_id}}\">\r\n                    {{ activeSurveys.survey_name }}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n              <div class=\"col\">\r\n                <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\" (click)='save(); openModal()'>\r\n                  <i class=\"fas fa-database\"></i>\r\n                  Save\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"feed-activity-list\">\r\n              <b><legend align=\"center\"> {{ selectedSurveyName }} </legend></b>\r\n              \r\n              <form>\r\n                <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n                  <div>\r\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions; let k = index\">\r\n                      <div>\r\n                        <div class=\"col-lg-4\" style=\"margin-left:40px\">\r\n                          <span class=\"spanQuestion\"> {{ k+1 }} . <span class=\"spanQuestionText\">{{\r\n                              question.question_text\r\n                              }}</span></span>\r\n                        </div>\r\n                        <div class=\"col-lg-7\">\r\n                          <div [ngSwitch]=\"question.question_type\">\r\n\r\n                            <div *ngSwitchCase=\"'select'\">\r\n                              <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                                class=\"form-control\">\r\n                                <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                                  {{ option.option_text }}\r\n                                </option>\r\n                              </select>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'checkbox'\">\r\n                              <div *ngFor=\"let option of question.options; let j = index\">\r\n                                <label class=\"form-check-label\">\r\n                                  <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                    type=\"checkbox\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'text'\">\r\n                              <div *ngFor=\"let option of question.options\">\r\n                                <label class=\"form-check-label\"></label>\r\n                                <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                                  [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'radio'\">\r\n                              <div *ngFor=\"let option of question.options\">\r\n                                <label class=\"check-label\">\r\n                                  <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                                  <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                    [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                    [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </form>\r\n\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n        <!-- Modal content -->\r\n        <div class=\"modal-content\">\r\n          <p class=\"saved\">Saved Successfully!</p>\r\n        </div>\r\n\r\n      </div>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
 /***/ 635:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\n  <navigation></navigation>\n  <div id=\"page-wrapper\" class=\"gray-bg\">\n    <topnavbar></topnavbar>\n    <div id=\"ctr\">\n      <div class=\"row\">\n        <div class=\"col-lg-11 ibox float-e-margins\">\n          <div class=\"ibox-content\">\n            <div class=\"row justify-content-between btnBar\">\n              <div class=\"col\">\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"surveySelect($event.target.value)\">\n                  <option disabled selected>-Please Select a Survey-</option>\n                  <option *ngFor=\"let activeSurveys of surveys\" value=\"{{activeSurveys.survey_id}}\">\n                    {{ activeSurveys.survey_name }}\n                  </option>\n                </select>\n              </div>\n              <div class=\"col\">\n                <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\" (click)='save()'>\n                  <i class=\"fas fa-database\"></i>\n                  Save\n                </button>\n              </div>\n            </div>\n            <div class=\"feed-activity-list\">\n              <form>\n                <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\n                  <div>\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions; let k = index\">\n                      <div>\n                        <div class=\"col-lg-4\" style=\"margin-left:40px\">\n                          <span class=\"spanQuestion\"> {{ k+1 }} . <span class=\"spanQuestionText\">{{\n                              question.question_text\n                              }}</span></span>\n                        </div>\n                        <div class=\"col-lg-7\">\n                          <div [ngSwitch]=\"question.question_type\">\n\n                            <div *ngSwitchCase=\"'select'\">\n                              <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\n                                class=\"form-control\">\n                                <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\n                                  {{ option.option_text }}\n                                </option>\n                              </select>\n                            </div>\n                            <div *ngSwitchCase=\"'checkbox'\">\n                              <div *ngFor=\"let option of question.options; let j = index\">\n                                <label class=\"form-check-label\">\n                                  <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\n                                    type=\"checkbox\" [value]=\"option.option_text\">\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\n                                </label>\n                              </div>\n                            </div>\n                            <div *ngSwitchCase=\"'text'\">\n                              <label class=\"form-check-label\"></label>\n                              <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, -1, question.response)'\n                                [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" rows=\"3\"></textarea>\n                            </div>\n                            <div *ngSwitchCase=\"'radio'\">\n                              <div *ngFor=\"let option of question.options\">\n                                <label class=\"check-label\">\n                                  <!--  [(ngModel)]=\"surveys.responses[k]\"-->\n                                  <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\n                                    [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\n                                    [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\n                                </label>\n                              </div>\n                            </div>\n                          </div>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n              </form>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div id=\"notfound\">\r\n\t<div class=\"notfound\">\r\n\t\t<div class=\"notfound-bg\">\r\n\t\t\t<div></div>\r\n\t\t\t<div></div>\r\n\t\t\t<div></div>\r\n\t\t</div>\r\n\t\t<h1>oops!</h1>\r\n\t\t<h2>Error 404 : Page Not Found</h2>\r\n\t\t<a [routerLink]=\"['/home']\">go back</a>\r\n\t</div>\r\n</div>"
 
 /***/ }),
 
 /***/ 636:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"notfound\">\r\n\t<div class=\"notfound\">\r\n\t\t<div class=\"notfound-bg\">\r\n\t\t\t<div></div>\r\n\t\t\t<div></div>\r\n\t\t\t<div></div>\r\n\t\t</div>\r\n\t\t<h1>oops!</h1>\r\n\t\t<h2>Error 404 : Page Not Found</h2>\r\n\t\t<a [routerLink]=\"['/home']\">go back</a>\r\n\t</div>\r\n</div>"
-
-/***/ }),
-
-/***/ 637:
-/***/ (function(module, exports) {
-
 module.exports = "<!-- Survey Landing/Home page -->\r\n<div class=\"container\" id=\"container2\" style=\"margin: 0 auto\"  *ngIf=\"!showSurveyDiv\">\r\n    <button class=\"btn btn-default\"id=\"loginBtn\" *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">\r\n      Login\r\n    </button>\r\n    <div class=\"row\">\r\n        <div class=\"col-md-7\" id=\"bucket\" >\r\n            <div class=\"well well-sm\">\r\n                <legend class=\"text-center header\">Welcome to Dutchess CAP</legend>\r\n                <p class=\"text-center header3\">Please select the survey you would like to take:</p>\r\n               \r\n                <form class=\"form-horizontal\" method=\"post\" #start=\"ngForm\" validate>\r\n\r\n                    <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event, $event.target.value)\">\r\n                        <option disabled selected>-Please Select a Survey-</option>\r\n                        <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\r\n                    </select>\r\n                    \r\n                    <div class=\"form-group\">\r\n                        <div class=\"col-md-12 text-center\">\r\n                            <button type=\"submit\" id=\"btn\" class=\"btn btn-primary btn-lg\" (click)=\"onStart()\">Start</button>\r\n                        </div>\r\n                    </div>\r\n                </form>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<!-- Actual survey with questions -->\r\n<div class=\"container\" *ngIf=\"showSurveyDiv\">\r\n      <div class=\"col-md-9\" id=\"bucket\">\r\n        <div class=\"well well-sm\">\r\n          <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index\">\r\n            <div *ngFor=\"let question of survey.questions | paginate: config; let k = index\">\r\n              <form class=\"form-horiziontal\">\r\n                <fieldset>\r\n                  <legend class=\"text-center header\">{{ survey.survey_name }}</legend>\r\n  \r\n                  <div class=\"text-center header2\">\r\n                    <h3> {{ k+1 }}. {{ question.question_text}} </h3>\r\n                  </div>\r\n\r\n                  <div [ngSwitch]=\"question.question_type\" style=\"height:150px;\">\r\n  \r\n                    <div class=\"form-group\" id=\"dropdownStyle\" *ngSwitchCase=\"'select'\">\r\n                      <div class=\"col-md-6\" id=\"bucket\">\r\n                          <select class=\"form-control\" id=\"select\" [(ngModel)]=\"selectedOptionId\" name=\"selectedOption\"\r\n                            (change)=\"optionSelect($event, $event.target.value, 'select')\">\r\n                            <option disabled selected>-Please Select an Option-</option>\r\n                            <option *ngFor=\"let option of question.options\" value=\"{{option.option_id}}\">\r\n                              {{ option.option_text }}\r\n                            </option>\r\n                          </select>\r\n                      </div>\r\n                    </div>\r\n  \r\n                    <div class=\"form-check\" *ngSwitchCase=\"'checkbox'\" id=\"checkboxStyle\">\r\n                        <div class=\"col-md-6\" id=\"bucket\">\r\n                          <div *ngFor=\"let option of question.options\" class=\"form-check-label\" id=\"divCheckboxOptionText\"\r\n                            (change)=\"optionSelect($event, $event.target.value, 'checkbox')\">\r\n                            <input class=\"form-check-input\" type=\"checkbox\" value=\"{{option.option_id}}\">\r\n                            {{ option.option_text }}\r\n                          </div>\r\n                      </div>\r\n                    </div>\r\n  \r\n                    <div class=\"form-group\" *ngSwitchCase=\"'text'\" id=\"textStyle\">\r\n                        <div class=\"col-md-6\" id=\"bucket\">\r\n                          <div class=\"form-check-label\">\r\n                            <textarea class=\"form-control\" name=\"text\" rows=\"2\" [(ngModel)]=\"textAreaValue\"></textarea>\r\n                          </div>\r\n                      </div>\r\n                    </div>\r\n  \r\n                    <div class=\"form-group\" *ngSwitchCase=\"'radio'\" id=\"radioStyle\">\r\n                      <div class=\"col-md-6\" id=\"bucket\">\r\n                          <div *ngFor=\"let option of question.options\" id=\"radioBoxOptionText\" (change)=\"optionSelect($event, $event.target.value, 'radio')\">\r\n                            <input type=\"radio\" class=\"form-check-input\" name=\"question.question_id\" value=\"{{option.option_id}}\">\r\n                            {{ option.option_text }}\r\n                          </div>\r\n                      </div>\r\n                    </div>\r\n  \r\n                  </div>\r\n                  <pagination-template #p=\"paginationApi\" [id]=\"config.id\" (pageChange)=\"config.currentPage = $event\">\r\n                    <div class=\"custom-pagination\">\r\n                      <ul>\r\n                        <span class=\"pagination-previous\" [class.disabled]=\"p.isFirstPage()\">\r\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isFirstPage()\" (click)=\"removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();\">\r\n                            Previous </button>\r\n                          </span>\r\n  \r\n                        <span *ngFor=\"let page of p.pages\" [class.current]=\"p.getCurrent() === page.value\">\r\n                          <li class=\"pageNumbers\" *ngIf=\"p.getCurrent() !== page.value\">\r\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\r\n                          </li>\r\n                          <li class=\"pageNumberActive\" *ngIf=\"p.getCurrent() === page.value\">\r\n                            <a style=\"font-size: 15px; color: grey\">{{ page.label }}</a>\r\n                          </li>\r\n                        </span>\r\n  \r\n                        <span class=\"pagination-next\" [class.disabled]=\"p.isLastPage()\">\r\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"!p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()\">\r\n                            Next </button>\r\n                          <button class=\"btn btn-primary btn-sm\" *ngIf=\"p.isLastPage()\" (click)=\"updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();\">\r\n                            Submit </button>\r\n                          </span>\r\n                      </ul>\r\n                    </div>\r\n                  </pagination-template>\r\n                </fieldset>\r\n              </form>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    \r\n</div>"
 
 /***/ }),
 
-/***/ 77:
+/***/ 65:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Globals; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-var Globals = (function () {
-    function Globals() {
-        this.surveys = [
-            {
-                survey_id: 0,
-                survey_name: "Lindas Survey",
-                date_created: "2018-02-13",
-                questions: [
-                    {
-                        question_id: 0,
-                        question_text: "What is your favorite color?",
-                        question_type: "dropdown",
-                        question_active: true,
-                        options: [
-                            { option_id: 0, option_text: "Red", option_active: true },
-                            { option_id: 1, option_text: "White", option_active: true },
-                            { option_id: 2, option_text: "Pink", option_active: true },
-                            { option_id: 3, option_text: "Blue", option_active: true },
-                            { option_id: 4, option_text: "Yellow", option_active: false }
-                        ],
-                        responses: [
-                            { response_id: 0, response_text: "Red", date_taken: "2018-11-02" },
-                            { response_id: 1, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 2, response_text: "Pink", date_taken: "2018-11-02" },
-                            { response_id: 3, response_text: "Blue", date_taken: "2018-11-02" },
-                            { response_id: 4, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 5, response_text: "White", date_taken: "2018-11-02" },
-                            { response_id: 6, response_text: "Yellow", date_taken: "2018-11-02" },
-                            { response_id: 7, response_text: "Blue", date_taken: "2018-11-02" },
-                            { response_id: 8, response_text: "Pink", date_taken: "2018-11-02" },
-                        ]
-                    },
-                    {
-                        question_id: 1,
-                        question_text: "What is your favorite City?",
-                        question_type: "mc",
-                        question_active: true,
-                        options: [
-                            { option_id: 5, option_text: "New York City", option_active: true },
-                            { option_id: 6, option_text: "Boston", option_active: true },
-                            { option_id: 7, option_text: "Washington", option_active: false },
-                            { option_id: 8, option_text: "Miami", option_active: true },
-                            { option_id: 9, option_text: "Poughkeepsie", option_active: true }
-                        ],
-                        responses: [
-                            { response_id: 9, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 10, response_text: "Boston", date_taken: "2018-11-02" },
-                            { response_id: 11, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 12, response_text: "Washington", date_taken: "2018-11-02" },
-                            { response_id: 13, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
-                            { response_id: 14, response_text: "Poughkeepsie", date_taken: "2018-11-02" },
-                            { response_id: 15, response_text: "New York City", date_taken: "2018-11-02" },
-                            { response_id: 16, response_text: "Miami", date_taken: "2018-11-02" },
-                            { response_id: 17, response_text: "Boston", date_taken: "2018-11-02" },
-                        ]
-                    },
-                    {
-                        question_id: 2,
-                        question_text: "Select the services that you need: ",
-                        question_type: "checkboxes",
-                        question_active: true,
-                        options: [
-                            { option_id: 10, option_text: "More Money", option_active: false },
-                            { option_id: 11, option_text: "More Time", option_active: true },
-                            { option_id: 12, option_text: "More Clothes", option_active: true },
-                            { option_id: 13, option_text: "Less capping work", option_active: true },
-                            { option_id: 14, option_text: "Less drinking", option_active: false }
-                        ],
-                        responses: [
-                            { response_id: 18, response_text: "More Time", date_taken: "2018-11-02" },
-                            { response_id: 19, response_text: "More Time", date_taken: "2018-11-02" },
-                            { response_id: 20, response_text: "More Money", date_taken: "2018-11-02" },
-                            { response_id: 21, response_text: "Less drinking", date_taken: "2018-11-02" },
-                            { response_id: 22, response_text: "Less capping work", date_taken: "2018-11-02" },
-                            { response_id: 23, response_text: "Less capping work", date_taken: "2018-11-02" },
-                            { response_id: 24, response_text: "More Money", date_taken: "2018-11-02" },
-                            { response_id: 25, response_text: "More Clothes", date_taken: "2018-11-02" },
-                            { response_id: 26, response_text: "Less capping work", date_taken: "2018-11-02" },
-                        ]
-                    }
-                ]
-            }
-        ];
-    }
-    return Globals;
-}());
-Globals = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
-], Globals);
-
-//# sourceMappingURL=globals.js.map
-
-/***/ }),
-
-/***/ 78:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(184);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_lock__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(417);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(416);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthenticationService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -3897,13 +3642,13 @@ var _a;
 
 /***/ }),
 
-/***/ 798:
+/***/ 797:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(390);
+module.exports = __webpack_require__(389);
 
 
 /***/ })
 
-},[798]);
+},[797]);
 //# sourceMappingURL=main.bundle.js.map

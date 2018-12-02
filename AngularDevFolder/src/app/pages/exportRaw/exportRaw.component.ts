@@ -1,13 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef,  } from '@angular/core';
-import { Globals } from '../../globals';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
 import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
 import { Responses } from '../../models/responseExport.model';
-import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
-
-
 
 @Component({
    selector: 'app-exportRaw',
@@ -16,15 +12,11 @@ import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
    providers: [SurveyService]
 
 })
+
 export class ExportRawComponent implements OnInit {
    
-   constructor(
-      public globals: Globals,
-      public surveyService: SurveyService,
-      private _fb: FormBuilder,
-      private changeref: ChangeDetectorRef
-
-      ) {}
+   constructor(public surveyService: SurveyService,
+               private changeref: ChangeDetectorRef) {}
 
    // datafeed that the table uses to populate data
    dataFeed: any[];

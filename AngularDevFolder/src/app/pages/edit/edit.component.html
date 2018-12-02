@@ -1,170 +1,165 @@
 <div id="wrapper">
-  <navigation></navigation>
-  <div id="page-wrapper" class="gray-bg">
-    <topnavbar></topnavbar>
-    <div id="ctr">
-      <div class="row">
-        <div class="col-lg-10 ibox float-e-margins">
-          <div class="ibox-content">
-            <div class="row justify-content-between btnBar">
-              <div class="col">
-                <select class="form-control pull-left" id="surveySelect" (change)="updateSurveyFormData($event.target.value)">
-                  <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
-                  <option *ngFor="let s of surveys" [value]="s.survey_id">
-                    {{ s.survey_name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col">
-                <button type="button" (click)="newSurveyForm()" class="pull-right btn btn-warning">
-                  Create New Survey
-                </button>
-              </div>
-            </div>
-            <hr>
-            <div class="feed-activity-list">
-              <form [formGroup]="survey" novalidate (ngSubmit)="save(survey.value)">
-                <div class="form-group">
-                  <h2 style="font-weight:bold">Survey Name</h2>
-                  <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="survey_name"
-                    placeholder="Enter Survey Name">
-                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="survey_id"
-                    placeholder="Enter Survey Name">
-                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="question_id"
-                    placeholder="Enter Survey Name">
-                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="option_id"
-                    placeholder="Enter Survey Name">
+    <navigation></navigation>
+    <div id="page-wrapper" class="gray-bg">
+      <topnavbar></topnavbar>
+      <div id="ctr">
+        <div class="row">
+          <div class="col-lg-10 ibox float-e-margins">
+            <div class="ibox-content">
+              <div class="row justify-content-between btnBar">
+                <div class="col">
+                  <select class="form-control pull-left" id="surveySelect" (change)="updateSurveyFormData($event.target.value)">
+                    <option value="-1" disabled selected>Select survey to edit or create a new one!</option>
+                    <option *ngFor="let s of surveys" [value]="s.survey_id">
+                      {{ s.survey_name }}
+                    </option>
+                  </select>
                 </div>
-                  
-                <!-- QUESTIONS -->
-                <div formArrayName="questions">
-                  <div *ngFor="let question of survey.controls.questions.controls; let i=index">
-                    <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div row>
-                            <h3 class="pull-left" id="questionHeader">Question {{ i+1}}</h3>
-                            <button type="button" (click)="updateQuestionActiveStatus(question, false)" *ngIf="survey.controls.questions.controls[i].controls.question_is_active.value"
-                              value="true" class="label label-primary">Active</button>
-                            <button type="button" (click)="updateQuestionActiveStatus(question, true)" *ngIf="! survey.controls.questions.controls[i].controls.question_is_active.value"
-                              value="false" class="label label-warning">Inactive</button>
-                            <button type="button" *ngIf="survey.controls.questions.length > 1 && i > currentQuestionScope"
-                              class="btn btn-danger btn-sm pull-right" (click)='removeQuestion(i)'> <i id="btnQuestionRemove"
-                                class="fas fa-minus-circle"></i></button>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-3">
-                          <div class="row">
-                            <div class="col-lg-12">
-                              <small class="text-muted">Question Type</small>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-lg-12">
-                              <!--TYPE GO HERE-->
-                              <select formControlName="question_type" class="form-control form-control-sm" required>
-                                <option value="" disabled selected>Select question type:</option>
-                                <option value="select">Dropdown</option>
-                                <option value="checkbox">Checkboxes</option>
-                                <option value="radio">Multiple Choice</option>
-                                <option value="text">Textbox</option>
-                              </select>
+                <div class="col">
+                  <button type="button" (click)="newSurveyForm()" class="pull-right btn btn-warning">
+                    Create New Survey
+                  </button>
+                </div>
+              </div>
+              <hr>
+              <div class="feed-activity-list">
+                <form [formGroup]="survey" novalidate (ngSubmit)="save(survey.value)">
+                  <div class="form-group">
+                    <h2 style="font-weight:bold">Survey Name</h2>
+                    <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="survey_name"
+                      placeholder="Enter Survey Name">
+                  </div>
+                  <!-- QUESTIONS -->
+                  <div formArrayName="questions">
+                    <div *ngFor="let question of survey.controls.questions.controls; let i=index">
+                      <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div row>
+                              <h3 class="pull-left" id="questionHeader">Question {{ i+1}}</h3>
+                              <button type="button" (click)="updateQuestionActiveStatus(question, false)" *ngIf="survey.controls.questions.controls[i].controls.question_is_active.value"
+                                value="true" class="label label-primary">Active</button>
+                              <button type="button" (click)="updateQuestionActiveStatus(question, true)" *ngIf="! survey.controls.questions.controls[i].controls.question_is_active.value"
+                                value="false" class="label label-warning">Inactive</button>
+                              <button type="button" *ngIf="survey.controls.questions.length > 1 && i > currentQuestionScope"
+                                class="btn btn-danger btn-sm pull-right" (click)='removeQuestion(i)'> <i id="btnQuestionRemove"
+                                  class="fas fa-minus-circle"></i></button>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="row" style="margin-top:10px">
-                        <div class="col-lg-12">
-                          <small class="text-muted">Question Prompt</small>
-                          <!--TEXT BOX GOES HERE-->
-                          <div class="form-group">
-                            <textarea formControlName="question_text" class="form-control"
-                              id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here...">
-                            </textarea>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row" *ngIf="showOptionsDiv(question)">
-                        <div class="col-lg-6">
-                          <!--OPTIONS GO HERE-->
-                          <!-- SHOWING OPTIONS-->
-                          <div formArrayName="options" *ngFor="let option of survey.controls.questions.controls[i].controls.options.controls; let j=index">
-
-                            <div class="row">
-                              <div class="col-lg-10">
-                                <h3 style="font-weight:lighter" class="pull-left">Option {{ j+1}}</h3>
-                                <button type="button" (click)="updateOptionActiveStatus(question, j, false)" *ngIf="survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"
-                                  value="true" class="label label-primary pull-right">Active</button>
-                                <button type="button" (click)="updateOptionActiveStatus(question, j, true)" *ngIf="! survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"
-                                  value="false" class="label label-warning pull-right">Inactive</button>
-                              </div>
-                            </div>
-
+                        <div class="row">
+                          <div class="col-lg-3">
                             <div class="row">
                               <div class="col-lg-12">
-                                <div [formGroupName]="j">
-                                  <div class="form-group">
-                                    <div class="row">
-                                      <div class="col-lg-10">
-                                        <input formControlName="option_text" type="text"
-                                          class="form-control" placeholder="Enter Option">
-                                      </div>
-                                      <div class="col-lg-2">
-                                        <button type="button" class="btn btn-danger btn-sm pull-right" *ngIf="question.controls.options.length > 1  &&  j > currentOptionScope[i] "
-                                          (click)="removeOption(question, j, i)"><i class="fas fa-minus-circle"></i></button>
+                                <small class="text-muted">Question Type</small>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <!--TYPE GO HERE-->
+                                <select formControlName="question_type" class="form-control form-control-sm" required>
+                                  <option value="" disabled selected>Select question type:</option>
+                                  <option value="select">Dropdown</option>
+                                  <option value="checkbox">Checkboxes</option>
+                                  <option value="radio">Multiple Choice</option>
+                                  <option value="text">Textbox</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" style="margin-top:10px">
+                          <div class="col-lg-12">
+                            <small class="text-muted">Question Prompt</small>
+                            <!--TEXT BOX GOES HERE-->
+                            <div class="form-group">
+                              <textarea formControlName="question_text" class="form-control"
+                                id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here...">
+                              </textarea>
+                            </div>
+                          </div>
+                        </div>
+  
+                        <div class="row" *ngIf="showOptionsDiv(question)">
+                          <div class="col-lg-6">
+                            <!--OPTIONS GO HERE-->
+                            <!-- SHOWING OPTIONS-->
+                            <div formArrayName="options" *ngFor="let option of survey.controls.questions.controls[i].controls.options.controls; let j=index">
+  
+                              <div class="row">
+                                <div class="col-lg-10">
+                                  <h3 style="font-weight:lighter" class="pull-left">Option {{ j+1}}</h3>
+                                  <button type="button" (click)="updateOptionActiveStatus(question, j, false)" *ngIf="survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"
+                                    value="true" class="label label-primary pull-right">Active</button>
+                                  <button type="button" (click)="updateOptionActiveStatus(question, j, true)" *ngIf="! survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"
+                                    value="false" class="label label-warning pull-right">Inactive</button>
+                                </div>
+                              </div>
+  
+                              <div class="row">
+                                <div class="col-lg-12">
+                                  <div [formGroupName]="j">
+                                    <div class="form-group">
+                                      <div class="row">
+                                        <div class="col-lg-10">
+                                          <input formControlName="option_text" type="text"
+                                            class="form-control" placeholder="Enter Option">
+                                        </div>
+                                        <div class="col-lg-2">
+                                          <button type="button" class="btn btn-danger btn-sm pull-right" *ngIf="question.controls.options.length > 1  &&  j > currentOptionScope[i] "
+                                            (click)="removeOption(question, j, i)"><i class="fas fa-minus-circle"></i></button>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-
-                            <div class="row">
-                              <div class="col-lg-10">
-                                <button type="button" class="btn btn-primary btn-block pull-right " *ngIf="j == question.controls.options.length - 1 && j >= currentOptionScope[i]"
-                                  (click)="addOption(question,i)"><i class="fa fa-plus-circle"></i>
-                                </button>
+  
+                              <div class="row">
+                                <div class="col-lg-10">
+                                  <button type="button" class="btn btn-primary btn-block pull-right " *ngIf="j == question.controls.options.length - 1"
+                                    (click)="addOption(question,i)"><i class="fa fa-plus-circle"></i> 
+                                  </button>
+                                </div>
                               </div>
+  
                             </div>
-
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <button type="button" class="btn btn-primary btn-sm pull-right" *ngIf='i >= currentQuestionScope'
+                              (click)='addQuestion(i)'><i class="fa fa-plus-circle"></i>
+                            </button>
                           </div>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <button type="button" class="btn btn-primary btn-sm pull-right" *ngIf='i >= currentQuestionScope'
-                            (click)='addQuestion(i)'><i class="fa fa-plus-circle"></i>
-                          </button>
-                        </div>
-                      </div>
+                      <!--END OF FEED ELEMENT DIV-  -->
                     </div>
-                    <!--END OF FEED ELEMENT DIV-  -->
+                    <!--END OF ngFor DIV-->
                   </div>
-                  <!--END OF ngFor DIV-->
+                  <!--END OF Form Array for Questions Div-->
+                  <button type="submit" id="save" (click)="openModal()" class="btn btn-success btn-lg btn-block">
+                    Save Survey
+                  </button>
+  
+                </form>
+                <div id="success" class="modal">
+  
+                  <!-- Modal content -->
+                  <div class="modal-content">
+                    <span (click)="closeModal()" class="close">&times;</span>
+                    <p>Saved Successfully!</p>
+                  </div>
+  
                 </div>
-                <!--END OF Form Array for Questions Div-->
-                <button type="submit" id="save" (click)="openModal()" class="btn btn-success btn-lg btn-block">
-                  Save Survey
-                </button>
-
-              </form>
-              <div id="success" class="modal">
-
-                <!-- Modal content -->
-                <div class="modal-content">
-                  <p class="saved">Saved Successfully!</p>
-                </div>
-
               </div>
+  
+              <pre>Form Value: <br>{{survey.value | json}}</pre>
             </div>
-
-            <pre>Form Value: <br>{{survey.value | json}}</pre>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+  

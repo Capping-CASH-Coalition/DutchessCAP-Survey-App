@@ -1,5 +1,4 @@
 import { OnInit, Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
-import { Globals } from "../../globals";
 import { GraphService } from '../../services/graph.service';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
@@ -13,13 +12,10 @@ import { Responses } from '../../models/responseExport.model';
    styleUrls: ['./home.component.css'],
    providers: [SurveyService]
 })
-export class HomeComponent implements OnInit {
-   constructor(
-      public globals: Globals,
-      public graphService: GraphService,
-      public surveyService: SurveyService,
-      private changeref: ChangeDetectorRef 
-   ){ }
+export class HomeComponent implements OnInit, AfterViewInit {
+   constructor(public graphService: GraphService,
+               public surveyService: SurveyService,
+               private changeref: ChangeDetectorRef){ }
 
    canvas: any;
       // canvas context

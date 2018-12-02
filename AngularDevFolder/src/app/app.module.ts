@@ -35,11 +35,8 @@ import { GraphableQuestionPipe } from './pipes/graphableQuestion.pipe';
 import { ExceptQuestionIdPipe } from './pipes/exceptQuestionId.pipe';
 import { FilterByQuestionActivePipe } from './pipes/filterByQuestionActive.pipe'
 
-
 // Custom imports
 import { appRoutes } from "./app.routes";
-import { Globals } from './globals';
-
 
 @NgModule({
     // Declarations allow all components and pipes to be used through the project
@@ -80,8 +77,7 @@ import { Globals } from './globals';
        SurveyService, 
        GraphService, 
        AuthenticationService, 
-       AuthGuardService, 
-       Globals, 
+       AuthGuardService,
        {provide: LocationStrategy, useClass: HashLocationStrategy}
     ],
    // Bootstrap is the first component loaded in the project

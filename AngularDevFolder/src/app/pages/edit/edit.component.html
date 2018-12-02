@@ -28,7 +28,14 @@
                   <h2 style="font-weight:bold">Survey Name</h2>
                   <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="survey_name"
                     placeholder="Enter Survey Name">
+                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="survey_id"
+                    placeholder="Enter Survey Name">
+                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="question_id"
+                    placeholder="Enter Survey Name">
+                  <input [readonly]="setReadOnly()" type="hidden" class="form-control" formControlName="option_id"
+                    placeholder="Enter Survey Name">
                 </div>
+                  
                 <!-- QUESTIONS -->
                 <div formArrayName="questions">
                   <div *ngFor="let question of survey.controls.questions.controls; let i=index">
@@ -73,7 +80,7 @@
                           <small class="text-muted">Question Prompt</small>
                           <!--TEXT BOX GOES HERE-->
                           <div class="form-group">
-                            <textarea formControlName="question_text" [readonly]="setReadOnly()" class="form-control"
+                            <textarea formControlName="question_text" class="form-control"
                               id="exampleTextarea" rows="2" placeholder="Enter Question Prompt Here...">
                             </textarea>
                           </div>
@@ -102,7 +109,7 @@
                                   <div class="form-group">
                                     <div class="row">
                                       <div class="col-lg-10">
-                                        <input formControlName="option_text" [readonly]="setReadOnly()" type="text"
+                                        <input formControlName="option_text" type="text"
                                           class="form-control" placeholder="Enter Option">
                                       </div>
                                       <div class="col-lg-2">
@@ -148,8 +155,7 @@
 
                 <!-- Modal content -->
                 <div class="modal-content">
-                  <span (click)="closeModal()" class="close">&times;</span>
-                  <p>Saved Successfully!</p>
+                  <p class="saved">Saved Successfully!</p>
                 </div>
 
               </div>

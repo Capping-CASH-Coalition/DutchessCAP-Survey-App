@@ -126,7 +126,6 @@ export class HomeComponent implements OnInit {
                            if(i == this.surveys.length -1){
                               this.showHomeDiv = true;
                               this.showInfo = true;
-                              this.updateChart();
                            }
                      }, (error) => {
                            console.log('error is ', error)
@@ -146,6 +145,7 @@ export class HomeComponent implements OnInit {
    }
 
    ngAfterViewInit() {
+      setTimeout(() => {this.updateChart();}, 600);
    };
 
     // Updates survey, changing it's active status

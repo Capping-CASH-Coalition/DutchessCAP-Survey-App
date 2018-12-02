@@ -24,6 +24,7 @@ export class InputComponent implements OnInit {
     // Survey variables set by surveySelect()
     selectedSurveyId: number;
     selectedSurveyIndex: number;
+    selectedSurveyName: string = "";
 
     // Option_id that is set by optionSelect()
     selectedOption: number;
@@ -37,6 +38,8 @@ export class InputComponent implements OnInit {
     // Unique user hash
     currentUser: string;
 
+    modal;
+
 
 
     constructor(public surveyService: SurveyService,
@@ -46,6 +49,8 @@ export class InputComponent implements OnInit {
 
     // On component initialization, get the survey ids, names, and date created
     ngOnInit(): void {
+        // Get the modal
+        this.modal = document.getElementById('success');
         this.surveyService.getAllSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
             for (let i = 0; i < response.body.length; i++) {
@@ -65,6 +70,17 @@ export class InputComponent implements OnInit {
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
 
+
+
+        
+
+    }
+
+    ngAfterViewInit(){
+        setTimeout(() => {this.surveySelect(this.surveys[0].survey_id)}, 1000);
+
+        
+       
     }
 
     // This continuously checks if the user is authenticated
@@ -77,6 +93,7 @@ export class InputComponent implements OnInit {
 
     //when a user clicks an option from the dropdown menu
     surveySelect(value) {
+
         this.selectedSurveyId = value;
         for (let i = 0; i < this.surveys.length; i++) {
             if (this.selectedSurveyId == this.surveys[i].survey_id) {
@@ -84,6 +101,9 @@ export class InputComponent implements OnInit {
             }
             this.surveys[i].questions = [];
         }
+
+        // Sets default survey name and updates on select
+        this.selectedSurveyName = this.surveys[this.selectedSurveyIndex].survey_name;
         
         // Once the selected surveyID is done, this will populate the data using the selected ID
         this.surveyService.getAllSurveyQuestions(this.selectedSurveyId).subscribe(response => {
@@ -221,5 +241,17 @@ export class InputComponent implements OnInit {
         });
     }
 
+    // When user clicks save survey, display modal
+    openModal(): void {
+        this.modal.style.display = "block";
+        if (this.modal.style.display == "block") {
+            setTimeout(() => {this.closeModal();}, 3000);
+        }
+    }
+
+    // When user clicks X, close the modal and refresh the page to see changes
+    closeModal(): any {
+        window.location.reload();
+    }   
 
 }

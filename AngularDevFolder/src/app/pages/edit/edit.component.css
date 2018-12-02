@@ -36,27 +36,18 @@
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+   background-color: #fefefe;
+   margin: 15% auto; /* 15% from the top and centered */
+   padding: 30px;
+   border: 1px solid #888;
+   width: 18%; /* Could be more or less, depending on screen size */
 }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.saved {
+   font-size: 28px;
+   text-align: center;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 
 .questionActiveLabel {
    margin-left: 15px;
@@ -69,4 +60,8 @@
 
 #questionHeader {
    margin-right: 30px;
+}
+
+.hide{
+   display: "none";
 }

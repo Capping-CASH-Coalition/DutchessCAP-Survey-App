@@ -1,10 +1,8 @@
-import { OnInit, Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
-import { Globals } from "../../globals";
+import { OnInit, Component, ChangeDetectorRef } from "@angular/core";
 import { GraphService } from '../../services/graph.service';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
 import { Question } from '../../models/question.model';
-import { Option } from '../../models/option.model';
 import { Responses } from '../../models/responseExport.model';
 
 @Component({
@@ -15,18 +13,17 @@ import { Responses } from '../../models/responseExport.model';
 })
 export class HomeComponent implements OnInit {
    constructor(
-      public globals: Globals,
       public graphService: GraphService,
       public surveyService: SurveyService,
       private changeref: ChangeDetectorRef 
    ){ }
 
    canvas: any;
-      // canvas context
+   // canvas context
    ctx: any;
-      // chart object
+   // chart object
    chart: Chart = null;
-      // Holds the dynamic survey variables for display
+   // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
    showHomeDiv: boolean = false;
    showInfo: boolean = false;
@@ -95,7 +92,6 @@ export class HomeComponent implements OnInit {
                      }, (error) => {
                            console.log('error is ', error)
                      })
-               
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
                },(error) => {
@@ -108,9 +104,6 @@ export class HomeComponent implements OnInit {
             console.log('error is ', error)
       })
    }
-
-   ngAfterViewInit() {
-   };
 
    // Updates survey, changing it's active status
    updateActiveSurvey(val): void {

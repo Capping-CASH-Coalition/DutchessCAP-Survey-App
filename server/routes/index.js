@@ -5,13 +5,14 @@ const pg = require('pg');
 const path = require('path');
 // This string is what allows index.js to connect to the database. It is the name of the server://nameOfOwnerOfDatabase:password@host:portNumber/nameOfDatabase
 
+// Server
 //const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
 
 // stephens
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
 
 // Brians
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
 
 // Garys
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
@@ -255,6 +256,7 @@ router.post('/api/postSurveyResponse', (req, res) => {
 router.post('/api/postNewSurvey', (req, res, next) => {
     // Created array that will hold the data to be passed to the sql function
     const data = req.body;
+    console.log(req.body);
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -264,28 +266,12 @@ router.post('/api/postNewSurvey', (req, res, next) => {
             return res.status(500).json({ success: false, data: err });
         }
         var query;
-        var surveyId;
-        var questionId;
-        var optionId;
-        query = client.query('SELECT MAX(survey_id) as survey_id FROM surveys');
-        query.on('row', (row) => {
-            surveyId.push(row);
-        });
-        query = client.query('SELECT MAX(question_id) as question_id FROM questions');
-        query.on('row', (row) => {
-            questionId.push(row);
-        });
-        query = client.query('SELECT MAX(option_id) as option_id FROM options');
-        query.on('row', (row) => {
-            optionId.push(row);
-        });
-        
-        lastSurveyId = surveyId.survey_id;
-        console.log("surveyid.sid: " + lastSurveyId);
-        lastQuestionId = questionId.question_id;
-        console.log("questionid.qid: " + lastQuestionId);
-        lastOptionId = optionId.option_id;
-        console.log("optionid.oid: " + lastOptionId);
+
+        lastSurveyId = data.survey_id;
+        lastQuestionId = data.question_id;
+        lastOptionId = data.option_id;
+        lastSurveyId++;
+
         // Created query that will insert a survey_name into the surveys table.
         query = client.query('INSERT INTO surveys (survey_name) VALUES ($1)', [data.survey_name]);
         
@@ -296,50 +282,23 @@ router.post('/api/postNewSurvey', (req, res, next) => {
 
             for (var j = 0; j < data.questions[i].options.length; j++ ) {
                 lastOptionId++;
-                query = client.query('INSERT INTO options (question_id, option_text) VALUES ($1, $2)', [lastQuestionId, data.questions[i].option_text]);
+                query = client.query('INSERT INTO options (question_id, option_text) VALUES ($1, $2)', [lastQuestionId, data.questions[i].options[j].option_text]);
                 query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES ($1, $2, $3)', [lastSurveyId, lastQuestionId, lastOptionId]);
             }
         }
 
-
         // After all data is returned, close connection and return results
         query.on('end', () => {
             done();
         });
     });
 });
-/*
-// Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
-router.post('/api/postSurvey', (req, res, next) => {
-    //Array to hold results from query
-    const results = [];
-    // Created array that will hold the data to be passed to the sql function
-    const data = { survey_name: req.body.survey_name };
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-        // Handle connection errors
-        if (err) {
-            done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
-        }
 
-        // Created query that will insert a survey_name into the surveys table.
-        const query = client.query('INSERT INTO surveys (survey_name) VALUES ($1)', [data.survey_name]);
-
-        // After all data is returned, close connection and return results
-        query.on('end', () => {
-            done();
-        });
-    });
-});
-*/
 // Route that will post a question given a question_text & question_type. The question_id and question_is_active will be automatically given by the database
 router.post('/api/postQuestion', (req, res, next) => {
     //Array to hold results from query
-    const results = [];
+    const results = req.body;
 
-    const data = { question_text: req.body.question_text, question_type: req.body.question_type };
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -348,10 +307,17 @@ router.post('/api/postQuestion', (req, res, next) => {
             console.log(err);
             return res.status(500).json({ success: false, data: err });
         }
-
-        // Created query that will insert a question into the questions table given question_text & question_type
-        const query = client.query('INSERT INTO questions (question_text, question_type) VALUES($1, $2)', [data.question_text, data.question_type]);
-
+        var lastOptionId = results[0].option_id
+        for (var i = 0; i < results.length; i++) {
+            // Created query that will insert a question into the questions table given question_text & question_type
+            var query = client.query('INSERT INTO questions (question_text, question_type) VALUES($1, $2)', [results[i].question_text, results[i].question_type]);
+            for (var j = 0; j < results[i].options.length; j++) {
+                lastOptionId++;
+                query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [results[i].options[j].option_text, results[i].question_id]);
+                query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [results[0].survey_id, results[i].question_id, lastOptionId]);
+            }
+        }
+        
         // After all data is returned, close connection and return results
         query.on('end', () => {
             done();
@@ -364,7 +330,11 @@ router.post('/api/postOption', (req, res, next) => {
     //Array to hold results from query
     const results = [];
 
-    const data = { option_text: req.body.option_text, question_id: req.body.question_id };
+    const data = { option_text: req.body.option_text, 
+                   question_id: req.body.question_id,
+                   survey_id: req.body.survey_id,
+                   option_id: req.body.option_id };
+
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -375,7 +345,9 @@ router.post('/api/postOption', (req, res, next) => {
         }
 
         // Created query that will insert an option into the options table given an option_text & a question_id
-        const query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [data.option_text, data.question_id]);
+        var query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [data.option_text, data.question_id]);
+
+        query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [data.survey_id, data.question_id, data.option_id]);
 
         // After all data is returned, close connection and return results
         query.on('end', () => {

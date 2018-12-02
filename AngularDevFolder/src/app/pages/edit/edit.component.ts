@@ -90,6 +90,8 @@ export class EditComponent implements OnInit {
                                           }
                                     }
                               }
+                              this.newSurveyForm();
+                              this.changeref.detectChanges();
                         }, (error) => {
                               console.log('error is ', error)
                         }) 
@@ -114,8 +116,10 @@ export class EditComponent implements OnInit {
       this.currentOptionScope = [-1];
       
       this.survey = this._fb.group({
-            survey_id: new FormControl(''),
+            survey_id: new FormControl(0),
             survey_name: new FormControl(''),
+            question_id: new FormControl(0),
+            option_id: new FormControl(0),
             questions: this._fb.array([
                   this.initQuestion(),
             ])
@@ -209,6 +213,8 @@ export class EditComponent implements OnInit {
       // populate the survey form with proper data
       this.survey = this._fb.group({
          survey_id: new FormControl(currSurvey.survey_id),
+         question_id: new FormControl(''),
+         option_id: new FormControl(''),
          survey_name: new FormControl({value: currSurvey.survey_name, disabled: true}),
          questions: this._fb.array([])
       });
@@ -218,7 +224,7 @@ export class EditComponent implements OnInit {
       this.currentQuestionScope = currSurvey.questions.length - 1;
    }
 
-   // used to update the questions of the form group qustions array
+   // used to update the questions of the form group questions array
    patchFormQuestions(questions: any[]) {
       const control = <FormArray>this.survey.controls['questions'];
       questions.forEach(q => {
@@ -244,67 +250,45 @@ export class EditComponent implements OnInit {
       return ops;
    }
 
+   // used to update the options of the nested form group options array
+   patchSurvey(options) {
+      let ops = new FormArray([]);
+      options.forEach(o => {
+         ops.push(this._fb.group({
+            option_is_active: new FormControl(o.option_is_active),
+            option_text: new FormControl({value: o.option_text, disabled: true})
+         }));
+      });
+      this.currentOptionScope.push(options.length - 1);
+      return ops;
+   }
+
    // Saves/Uploads the selected formData to the database
    save(formData) {
       // Get the survey index
       let surveyIndex = this.getSurveyIndex(formData);
+      console.log(formData);
       // Check if its a new survey
       console.log(surveyIndex);
       let question;
       let option;
       let architecture;
-      if (surveyIndex == -1) {
-            
-            //this.lastSurveyId++;
-            //let surveyName = { "survey_name": formData.survey_name };
+      if (surveyIndex === -1) {
+            formData.survey_id = this.lastSurveyId;
+            formData.question_id = this.lastQuestionId;
+            formData.option_id = this.lastOptionId;
+
             this.surveyService.postNewSurvey(formData).subscribe();
-             /*
-            for (let i = 0; i < formData.questions.length; i++) {
-
-                  question = {
-                        "question_text": formData.questions[i].question_text,
-                        "question_type": formData.questions[i].question_type
-                  };
-
-                  this.surveyService.postQuestion(question).subscribe();
-                  this.lastQuestionId++;
-                  this.surveyService.wait(50);
-                  for (let j = 0; j < formData.questions[i].options.length; j++) {
-                 
-                        option = {
-                              "option_text": formData.questions[i].options[j].option_text,
-                              "question_id": this.lastQuestionId
-                        };
-
-                        this.surveyService.wait(50);
-                        this.surveyService.postOption(option).subscribe();
-                        this.surveyService.wait(50);
-                        this.lastOptionId++;
-                        console.log("surveyId: " + this.lastSurveyId);
-                        console.log("questionId: " + this.lastQuestionId);
-                        console.log("optionId: " + this.lastOptionId);
-                        architecture = {
-                              "survey_id": this.lastSurveyId,
-                              "question_id": this.lastQuestionId,
-                              "option_id": this.lastOptionId
-                        };
-
-                        this.surveyService.postArchitecture(architecture).subscribe();
-                  }
-            }
       // If index is not -1, this is an existing survey
-      */
      } else {
            for (let i = 0; i < this.surveys[surveyIndex].questions.length; i++) {
                  // // Check if questions active/inactive has changed, then update the database
-                  console.log("qactive: " + formData.questions[i].question_is_active);
                  if (formData.questions[i].question_is_active !== 
                      this.surveys[surveyIndex].questions[i].question_is_active) {
                         question = {
                               "question_id": this.surveys[surveyIndex].questions[i].question_id,
                               "question_is_active": formData.questions[i].question_is_active
                         };
-                        console.log("question.isactive: " + question.question_is_active);
                         this.surveyService.updateSurveyQuestionActive(question).subscribe();
                  }
                  // Check if options active/inactive has changed
@@ -320,18 +304,25 @@ export class EditComponent implements OnInit {
                                           "option_id": this.surveys[surveyIndex].questions[i].options[j].option_id,
                                           "option_is_active": formData.questions[i].options[j].option_is_active
                                     };
-                              this.surveyService.updateSurveyQuestionActive(option).subscribe();
+                              this.surveyService.updateSurveyOptionActive(option).subscribe();
                         }
                  }
-                 // Check if there were options added
+                 // Check if there were options added to existing questions
                  if (this.surveys[surveyIndex].questions[i].options.length < formData.questions[i].options.length) {
                        for (let m = this.surveys[surveyIndex].questions[i].options.length; m < formData.questions[i].options.length; m++) {
-                             this.lastOptionId++;
+                             console.log("add option to existing");
+                             console.log("i index: " + i);
+                              console.log("m index: " + m);
+                             console.log("formdata.q[i].o.length: " + formData.questions[i].options.length);
+                              this.lastOptionId++;
                              option = {
                                     "option_text": formData.questions[i].options[m].option_text,
-                                    "question_id": this.lastQuestionId
+                                    "question_id": this.surveys[surveyIndex].questions[i].question_id,
+                                    "survey_id": this.surveys[surveyIndex].survey_id,
+                                    "option_id": this.lastOptionId
                               };
                               this.surveyService.postOption(option).subscribe();
+                              /*
                               this.surveyService.wait(50);
                               console.log("surveyId: " + this.surveys[surveyIndex].survey_id);
                               console.log("questionId: " + this.surveys[surveyIndex].questions[i].question_id);
@@ -343,18 +334,42 @@ export class EditComponent implements OnInit {
                               };
 
                               this.surveyService.postArchitecture(architecture).subscribe();
+                              */
                        }
                  }
            }
            // Check if there are new questions added
            if (this.surveys[surveyIndex].questions.length < formData.questions.length) {
+                 let questions = [];
                  for (let k = this.surveys[surveyIndex].questions.length; k < formData.questions.length; k++) {
+                       console.log("new question");
                         this.lastQuestionId++;
+                        formData.questions[k].survey_id = this.surveys[surveyIndex].survey_id;
+                        formData.questions[k].question_id = this.lastQuestionId;
+                        
                         question = {
+                              "survey_id": this.surveys[surveyIndex].survey_id,
+                              "question_id": this.lastQuestionId,
+                              "option_id": this.lastOptionId,
                               "question_text": formData.questions[k].question_text,
-                              "question_type": formData.questions[k].question_type
+                              "question_type": formData.questions[k].question_type,
+                              options: []
                         };
-                        this.surveyService.postQuestion(question).subscribe();
+
+                        questions.push(question);
+                        console.log("questions[0]: " + questions[0]);
+
+                        for (let l = 0; l < formData.questions[k].options.length; l++) {
+                              option = {
+                                    "option_text": formData.questions[k].options[l].option_text
+                              };
+                              
+                              questions[l].options.push(option);
+                              console.log("questions[l].options" + questions[l].options);
+                        }
+                        
+                        this.surveyService.postQuestion(questions).subscribe();
+                        /*
                         this.surveyService.wait(50);
 
                         for (let l = 0; l < formData.questions[k].options.length; l++) {
@@ -377,7 +392,7 @@ export class EditComponent implements OnInit {
                               this.surveyService.wait(50);
 
                               this.surveyService.postArchitecture(architecture).subscribe();
-                        }
+                        }*/
                  }
            }
      }

@@ -499,6 +499,9 @@ var EditComponent = (function () {
         var option;
         var architecture;
         if (surveyIndex == -1) {
+            formData.survey_id = this.lastSurveyId;
+            formData.question_id = this.lastQuestionId;
+            formData.option_id = this.lastOptionId;
             this.surveyService.postNewSurvey(formData).subscribe();
         }
         else {
@@ -1372,7 +1375,7 @@ var HomeComponent = (function () {
     };
     HomeComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        setTimeout(function () { _this.updateChart(); }, 700);
+        setTimeout(function () { _this.updateChart(); }, 750);
     };
     ;
     // Updates survey, changing it's active status

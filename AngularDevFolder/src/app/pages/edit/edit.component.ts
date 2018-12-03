@@ -256,6 +256,9 @@ export class EditComponent implements OnInit {
       let option;
       let architecture;
       if (surveyIndex == -1) {
+            formData.survey_id = this.lastSurveyId;
+            formData.question_id = this.lastQuestionId;
+            formData.option_id = this.lastOptionId;
             this.surveyService.postNewSurvey(formData).subscribe();
       } else {
             for (let i = 0; i < this.surveys[surveyIndex].questions.length; i++) {

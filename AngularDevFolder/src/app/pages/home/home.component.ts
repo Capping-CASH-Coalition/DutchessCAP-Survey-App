@@ -141,7 +141,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
    }
 
    ngAfterViewInit() {
-      setTimeout(() => {this.updateChart();}, 700);
+      setTimeout(() => {this.updateChart();}, 750);
    };
 
     // Updates survey, changing it's active status

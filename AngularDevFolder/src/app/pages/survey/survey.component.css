@@ -1,115 +1,36 @@
-.header {
-    color: #36A0FF;
-    font-size: 27px;
-    padding: 10px;
-}
-
-.header2 {
-    font-size: 20px;
-}
-
-.header3 {
-    color: #36A0FF;
-    font-size: 15px;
-    padding: 10px;
-    margin-bottom:30px;
-}
-
-.pages{
-    margin-left:290px;
-}
-
-.pageNumbers {
-    list-style-type: none;
-    display:inline;
-}
-
-.custom-pagination{
-    display:inline-block;
-}
-
-.pagination{
-    display: inline;
-}
-
-.pageNumberActive {
-    color: black;
-    list-style-type: none;
-    display:inline;
-}
-
-.inline {
-    display:inline-block;
-    margin-right:5px;
-}
-
-.container-fluid{
-    width:100%;    
-}
-
-.container {
-    height: 100%;
-    margin: 0 auto;
-}
-
-#container2 {
-    height: 90%;
-}
-
-#bucket{ 
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    float: none;
-    padding-top: 1%;
-}
-
-.bigicon {
-    font-size: 35px;
-    color: #36A0FF;
-}
-
-#btn {
-    margin-top: 1%;
-}
-
-.form-group {
-    margin: -10px;
-}
-
-#divCheckboxOptionText {
-    transform: translateX(39%);
-    text-align: left;
-}
-
-#radioBoxOptionText {
-    transform: translateX(39%);
-    text-align: left;
-}
-
-#radioStyle {
-    transform: translateX(50%);
-}
-
-#dropdownStyle {
-    float: none;
-    margin: auto 0;
-    width:250px;
-    transform: translateX(25%);
-}
-
-#multiplechoiceStyle{
-    transform: translateX(50%);
-}
-
-.btn {
-    width: 80px;
-}
-
-#loginBtn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-top: 5px;
-    margin-right: 5px;
-}
+.spanOption {
+    margin-left: 15px;
+    font-weight: 400;
+  }
+  .spanQuestionText {
+    margin-left: 5px
+  }
+  .spanQuestion {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .btnBar {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+  }
+  #selectBox{
+    align-content: center;
+  }
+  #surveySelect {
+    width: 300px;
+    align-self: center;
+  }
+  #ctr {
+    margin-left: 7%;
+  }
+  body {
+    height: 100vh;
+    background-color: #F2F2F2;
+  }
+  #topSpacing {
+    margin-top: 3%;
+  }
+  #bottomSpacing {
+    margin-bottom: 8%;
+  }

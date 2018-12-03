@@ -19,6 +19,7 @@ import { InputComponent } from "./pages/input/input.component";
 import { EditComponent } from "./pages/edit/edit.component";
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ThankyouComponent } from './pages/thankyou/thankyou.component';
 
 // Services/Pipes imports
 import { SurveyService } from './services/survey.service';
@@ -51,6 +52,7 @@ import { appRoutes } from "./app.routes";
       InputComponent,
       SurveyComponent,
       NotFoundComponent,
+      ThankyouComponent,
       KeysPipe,
       FilterByOptionActivePipe,
       FilterByQuestionIDPipe,

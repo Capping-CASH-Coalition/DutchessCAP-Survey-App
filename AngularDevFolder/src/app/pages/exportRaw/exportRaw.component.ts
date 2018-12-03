@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef,  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
 import { SurveyService } from 'app/services/survey.service';
 import { SurveyInfo } from '../../models/surveyInfo.model';
 import { Question } from '../../models/question.model';
@@ -10,7 +10,6 @@ import { Responses } from '../../models/responseExport.model';
    styleUrls: ['./exportRaw.component.css'],
    templateUrl: './exportRaw.component.html',
    providers: [SurveyService]
-
 })
 
 export class ExportRawComponent implements OnInit {

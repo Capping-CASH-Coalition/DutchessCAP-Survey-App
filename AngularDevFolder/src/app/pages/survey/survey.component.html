@@ -1,119 +1,133 @@
 <!-- Survey Landing/Home page -->
-<div class="container" id="container2" style="margin: 0 auto"  *ngIf="!showSurveyDiv">
-    <button class="btn btn-default"id="loginBtn" *ngIf="!auth.isAuthenticated()" (click)="auth.login()">
+<body>
+  <div class="container" id="container2" style="margin: 0 auto" *ngIf="!showSurveyDiv">
+    <button class="btn btn-default" id="loginBtn" *ngIf="!auth.isAuthenticated()" (click)="auth.login()">
       Login
     </button>
     <div class="row">
-        <div class="col-md-7" id="bucket" >
-            <div class="well well-sm">
-                <legend class="text-center header">Welcome to Dutchess CAP</legend>
-                <p class="text-center header3">Please select the survey you would like to take:</p>
-               
-                <form class="form-horizontal" method="post" #start="ngForm" validate>
-
-                    <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
-                        <option disabled selected>-Please Select a Survey-</option>
-                        <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
-                    </select>
-                    
-                    <div class="form-group">
-                        <div class="col-md-12 text-center">
-                            <button type="submit" id="btn" class="btn btn-primary btn-lg" (click)="onStart()">Start</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Actual survey with questions -->
-<div class="container" *ngIf="showSurveyDiv">
-      <div class="col-md-9" id="bucket">
+      <div class="col-md-7" id="bucket">
         <div class="well well-sm">
-          <div *ngFor="let survey of surveys | filterBySurveyID: selectedSurveyId; let j = index">
-            <div *ngFor="let question of survey.questions | paginate: config; let k = index">
-              <form class="form-horiziontal">
-                <fieldset>
-                  <legend class="text-center header">{{ survey.survey_name }}</legend>
-  
-                  <div class="text-center header2">
-                    <h3> {{ k+1 }}. {{ question.question_text}} </h3>
-                  </div>
+          <h1>Welcome to Dutchess CAP</h1>
+          <p class="text-center header3">Please select the survey you would like to take:</p>
 
-                  <div [ngSwitch]="question.question_type" style="height:150px;">
-  
-                    <div class="form-group" id="dropdownStyle" *ngSwitchCase="'select'">
-                      <div class="col-md-6" id="bucket">
-                          <select class="form-control" id="select" [(ngModel)]="selectedOptionId" name="selectedOption"
-                            (change)="optionSelect($event, $event.target.value, 'select')">
-                            <option disabled selected>-Please Select an Option-</option>
-                            <option *ngFor="let option of question.options" value="{{option.option_id}}">
-                              {{ option.option_text }}
-                            </option>
-                          </select>
-                      </div>
-                    </div>
-  
-                    <div class="form-check" *ngSwitchCase="'checkbox'" id="checkboxStyle">
-                        <div class="col-md-6" id="bucket">
-                          <div *ngFor="let option of question.options" class="form-check-label" id="divCheckboxOptionText"
-                            (change)="optionSelect($event, $event.target.value, 'checkbox')">
-                            <input class="form-check-input" type="checkbox" value="{{option.option_id}}">
-                            {{ option.option_text }}
+          <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
+            <option disabled selected>-Please Select a Survey-</option>
+            <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
+          </select>
+
+          <div class="form-group">
+            <div class="col-md-12 text-center">
+              <button type="button" id="btn" class="btn btn-primary btn-lg" (click)="onStart()">Start</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="wrapper" *ngIf="showSurveyDiv">
+    <div id="ctr">
+      <div class="row">
+        <div class="col-lg-11 ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="feed-activity-list">
+              <!-- Survey Landing/Home page -->
+              <div class="container" id="container2" style="margin: 0 auto" *ngIf="!showSurveyDiv">
+                <button class="btn btn-default" id="loginBtn" *ngIf="!auth.isAuthenticated()" (click)="auth.login()">
+                  Login
+                </button>
+                <div class="row">
+                  <div class="col-md-7" id="bucket">
+                    <div class="well well-sm">
+                      <legend class="text-center header">Welcome to Dutchess CAP</legend>
+                      <p class="text-center header3">Please select the survey you would like to take:</p>
+
+                      <form class="form-horizontal" method="post" #start="ngForm" validate>
+                        <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
+                          <option disabled selected>-Please Select a Survey-</option>
+                          <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
+                        </select>
+
+                        <div class="form-group">
+                          <div class="col-md-12 text-center">
+                            <button type="submit" id="btn" class="btn btn-primary btn-lg" (click)="onStart()">Start</button>
                           </div>
-                      </div>
+                        </div>
+                      </form>
                     </div>
-  
-                    <div class="form-group" *ngSwitchCase="'text'" id="textStyle">
-                        <div class="col-md-6" id="bucket">
-                          <div class="form-check-label">
-                            <textarea class="form-control" name="text" rows="2" [(ngModel)]="textAreaValue"></textarea>
-                          </div>
-                      </div>
-                    </div>
-  
-                    <div class="form-group" *ngSwitchCase="'radio'" id="radioStyle">
-                      <div class="col-md-6" id="bucket">
-                          <div *ngFor="let option of question.options" id="radioBoxOptionText" (change)="optionSelect($event, $event.target.value, 'radio')">
-                            <input type="radio" class="form-check-input" name="question.question_id" value="{{option.option_id}}">
-                            {{ option.option_text }}
-                          </div>
-                      </div>
-                    </div>
-  
                   </div>
-                  <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="config.currentPage = $event">
-                    <div class="custom-pagination">
-                      <ul>
-                        <span class="pagination-previous" [class.disabled]="p.isFirstPage()">
-                          <button class="btn btn-primary btn-sm" *ngIf="!p.isFirstPage()" (click)="removeResponse(getQuestionIndex(question.question_id, p.getCurrent())); p.previous();">
-                            Previous </button>
+                </div>
+
+              </div>
+              <form>
+                <div *ngFor="let survey of surveys | filterBySurveyID: selectedSurveyId">
+                  <div class="row" *ngFor="let question of survey.questions; let k = index">
+                    <div [hidden]="hideQuestion(k)" id="topSpacing">
+                      <div class="col-lg-4" style="margin-left:40px">
+                        <span class="spanQuestion">
+                          {{ k+1 }} . <span class="spanQuestionText">
+                            {{
+                              survey.questions[k].question_text
+                            }}
                           </span>
-  
-                        <span *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
-                          <li class="pageNumbers" *ngIf="p.getCurrent() !== page.value">
-                            <a style="font-size: 15px; color: grey">{{ page.label }}</a>
-                          </li>
-                          <li class="pageNumberActive" *ngIf="p.getCurrent() === page.value">
-                            <a style="font-size: 15px; color: grey">{{ page.label }}</a>
-                          </li>
                         </span>
-  
-                        <span class="pagination-next" [class.disabled]="p.isLastPage()">
-                          <button class="btn btn-primary btn-sm" *ngIf="!p.isLastPage()" (click)="updateResponses(textAreaValue, getQuestionIndex(question.question_id)); p.next()">
-                            Next </button>
-                          <button class="btn btn-primary btn-sm" *ngIf="p.isLastPage()" (click)="updateResponses(textAreaValue, getQuestionIndex(question.question_id)); postOnSubmit();">
-                            Submit </button>
-                          </span>
-                      </ul>
+                      </div>
+                      <div class="col-lg-7">
+                        <div [ngSwitch]="question.question_type" id="bottomSpacing">
+
+                          <div *ngSwitchCase="'select'">
+                            <select [(ngModel)]="question.response" [ngModelOptions]="{standalone: true}" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'
+                                    class="form-control">
+                              <option *ngFor="let option of question.options" [value]="option.option_id">
+
+                                {{ option.option_text }}
+                              </option>
+                            </select>
+                          </div>
+                          <div *ngSwitchCase="'checkbox'">
+                            <div *ngFor="let option of question.options; let j = index">
+                              <label class="form-check-label">
+                                <input class="form-check-input" (change)="updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)"
+                                       type="checkbox" [value]="option.option_text">
+                                <span class="spanOption">{{ option.option_text }}</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div *ngSwitchCase="'text'">
+                            <div *ngFor="let option of question.options">
+                              <label class="form-check-label"></label>
+                              <textarea class="form-control" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'
+                                        [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows="3"></textarea>
+                            </div>
+                          </div>
+                          <div *ngSwitchCase="'radio'">
+                            <div *ngFor="let option of question.options">
+                              <label class="check-label">
+                                <!--  [(ngModel)]="surveys.responses[k]"-->
+                                <input type="radio" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'
+                                       [(ngModel)]="question.response" [ngModelOptions]="{standalone: true}" class="form-check-input"
+                                       [name]="'radio'+question.question_id" [value]="option.option_text">
+                                <span class="spanOption">{{ option.option_text }}</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </pagination-template>
-                </fieldset>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <button *ngIf="!isFirstPage()" type="button" class="btn btn-primary pull-left btn-sm" (click)='onPrevious()'> Previous </button>
+                      <button type="button" *ngIf="!isLastPage()" class="btn btn-primary pull-right btn-sm" (click)='onNext()'> Next </button>
+                      <button [disabled]="disabledSave" id="save" type="button" *ngIf="isLastPage()" class="btn btn-primary pull-right btn-sm" (click)='save()'> Save </button>
+                    </div>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
         </div>
       </div>
-    
-</div>
+    </div>
+  </div>
+</body>

@@ -8,7 +8,7 @@ const path = require('path');
 //const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
 
 // stephens
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
 
 // Brians
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
@@ -20,7 +20,7 @@ const path = require('path');
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:lina1968@localhost:5432/CashCoalition';
 
 // Zachs
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:zachary510@localhost:5432/CashCoalition3';
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:zachary510@localhost:5432/CashCoalition3';
 
 /* 
     Get functions

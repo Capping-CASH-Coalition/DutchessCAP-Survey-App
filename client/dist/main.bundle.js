@@ -1372,7 +1372,7 @@ var HomeComponent = (function () {
     };
     HomeComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        setTimeout(function () { _this.updateChart(); }, 600);
+        setTimeout(function () { _this.updateChart(); }, 700);
     };
     ;
     // Updates survey, changing it's active status

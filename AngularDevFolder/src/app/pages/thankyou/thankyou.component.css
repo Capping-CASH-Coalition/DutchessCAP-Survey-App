@@ -3,6 +3,10 @@
    text-align: center;
 }
 
+#divRowHeader {
+   text-align: center;
+}
+
 #divRowBtn {
    margin-top:5%;
 }

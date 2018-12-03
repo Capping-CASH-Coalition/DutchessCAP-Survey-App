@@ -3225,7 +3225,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "\n#divRowComment {\n   text-align: center;\n}\n\n#divRowBtn {\n   margin-top:5%;\n}\n\nbody {\n  height: 100vh;\n\n}\n", ""]);
+exports.push([module.i, "\n#divRowComment {\n   text-align: center;\n}\n\n#divRowHeader {\n   text-align: center;\n}\n\n#divRowBtn {\n   margin-top:5%;\n}\n\nbody {\n  height: 100vh;\n\n}\n", ""]);
 
 // exports
 
@@ -3578,7 +3578,7 @@ module.exports = "<!-- Survey Landing/Home page -->\r\n\r\n<body>\r\n\r\n  <div 
 /***/ 639:
 /***/ (function(module, exports) {
 
-module.exports = "<body>\n\n  <div class=\"row\" style=\"margin-top:6%\">\n\n    <div class=\"col-lg-3\">\n    </div>\n\n    <div class=\"col-lg-6\">\n      <div class=\"ibox float-e-margins\">\n        <div class=\"ibox-title \">\n          <h2 class=\"center-text\">Thank you for taking our survey!</h2>\n        </div>\n        <div class=\"ibox-content\">\n           <div class=\"row\" id=\"divRowComment\">\n               <p class=\"center-text\">If you would like to leave a comment or question, <a href=\"http://dutchesscaporg-proof.presencehost.net/contact.html\"> click here!</a>\n            </div>\n            <div class=\"row\" id=\"divRowBtn\">\n            <button class=\"btn btn-default btn-block\" (click)=\"location.href = 'http://www.dutchesscap.org/'\">\n              <i class=\"fas fa-sign-in-alt\"></i>\n              Return to http://www.dutchesscap.org\n            </button>\n         </div>\n        </div>\n      </div>\n\n    </div>\n\n    <div class=\"col-lg-3\">\n    </div>\n\n  </div>\n</body>"
+module.exports = "<body>\n\n  <div class=\"row\" style=\"margin-top:6%\">\n\n    <div class=\"col-lg-3\">\n    </div>\n\n    <div class=\"col-lg-6\">\n      <div class=\"ibox float-e-margins\">\n        <div class=\"ibox-title\" id=\"divRowHeader\">\n          <h2 class=\"center-text\">Thank you for taking our survey!</h2>\n        </div>\n        <div class=\"ibox-content\">\n           <div class=\"row\" id=\"divRowComment\">\n               <p class=\"center-text\">If you would like to leave a comment or question, <a href=\"http://dutchesscaporg-proof.presencehost.net/contact.html\"> click here!</a>\n            </div>\n            <div class=\"row\" id=\"divRowBtn\">\n            <button class=\"btn btn-default btn-block\" (click)=\"location.href = 'http://www.dutchesscap.org/'\">\n              <i class=\"fas fa-sign-in-alt\"></i>\n              Return to http://www.dutchesscap.org\n            </button>\n         </div>\n        </div>\n      </div>\n\n    </div>\n\n    <div class=\"col-lg-3\">\n    </div>\n\n  </div>\n</body>"
 
 /***/ }),
 

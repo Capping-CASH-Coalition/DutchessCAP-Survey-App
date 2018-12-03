@@ -1,36 +1,113 @@
+#btnLogin {
+   margin: 5px;
+}
+
+.center {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
+}
+
+#imgLogo {
+   height: 60%;
+   width: 60%;
+}
+
+.margin-top-5pct {
+   margin-top: 5%;
+}
+
+#btnStart {
+   margin-top: 10%;
+}
+
+.mt-3 {
+   margin-top: 3%;
+ }
+
+ .questionHeader {
+    margin-bottom: 20px;
+ }
+ 
+ #imgHeart {
+    height: 50px;
+ }
+
+
 .spanOption {
-    margin-left: 15px;
-    font-weight: 400;
-  }
-  .spanQuestionText {
-    margin-left: 5px
-  }
-  .spanQuestion {
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .btnBar {
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-  }
-  #selectBox{
-    align-content: center;
-  }
-  #surveySelect {
-    width: 300px;
-    align-self: center;
-  }
-  #ctr {
-    margin-left: 7%;
-  }
-  body {
-    height: 100vh;
-    background-color: #F2F2F2;
-  }
-  #topSpacing {
-    margin-top: 3%;
-  }
-  #bottomSpacing {
-    margin-bottom: 8%;
-  }
+  font-weight: 400;
+}
+.spanQuestionText {
+  margin-left: 5px
+}
+.spanQuestion {
+  font-weight: 600;
+  font-size: 14px;
+}
+.btnBar {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+}
+#selectBox{
+  align-content: center;
+}
+.row-centered {
+  text-align: center;
+}
+.center {
+  margin: 0 auto;
+  width: 80%;
+}
+.col-centered {
+  display: inline-block;
+  float: none;
+  /* reset the text-align */
+  text-align: left;
+  /* inline-block space fix */
+  margin-right: -4px;
+  text-align: center;
+  background-color: #ccc;
+  border: 1px solid #ddd;
+}
+#surveySelect {
+  width: 300px;
+  align-self: center;
+}
+#ctr {
+  margin-left: 7%;
+}
+body {
+  height: 100vh;
+
+}
+
+#bottomSpacing {
+  margin-bottom: 8%;
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 30px;
+  border: 1px solid #888;
+  width: 18%; /* Could be more or less, depending on screen size */
+}
+.saved {
+  font-size: 28px;
+  text-align: center;
+}

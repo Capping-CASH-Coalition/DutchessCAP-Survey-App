@@ -1,9 +1,6 @@
-//import { Globals } from '../../globals';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, DoCheck } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl, FormControlName } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { SurveyService } from '../../services/survey.service';
-import { SurveyInfo } from 'app/models/surveyInfo.model';
 import { Question } from 'app/models/question.model';
 import { Option } from 'app/models/option.model';
 import { Survey } from 'app/models/survey.model';
@@ -49,8 +46,8 @@ export class SurveyComponent implements OnInit {
 
   constructor(public surveyService: SurveyService,
     private changeref: ChangeDetectorRef,
-    public auth: AuthenticationService,
-    private router: Router) { }
+    public auth: AuthenticationService
+    ) { }
 
 
   // On component initialization, get the survey ids, names, and date created

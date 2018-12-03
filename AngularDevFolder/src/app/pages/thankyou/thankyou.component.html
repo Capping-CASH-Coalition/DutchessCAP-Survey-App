@@ -1,12 +1,32 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<div class="container">
-    <div class="row">
-        <div class="col-md-9" id="bucket">
-            <div class="well well-sm">
-                <legend class="text-center header">Thank you for taking our survey!</legend>
-                <p>If you would like to leave a comment or question, visit <a href="http://dutchesscaporg-proof.presencehost.net/contact.html">http://dutchesscaporg-proof.presencehost.net/contact.html</a>
-                <p>Return to <a href="http://www.dutchesscap.org/">http://www.dutchesscap.org/</a></p>
-            </div>
-        </div>
+<body>
+
+  <div class="row" style="margin-top:6%">
+
+    <div class="col-lg-3">
     </div>
-</div>
+
+    <div class="col-lg-6">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title ">
+          <h2 class="center-text">Thank you for taking our survey!</h2>
+        </div>
+        <div class="ibox-content">
+           <div class="row" id="divRowComment">
+               <p class="center-text">If you would like to leave a comment or question, <a href="http://dutchesscaporg-proof.presencehost.net/contact.html"> click here!</a>
+            </div>
+            <div class="row" id="divRowBtn">
+            <button class="btn btn-default btn-block" (click)="location.href = 'http://www.dutchesscap.org/'">
+              <i class="fas fa-sign-in-alt"></i>
+              Return to http://www.dutchesscap.org
+            </button>
+         </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-3">
+    </div>
+
+  </div>
+</body>

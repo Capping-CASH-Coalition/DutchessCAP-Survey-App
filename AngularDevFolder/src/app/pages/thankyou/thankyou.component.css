@@ -1,29 +1,13 @@
-.header {
-    color: #36A0FF;
-    font-size: 27px;
-    padding: 10px;
-}
-.header2 {
-    color: #36A0FF;
-    font-size: 15px;
-    padding: 10px;
-    margin-bottom:30px;
+
+#divRowComment {
+   text-align: center;
 }
 
-.bigicon {
-    font-size: 35px;
-    color: #36A0FF;
+#divRowBtn {
+   margin-top:5%;
 }
-.pagination{
-    text-align:center;
-}
-.container-fluid{
-    width:100%;
-}
-#bucket{
-    margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  float: none;
-  padding-top: 1%;
+
+body {
+  height: 100vh;
+
 }

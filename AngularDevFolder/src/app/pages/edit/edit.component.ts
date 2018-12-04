@@ -34,7 +34,7 @@ export class EditComponent implements OnInit {
    isNewSurvey: boolean;
    modal;
 
-   constructor(private _fb: FormBuilder,
+   constructor (private _fb: FormBuilder,
                public surveyService: SurveyService) { }
 
    // initilaize a new blank survey form

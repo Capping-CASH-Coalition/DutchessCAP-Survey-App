@@ -14,9 +14,6 @@ import { Responses } from '../../models/responseExport.model';
 
 export class ExportRawComponent implements OnInit {
    
-   constructor(public surveyService: SurveyService,
-               private changeref: ChangeDetectorRef) {}
-
    // datafeed that the table uses to populate data
    dataFeed: any[];
    // set the current survey and the date to filter by
@@ -29,8 +26,11 @@ export class ExportRawComponent implements OnInit {
    surveys: Array<any> = [];
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
-   
    showExportDiv: boolean = false;
+
+   constructor (public surveyService: SurveyService,
+               private changeref: ChangeDetectorRef) { }
+
 
    ngOnInit() {
       this.surveyService.getAllSurveys().subscribe((response) => {

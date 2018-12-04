@@ -4,7 +4,7 @@
 
   <div class="row white-bg h-100" *ngIf="!showSurveyDiv">
     <div class="col-lg-9 align-items-center h-100">
-      <img style="float:left; margin-right: 10px;" src="../../../assets/img/dutchess-cap-heart.png" id="imgHeart">
+      <img id="dcapLogo" src="../../../assets/img/dutchess-cap-heart.png" id="imgHeart">
       <h1>Dutchess County Community Action Survey Portal</h1>
     </div>
     <div class="col-lg-3 align-items-center h-100">
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="row" style="margin-top:3%">
+  <div class="row" id="landingRow">
 
     <div class="col-lg-3">
     </div>
@@ -60,7 +60,7 @@
                   <div [hidden]="hideQuestion(k)" id="topSpacing">
                     <div class="row">
                       <div class="col-lg-12 questionHeader row-centered">
-                        <h2 style="font-weight:bold">{{ question.question_text }}</h2>
+                        <h2 id="questionText">{{ question.question_text }}</h2>
                       </div>
                     </div>
                     <div class="col-lg-2">

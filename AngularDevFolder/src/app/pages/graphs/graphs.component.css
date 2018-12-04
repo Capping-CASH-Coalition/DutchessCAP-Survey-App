@@ -38,7 +38,14 @@
    padding-right:32px;
 }
 
-
 li {
    margin-bottom: 5px;
+}
+
+#chartDiv {
+    margin-bottom: 500px;
+}
+
+#export {
+    color: white;
 }

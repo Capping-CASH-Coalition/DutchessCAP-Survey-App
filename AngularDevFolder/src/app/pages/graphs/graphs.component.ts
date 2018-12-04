@@ -15,13 +15,6 @@ import { SurveyResponses } from '../../models/surveyResponses.model'
 
 export class GraphsComponent implements OnInit {
 
-   constructor(
-      public graphService: GraphService,
-      private changeref: ChangeDetectorRef,
-      public surveyService: SurveyService,
-      private fb: FormBuilder,
-   ) { };
-
    // global to track which switch for the dataset
    currentDatasetType: string = 'single';
    // form for the chart filters
@@ -42,6 +35,11 @@ export class GraphsComponent implements OnInit {
    surveys: Array<SurveyResponses> = [];
    // sub question options global
    subQuestionOptions: any[] = [];
+
+   constructor (public graphService: GraphService,
+      private changeref: ChangeDetectorRef,
+      public surveyService: SurveyService,
+      private fb: FormBuilder) { };
 
    ngOnInit(): void {
       // init the chart form

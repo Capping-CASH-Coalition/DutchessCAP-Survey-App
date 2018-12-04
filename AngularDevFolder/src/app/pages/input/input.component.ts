@@ -16,6 +16,7 @@ import { Response } from 'app/models/response.model'
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [SurveyService]
 })
+
 export class InputComponent implements OnInit {
 
     // Array that holds all survey structuring data
@@ -43,8 +44,8 @@ export class InputComponent implements OnInit {
 
 
     constructor(public surveyService: SurveyService,
-        private changeref: ChangeDetectorRef,
-        public auth: AuthenticationService, ) { }
+                private changeref: ChangeDetectorRef,
+                public auth: AuthenticationService) { }
 
 
     // On component initialization, get the survey ids, names, and date created

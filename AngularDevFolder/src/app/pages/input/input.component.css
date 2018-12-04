@@ -53,3 +53,7 @@
    font-size: 28px;
    text-align: center;
 }
+
+#questionText {
+  margin-left: 40px;
+}

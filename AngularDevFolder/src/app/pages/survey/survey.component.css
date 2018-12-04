@@ -91,3 +91,15 @@ body {
   font-size: 28px;
   text-align: center;
 }
+
+#questionText {
+  font-weight: bold;
+}
+
+#dcapLogo {
+  float:left; margin-right: 10px;
+}
+
+#landingRow {
+  margin-top: 3%;
+}

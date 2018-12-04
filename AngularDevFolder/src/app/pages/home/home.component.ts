@@ -12,11 +12,9 @@ import { Responses } from '../../models/responseExport.model';
    styleUrls: ['./home.component.css'],
    providers: [SurveyService]
 })
-export class HomeComponent implements OnInit, AfterViewInit {
-   constructor(public graphService: GraphService,
-               public surveyService: SurveyService,
-               private changeref: ChangeDetectorRef){ }
 
+export class HomeComponent implements OnInit, AfterViewInit {
+   
    canvas: any;
       // canvas context
    ctx: any;
@@ -34,6 +32,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
    currSurveyIndex: number = 0;
       // 
    modal;
+
+   constructor (public graphService: GraphService,
+               public surveyService: SurveyService,
+               private changeref: ChangeDetectorRef) { }
+
 
    ngOnInit() {
       // Get the modal

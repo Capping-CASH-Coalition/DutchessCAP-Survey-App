@@ -25,14 +25,14 @@
               <div class="feed-activity-list">
                 <form [formGroup]="survey" novalidate (ngSubmit)="save(survey.value)">
                   <div class="form-group">
-                    <h2 style="font-weight:bold">Survey Name</h2>
+                    <h2 id="surveyNameh2">Survey Name</h2>
                     <input [readonly]="setReadOnly()" type="text" class="form-control" formControlName="survey_name"
                       placeholder="Enter Survey Name">
                   </div>
                   <!-- QUESTIONS -->
                   <div formArrayName="questions">
                     <div *ngFor="let question of survey.controls.questions.controls; let i=index">
-                      <div [formGroupName]="i" class="feed-element" style="margin-bottom:10px">
+                      <div [formGroupName]="i" class="feed-element" id="questionDiv">
                         <div class="row">
                           <div class="col-lg-12">
                             <div row>
@@ -68,7 +68,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="row" style="margin-top:10px">
+                        <div class="row" id="questionPromptDiv">
                           <div class="col-lg-12">
                             <small class="text-muted">Question Prompt</small>
                             <!--TEXT BOX GOES HERE-->
@@ -88,7 +88,7 @@
   
                               <div class="row">
                                 <div class="col-lg-10">
-                                  <h3 style="font-weight:lighter" class="pull-left">Option {{ j+1}}</h3>
+                                  <h3 id="optionh3" class="pull-left">Option {{ j+1}}</h3>
                                   <button type="button" (click)="updateOptionActiveStatus(question, j, false)" *ngIf="survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"
                                     value="true" class="label label-primary pull-right">Active</button>
                                   <button type="button" (click)="updateOptionActiveStatus(question, j, true)" *ngIf="! survey.controls.questions.controls[i].controls.options.controls[j].controls.option_is_active.value"

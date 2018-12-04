@@ -30,7 +30,7 @@
                   <div>
                     <div class="row form-group" *ngFor="let question of survey.questions; let k = index">
                       <div>
-                        <div class="col-lg-4" style="margin-left:40px">
+                        <div class="col-lg-4" id="questionText">
                           <span class="spanQuestion"> {{ k+1 }} . <span class="spanQuestionText">{{
                               question.question_text
                               }}</span></span>

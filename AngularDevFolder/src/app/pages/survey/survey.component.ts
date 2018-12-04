@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SurveyService]
 })
+
 export class SurveyComponent implements OnInit, DoCheck {
 
   // Array that holds all survey structuring data

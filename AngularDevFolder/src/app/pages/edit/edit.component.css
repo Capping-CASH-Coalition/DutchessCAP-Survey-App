@@ -48,7 +48,6 @@
    text-align: center;
 }
 
-
 .questionActiveLabel {
    margin-left: 15px;
    margin-top: 3px;
@@ -64,4 +63,20 @@
 
 .hide{
    display: "none";
+}
+
+#questionPromptDiv {
+    margin-top: 10px;
+}
+
+#optionh3 {
+    font-weight: lighter;
+}
+
+#surveyNameh2 {
+    font-weight: bold;
+}
+
+#questionDiv {
+    margin-bottom: 10px;
 }

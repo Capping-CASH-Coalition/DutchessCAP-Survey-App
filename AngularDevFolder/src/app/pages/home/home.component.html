@@ -10,9 +10,9 @@
         <div class="ibox-content">
           <div *ngIf="showInfo" class="feed-activity-list">
             <div *ngFor="let info of surveyDetails">
-               <div class="feed-element margin-top-5" (click)="openModal($event.target.value)">
-                <button type="submit" *ngIf="info.survey_is_active"  value="{{info.survey_id}}" class="label label-primary pull-right">Active</button>
-                <button type="submit" *ngIf="! info.survey_is_active" value="{{info.survey_id}}" class="label label-warning pull-right">Inactive</button>
+               <div class="feed-element margin-top-5">
+                <button type="submit" *ngIf="info.survey_is_active"  value="{{info.survey_id}}" (click)="openModal($event.target.value)" class="label label-primary pull-right">Active</button>
+                <button type="submit" *ngIf="! info.survey_is_active" value="{{info.survey_id}}" (click)="openModal($event.target.value)" class="label label-warning pull-right">Inactive</button>
                 <strong>{{info.survey_name}}</strong>
                 <div class="margin-top-5">
                   <div> Date Created: <small class="text-muted pull-right">{{info.date_created}}</small></div>

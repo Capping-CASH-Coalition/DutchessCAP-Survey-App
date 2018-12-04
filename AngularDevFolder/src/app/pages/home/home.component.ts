@@ -24,20 +24,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
    chart: Chart = null;
       // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
+      // Forces home page to wait on the get calls to the database
    showHomeDiv: boolean = false;
+      // Forces home page to wait on the get calls to the database
    showInfo: boolean = false;
-
+      // Holds the survey details to determine if survey is active
    surveyDetails: Array<SurveyDetails> = [];
-   currSurveyID: number = 0;
+      // Used to keep track 
+   currSurveyIndex: number = 0;
+      // 
    modal;
 
    ngOnInit() {
-      
       // Get the modal
       this.modal = document.getElementById('success');
+      // get the canvas
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
-
       this.surveyService.getAllSurveysInfo().subscribe((response) => {
          for (let i = 0; i < response.body.length; i++) {
             let survey: SurveyDetails = {
@@ -49,11 +52,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
             };
             this.surveyDetails.push(survey);
          }
-
       }, (error) => {
          console.log('error is ', error)
       })
-
       this.surveyService.getAllSurveysInfo().subscribe((response) => {
          for (let i = 0; i < response.body.length; i++) {
             let submissions: any = {
@@ -62,11 +63,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                "count": response.body[i].count
             };
          }
-
       }, (error) => {
          console.log('error is ', error)
       })
-
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
@@ -76,7 +75,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                      "date_created": response.body[i].date_created.split(" ")[0],
                      "survey_is_active": response.body[i].survey_is_active
                };
- 
                this.surveys.push(survey);
                // Get the survey questions by selectedSurveyId
                this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
@@ -93,12 +91,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                  responses: []
                            };
                            this.surveys[i].questions.push(question);
-                     }
-                        
+                     }                     
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
                         this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
-                           
                            for (let k = 0; k < this.surveys[i].questions.length; k++) {
                                  for (let l = 0; l < response.body.length; l++) {
                                        let responseData: Responses = {
@@ -115,8 +111,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                                              this.surveys[i].questions[k].responses.push(responseData);
                                        }
                                  }
-                           }
-                           
+                              }
                            // Manually detect changes as the page will load faster than the async call
                            this.changeref.detectChanges();
                            if(i == this.surveys.length -1){
@@ -126,7 +121,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                      }, (error) => {
                            console.log('error is ', error)
                      })
-               
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
                },(error) => {
@@ -141,27 +135,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
    }
 
    ngAfterViewInit() {
+      // update chart after .75 seconds have passed to allow for all the data to be retrieved
       setTimeout(() => {this.updateChart();}, 750);
    };
 
-    // Updates survey, changing it's active status
-    updateActiveSurvey(): void {
+   // Updates survey, changing it's active status
+   updateActiveSurvey(): void {
       let survey = {
-         "survey_id": this.surveyDetails[this.currSurveyID - 1].survey_id,
-         "survey_is_active": this.surveyDetails[this.currSurveyID - 1].survey_is_active
+         "survey_id": this.surveyDetails[this.currSurveyIndex].survey_id,
+         "survey_is_active": this.surveyDetails[this.currSurveyIndex].survey_is_active
       }
       // Checks if survey is currently active
-      if(this.surveyDetails[this.currSurveyID - 1].survey_is_active){
-            this.surveyDetails[this.currSurveyID - 1].survey_is_active = false;
-            survey.survey_is_active = false;
-            this.surveyService.updateSurveyActive(survey).subscribe();
+      if(this.surveyDetails[this.currSurveyIndex].survey_is_active){
+         this.surveyDetails[this.currSurveyIndex].survey_is_active = false;
+         survey.survey_is_active = false;
+         this.surveyService.updateSurveyActive(survey).subscribe();
       }
       // Checks if survey is currently inactive
       else {
-            this.surveyDetails[this.currSurveyID - 1].survey_is_active = true;
-            survey.survey_is_active = true;
-            this.surveyService.updateSurveyActive(survey).subscribe();
+         this.surveyDetails[this.currSurveyIndex].survey_is_active = true;
+         survey.survey_is_active = true;
+         this.surveyService.updateSurveyActive(survey).subscribe();
       }
+      // closes the modal
       this.modal.style.display = "none";
       window.location.reload();
    }
@@ -169,14 +165,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
    // Builds chart with survey date data
    updateChart(): void {
       this.destroyChart();
-      let c: Chart = this.graphService.createDateChart(this.ctx, "line", this.DateGraphData())
+      let c: Chart = this.graphService.createDateChart(this.ctx, "line", this.dateGraphData())
       this.buildChart(c)
       }
-
+   // destroys chart if a chart is already there(for refresh button)
    private destroyChart(): void {
       if (this.chart != null) {
             this.chart.destroy();
       }
+   }
+
+   // builds the chart
+   private buildChart(chartData: Chart): void {
+      this.chart = chartData;
+      this.chart.update();
    }
 
    // go through the surveys and get the info for the survey details card
@@ -199,19 +201,53 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return surveyDetails;
    }
 
-   private buildChart(chartData: Chart): void {
-      this.chart = chartData;
-      this.chart.update();
+   // Push all the surveys information into a datasets array and return it for chart creation
+   dateGraphData(): any {
+      let dataset: any[] = new Array();
+      for(let index = 0; index < this.surveys.length; index++){
+         // push the dataset values
+         dataset.push({
+            label: this.surveys[index].survey_name,
+            data: this.pushDateDataBySurvey(index),
+            backgroundColor: this.graphService.getColorByIndex(index, 'date'),
+            borderColor: this.graphService.getColorByIndex(index, 'date'),
+            fill: false
+         })
+      };
+      return {
+         datasets: dataset,
+      }
+   }
+
+   // Sets the date taken and submit count for each date taken for each survey
+   pushDateDataBySurvey(surveyIndex): any[] {
+      let data: any[] = new Array();
+      // Push the values with the labels to the data array
+      for(let r=0; r <= this.surveys[surveyIndex].questions[0].responses.length; r++){
+         data.push({
+            // the date.taken text for each response on a given date taken
+            x: Array.from(this.mapDateData(surveyIndex).keys())[r],
+            // the count for amount of surveys taken on each date.taken
+            y: Array.from(this.mapDateData(surveyIndex).values())[r]
+         })
+      }
+      // returns data to the datasets
+      return data;
    }
    
    // Map a surveys dates and count how much surveys were taken per that date
-   mapDateData(val): Map<string, number> {
+   mapDateData(surveyIndex): Map<string, number> {
       let map = new Map();
-      let survey = this.surveys[val];
-      let qid = survey.questions[0].question_id;
-      survey.questions.forEach(question => {
-         if (question.question_id == qid) {
+      // makes sure the question is part of current survey
+      let questionIndex = 0;
+      // Maps each survey separately to be able to display on the same graphs
+      this.surveys[surveyIndex].questions.forEach(question => {
+         // Used to increment question index if current question is not a checkbox
+         let questionId = this.surveys[surveyIndex].questions[questionIndex].question_id;
+         // confirms that the question is active and not a checkbox
+         if (question.question_id == questionId && question.question_type != "checkbox" && question.question_is_active == true) {
             question.responses.forEach(r => {
+               // checks to make sure to only grab responses from the last year
                let testdate = new Date(r.date_taken);
                if (testdate >= this.getDateYearAgo()){
                   if (map.has(r.date_taken)) {
@@ -226,51 +262,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                }
             });
          }
+         // Increments the index if current question was a checkbox or inactive
+         else{
+            questionIndex++;
+         }
       });
       return map;
    }
    
-   // Push all the surveys information into a datasets array
-   mapDateDataSets(): any[] {
-      let datasets: any[] = new Array();
-         for(let v = 0; v < this.surveys.length; v++){
-            // push the dataset values
-            datasets.push({
-               label: this.surveys[v].survey_name,
-               data: this.mapDataForSurvey(v),
-               backgroundColor: this.graphService.getColorByIndex(v, 'date'),
-               borderColor: this.graphService.getColorByIndex(v, 'date'),
-               fill: false
-            })
-         };
-      return datasets;
-   }
-
-   // Push all the current surveys date data to data array
-   mapDataForSurvey(val): any[] {
-      let data: any[] = new Array();
-      let a = Array.from(this.mapDateData(val).keys());
-      let b = Array.from(this.mapDateData(val).values());
-
-      let survey = this.surveys[val];
-
-      // Push the values with the labels to the datasets
-      for(let r=0; r <= survey.questions[0].responses.length; r++){
-         data.push({
-            x: a[r],
-            y: b[r]
-         })
-      }
-      return data
-   }
-
-
-   // pulls together the above functions to set the labels and datasets for the matrix graph
-   DateGraphData(): any {
-      return {
-         datasets: this.mapDateDataSets()
-      }
-   }
 
    // Get date from exactly one year ago to make sure that only surveys taken in the past year are graphed
    private getDateYearAgo(): any {
@@ -292,19 +291,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
       else{
          mm = '' + m;
       }
-      let today1 = new Date(yyyy + '-' + mm + '-' + dd);
-      return today1;
+      // puts the date from a year ago into date format
+      let yearago = new Date(yyyy + '-' + mm + '-' + dd);
+      // reaturns the date to check against the date.taken of each submission
+      return yearago;
    }  
 
    // When user clicks save survey, display modal
    openModal(id): void {
-      this.currSurveyID = id;
+      this.currSurveyIndex = id - 1;
       this.modal.style.display = "block";
    }
 
    // When user clicks X, close the modal and refresh the page to see changes
    closeModal(): void {
       this.modal.style.display = "none";
-      window.location.reload();
    }
 }

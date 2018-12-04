@@ -51,7 +51,7 @@ export class InputComponent implements OnInit {
     ngOnInit(): void {
         // Get the modal
         this.modal = document.getElementById('success');
-        this.surveyService.getAllSurveys().subscribe(response => {
+        this.surveyService.getActiveSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
             for (let i = 0; i < response.body.length; i++) {
                 let survey: Survey = {
@@ -106,7 +106,7 @@ export class InputComponent implements OnInit {
         this.selectedSurveyName = this.surveys[this.selectedSurveyIndex].survey_name;
         
         // Once the selected surveyID is done, this will populate the data using the selected ID
-        this.surveyService.getAllSurveyQuestions(this.selectedSurveyId).subscribe(response => {
+        this.surveyService.getActiveSurveyQuestions(this.selectedSurveyId).subscribe(response => {
             // Initialize the questions
             // this.surveys[this.selectedSurveyIndex].questions = [];
             // Iterate through the questions and push them one at a time
@@ -124,7 +124,7 @@ export class InputComponent implements OnInit {
             this.changeref.detectChanges();
 
             // Get the survey options based on the selectedSurveyId
-            this.surveyService.getAllSurveyOptions(this.selectedSurveyId).subscribe(response => {
+            this.surveyService.getActiveSurveyOptions(this.selectedSurveyId).subscribe(response => {
                 for (let j = 0; j < this.surveys[this.selectedSurveyIndex].questions.length; j++) {
                     for (let k = 0; k < response.body.length; k++) {
                         let option: Option = {
@@ -168,9 +168,9 @@ export class InputComponent implements OnInit {
             'survey_hash': this.currentUser
         }
         // gets the question index in the surveys.questions array from the question id
-        let question_index = this.surveys[this.selectedSurveyId - 1].questions.findIndex(i => i.question_id === question_id);
+        let question_index = this.surveys[this.selectedSurveyIndex].questions.findIndex(i => i.question_id === question_id);
         //sets the current question response model based off values passed through
-        this.surveys[this.selectedSurveyId - 1].questions[question_index].responseModel = [response];
+        this.surveys[this.selectedSurveyIndex].questions[question_index].responseModel = [response];
 
     }
 
@@ -207,7 +207,7 @@ export class InputComponent implements OnInit {
     save() {
         //Takes the responsemodel from each question and pushes it to the surveyData object
         // console.log(this.surveys[this.selectedSurveyId - 1]);
-        this.surveys[this.selectedSurveyId - 1].questions.forEach(element => {
+        this.surveys[this.selectedSurveyIndex].questions.forEach(element => {
             this.surveyData = this.surveyData.concat(element.responseModel)
         });
 

@@ -28,7 +28,7 @@
             <div class="col-lg-3"></div>
             <div class="col-lg-6">
               <p class="text-center black">Please select a survey to take:</p>
-              <select class="form-control" id="select" (change)="surveySelect($event, $event.target.value)">
+              <select class="form-control" id="select" (change)="surveySelect($event.target.value)">
                 <option disabled selected>-Please Select a Survey-</option>
                 <option *ngFor="let surveyActive of surveys" value="{{surveyActive.survey_id}}">{{surveyActive.survey_name}}</option>
               </select>
@@ -131,7 +131,7 @@
                     Next Question
                     <i class="fas fa-arrow-circle-right"></i>
                   </button>
-                  <button type="button" [disabled]='disabledSave' *ngIf="isLastPage()" class="btn btn-warning pull-right" (click)='save(); openModal()'>
+                  <button type="button" [disabled]='disabledSave' *ngIf="isLastPage()" class="btn btn-warning pull-right" (click)='save();'>
                      Submit Response!
                      <i class="fas fa-database"></i>
                   </button>
@@ -150,10 +150,3 @@
 
   </div>
 </body>
-
-<div id="success" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <p class="saved">Saved Successfully!</p>
-  </div>
-</div>

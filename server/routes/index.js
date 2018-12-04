@@ -8,7 +8,7 @@ const path = require('path');
 //const connectionString = process.env.DATABASE_URL || 'postgres://enterprisedb:@lgozzine@localhost:5444/CashCoalition';
 
 // stephens
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
 
 // Brians
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
@@ -17,7 +17,7 @@ const path = require('path');
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
 //Christians
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:lina1968@localhost:5432/CashCoalition';
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:lina1968@localhost:5432/CashCoalition';
 
 // Zachs
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:zachary510@localhost:5432/CashCoalition3';
@@ -283,9 +283,6 @@ router.get('/', (req, res, next) => {
  */
  
  router.post('/api/postSurveyResponse', (req, res) => {
-     //Array to hold results from query
-     const results = req.body;
- 
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -295,11 +292,10 @@ router.get('/', (req, res, next) => {
              return res.status(500).json({ success: false, data: err });
          }
              
-         let query;
-         for (let i = 0; i < results.length; i++) {
-             let result = results[i];
+         var query;
+         for (let i = 0; i < req.body.length; i++) {
              // Created query that inserts an individual response into the responses table 
-             query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [result.survey_id, result.question_id, result.option_id, result.response_text, result.survey_hash]);
+             query = client.query('INSERT INTO responses (survey_id, question_id, option_id, response_text, survey_hash) VALUES ($1, $2, $3, $4, $5)', [req.body[i].survey_id, req.body[i].question_id, req.body[i].option_id, req.body[i].response_text, req.body[i].survey_hash]);
          }
  
          // After all data is returned, close connection and return results
@@ -310,10 +306,7 @@ router.get('/', (req, res, next) => {
  });
  
  // Route that will post a survey given a survey name. The survey_id and date_taken will be automatically given by the database
- router.post('/api/postNewSurvey', (req, res, next) => {
-    // Created array that will hold the data to be passed to the sql function
-    const data = req.body;
-    console.log(req.body);
+ router.post('/api/postNewSurvey', (req, res) => {
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
         // Handle connection errors
@@ -322,27 +315,9 @@ router.get('/', (req, res, next) => {
             console.log(err);
             return res.status(500).json({ success: false, data: err });
         }
-        var query;
-
-        lastSurveyId = data.survey_id;
-        lastQuestionId = data.question_id;
-        lastOptionId = data.option_id;
-        lastSurveyId++;
 
         // Created query that will insert a survey_name into the surveys table.
-        query = client.query('INSERT INTO surveys (survey_name) VALUES ($1)', [data.survey_name]);
-        lastSurveyId++;
-        // Insert the questions
-        for (var i = 0; i < data.questions.length; i++) {
-            lastQuestionId++;
-            query = client.query('INSERT INTO questions (question_text, question_type) VALUES ($1, $2)', [data.questions[i].question_text, data.questions[i].question_type]);
-
-            for (var j = 0; j < data.questions[i].options.length; j++ ) {
-                lastOptionId++;
-                query = client.query('INSERT INTO options (question_id, option_text) VALUES ($1, $2)', [lastQuestionId, data.questions[i].options[j].option_text]);
-                query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES ($1, $2, $3)', [lastSurveyId, lastQuestionId, lastOptionId]);
-            }
-        }
+        const query = client.query('INSERT INTO surveys (survey_name) VALUES ($1)', [req.body.survey_name]);
 
         // After all data is returned, close connection and return results
         query.on('end', () => {
@@ -352,10 +327,7 @@ router.get('/', (req, res, next) => {
 });
  
  // Route that will post a question given a question_text & question_type. The question_id and question_is_active will be automatically given by the database
- router.post('/api/postQuestion', (req, res, next) => {
-     //Array to hold results from query
-     const results = req.body;
- 
+ router.post('/api/postQuestion', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -364,16 +336,8 @@ router.get('/', (req, res, next) => {
              console.log(err);
              return res.status(500).json({ success: false, data: err });
          }
-         var lastOptionId = results[0].option_id
-         for (var i = 0; i < results.length; i++) {
-             // Created query that will insert a question into the questions table given question_text & question_type
-             var query = client.query('INSERT INTO questions (question_text, question_type) VALUES($1, $2)', [results[i].question_text, results[i].question_type]);
-             for (var j = 0; j < results[i].options.length; j++) {
-                 lastOptionId++;
-                 query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [results[i].options[j].option_text, results[i].question_id]);
-                 query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [results[0].survey_id, results[i].question_id, lastOptionId]);
-             }
-         }
+        // Created query that will insert a question into the questions table given question_text & question_type
+        const query = client.query('INSERT INTO questions (question_text, question_type) VALUES($1, $2)', [req.body.question_text, req.body.question_type]);
          
          // After all data is returned, close connection and return results
          query.on('end', () => {
@@ -383,15 +347,7 @@ router.get('/', (req, res, next) => {
  });
  
  //Route that will post an option given a option_text & question_id. The option_id and option_is_active will be automatically given by the database
- router.post('/api/postOption', (req, res, next) => {
-     //Array to hold results from query
-     const results = [];
- 
-     const data = { option_text: req.body.option_text, 
-                    question_id: req.body.question_id,
-                    survey_id: req.body.survey_id,
-                    option_id: req.body.option_id };
- 
+ router.post('/api/postOption', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -402,10 +358,8 @@ router.get('/', (req, res, next) => {
          }
  
          // Created query that will insert an option into the options table given an option_text & a question_id
-         var query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [data.option_text, data.question_id]);
- 
-         query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [data.survey_id, data.question_id, data.option_id]);
- 
+         const query = client.query('INSERT INTO options (option_text, question_id) VALUES($1, $2)', [req.body.option_text, req.body.question_id]);
+
          // After all data is returned, close connection and return results
          query.on('end', () => {
              done();
@@ -414,15 +368,7 @@ router.get('/', (req, res, next) => {
  });
  
  // Route that will assign a survey a question and that question an option
- router.post('/api/postArchitecture', (req, res, next) => {
-     //Array to hold results from query
-     const results = [];
-     const data = { 
-         survey_id: req.body.survey_id, 
-         question_id: req.body.question_id, 
-         option_id: req.body.option_id 
-     };
- 
+ router.post('/api/postArchitecture', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -432,7 +378,7 @@ router.get('/', (req, res, next) => {
              return res.status(500).json({ success: false, data: err });
          }
          // Created query the will insert a specifc survey, question, option combination into the architectures table
-         const query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [data.survey_id, data.question_id, data.option_id]);
+         const query = client.query('INSERT INTO architectures (survey_id, question_id, option_id) VALUES($1, $2, $3)', [req.body.survey_id, req.body.question_id, req.body.option_id]);
  
          // After all data is returned, close connection and return results
          query.on('end', () => {
@@ -445,11 +391,7 @@ router.get('/', (req, res, next) => {
      Put/Update functions
  */
  
- router.put('/api/updateSurveyActive', (req, res, next) => {
-     //Array to hold results from query
-     const results = [];
-     // Created array that will hold the data to be passed to the sql function
-     const data = { survey_id: req.body.survey_id, survey_is_active: req.body.survey_is_active };
+ router.put('/api/updateSurveyActive', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -459,7 +401,7 @@ router.get('/', (req, res, next) => {
              return res.status(500).json({ success: false, data: err });
          }
          // Created query that will update a specific question in the questions table given a question_id
-         const query = client.query('UPDATE surveys set survey_is_active = ($2) WHERE survey_id = ($1)', [data.survey_id, data.survey_is_active]);
+         const query = client.query('UPDATE surveys set survey_is_active = ($2) WHERE survey_id = ($1)', [req.body.survey_id, req.body.survey_is_active]);
  
          // After all data is returned, close connection and return results
          query.on('end', () => {
@@ -468,11 +410,7 @@ router.get('/', (req, res, next) => {
      });
  });
  
- router.put('/api/updateSurveyQuestionActive', (req, res, next) => {
-     //Array to hold results from query
-     const results = [];
-     // Created array that will hold the data to be passed to the sql function
-     const data = { question_id: req.body.question_id, question_is_active: req.body.question_is_active };
+ router.put('/api/updateSurveyQuestionActive', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -482,7 +420,7 @@ router.get('/', (req, res, next) => {
              return res.status(500).json({ success: false, data: err });
          }
          // Created query that will update a specific question in the questions table given a question_id
-         const query = client.query('UPDATE questions set question_is_active = ($2) WHERE question_id = ($1)', [data.question_id, data.question_is_active]);
+         const query = client.query('UPDATE questions set question_is_active = ($2) WHERE question_id = ($1)', [req.body.question_id, req.body.question_is_active]);
  
          // After all data is returned, close connection and return results
          query.on('end', () => {
@@ -491,11 +429,7 @@ router.get('/', (req, res, next) => {
      });
  });
  
- router.put('/api/updateSurveyOptionActive', (req, res, next) => {
-     //Array to hold results from query
-     const results = [];
-     // Created array that will hold the data to be passed to the sql function
-     const data = { option_id: req.body.option_id, option_is_active: req.body.question_is_active };
+ router.put('/api/updateSurveyOptionActive', (req, res) => {
      // Get a Postgres client from the connection pool
      pg.connect(connectionString, (err, client, done) => {
          // Handle connection errors
@@ -505,17 +439,11 @@ router.get('/', (req, res, next) => {
              return res.status(500).json({ success: false, data: err });
          }
          // // Created query that will update a specific option in the questions table given a option_id
-         const query = client.query('UPDATE options set option_is_active = ($2), WHERE option_id = ($1)', [data.option_id, data.option_is_active]);
+         const query = client.query('UPDATE options set option_is_active = ($2) WHERE option_id = ($1)', [req.body.option_id, req.body.option_is_active]);
  
- 
-         // Stream results back one row at a time
-         query.on('row', (row) => {
-             results.push(row);
-         });
          // After all data is returned, close connection and return results
          query.on('end', () => {
              done();
-             return res.json(results);
          });
      });
  });

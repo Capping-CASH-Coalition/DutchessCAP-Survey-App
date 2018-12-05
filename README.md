@@ -1,67 +1,53 @@
 # Dutchess C.A.P. Survey Website Development Guide
 
-This repository now contains the full stack application, for developing the old `Cash-UI` - work in the AngularDevFolder.
+This repository contains the full stack Dutchess CAP Survey Builder/Editor application.
 
 ## Installation
 
-Currently working off of the `api` branch as the `master` branch
+First, clone this repository using the following command in your terminal.
 
 ```bash
-git clone -b api https://github.com/Capping-CASH-Coalition/Cash-UI.git
+git clone https://github.com/Capping-CASH-Coalition/Cash-UI.git
 ```
+This will create a new directory called `DutchessCAP-Survey-App`.
 
 ## Angular Development
 
 To develop the Angular functionalities, follow the following instructions:
 
 ```bash
-cd Cash-UI/AngularDevFolder/
-npm start
+cd DutchessCAP-Survey-App/AngularDevFolder/
+ng serve
 ```
 
 This will run the Angular application on `localhost:4200`
 
-#### Accessing the DB JSON data (`Globals.ts`)
+While in this development server, saved changes to Angular code will be automatically seen in the development server which can be seen by going to `localhost:4200/#/`
 
-In the module file:
-```TypeScript
-import { Globals } from "../../globals" //path relative
-.
-.
-// Add the provider to the @NgModule
-@NgModule({
-  providers: [
-    Globals
-  ]
-})
+When you are finished testing your code and are ready to see how it performs with node.JS, run
+
+```bash
+cd DutchessCAP-Survey-App/AngularDevFolder/
+ng build --env=prod
 ```
 
-In the component file:
-```TypeScript
-import { Globals } from "../../globals" //path relative
-.
-.
-// Add this at the top of the exported class    
-constructor(private globals: Globals) {}
+This will bundle the Angular code into 1 compact folder named `dist` within `DutchessCAP-Survey-App/client/`.
 
-```
-In the component.html file:
-```HTML
-<div *ngFor="let question of globals.questions"> 
-    {{ question.question_id }} 
-</div> 
+You can also run `bash ng build --env prod --watch` to automatically build the `dist` folder on each save which speeds up the process of having to build the application, then manually have to start the server.
 
-```
+# Node.JS Development
 
+To develop the core Node web server functionalities, go to `DutchessCAP-Survey-App/app.js`.
 
-
+To develop the API routes between node.JS and Angular, go to `DutchessCAP-Survey-App/server/routes/index.js`.
 
 ## Node Stack
 
 To start the node application (note: need updated `dist` folder to see changes) 
 
 ```bash
-cd Cash-UI
+cd DutchessCap-Survey-App
 npm start
 ```
-This will run the node server on `localhost:3000`.
+
+This will run the node server on `localhost:8888/#/`.

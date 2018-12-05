@@ -35,7 +35,7 @@ This will bundle the Angular code into 1 compact folder named `dist` within `Dut
 
 You can also run `bash ng build --env prod --watch` to automatically build the `dist` folder on each save which speeds up the process of having to build the application, then manually have to start the server.
 
-# Node.JS Development
+## Node.JS Development
 
 To develop the core Node web server functionalities, go to `DutchessCAP-Survey-App/app.js`.
 

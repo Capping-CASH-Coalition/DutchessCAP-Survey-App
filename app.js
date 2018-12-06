@@ -16,6 +16,26 @@ var app = express();
 // Swap http/https as needed for testing
 var server = http.createServer(app);
 
+
+// BEGIN CORS POLICY
+// app.use(function (req, res, next) {
+//
+//    // Change with the domain you wish to have to allow CORS policy
+//    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+//
+//    // Request methods you wish to allow
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//
+//    // Request headers you wish to allow
+//    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//
+//    // Set to true if you need the website to include cookies in the requests sent to the API
+//    res.setHeader('Access-Control-Allow-Credentials', true);
+//
+//    next();
+//}); 
+// END CORS POLICY
+
 // Add hostname to server.listen on server
 server.listen(port, () => console.log(`Example app listening on port ${port}!`));
 

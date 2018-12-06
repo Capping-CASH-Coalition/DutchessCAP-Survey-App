@@ -103,3 +103,11 @@ body {
 #landingRow {
   margin-top: 3%;
 }
+
+#test label > input {
+  float:left;
+  margin-right:10px;
+}
+#test label > span {
+  display:table;
+}

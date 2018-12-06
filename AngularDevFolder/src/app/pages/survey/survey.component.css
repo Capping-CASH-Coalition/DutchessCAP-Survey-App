@@ -104,10 +104,11 @@ body {
   margin-top: 3%;
 }
 
-#test label > input {
+/* Aligns multi-line checkbox or radio text */
+#indentAlign label > input {
   float:left;
   margin-right:10px;
 }
-#test label > span {
+#indentAlign label > span {
   display:table;
 }

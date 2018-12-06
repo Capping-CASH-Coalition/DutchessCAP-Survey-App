@@ -57,3 +57,11 @@
 #questionText {
   margin-left: 40px;
 }
+/* Aligns multi-line checkbox or radio text */
+#indentAlign label > input {
+  float:left;
+  margin-right:10px;
+}
+#indentAlign label > span {
+  display:table;
+}

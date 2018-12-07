@@ -1,10 +1,9 @@
 import { OnInit, Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
 import { GraphService } from '../../services/graph.service';
 import { SurveyService } from 'app/services/survey.service';
-import { SurveyInfo } from '../../models/surveyInfo.model';
-import { QuestionResponses } from '../../models/questionResponses.model';
-import { SurveyDetails } from '../../models/surveyDetails.model';
-import { Responses } from '../../models/responseExport.model';
+import { Survey } from '../../models/survey.model';
+import { Question } from '../../models/question.model';
+import { ResponseExport } from '../../models/responseExport.model';
 
 @Component({
    selector: 'home',
@@ -27,7 +26,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Forces home page to wait on the get calls to the database
    showInfo: boolean = false;
       // Holds the survey details to determine if survey is active
-   surveyDetails: Array<SurveyDetails> = [];
+   surveyDetails: Array<Survey> = [];
       // Used to keep track 
    currSurveyIndex: number = 0;
       // 
@@ -44,40 +43,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // get the canvas
       this.canvas = document.getElementById('graphCanvas');
       this.ctx = this.canvas.getContext('2d');
-      this.surveyService.getAllSurveysInfo().subscribe((response) => {
-         for (let i = 0; i < response.body.length; i++) {
-            let survey: SurveyDetails = {
-               "survey_id": response.body[i].survey_id,
-               "survey_name": response.body[i].survey_name,
-               "date_created": response.body[i].date_created.split(" ")[0],
-               "survey_is_active": response.body[i].survey_is_active,
-               "response_count": response.body[i].response_count
-            };
-            this.surveyDetails.push(survey);
-         }
-      }, (error) => {
-         console.log('error is ', error)
-      })
-      this.surveyService.getAllSurveysInfo().subscribe((response) => {
-         for (let i = 0; i < response.body.length; i++) {
-            let submissions: any = {
-               "survey_id": response.body[i].survey_id,
-               //"date_taken": response.body[i].date_taken.split(" ")[0],
-               "count": response.body[i].count
-            };
-         }
-      }, (error) => {
-         console.log('error is ', error)
-      })
+     
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
-               let survey: SurveyInfo = {
+               let survey: Survey = {
                      "survey_id": response.body[i].survey_id,
                      "survey_name": response.body[i].survey_name,
                      "date_created": response.body[i].date_created.split(" ")[0],
-                     "survey_is_active": response.body[i].survey_is_active
+                     "survey_is_active": response.body[i].survey_is_active,
+                     "response_count": response.body[i].response_count
                };
+               this.surveyDetails.push(survey);
                this.surveys.push(survey);
                // Get the survey questions by selectedSurveyId
                this.surveyService.getAllSurveyQuestions(this.surveys[i].survey_id).subscribe((response)=>{
@@ -85,7 +62,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                      this.surveys[i].questions = [];
                      // Iterate through the questions and push them one at a time
                      for (let j = 0; j < response.body.length; j++) {
-                           let question: QuestionResponses = {
+                           let question: Question = {
                                  "question_id": response.body[j].question_id,
                                  "question_text": response.body[j].question_text,
                                  "question_type": response.body[j].question_type,
@@ -100,7 +77,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
                            for (let k = 0; k < this.surveys[i].questions.length; k++) {
                                  for (let l = 0; l < response.body.length; l++) {
-                                       let responseData: Responses = {
+                                       let responseData: ResponseExport = {
                                              "response_id": response.body[l].response_id,
                                              "survey_id": response.body[l].survey_id,
                                              "question_id": response.body[l].question_id,

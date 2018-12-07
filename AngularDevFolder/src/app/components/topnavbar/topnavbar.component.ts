@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {smoothlyMenu} from "../../app.helpers";
+import { smoothlyMenu } from "../../app.helpers";
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({

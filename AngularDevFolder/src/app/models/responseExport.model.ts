@@ -1,4 +1,5 @@
-export class Responses {
+// Defines response with needed values for exportRaw component
+export class ResponseExport {
 
     response_id: number;
     survey_id: number;

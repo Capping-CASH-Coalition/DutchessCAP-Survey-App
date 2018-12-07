@@ -5,7 +5,7 @@ import { Response } from '../../models/response.model';
 import { SurveyService } from '../../services/survey.service';
 import { QuestionResponses } from '../../models/questionResponses.model';
 import { Option } from '../../models/option.model';
-import { SurveyResponses } from '../../models/surveyResponses.model'
+import { Survey } from '../../models/survey.model'
 
 @Component({
    selector: 'app-graphs',
@@ -32,14 +32,14 @@ export class GraphsComponent implements OnInit {
    // hold off on displaying div until this is true after data loaded
    displayDiv = false;
    // Holds the dynamic survey variables for display
-   surveys: Array<SurveyResponses> = [];
+   surveys: Array<Survey> = [];
    // sub question options global
    subQuestionOptions: any[] = [];
 
    constructor (public graphService: GraphService,
-      private changeref: ChangeDetectorRef,
-      public surveyService: SurveyService,
-      private fb: FormBuilder) { };
+                private changeref: ChangeDetectorRef,
+                public surveyService: SurveyService,
+                private fb: FormBuilder) { };
 
    ngOnInit(): void {
       // init the chart form
@@ -48,13 +48,12 @@ export class GraphsComponent implements OnInit {
       this.surveyService.getAllSurveys().subscribe(response => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
-            let survey: SurveyResponses = {
+            let survey: Survey = {
                "survey_id": response.body[i].survey_id,
                "survey_name": response.body[i].survey_name,
                "date_created": response.body[i].date_created,
                questions: []
             };
-            //this.surveys.push(survey);
             this.surveys.push(survey);
             // Manually detect changes as the page will load faster than the async call
             this.changeref.detectChanges();

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable} from 'rxjs/Observable';
 import { catchError, retry } from 'rxjs/operators';
 import { HttpHeaders, HttpResponse, HttpClient, HttpErrorResponse } from '@angular/common/http'
-import { SurveyInfo } from 'app/models/surveyInfo.model';
 import { Response } from '../models/response.model'
 
 // Http specifc header that is needed to post data to the database

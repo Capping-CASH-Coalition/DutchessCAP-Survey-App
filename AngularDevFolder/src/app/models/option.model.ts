@@ -1,3 +1,4 @@
+// Defines an option
 export class Option {
 
     option_id: number;

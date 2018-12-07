@@ -34,32 +34,38 @@
     height: 50px;
  }
 
-
 .spanOption {
   font-weight: 400;
 }
+
 .spanQuestionText {
   margin-left: 5px
 }
+
 .spanQuestion {
   font-weight: 600;
   font-size: 14px;
 }
+
 .btnBar {
   padding-left: 15px;
   padding-right: 15px;
   padding-top: 15px;
 }
+
 #selectBox{
   align-content: center;
 }
+
 .row-centered {
   text-align: center;
 }
+
 .center {
   margin: 0 auto;
   width: 80%;
 }
+
 .col-centered {
   display: inline-block;
   float: none;
@@ -71,16 +77,18 @@
   background-color: #ccc;
   border: 1px solid #ddd;
 }
+
 #surveySelect {
   width: 300px;
   align-self: center;
 }
+
 #ctr {
   margin-left: 7%;
 }
+
 body {
   height: 100vh;
-
 }
 
 #bottomSpacing {
@@ -97,9 +105,20 @@ body {
 }
 
 #dcapLogo {
-  float:left; margin-right: 10px;
+  float:left; 
+  margin-right: 10px;
 }
 
 #landingRow {
   margin-top: 3%;
+}
+
+/* Aligns multi-line checkbox or radio text */
+#indentAlign label > input {
+  float:left;
+  margin-right:10px;
+}
+
+#indentAlign label > span {
+  display:table;
 }

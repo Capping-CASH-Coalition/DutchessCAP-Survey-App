@@ -1,7 +1,5 @@
-<!-- Survey Landing/Home page -->
-
 <body>
-
+  <!-- Survey Landing/Home page -->
   <div class="row white-bg h-100" *ngIf="!showSurveyDiv">
     <div class="col-lg-9 align-items-center h-100">
       <img id="dcapLogo" src="../../../assets/img/dutchess-cap-heart.png" id="imgHeart">
@@ -77,11 +75,11 @@
                           </select>
                         </div>
                         <div *ngSwitchCase="'checkbox'">
-                          <div *ngFor="let option of question.options; let j = index">
-                            <label class="form-check-label">
+                          <div id ="indentAlign" *ngFor="let option of question.options; let j = index">
+                            <label id="checkLabel" class="form-check-label">
                               <input class="form-check-input" (change)="updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)"
                                 type="checkbox" [value]="option.option_text">
-                              <span class="spanOption">{{ option.option_text }}</span>
+                              <span id="indent" class="spanOption">{{ option.option_text }}</span>
 
                             </label>
                           </div>
@@ -94,7 +92,7 @@
                           </div>
                         </div>
                         <div *ngSwitchCase="'radio'">
-                          <div *ngFor="let option of question.options">
+                          <div id ="indentAlign" *ngFor="let option of question.options">
                             <label class="check-label">
                               <!--  [(ngModel)]="surveys.responses[k]"-->
                               <input type="radio" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'
@@ -144,9 +142,5 @@
       </div>
 
     </div>
-
-    <div class="col-lg-3">
-    </div>
-
   </div>
 </body>

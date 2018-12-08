@@ -1,6 +1,6 @@
 # Dutchess C.A.P. Survey Website Development Guide
 
-This repository contains the full stack Dutchess CAP Survey Builder/Editor application.
+This repository contains the full stack Dutchess CAP Survey Builder/Editor application. The application uses node.JS as the web server and API, Angular as the web development framework, and PostgreSQL as the database.
 
 ## Installation
 

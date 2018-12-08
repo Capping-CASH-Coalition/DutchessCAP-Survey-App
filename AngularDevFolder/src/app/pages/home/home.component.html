@@ -6,6 +6,9 @@
       <div class="ibox float-e-margins">
         <div class="ibox-title">
           <h5>Survey Details</h5>
+          <div (click)="updateChart()" id="divRefresh">
+               <i class="fas fa-sync-alt pull-right"></i>
+          </div>
         </div>
         <div class="ibox-content">
           <div *ngIf="showInfo" class="feed-activity-list">
@@ -19,11 +22,6 @@
                   <div> Submissions: <small class="text-muted pull-right">{{info.response_count}}</small></div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="filterBlock">
-            <div class="btn-group w-100" id="deepGraphSwitch" role="group" (click)="updateChart()" required>
-              <button type="button" class="btnGroupSwitch btn btn-success">Refresh Chart</button>
             </div>
           </div>
         </div>

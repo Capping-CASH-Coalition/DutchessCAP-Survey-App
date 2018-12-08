@@ -15,25 +15,21 @@
                   </option>
                 </select>
               </div>
-              <div class="col">
-                <button type="button" class="btn btn-primary pull-right btn-sm" (click)='save(); openModal()'>
-                  <i class="fas fa-database"></i>
-                  Save
-                </button>
-              </div>
             </div>
             <div class="feed-activity-list">
-              <b><legend align="center"> {{ selectedSurveyName }} </legend></b>
-              
+              <b>
+                <legend align="center"> {{ selectedSurveyName }} </legend>
+              </b>
+
               <form>
                 <div *ngFor="let survey of surveys | filterBySurveyID: selectedSurveyId">
                   <div>
                     <div class="row form-group" *ngFor="let question of survey.questions; let k = index">
                       <div>
                         <div class="col-lg-4" id="questionText">
-                          <span class="spanQuestion"> {{ k+1 }} . <span class="spanQuestionText">{{
-                              question.question_text
-                              }}</span></span>
+                          <span class="spanQuestion"> {{ k+1 }} . <span class="spanQuestionText">
+                              {{ question.question_text }}</span>
+                          </span>
                         </div>
                         <div class="col-lg-7">
                           <div [ngSwitch]="question.question_type">
@@ -47,7 +43,7 @@
                               </select>
                             </div>
                             <div *ngSwitchCase="'checkbox'">
-                              <div id ="indentAlign" *ngFor="let option of question.options; let j = index">
+                              <div id="indentAlign" *ngFor="let option of question.options; let j = index">
                                 <label class="form-check-label">
                                   <input class="form-check-input" (change)="updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)"
                                     type="checkbox" [value]="option.option_text">
@@ -63,7 +59,7 @@
                               </div>
                             </div>
                             <div *ngSwitchCase="'radio'">
-                              <div id ="indentAlign" *ngFor="let option of question.options">
+                              <div id="indentAlign" *ngFor="let option of question.options">
                                 <label class="check-label">
                                   <!--  [(ngModel)]="surveys.responses[k]"-->
                                   <input type="radio" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'
@@ -80,7 +76,14 @@
                   </div>
                 </div>
               </form>
-
+              <div class="row">
+                <div class="col-lg-12">
+                  <button type="button" class="btn btn-primary btn-block" (click)='save(); openModal()'>
+                    <i class="fas fa-database"></i>
+                    Save To Database
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -88,11 +91,11 @@
     </div>
     <div id="success" class="modal">
 
-        <!-- Modal content -->
-        <div class="modal-content">
-          <p class="saved">Saved Successfully!</p>
-        </div>
-
+      <!-- Modal content -->
+      <div class="modal-content">
+        <p class="saved">Saved Successfully!</p>
       </div>
+
+    </div>
   </div>
 </div>

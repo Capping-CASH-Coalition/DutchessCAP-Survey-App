@@ -2,6 +2,23 @@
    margin-top: 5px;
 }
 
+#divRefresh{
+   cursor: pointer;
+}
+
+.fa-sync-alt {
+   -o-transition:color .2s ease-out, background 1s ease-in;
+   -ms-transition:color .2s ease-out, background 1s ease-in;
+   -moz-transition:color .2s ease-out, background 1s ease-in;
+   -webkit-transition:color .2s ease-out, background 1s ease-in;
+   /* ...and now override with proper CSS property */
+   transition:color .2s ease-out, background 1s ease-in;
+ }
+
+.fa-sync-alt:hover {
+   color: #2ECC71  
+}
+ 
 .margin-top-20 {
    margin-top: 20px;
 }

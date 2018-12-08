@@ -56,7 +56,9 @@ export class ExportRawComponent implements OnInit {
                                  "question_text": response.body[j].question_text,
                                  "question_type": response.body[j].question_type,
                                  "question_is_active": response.body[j].question_is_active,
-                                 options: []
+                                 "options": [],
+                                 "responses": []
+
                            };
                            this.surveys[i].questions.push(question);
                      }

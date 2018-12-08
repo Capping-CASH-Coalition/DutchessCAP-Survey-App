@@ -5,7 +5,6 @@ import { Question } from 'app/models/question.model';
 import { Option } from 'app/models/option.model';
 import { Survey } from 'app/models/survey.model';
 import { Response } from 'app/models/response.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey',
@@ -38,12 +37,12 @@ export class SurveyComponent implements OnInit, DoCheck {
   disabledSave: boolean = false;
 
   constructor(public surveyService: SurveyService,
-              private changeref: ChangeDetectorRef,
-              public auth: AuthenticationService) { }
+    private changeref: ChangeDetectorRef,
+    public auth: AuthenticationService) { }
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
-    //Generates UUID on initialization and sets it to currentUser
+    // Generates UUID on initialization and sets it to currentUser
     this.currentUser = this.generateUUID();
 
     // Gets all active surveys
@@ -75,7 +74,10 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // When a user clicks a survey name option from the dropdown menu, save the selectedSurveyId and selectedSurveyIndex
   surveySelect(surveyId): void {
+    // Sets the selected survey_id to the one chosen from the webpage
     this.selectedSurveyId = surveyId;
+
+    // Iterates through the surveys array and sets the index based on survey_id
     for (let i = 0; i < this.surveys.length; i++) {
       if (this.selectedSurveyId == this.surveys[i].survey_id) {
         this.selectedSurveyIndex = i;
@@ -103,7 +105,6 @@ export class SurveyComponent implements OnInit, DoCheck {
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
       }
-      //  console.log(this.surveys[this.selectedSurveyIndex]);
       this.changeref.detectChanges();
 
       // Get the survey options based on the selectedSurveyId
@@ -130,12 +131,12 @@ export class SurveyComponent implements OnInit, DoCheck {
       console.log('error is ', error)
     })
   }
-  
+
   // Deals with Radio/Text/Select and grabs correct values for DB
   valueChanges(survey_id, question_id, option_id, option_text): void {
     // Checks for multiple options, runs for SELECT type
     if (typeof option_id == 'object') {
-      // options is an array, filter the correct option id to get correlating option_text
+      // Options is an array, filter the correct option id to get correlating option_text
       let options: any[] = option_id.filter(option => option.option_id == option_text);
       option_id = options[0].option_id;
       option_text = options[0].option_text;
@@ -155,27 +156,27 @@ export class SurveyComponent implements OnInit, DoCheck {
   }
 
   // Updates response array based on checked box
-  updateCheckbox(currentQuestion, content, isChecked, option_id, survey_id): void {
-    //Checks to see if current question has response, if not make a response array for that Q  
+  updateCheckbox(currentQuestion, option_text, isChecked, option_id, survey_id): void {
+    // Checks to see if current question has response, if not make a response array for that Q  
     if (!currentQuestion.response) {
       currentQuestion.response = [];
       currentQuestion.responseModel = [];
     }
-    //If Checkbox is checked, push the content of the checked box to response array
+    // If Checkbox is checked, push the content of the checked box to response array
     if (isChecked) {
       // Pushes value selected into response array
-      currentQuestion.response.push(content); 
+      currentQuestion.response.push(option_text);
       let response: Response = {
         "survey_id": survey_id,
         "question_id": currentQuestion.question_id,
         "option_id": option_id,
-        "response_text": content,
+        "response_text": option_text,
         "survey_hash": this.currentUser
       }
 
       currentQuestion.responseModel.push(response);
     } else {
-      let index = currentQuestion.response.findIndex((o) => o === content);
+      let index = currentQuestion.response.findIndex((o) => o === option_text);
       let temp = currentQuestion.responseModel.filter(item => item.option_id != option_id);
       currentQuestion.responseModel = temp;
       currentQuestion.response.splice(index, 1);
@@ -226,8 +227,7 @@ export class SurveyComponent implements OnInit, DoCheck {
   // Submit Button Functionality
   save(): void {
     this.disabledSave = true;
-    //Takes the responsemodel from each question and pushes it to the surveyData object
-    // console.log(this.surveys[this.selectedSurveyId - 1]);
+    // Takes the responsemodel from each question and pushes it to the surveyData object
     this.surveys[this.selectedSurveyIndex].questions.forEach(element => {
       this.surveyData = this.surveyData.concat(element.responseModel)
     });
@@ -247,9 +247,10 @@ export class SurveyComponent implements OnInit, DoCheck {
     this.surveyService.postSurveyResponse(this.surveyData).subscribe();
 
     // Function to reload the page once submitted, this makes it so they can't submit it multiple times
-    setTimeout(() => {this.sendThankYou()}, 1000);
+    setTimeout(() => { this.sendThankYou() }, 1000);
   }
 
+  // Function to generate the unique user hash which will be input into the DB
   generateUUID(): string {
     var d = new Date().getTime();
     if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -262,8 +263,9 @@ export class SurveyComponent implements OnInit, DoCheck {
     });
   }
 
+  // Used on submit click which sends the user to the Thank You once finished with the survey
   sendThankYou(): void {
-    window.location.href='http://localhost:8888/#/thankyou';
+    window.location.href = 'http://localhost:8888/#/thankyou';
   }
-  
+
 }

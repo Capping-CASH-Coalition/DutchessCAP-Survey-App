@@ -77,7 +77,7 @@
                           </select>
                         </div>
                         <div *ngSwitchCase="'checkbox'">
-                          <div id ="indentAlign" *ngFor="let option of question.options; let j = index">
+                          <div id="indentAlign" *ngFor="let option of question.options; let j = index">
                             <label id="checkLabel" class="form-check-label">
                               <input class="form-check-input" (change)="updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)"
                                 type="checkbox" [value]="option.option_text">
@@ -94,7 +94,7 @@
                           </div>
                         </div>
                         <div *ngSwitchCase="'radio'">
-                          <div id ="indentAlign" *ngFor="let option of question.options">
+                          <div id="indentAlign" *ngFor="let option of question.options">
                             <label class="check-label">
                               <!--  [(ngModel)]="surveys.responses[k]"-->
                               <input type="radio" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'
@@ -110,34 +110,35 @@
                     </div>
                   </div>
                 </div>
-              
-              <div class="row" [hidden]="hideQuestion(k)">
-                <div class="col-lg-4">
-                  <button [disabled]="isFirstPage()" type="button" class="btn btn-primary pull-left" (click)='onPrevious()'>
-                    <i class="fas fa-arrow-circle-left"></i>
-                    Previous Question
-                  </button>
-                </div>
-                <div class="col-lg-4 row-centered">
-                   <div class="row">
-                     <b>Question {{k + 1}} of {{survey.questions.length }}</b>
+
+                <div class="row" [hidden]="hideQuestion(k)">
+                  <div class="col-lg-4">
+                    <button [disabled]="isFirstPage()" type="button" class="btn btn-primary pull-left" (click)='onPrevious()'>
+                      <i class="fas fa-arrow-circle-left"></i>
+                      Previous Question
+                    </button>
                   </div>
-                  <div class="row">
-                     {{survey.survey_name}}
+                  <div class="col-lg-4 row-centered">
+                    <div class="row">
+                      <b>Question {{k + 1}} of {{survey.questions.length }}</b>
+                    </div>
+                    <div class="row">
+                      {{survey.survey_name}}
+                    </div>
                   </div>
-                </div>
-                <div class="col-lg-4">
-                  <button type="button" *ngIf="!isLastPage()" class="btn btn-primary pull-right" (click)='onNext()'>
-                    Next Question
-                    <i class="fas fa-arrow-circle-right"></i>
-                  </button>
-                  <button type="button" [disabled]='disabledSave' *ngIf="isLastPage()" class="btn btn-warning pull-right" (click)='save();'>
-                     Submit Response!
-                     <i class="fas fa-database"></i>
-                  </button>
+                  <div class="col-lg-4">
+                    <button type="button" *ngIf="!isLastPage()" class="btn btn-primary pull-right" (click)='onNext()'>
+                      Next Question
+                      <i class="fas fa-arrow-circle-right"></i>
+                    </button>
+                    <button type="button" [disabled]='disabledSave' *ngIf="isLastPage()" class="btn btn-warning pull-right"
+                      (click)='save();'>
+                      Submit Response!
+                      <i class="fas fa-database"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
           </form>
         </div>

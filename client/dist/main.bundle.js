@@ -1605,7 +1605,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-//import { Globals } from '../../globals';
 
 
 
@@ -1645,6 +1644,7 @@ var InputComponent = (function () {
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
     };
+    // After initial load, delay the survey select so data can properly load from DB
     InputComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         setTimeout(function () { _this.surveySelect(_this.surveys[0].survey_id); }, 1000);
@@ -1656,10 +1656,12 @@ var InputComponent = (function () {
             //this.router.navigate(['home']);
         }
     };
-    //when a user clicks an option from the dropdown menu
-    InputComponent.prototype.surveySelect = function (value) {
+    // When a user clicks an option from the dropdown menu
+    InputComponent.prototype.surveySelect = function (survey_id) {
         var _this = this;
-        this.selectedSurveyId = value;
+        // Sets the selected survey id based on the one chosen from the webpage
+        this.selectedSurveyId = survey_id;
+        // Iterates through the surveys array and sets the index to the survey selected
         for (var i = 0; i < this.surveys.length; i++) {
             if (this.selectedSurveyId == this.surveys[i].survey_id) {
                 this.selectedSurveyIndex = i;
@@ -1712,7 +1714,7 @@ var InputComponent = (function () {
     };
     // Deals with Radio/Text/Select and grabs correct values for DB
     InputComponent.prototype.valueChanges = function (survey_id, question_id, option_id, option_text) {
-        //Checks for multiple options, runs for SELECT type
+        // Checks for multiple options, runs for SELECT type
         if (typeof option_id == 'object') {
             // option is an array, filter the correct option id to get correlating option_text
             var options = option_id.filter(function (option) { return option.option_id == option_text; });
@@ -1727,42 +1729,41 @@ var InputComponent = (function () {
             'response_text': option_text,
             'survey_hash': this.currentUser
         };
-        // gets the question index in the surveys.questions array from the question id
+        // Gets the question index in the surveys.questions array from the question id
         var question_index = this.surveys[this.selectedSurveyIndex].questions.findIndex(function (i) { return i.question_id === question_id; });
-        //sets the current question response model based off values passed through
+        // Sets the current question response model based off values passed through
         this.surveys[this.selectedSurveyIndex].questions[question_index].responseModel = [response];
     };
-    //Updates response array based on checked box
-    InputComponent.prototype.updateCheckbox = function (currentQuestion, content, isChecked, option_id, survey_id) {
-        //Checks to see if current question has response, if not make a response array for that Q  
+    // Updates response array based on checked box
+    InputComponent.prototype.updateCheckbox = function (currentQuestion, option_text, isChecked, option_id, survey_id) {
+        // Checks to see if current question has response, if not make a response array for that Q  
         if (!currentQuestion.response) {
             currentQuestion.response = [];
             currentQuestion.responseModel = [];
         }
-        //If Checkbox is checked, push the content of the checked box to response array
+        // If Checkbox is checked, push the content of the checked box to response array
         if (isChecked) {
-            currentQuestion.response.push(content); //Pushes value selected into response array
+            currentQuestion.response.push(option_text); // Pushes value selected into response array
             var response = {
                 survey_id: survey_id,
                 question_id: currentQuestion.question_id,
                 option_id: option_id,
-                response_text: content,
+                response_text: option_text,
                 survey_hash: this.currentUser
             };
             currentQuestion.responseModel.push(response);
         }
         else {
-            var index = currentQuestion.response.findIndex(function (o) { return o === content; });
+            var index = currentQuestion.response.findIndex(function (o) { return o === option_text; });
             var temp = currentQuestion.responseModel.filter(function (item) { return item.option_id != option_id; });
             currentQuestion.responseModel = temp;
             currentQuestion.response.splice(index, 1);
         }
     };
-    //Submit Button Functionality
+    // Submit Button Functionality
     InputComponent.prototype.save = function () {
         var _this = this;
-        //Takes the responsemodel from each question and pushes it to the surveyData object
-        // console.log(this.surveys[this.selectedSurveyId - 1]);
+        // Takes the responsemodel from each question and pushes it to the surveyData object
         this.surveys[this.selectedSurveyIndex].questions.forEach(function (element) {
             _this.surveyData = _this.surveyData.concat(element.responseModel);
         });
@@ -1777,8 +1778,9 @@ var InputComponent = (function () {
         // Post the surveyData array to the API
         this.surveyService.postSurveyResponse(this.surveyData).subscribe();
         // Function to reload the page once submitted, this makes it so they can't submit it multiple times
-        //window.location.reload();
+        window.location.reload();
     };
+    // Generates a unique user hash for the current user using the page
     InputComponent.prototype.generateUUID = function () {
         var d = new Date().getTime();
         if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -1891,7 +1893,7 @@ var SurveyComponent = (function () {
     // On component initialization, get the survey ids, names, and date created
     SurveyComponent.prototype.ngOnInit = function () {
         var _this = this;
-        //Generates UUID on initialization and sets it to currentUser
+        // Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
         // Gets all active surveys
         this.surveyService.getActiveSurveys().subscribe(function (response) {
@@ -1920,7 +1922,9 @@ var SurveyComponent = (function () {
     };
     // When a user clicks a survey name option from the dropdown menu, save the selectedSurveyId and selectedSurveyIndex
     SurveyComponent.prototype.surveySelect = function (surveyId) {
+        // Sets the selected survey_id to the one chosen from the webpage
         this.selectedSurveyId = surveyId;
+        // Iterates through the surveys array and sets the index based on survey_id
         for (var i = 0; i < this.surveys.length; i++) {
             if (this.selectedSurveyId == this.surveys[i].survey_id) {
                 this.selectedSurveyIndex = i;
@@ -1948,7 +1952,6 @@ var SurveyComponent = (function () {
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
             }
-            //  console.log(this.surveys[this.selectedSurveyIndex]);
             _this.changeref.detectChanges();
             // Get the survey options based on the selectedSurveyId
             _this.surveyService.getActiveSurveyOptions(_this.selectedSurveyId).subscribe(function (response) {
@@ -1978,7 +1981,7 @@ var SurveyComponent = (function () {
     SurveyComponent.prototype.valueChanges = function (survey_id, question_id, option_id, option_text) {
         // Checks for multiple options, runs for SELECT type
         if (typeof option_id == 'object') {
-            // options is an array, filter the correct option id to get correlating option_text
+            // Options is an array, filter the correct option id to get correlating option_text
             var options = option_id.filter(function (option) { return option.option_id == option_text; });
             option_id = options[0].option_id;
             option_text = options[0].option_text;
@@ -1997,27 +2000,27 @@ var SurveyComponent = (function () {
         this.surveys[this.selectedSurveyIndex].questions[question_index].responseModel = [response];
     };
     // Updates response array based on checked box
-    SurveyComponent.prototype.updateCheckbox = function (currentQuestion, content, isChecked, option_id, survey_id) {
-        //Checks to see if current question has response, if not make a response array for that Q  
+    SurveyComponent.prototype.updateCheckbox = function (currentQuestion, option_text, isChecked, option_id, survey_id) {
+        // Checks to see if current question has response, if not make a response array for that Q  
         if (!currentQuestion.response) {
             currentQuestion.response = [];
             currentQuestion.responseModel = [];
         }
-        //If Checkbox is checked, push the content of the checked box to response array
+        // If Checkbox is checked, push the content of the checked box to response array
         if (isChecked) {
             // Pushes value selected into response array
-            currentQuestion.response.push(content);
+            currentQuestion.response.push(option_text);
             var response = {
                 "survey_id": survey_id,
                 "question_id": currentQuestion.question_id,
                 "option_id": option_id,
-                "response_text": content,
+                "response_text": option_text,
                 "survey_hash": this.currentUser
             };
             currentQuestion.responseModel.push(response);
         }
         else {
-            var index = currentQuestion.response.findIndex(function (o) { return o === content; });
+            var index = currentQuestion.response.findIndex(function (o) { return o === option_text; });
             var temp = currentQuestion.responseModel.filter(function (item) { return item.option_id != option_id; });
             currentQuestion.responseModel = temp;
             currentQuestion.response.splice(index, 1);
@@ -2062,8 +2065,7 @@ var SurveyComponent = (function () {
     SurveyComponent.prototype.save = function () {
         var _this = this;
         this.disabledSave = true;
-        //Takes the responsemodel from each question and pushes it to the surveyData object
-        // console.log(this.surveys[this.selectedSurveyId - 1]);
+        // Takes the responsemodel from each question and pushes it to the surveyData object
         this.surveys[this.selectedSurveyIndex].questions.forEach(function (element) {
             _this.surveyData = _this.surveyData.concat(element.responseModel);
         });
@@ -2080,6 +2082,7 @@ var SurveyComponent = (function () {
         // Function to reload the page once submitted, this makes it so they can't submit it multiple times
         setTimeout(function () { _this.sendThankYou(); }, 1000);
     };
+    // Function to generate the unique user hash which will be input into the DB
     SurveyComponent.prototype.generateUUID = function () {
         var d = new Date().getTime();
         if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -2091,6 +2094,7 @@ var SurveyComponent = (function () {
             return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
     };
+    // Used on submit click which sends the user to the Thank You once finished with the survey
     SurveyComponent.prototype.sendThankYou = function () {
         window.location.href = 'http://localhost:8888/#/thankyou';
     };
@@ -3599,7 +3603,7 @@ module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div 
 /***/ 636:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div id=\"ctr\">\r\n      <div class=\"row\">\r\n        <div class=\"col-lg-11 ibox float-e-margins\">\r\n          <div class=\"ibox-content\">\r\n            <div class=\"row justify-content-between btnBar\">\r\n              <div class=\"col\">\r\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"surveySelect($event.target.value)\">\r\n                  <option disabled selected>-Please Select a Survey-</option>\r\n                  <option *ngFor=\"let activeSurveys of surveys\" value=\"{{activeSurveys.survey_id}}\">\r\n                    {{ activeSurveys.survey_name }}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n              <div class=\"col\">\r\n                <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\" (click)='save(); openModal()'>\r\n                  <i class=\"fas fa-database\"></i>\r\n                  Save\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"feed-activity-list\">\r\n              <b><legend align=\"center\"> {{ selectedSurveyName }} </legend></b>\r\n              \r\n              <form>\r\n                <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n                  <div>\r\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions; let k = index\">\r\n                      <div>\r\n                        <div class=\"col-lg-4\" id=\"questionText\">\r\n                          <span class=\"spanQuestion\"> {{ k+1 }} . <span class=\"spanQuestionText\">{{\r\n                              question.question_text\r\n                              }}</span></span>\r\n                        </div>\r\n                        <div class=\"col-lg-7\">\r\n                          <div [ngSwitch]=\"question.question_type\">\r\n\r\n                            <div *ngSwitchCase=\"'select'\">\r\n                              <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                                class=\"form-control\">\r\n                                <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                                  {{ option.option_text }}\r\n                                </option>\r\n                              </select>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'checkbox'\">\r\n                              <div id =\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                                <label class=\"form-check-label\">\r\n                                  <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                    type=\"checkbox\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'text'\">\r\n                              <div *ngFor=\"let option of question.options\">\r\n                                <label class=\"form-check-label\"></label>\r\n                                <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                                  [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'radio'\">\r\n                              <div id =\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                                <label class=\"check-label\">\r\n                                  <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                                  <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                    [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                    [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </form>\r\n\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n        <!-- Modal content -->\r\n        <div class=\"modal-content\">\r\n          <p class=\"saved\">Saved Successfully!</p>\r\n        </div>\r\n\r\n      </div>\r\n  </div>\r\n</div>"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div id=\"ctr\">\r\n      <div class=\"row\">\r\n        <div class=\"col-lg-11 ibox float-e-margins\">\r\n          <div class=\"ibox-content\">\r\n            <div class=\"row justify-content-between btnBar\">\r\n              <div class=\"col\">\r\n                <select class=\"form-control pull-left\" id=\"surveySelect\" (change)=\"surveySelect($event.target.value)\">\r\n                  <option disabled selected>-Please Select a Survey-</option>\r\n                  <option *ngFor=\"let activeSurveys of surveys\" value=\"{{activeSurveys.survey_id}}\">\r\n                    {{ activeSurveys.survey_name }}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n              <div class=\"col\">\r\n                <button type=\"button\" class=\"btn btn-primary pull-right btn-sm\" (click)='save(); openModal()'>\r\n                  <i class=\"fas fa-database\"></i>\r\n                  Save\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"feed-activity-list\">\r\n              <b>\r\n                <legend align=\"center\"> {{ selectedSurveyName }} </legend>\r\n              </b>\r\n\r\n              <form>\r\n                <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n                  <div>\r\n                    <div class=\"row form-group\" *ngFor=\"let question of survey.questions; let k = index\">\r\n                      <div>\r\n                        <div class=\"col-lg-4\" id=\"questionText\">\r\n                          <span class=\"spanQuestion\"> {{ k+1 }} . <span class=\"spanQuestionText\">{{\r\n                              question.question_text\r\n                              }}</span></span>\r\n                        </div>\r\n                        <div class=\"col-lg-7\">\r\n                          <div [ngSwitch]=\"question.question_type\">\r\n\r\n                            <div *ngSwitchCase=\"'select'\">\r\n                              <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                                class=\"form-control\">\r\n                                <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                                  {{ option.option_text }}\r\n                                </option>\r\n                              </select>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'checkbox'\">\r\n                              <div id=\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                                <label class=\"form-check-label\">\r\n                                  <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                    type=\"checkbox\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'text'\">\r\n                              <div *ngFor=\"let option of question.options\">\r\n                                <label class=\"form-check-label\"></label>\r\n                                <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                                  [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                              </div>\r\n                            </div>\r\n                            <div *ngSwitchCase=\"'radio'\">\r\n                              <div id=\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                                <label class=\"check-label\">\r\n                                  <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                                  <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                    [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                    [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                                  <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                                </label>\r\n                              </div>\r\n                            </div>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </form>\r\n\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n      <!-- Modal content -->\r\n      <div class=\"modal-content\">\r\n        <p class=\"saved\">Saved Successfully!</p>\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -3613,7 +3617,7 @@ module.exports = "<div id=\"notfound\">\r\n\t<div class=\"notfound\">\r\n\t\t<di
 /***/ 638:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- Survey Landing/Home page -->\r\n\r\n<body>\r\n\r\n  <div class=\"row white-bg h-100\" *ngIf=\"!showSurveyDiv\">\r\n    <div class=\"col-lg-9 align-items-center h-100\">\r\n      <img id=\"dcapLogo\" src=\"../../../assets/img/dutchess-cap-heart.png\" id=\"imgHeart\">\r\n      <h1>Dutchess County Community Action Survey Portal</h1>\r\n    </div>\r\n    <div class=\"col-lg-3 align-items-center h-100\">\r\n      <button class=\"btn btn-default pull-right\" id=\"btnLogin\" *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">\r\n        <i class=\"fas fa-sign-in-alt\"></i>\r\n        Admin Login\r\n      </button>\r\n    </div>\r\n  </div>\r\n\r\n  <div class=\"row\" id=\"landingRow\">\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"!showSurveyDiv\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <img class=\"center\" id=\"imgLogo\" src=\"../../../assets/img/dutchess-cap-color.png\">\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-3\"></div>\r\n            <div class=\"col-lg-6\">\r\n              <p class=\"text-center black\">Please select a survey to take:</p>\r\n              <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event.target.value)\">\r\n                <option disabled selected>-Please Select a Survey-</option>\r\n                <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\r\n              </select>\r\n            </div>\r\n            <div class=\"col-lg-3\"></div>\r\n          </div>\r\n\r\n          <div class=\"row\">\r\n            <div class=\"form-group\">\r\n              <div class=\"col-lg-12 text-center \">\r\n                <button type=\"button\" id=\"btnStart\" class=\"btn btn-success btn-lg btn-block\" (click)=\"onStart()\">\r\n                  Start Survey!\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"showSurveyDiv\">\r\n\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <form>\r\n            <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n              <div *ngFor=\"let question of survey.questions; let k = index\">\r\n                <div class=\"row\">\r\n                  <div [hidden]=\"hideQuestion(k)\" id=\"topSpacing\">\r\n                    <div class=\"row\">\r\n                      <div class=\"col-lg-12 questionHeader row-centered\">\r\n                        <h2 id=\"questionText\">{{ question.question_text }}</h2>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                    <div class=\"col-lg-8\">\r\n                      <div [ngSwitch]=\"question.question_type\" id=\"bottomSpacing\">\r\n                        <div *ngSwitchCase=\"'select'\">\r\n                          <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                            class=\"form-control\">\r\n                            <option disabled selected>-Please Select a Response-</option>\r\n                            <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                              {{ option.option_text }}\r\n                            </option>\r\n                          </select>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'checkbox'\">\r\n                          <div id =\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                            <label id=\"checkLabel\" class=\"form-check-label\">\r\n                              <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                type=\"checkbox\" [value]=\"option.option_text\">\r\n                              <span id=\"indent\" class=\"spanOption\">{{ option.option_text }}</span>\r\n\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'text'\">\r\n                          <div *ngFor=\"let option of question.options\">\r\n                            <label class=\"form-check-label\"></label>\r\n                            <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                              [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'radio'\">\r\n                          <div id =\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                            <label class=\"check-label\">\r\n                              <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                              <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                              <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              \r\n              <div class=\"row\" [hidden]=\"hideQuestion(k)\">\r\n                <div class=\"col-lg-4\">\r\n                  <button [disabled]=\"isFirstPage()\" type=\"button\" class=\"btn btn-primary pull-left\" (click)='onPrevious()'>\r\n                    <i class=\"fas fa-arrow-circle-left\"></i>\r\n                    Previous Question\r\n                  </button>\r\n                </div>\r\n                <div class=\"col-lg-4 row-centered\">\r\n                   <div class=\"row\">\r\n                     <b>Question {{k + 1}} of {{survey.questions.length }}</b>\r\n                  </div>\r\n                  <div class=\"row\">\r\n                     {{survey.survey_name}}\r\n                  </div>\r\n                </div>\r\n                <div class=\"col-lg-4\">\r\n                  <button type=\"button\" *ngIf=\"!isLastPage()\" class=\"btn btn-primary pull-right\" (click)='onNext()'>\r\n                    Next Question\r\n                    <i class=\"fas fa-arrow-circle-right\"></i>\r\n                  </button>\r\n                  <button type=\"button\" [disabled]='disabledSave' *ngIf=\"isLastPage()\" class=\"btn btn-warning pull-right\" (click)='save();'>\r\n                     Submit Response!\r\n                     <i class=\"fas fa-database\"></i>\r\n                  </button>\r\n                </div>\r\n              </div>\r\n            </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n  </div>\r\n</body>\r\n"
+module.exports = "<!-- Survey Landing/Home page -->\r\n\r\n<body>\r\n\r\n  <div class=\"row white-bg h-100\" *ngIf=\"!showSurveyDiv\">\r\n    <div class=\"col-lg-9 align-items-center h-100\">\r\n      <img id=\"dcapLogo\" src=\"../../../assets/img/dutchess-cap-heart.png\" id=\"imgHeart\">\r\n      <h1>Dutchess County Community Action Survey Portal</h1>\r\n    </div>\r\n    <div class=\"col-lg-3 align-items-center h-100\">\r\n      <button class=\"btn btn-default pull-right\" id=\"btnLogin\" *ngIf=\"!auth.isAuthenticated()\" (click)=\"auth.login()\">\r\n        <i class=\"fas fa-sign-in-alt\"></i>\r\n        Admin Login\r\n      </button>\r\n    </div>\r\n  </div>\r\n\r\n  <div class=\"row\" id=\"landingRow\">\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"!showSurveyDiv\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <img class=\"center\" id=\"imgLogo\" src=\"../../../assets/img/dutchess-cap-color.png\">\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-3\"></div>\r\n            <div class=\"col-lg-6\">\r\n              <p class=\"text-center black\">Please select a survey to take:</p>\r\n              <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event.target.value)\">\r\n                <option disabled selected>-Please Select a Survey-</option>\r\n                <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\r\n              </select>\r\n            </div>\r\n            <div class=\"col-lg-3\"></div>\r\n          </div>\r\n\r\n          <div class=\"row\">\r\n            <div class=\"form-group\">\r\n              <div class=\"col-lg-12 text-center \">\r\n                <button type=\"button\" id=\"btnStart\" class=\"btn btn-success btn-lg btn-block\" (click)=\"onStart()\">\r\n                  Start Survey!\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"showSurveyDiv\">\r\n\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <form>\r\n            <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n              <div *ngFor=\"let question of survey.questions; let k = index\">\r\n                <div class=\"row\">\r\n                  <div [hidden]=\"hideQuestion(k)\" id=\"topSpacing\">\r\n                    <div class=\"row\">\r\n                      <div class=\"col-lg-12 questionHeader row-centered\">\r\n                        <h2 id=\"questionText\">{{ question.question_text }}</h2>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                    <div class=\"col-lg-8\">\r\n                      <div [ngSwitch]=\"question.question_type\" id=\"bottomSpacing\">\r\n                        <div *ngSwitchCase=\"'select'\">\r\n                          <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                            class=\"form-control\">\r\n                            <option disabled selected>-Please Select a Response-</option>\r\n                            <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                              {{ option.option_text }}\r\n                            </option>\r\n                          </select>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'checkbox'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                            <label id=\"checkLabel\" class=\"form-check-label\">\r\n                              <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                type=\"checkbox\" [value]=\"option.option_text\">\r\n                              <span id=\"indent\" class=\"spanOption\">{{ option.option_text }}</span>\r\n\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'text'\">\r\n                          <div *ngFor=\"let option of question.options\">\r\n                            <label class=\"form-check-label\"></label>\r\n                            <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                              [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'radio'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                            <label class=\"check-label\">\r\n                              <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                              <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                              <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n\r\n                <div class=\"row\" [hidden]=\"hideQuestion(k)\">\r\n                  <div class=\"col-lg-4\">\r\n                    <button [disabled]=\"isFirstPage()\" type=\"button\" class=\"btn btn-primary pull-left\" (click)='onPrevious()'>\r\n                      <i class=\"fas fa-arrow-circle-left\"></i>\r\n                      Previous Question\r\n                    </button>\r\n                  </div>\r\n                  <div class=\"col-lg-4 row-centered\">\r\n                    <div class=\"row\">\r\n                      <b>Question {{k + 1}} of {{survey.questions.length }}</b>\r\n                    </div>\r\n                    <div class=\"row\">\r\n                      {{survey.survey_name}}\r\n                    </div>\r\n                  </div>\r\n                  <div class=\"col-lg-4\">\r\n                    <button type=\"button\" *ngIf=\"!isLastPage()\" class=\"btn btn-primary pull-right\" (click)='onNext()'>\r\n                      Next Question\r\n                      <i class=\"fas fa-arrow-circle-right\"></i>\r\n                    </button>\r\n                    <button type=\"button\" [disabled]='disabledSave' *ngIf=\"isLastPage()\" class=\"btn btn-warning pull-right\"\r\n                      (click)='save();'>\r\n                      Submit Response!\r\n                      <i class=\"fas fa-database\"></i>\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n  </div>\r\n</body>"
 
 /***/ }),
 

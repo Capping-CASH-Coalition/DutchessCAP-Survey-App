@@ -32,6 +32,8 @@
  
  #imgHeart {
     height: 50px;
+    float:left; 
+    margin-right: 10px;
  }
 
 .spanOption {

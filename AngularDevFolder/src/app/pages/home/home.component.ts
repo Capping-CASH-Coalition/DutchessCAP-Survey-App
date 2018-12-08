@@ -14,30 +14,31 @@ import { ResponseExport } from '../../models/responseExport.model';
 
 export class HomeComponent implements OnInit, AfterViewInit {
    
+   // canvas id holder
    canvas: any;
-      // canvas context
+   // canvas context
    ctx: any;
-      // chart object
+   // chart object
    chart: Chart = null;
-      // Holds the dynamic survey variables for display
+   // Holds the dynamic survey variables for display
    surveys: Array<any> = [];
-      // Forces home page to wait on the get calls to the database
+   // hold off on displaying div until this is true after data loaded
    showHomeDiv: boolean = false;
-      // Forces home page to wait on the get calls to the database
+   // hold off on displaying div until this is true after data loaded
    showInfo: boolean = false;
-      // Holds the survey details to determine if survey is active
+   // Holds the survey details to determine if survey is active
    surveyDetails: Array<Survey> = [];
-      // Used to keep track 
+   // Used to keep track 
    currSurveyIndex: number = 0;
-      // 
+   // modal id holder
    modal;
 
    constructor (public graphService: GraphService,
                public surveyService: SurveyService,
                private changeref: ChangeDetectorRef) { }
 
-
-   ngOnInit() {
+   // On initialization, gets the surveys, question for each survey, and responses for each question
+   ngOnInit(): void {
       // Get the modal
       this.modal = document.getElementById('success');
       // get the canvas
@@ -114,7 +115,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       })
    }
 
-   ngAfterViewInit() {
+   // after component initialization, update chart
+   ngAfterViewInit(): void {
       // update chart after .75 seconds have passed to allow for all the data to be retrieved
       setTimeout(() => {this.updateChart();}, 750);
    };
@@ -273,7 +275,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
       // puts the date from a year ago into date format
       let yearago = new Date(yyyy + '-' + mm + '-' + dd);
-      // reaturns the date to check against the date.taken of each submission
+      // returns the date to check against the date.taken of each submission
       return yearago;
    }  
 

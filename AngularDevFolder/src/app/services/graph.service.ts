@@ -112,7 +112,7 @@ export class GraphService {
       })
    }
 
-   // date chart
+   // creates a date chart with multiple surveys
    public createDateChart(context, chartType, matrixData): Chart {
       return new Chart(context, {
          type: chartType,
@@ -137,7 +137,7 @@ export class GraphService {
                yAxes: [{
                   scaleLabel: {
                      display: true,
-                     labelString: 'value'
+                     labelString: 'Submissions'
                   }
                }]
             }

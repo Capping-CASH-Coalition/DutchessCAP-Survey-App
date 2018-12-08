@@ -8,5 +8,5 @@ export class ResponseExport {
     response_text: string;
     date_taken: string;
     survey_hash: string;
-
+    
 }

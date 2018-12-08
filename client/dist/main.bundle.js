@@ -159,7 +159,7 @@ var GraphService = (function () {
             options: this.getOptions(chartType)
         });
     };
-    // date chart
+    // creates a date chart with multiple surveys
     GraphService.prototype.createDateChart = function (context, chartType, matrixData) {
         return new __WEBPACK_IMPORTED_MODULE_1_chart_js__["Chart"](context, {
             type: chartType,
@@ -184,7 +184,7 @@ var GraphService = (function () {
                     yAxes: [{
                             scaleLabel: {
                                 display: true,
-                                labelString: 'value'
+                                labelString: 'Submissions'
                             }
                         }]
                 }
@@ -695,8 +695,10 @@ var ExportRawComponent = (function () {
         this.changeref = changeref;
         // Holds the dynamic survey variables for display
         this.surveys = [];
+        // hold off on displaying div until this is true after data loaded
         this.showExportDiv = false;
     }
+    // On component initialization, get the survey ids, names, and date created
     ExportRawComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.surveyService.getAllSurveys().subscribe(function (response) {
@@ -771,8 +773,8 @@ var ExportRawComponent = (function () {
                         _this.currSurvey = _this.surveys[0];
                         // update the date value select to be the date created of the survey
                         _this.updateDate(_this.currSurvey.date_created);
-                        // update the upper date limit with the latest response on the current survey
-                        _this.updateDateUpper(_this.currSurvey.questions[0].responses[_this.currSurvey.questions[0].responses.length - 1].date_taken);
+                        // update the upper date limit with the current date
+                        _this.updateDateUpper(_this.getDateToday());
                         // set the data feed to -1 which is all questions
                         _this.updateDataFeed(-1);
                     }, function (error) {
@@ -888,6 +890,31 @@ var ExportRawComponent = (function () {
         this.downloadCSV(csv.join("\n"));
         console.log("This is the csv: " + csv.join("\n"));
     };
+    // Get date for today formatted in yyyy-mm-dd
+    ExportRawComponent.prototype.getDateToday = function () {
+        var today = new Date();
+        var d = today.getDate();
+        var m = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        var mm;
+        var dd;
+        if (d < 10) {
+            dd = '0' + d;
+        }
+        else {
+            dd = '' + d;
+        }
+        if (m < 10) {
+            mm = '0' + m;
+        }
+        else {
+            mm = '' + m;
+        }
+        // puts the date from a today into date format
+        var currentdate = (yyyy + '-' + mm + '-' + dd);
+        // returns the date to check against the date.taken of each submission
+        return currentdate;
+    };
     return ExportRawComponent;
 }());
 ExportRawComponent = __decorate([
@@ -958,7 +985,6 @@ var GraphsComponent = (function () {
                     "date_created": response.body[i].date_created,
                     questions: []
                 };
-                //this.surveys.push(survey);
                 _this.surveys.push(survey);
                 // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
@@ -1296,15 +1322,16 @@ var HomeComponent = (function () {
         this.chart = null;
         // Holds the dynamic survey variables for display
         this.surveys = [];
-        // Forces home page to wait on the get calls to the database
+        // hold off on displaying div until this is true after data loaded
         this.showHomeDiv = false;
-        // Forces home page to wait on the get calls to the database
+        // hold off on displaying div until this is true after data loaded
         this.showInfo = false;
         // Holds the survey details to determine if survey is active
         this.surveyDetails = [];
         // Used to keep track 
         this.currSurveyIndex = 0;
     }
+    // On initialization, gets the surveys, question for each survey, and responses for each question
     HomeComponent.prototype.ngOnInit = function () {
         var _this = this;
         // Get the modal
@@ -1312,8 +1339,8 @@ var HomeComponent = (function () {
         // get the canvas
         this.canvas = document.getElementById('graphCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
-            for (var i = 0; i < response.body.length; i++) {
+        this.surveyService.getAllSurveys().subscribe(function (response) {
+            var _loop_1 = function (i) {
                 var survey = {
                     "survey_id": response.body[i].survey_id,
                     "survey_name": response.body[i].survey_name,
@@ -1322,29 +1349,6 @@ var HomeComponent = (function () {
                     "response_count": response.body[i].response_count
                 };
                 _this.surveyDetails.push(survey);
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
-            for (var i = 0; i < response.body.length; i++) {
-                var submissions = {
-                    "survey_id": response.body[i].survey_id,
-                    //"date_taken": response.body[i].date_taken.split(" ")[0],
-                    "count": response.body[i].count
-                };
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-        this.surveyService.getAllSurveys().subscribe(function (response) {
-            var _loop_1 = function (i) {
-                var survey = {
-                    "survey_id": response.body[i].survey_id,
-                    "survey_name": response.body[i].survey_name,
-                    "date_created": response.body[i].date_created.split(" ")[0],
-                    "survey_is_active": response.body[i].survey_is_active
-                };
                 _this.surveys.push(survey);
                 // Get the survey questions by selectedSurveyId
                 _this.surveyService.getAllSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
@@ -1407,6 +1411,7 @@ var HomeComponent = (function () {
             console.log('error is ', error);
         });
     };
+    // after component initialization, update chart
     HomeComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         // update chart after .75 seconds have passed to allow for all the data to be retrieved
@@ -1559,7 +1564,7 @@ var HomeComponent = (function () {
         }
         // puts the date from a year ago into date format
         var yearago = new Date(yyyy + '-' + mm + '-' + dd);
-        // reaturns the date to check against the date.taken of each submission
+        // returns the date to check against the date.taken of each submission
         return yearago;
     };
     // When user clicks save survey, display modal
@@ -1779,6 +1784,7 @@ var InputComponent = (function () {
         // Function to reload the page once submitted, this makes it so they can't submit it multiple times
         //window.location.reload();
     };
+    // generates a survey hash for each individual survey
     InputComponent.prototype.generateUUID = function () {
         var d = new Date().getTime();
         if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -1943,8 +1949,7 @@ var SurveyComponent = (function () {
                     "question_id": response.body[i].question_id,
                     "question_text": response.body[i].question_text,
                     "question_type": response.body[i].question_type,
-                    "question_is_active": response.body[i].question_is_active,
-                    options: []
+                    "question_is_active": response.body[i].question_is_active
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
             }
@@ -2510,9 +2515,9 @@ var NavigationComponent = (function () {
     function NavigationComponent(router) {
         this.router = router;
     }
-    NavigationComponent.prototype.ngOnInit = function () { };
-    NavigationComponent.prototype.activeRoute = function (routename) {
-        return this.router.url.indexOf(routename) > -1;
+    // Redirects to given routename
+    NavigationComponent.prototype.activeRoute = function (routeName) {
+        return this.router.url.indexOf(routeName) > -1;
     };
     return NavigationComponent;
 }());
@@ -3087,7 +3092,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "#footer {\n   background-color:white; \n   text-align: center; \n   padding: 5px;\n}", ""]);
+exports.push([module.i, "#footer {\r\n   background-color:white; \r\n   text-align: center; \r\n   padding: 5px;\r\n}", ""]);
 
 // exports
 
@@ -3123,7 +3128,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "#navbar {\r\n    margin-bottom: 0;\r\n}\r\n\r\n#fontsize12 {\r\n    font-size:12px;\r\n}", ""]);
 
 // exports
 
@@ -3267,7 +3272,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "#divRowComment {\n   text-align: center;\n}\n\n#divRowHeader {\n   text-align: center;\n}\n\n#divRowBtn {\n   margin-top:5%;\n}\n\nbody {\n  height: 100vh;\n}\n\n.row {\n  margin-top: 3%;\n}", ""]);
+exports.push([module.i, "#divRowComment {\r\n   text-align: center;\r\n}\r\n\r\n#divRowHeader {\r\n   text-align: center;\r\n}\r\n\r\n#divRowBtn {\r\n   margin-top:5%;\r\n}\r\n\r\nbody {\r\n  height: 100vh;\r\n}\r\n\r\n.row {\r\n  margin-top: 3%;\r\n}", ""]);
 
 // exports
 
@@ -3550,21 +3555,21 @@ webpackContext.id = 617;
 /***/ 629:
 /***/ (function(module, exports) {
 
-module.exports = "<router-outlet></router-outlet>\n"
+module.exports = "<router-outlet></router-outlet>\r\n"
 
 /***/ }),
 
 /***/ 630:
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"navigation\">\n    <div class=\"sidebar-collapse\">\n        <ul class=\"nav metismenu\" id=\"side-menu\">\n            <li class=\"nav-header\">\n                <div class=\"dropdown profile-element\">\n                    <span>\n                        <img alt=\"image\" class=\"img-rectangle\" width=\"165px\"\n                             src=\"./assets/img/dutchess-cap.png\" />\n                    </span>\n                </div>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('home')}\">\n                <a [routerLink]=\"['/home']\"><i class=\"fas fa-home\"></i> <span class=\"nav-label\">Home</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('graphs')}\">\n               <a [routerLink]=\"['/graphs']\"><i class=\"fas fa-chart-line\"></i> <span class=\"nav-label\">Graph Designer</span></a>\n           </li>\n            <li [ngClass]=\"{active: activeRoute('input')}\">\n                <a [routerLink]=\"['/input']\"><i class=\"fas fa-user-edit\"></i> <span class=\"nav-label\">Input Survey Manually</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('exportRaw')}\">\n                <a [routerLink]=\"['/exportRaw']\"><i class=\"fas fa-table\"></i> <span class=\"nav-label\">Query/Export Data</span></a>\n            </li>\n            <li [ngClass]=\"{active: activeRoute('edit')}\">\n                  <a [routerLink]=\"['/edit']\"><i class=\"fas fa-edit\"></i> <span class=\"nav-label\">Edit Survey</span></a>\n            </li>\n        </ul>\n    </div>\n</nav>"
+module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"navigation\">\r\n    <div class=\"sidebar-collapse\">\r\n        <ul class=\"nav metismenu\" id=\"side-menu\">\r\n            <li class=\"nav-header\">\r\n                <div class=\"dropdown profile-element\">\r\n                    <span>\r\n                        <img alt=\"image\" class=\"img-rectangle\" width=\"165px\"\r\n                             src=\"./assets/img/dutchess-cap.png\" />\r\n                    </span>\r\n                </div>\r\n            </li>\r\n            <li [ngClass]=\"{active: activeRoute('home')}\">\r\n                <a [routerLink]=\"['/home']\"><i class=\"fas fa-home\"></i> <span class=\"nav-label\">Home</span></a>\r\n            </li>\r\n            <li [ngClass]=\"{active: activeRoute('graphs')}\">\r\n               <a [routerLink]=\"['/graphs']\"><i class=\"fas fa-chart-line\"></i> <span class=\"nav-label\">Graph Designer</span></a>\r\n           </li>\r\n            <li [ngClass]=\"{active: activeRoute('input')}\">\r\n                <a [routerLink]=\"['/input']\"><i class=\"fas fa-user-edit\"></i> <span class=\"nav-label\">Input Survey Manually</span></a>\r\n            </li>\r\n            <li [ngClass]=\"{active: activeRoute('exportRaw')}\">\r\n                <a [routerLink]=\"['/exportRaw']\"><i class=\"fas fa-table\"></i> <span class=\"nav-label\">Query/Export Data</span></a>\r\n            </li>\r\n            <li [ngClass]=\"{active: activeRoute('edit')}\">\r\n                  <a [routerLink]=\"['/edit']\"><i class=\"fas fa-edit\"></i> <span class=\"nav-label\">Edit Survey</span></a>\r\n            </li>\r\n        </ul>\r\n    </div>\r\n</nav>"
 
 /***/ }),
 
 /***/ 631:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" style=\"margin-bottom: 0\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.isAuthenticated()\"\n                    (click)=\"auth.logout()\" style=\"font-size:12px\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n                <li>\n                    <a (click)=\"helpGuide()\" style=\"font-size:12px\">\n                        <i class=\"fas info-circle\"></i>\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n<div id=\"helpGuide\" class=\"modal\">\n  \n    <!-- Modal content -->\n    <div class=\"modal-content\">\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\n      <p>Saved Successfully!</p>\n    </div>\n\n\n</div>"
+module.exports = "<div class=\"row border-bottom\">\r\n    <div id=\"topNavBar\">\r\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" id=\"navbar\">\r\n            <ul class=\"nav navbar-top-links navbar-right\">\r\n                <li>\r\n                    <a *ngIf=\"auth.isAuthenticated()\"\r\n                    (click)=\"auth.logout()\" id=\"fontsize12\">\r\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\r\n                    </a>\r\n                </li>\r\n                <li>\r\n                    <a (click)=\"helpGuide()\">\r\n                        <i class=\"fas info-circle\"></i>\r\n                    </a>\r\n                </li>\r\n            </ul>\r\n        </nav>\r\n    </div>\r\n</div>\r\n<div id=\"helpGuide\" class=\"modal\">\r\n    <!-- Modal content -->\r\n    <div class=\"modal-content\">\r\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\r\n      <p>Saved Successfully!</p>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
@@ -3585,7 +3590,7 @@ module.exports = "<div id=\"wrapper\">\r\n    <navigation></navigation>\r\n    <
 /***/ 634:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n\r\n    <div  class=\"row wrapper border-bottom white-bg page-heading\">\r\n      <div class=\"row\">\r\n\r\n        <div *ngIf=\"displayDiv\" class=\"col-lg-3\" id=\"chartDiv\">\r\n          <br>\r\n          <form [formGroup]=\"chartForm\">\r\n            <div class=\"form-group\">\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                </div>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Chart Type</label>\r\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                    {{graph.view}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Survey</label>\r\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                    {{survey.survey_name}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Question</label>\r\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | GraphableQuestion\"\r\n                    [value]=\"question.question_id\">\r\n                    {{question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                <div class=\"filterBlock\">\r\n                  <label for=\"graphType\">Select Sub Question</label>\r\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateSubQuestionOptions()\">\r\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                      [value]=\"question.question_id\">\r\n                      {{question.question_text}}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"optionsDiv\">\r\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                      <div class=\"col-lg-12\">\r\n                         <li>\r\n                           <input type=\"checkbox\" [formControlName]=\"i\">\r\n                           <span class=\"spanOption\">{{option.option_text}}</span>\r\n                        </li>\r\n                      </div>\r\n                     </ul>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n              <div class=\"btnBlock\">\r\n               <hr>\r\n                <button type=\"button\" class=\"btn btn-primary btn-block btn-sm\">\r\n                  <a href=\"graphs\" (click)=\"download($event)\" id=\"export\">\r\n                    <i class=\"fas fa-download\"></i>\r\n                    Export Graph\r\n                  </a>\r\n                </button>\r\n              </div>\r\n\r\n            </div>\r\n          </form>\r\n        </div>\r\n\r\n        <div class=\"col-lg-8\">\r\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n        </div>\r\n\r\n        <div class=\"col-lg-1\">\r\n\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n\r\n    <div  class=\"row wrapper border-bottom white-bg page-heading\">\r\n      <div class=\"row\">\r\n\r\n        <div *ngIf=\"displayDiv\" class=\"col-lg-3\" id=\"chartDiv\">\r\n          <br>\r\n          <form [formGroup]=\"chartForm\">\r\n            <div class=\"form-group\">\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"deepGraphSwitch\">Data Set Modeling Switch</label>\r\n                <div class=\"btn-group w-100\" id=\"deepGraphSwitch\" role=\"group\" (click)=\"updateMultipleDataSetForm($event.target.value)\">\r\n                  <button [disabled]=\"buttonStateSingle()\" type=\"button\" value=\"single\" class=\"btnGroupSwitch btn btn-success\">Single</button>\r\n                  <button [disabled]=\"buttonStateMultiple()\" type=\"button\" value=\"multiple\" class=\"btnGroupSwitch btn btn-success\">Double</button>\r\n                </div>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Chart Type</label>\r\n                <select class=\"form-control\" formControlName=\"chartType\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let graph of graphService.getGraphTypes()\" [value]=\"graph.val\">\r\n                    {{graph.view}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Survey</label>\r\n                <select class=\"form-control\" formControlName=\"surveyId\" required>\r\n                  <option *ngFor=\"let survey of surveys\" [value]=\"survey.survey_id\">\r\n                    {{survey.survey_name}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div class=\"filterBlock\">\r\n                <label for=\"graphType\">Select Question</label>\r\n                <select class=\"form-control\" formControlName=\"questionId\" (change)=\"updateChart()\" required>\r\n                  <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | GraphableQuestion\"\r\n                    [value]=\"question.question_id\">\r\n                    {{question.question_text}}\r\n                  </option>\r\n                </select>\r\n              </div>\r\n\r\n              <div id=\"multipleDataSets\" *ngIf=\"currentDatasetType != 'single'\">\r\n                <div class=\"filterBlock\">\r\n                  <label for=\"graphType\">Select Sub Question</label>\r\n                  <select class=\"form-control\" formControlName=\"subQuestionId\" required (change)=\"updateSubQuestionOptions()\">\r\n                    <option *ngFor=\"let question of surveys[chartForm.controls.surveyId.value - 1].questions | ExceptQuestionId: chartForm.controls.questionId.value | GraphableQuestion\"\r\n                      [value]=\"question.question_id\">\r\n                      {{question.question_text}}\r\n                    </option>\r\n                  </select>\r\n                </div>\r\n                <div class=\"optionsDiv\">\r\n                  <form [formGroup]=\"optionsForm\" (change)=\"updateChart()\">\r\n                    <small class=\"optionsLabel text-muted\">Sub Question Data Filter</small>\r\n                    <ul class=\"optionsList\" formArrayName=\"options\" *ngFor=\"let option of getSubQuestionOptions(); let i = index\">\r\n                      <div class=\"col-lg-12\">\r\n                         <li>\r\n                           <input type=\"checkbox\" [formControlName]=\"i\">\r\n                           <span class=\"spanOption\">{{option.option_text}}</span>\r\n                        </li>\r\n                      </div>\r\n                     </ul>\r\n                  </form>\r\n                </div>\r\n              </div>\r\n              <div class=\"btnBlock\">\r\n               <hr>\r\n                <button type=\"button\" (click)=\"download($event)\" class=\"btn btn-primary btn-block btn-sm\">\r\n                  <a href=\"graphs\" id=\"export\">\r\n                    <i class=\"fas fa-download\"></i>\r\n                    Export Graph\r\n                  </a>\r\n                </button>\r\n              </div>\r\n\r\n            </div>\r\n          </form>\r\n        </div>\r\n\r\n        <div class=\"col-lg-8\">\r\n          <canvas id=\"graphCanvas\" width=\"670\" height=\"670\"></canvas>\r\n        </div>\r\n\r\n        <div class=\"col-lg-1\">\r\n\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -3620,7 +3625,7 @@ module.exports = "<body>\r\n  <!-- Survey Landing/Home page -->\r\n  <div class=
 /***/ 639:
 /***/ (function(module, exports) {
 
-module.exports = "<body>\n\n  <div class=\"row\">\n\n    <div class=\"col-lg-3\">\n    </div>\n\n    <div class=\"col-lg-6\">\n      <div class=\"ibox float-e-margins\">\n        <div class=\"ibox-title\" id=\"divRowHeader\">\n          <h2 class=\"center-text\">Thank you for taking our survey!</h2>\n        </div>\n        <div class=\"ibox-content\">\n           <div class=\"row\" id=\"divRowComment\">\n               <p class=\"center-text\">If you would like to leave a comment or question, <a href=\"http://dutchesscaporg-proof.presencehost.net/contact.html\"> click here!</a>\n            </div>\n            <div class=\"row\" id=\"divRowBtn\">\n            <button class=\"btn btn-default btn-block\" (click)=\"location.href = 'http://www.dutchesscap.org/'\">\n              <i class=\"fas fa-sign-in-alt\"></i>\n              Return to http://www.dutchesscap.org\n            </button>\n         </div>\n        </div>\n      </div>\n\n    </div>\n\n    <div class=\"col-lg-3\">\n    </div>\n\n  </div>\n</body>"
+module.exports = "<body>\r\n\r\n  <div class=\"row\">\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\" id=\"divRowHeader\">\r\n          <h2 class=\"center-text\">Thank you for taking our survey!</h2>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n           <div class=\"row\" id=\"divRowComment\">\r\n               <p class=\"center-text\">If you would like to leave a comment or question, <a href=\"http://dutchesscaporg-proof.presencehost.net/contact.html\"> click here!</a>\r\n            </div>\r\n            <div class=\"row\" id=\"divRowBtn\">\r\n            <button class=\"btn btn-default btn-block\" (click)=\"location.href = 'http://www.dutchesscap.org/'\">\r\n              <i class=\"fas fa-sign-in-alt\"></i>\r\n              Return to http://www.dutchesscap.org\r\n            </button>\r\n         </div>\r\n        </div>\r\n      </div>\r\n\r\n    </div>\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n  </div>\r\n</body>"
 
 /***/ }),
 

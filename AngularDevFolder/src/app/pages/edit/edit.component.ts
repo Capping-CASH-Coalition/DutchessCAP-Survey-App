@@ -4,6 +4,7 @@ import { SurveyService } from 'app/services/survey.service';
 import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
+import { AnonymousSubscription } from 'rxjs/Subscription';
 
 @Component({
    selector: 'app-edit',
@@ -31,14 +32,16 @@ export class EditComponent implements OnInit {
    lastOptionId: number = 0;
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
+   // hold off on displaying div until this is true after data loaded
    isNewSurvey: boolean;
+   // modal id holder
    modal;
 
    constructor (private _fb: FormBuilder,
                public surveyService: SurveyService) { }
 
    // initilaize a new blank survey form
-   ngOnInit() {
+   ngOnInit(): void {
       // Get the modal
       this.modal = document.getElementById('success');
       this.newSurveyForm();
@@ -108,7 +111,7 @@ export class EditComponent implements OnInit {
    }
 
    // sets the survey form to a blank survey
-   newSurveyForm() {
+   newSurveyForm(): void {
       this.isNewSurvey = true;
       this.currentQuestionScope = -1;
       this.currentOptionScope = [-1];
@@ -125,7 +128,7 @@ export class EditComponent implements OnInit {
    }
 
    // create a new blank question
-   initQuestion() {
+   initQuestion(): any {
       return this._fb.group({
          question_is_active: new FormControl({value: true, disabled: true}),
          question_text: new FormControl(''),
@@ -137,7 +140,7 @@ export class EditComponent implements OnInit {
    }
 
    // create a new blank option
-   initOption() {
+   initOption(): any {
       this.currentOptionScope.push(-1);
       return this._fb.group({
          option_is_active: new FormControl({value: true, disabled: true}),
@@ -146,13 +149,13 @@ export class EditComponent implements OnInit {
    }
 
    // add question to the form group array at the given index
-   addQuestion(idx: number) {
+   addQuestion(idx: number): void {
       const control = <FormArray>this.survey.controls['questions'];
       control.insert(idx + 1, this.initQuestion());
    }
 
    // remove question from the form group array at the given index
-   removeQuestion(idx: number) {
+   removeQuestion(idx: number): void {
       const control = <FormArray>this.survey.controls['questions'];
       control.removeAt(idx);
    }
@@ -167,7 +170,7 @@ export class EditComponent implements OnInit {
    }
 
    // remove option from the form group array at the given index
-   removeOption(question, optionIndex: number, questionIndex: number) {
+   removeOption(question, optionIndex: number, questionIndex: number): void {
       const control = <FormArray>question.controls.options;
       control.removeAt(optionIndex);
       if (this.isNewSurvey) {
@@ -199,7 +202,7 @@ export class EditComponent implements OnInit {
    }
 
    // Used to update the formgroup from a given survey id
-   updateSurveyFormData(survey_id) {
+   updateSurveyFormData(survey_id): void {
       this.isNewSurvey = false;
       let currSurvey;
       this.nameReadOnly = true;
@@ -221,7 +224,7 @@ export class EditComponent implements OnInit {
    }
 
    // used to update the questions of the form group qustions array
-   patchFormQuestions(questions: any[]) {
+   patchFormQuestions(questions: any[]): void {
       const control = <FormArray>this.survey.controls['questions'];
       questions.forEach(q => {
             control.push(this._fb.group({
@@ -234,7 +237,7 @@ export class EditComponent implements OnInit {
    }
 
    // used to update the options of the nested form group options array
-   patchFormOptions(options) {
+   patchFormOptions(options): any {
       let ops = new FormArray([]);
       options.forEach(o => {
          ops.push(this._fb.group({
@@ -247,7 +250,7 @@ export class EditComponent implements OnInit {
    }
 
    // Saves/Uploads the selected formData to the database
-   save(formData) {
+   save(formData): void {
       let survey;
       let question;
       let option;
@@ -382,7 +385,7 @@ export class EditComponent implements OnInit {
    }
 
    // Returns the surveyIndex that matches the formData.survey_id
-   getSurveyIndex(formData) {
+   getSurveyIndex(formData): any {
       let index;
       console.log("formData.survey_id" + formData.survey_id);
       if (formData.survey_id) {
@@ -407,14 +410,14 @@ export class EditComponent implements OnInit {
    }
 
    // Updates the options active status
-   updateOptionActiveStatus(question, option, bool) {
+   updateOptionActiveStatus(question, option, bool): void {
       if (! this.isNewSurvey) {
          const control = <FormGroup>question.controls.options.at(option);
          control.patchValue({option_is_active: bool});
       }
    }
 
-   updateQuestionActiveStatus(question, bool) {
+   updateQuestionActiveStatus(question, bool): void {
       if (! this.isNewSurvey) {
          const control = <FormGroup>question;
          control.patchValue({question_is_active: bool});

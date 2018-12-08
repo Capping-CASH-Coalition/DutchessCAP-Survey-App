@@ -958,7 +958,6 @@ var GraphsComponent = (function () {
                     "date_created": response.body[i].date_created,
                     questions: []
                 };
-                //this.surveys.push(survey);
                 _this.surveys.push(survey);
                 // Manually detect changes as the page will load faster than the async call
                 _this.changeref.detectChanges();
@@ -1312,8 +1311,8 @@ var HomeComponent = (function () {
         // get the canvas
         this.canvas = document.getElementById('graphCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
-            for (var i = 0; i < response.body.length; i++) {
+        this.surveyService.getAllSurveys().subscribe(function (response) {
+            var _loop_1 = function (i) {
                 var survey = {
                     "survey_id": response.body[i].survey_id,
                     "survey_name": response.body[i].survey_name,
@@ -1322,29 +1321,6 @@ var HomeComponent = (function () {
                     "response_count": response.body[i].response_count
                 };
                 _this.surveyDetails.push(survey);
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-        this.surveyService.getAllSurveysInfo().subscribe(function (response) {
-            for (var i = 0; i < response.body.length; i++) {
-                var submissions = {
-                    "survey_id": response.body[i].survey_id,
-                    //"date_taken": response.body[i].date_taken.split(" ")[0],
-                    "count": response.body[i].count
-                };
-            }
-        }, function (error) {
-            console.log('error is ', error);
-        });
-        this.surveyService.getAllSurveys().subscribe(function (response) {
-            var _loop_1 = function (i) {
-                var survey = {
-                    "survey_id": response.body[i].survey_id,
-                    "survey_name": response.body[i].survey_name,
-                    "date_created": response.body[i].date_created.split(" ")[0],
-                    "survey_is_active": response.body[i].survey_is_active
-                };
                 _this.surveys.push(survey);
                 // Get the survey questions by selectedSurveyId
                 _this.surveyService.getAllSurveyQuestions(_this.surveys[i].survey_id).subscribe(function (response) {
@@ -1944,7 +1920,7 @@ var SurveyComponent = (function () {
                     "question_text": response.body[i].question_text,
                     "question_type": response.body[i].question_type,
                     "question_is_active": response.body[i].question_is_active,
-                    options: []
+                    "options": []
                 };
                 _this.surveys[_this.selectedSurveyIndex].questions.push(question);
             }
@@ -1962,6 +1938,7 @@ var SurveyComponent = (function () {
                         };
                         // If the question IDs match, push the option into the questions[j].options array
                         if (_this.surveys[_this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
+                            console.log(_this.surveys[_this.selectedSurveyIndex].questions[j]);
                             _this.surveys[_this.selectedSurveyIndex].questions[j].options.push(option);
                         }
                     }
@@ -2510,9 +2487,9 @@ var NavigationComponent = (function () {
     function NavigationComponent(router) {
         this.router = router;
     }
-    NavigationComponent.prototype.ngOnInit = function () { };
-    NavigationComponent.prototype.activeRoute = function (routename) {
-        return this.router.url.indexOf(routename) > -1;
+    // Redirects to given routename
+    NavigationComponent.prototype.activeRoute = function (routeName) {
+        return this.router.url.indexOf(routeName) > -1;
     };
     return NavigationComponent;
 }());
@@ -3123,7 +3100,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "#navbar {\n    margin-bottom: 0;\n}\n\n#fontsize12 {\n    font-size:12px;\n}", ""]);
 
 // exports
 
@@ -3564,7 +3541,7 @@ module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"naviga
 /***/ 631:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" style=\"margin-bottom: 0\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.isAuthenticated()\"\n                    (click)=\"auth.logout()\" style=\"font-size:12px\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n                <li>\n                    <a (click)=\"helpGuide()\" style=\"font-size:12px\">\n                        <i class=\"fas info-circle\"></i>\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n<div id=\"helpGuide\" class=\"modal\">\n  \n    <!-- Modal content -->\n    <div class=\"modal-content\">\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\n      <p>Saved Successfully!</p>\n    </div>\n\n\n</div>"
+module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" id=\"navbar\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.isAuthenticated()\"\n                    (click)=\"auth.logout()\" id=\"fontsize12\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n                <li>\n                    <a (click)=\"helpGuide()\">\n                        <i class=\"fas info-circle\"></i>\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n<div id=\"helpGuide\" class=\"modal\">\n    <!-- Modal content -->\n    <div class=\"modal-content\">\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\n      <p>Saved Successfully!</p>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -3592,7 +3569,7 @@ module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div 
 /***/ 635:
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n          <div (click)=\"updateChart()\" id=\"divRefresh\">\r\n               <i class=\"fas fa-sync-alt pull-right\"></i>\r\n          </div>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\">\r\n                <button type=\"submit\" *ngIf=\"info.survey_is_active\"  value=\"{{info.survey_id}}\" (click)=\"openModal($event.target.value)\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"submit\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" (click)=\"openModal($event.target.value)\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n        \r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n        <!-- Modal content -->\r\n        <div class=\"modal-content\">\r\n          <p class=\"checker\">Are you sure you want to change the activity status of this survey?</p>\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-5\">\r\n              <span (click)=\"updateActiveSurvey()\" class=\"close\">Yes</span>\r\n            </div>\r\n            <div class=\"col-lg-2\">\r\n              <span (click)=\"closeModal()\" class=\"close\">No</span>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"wrapper\">\r\n  <navigation></navigation>\r\n  <div id=\"page-wrapper\" class=\"gray-bg\">\r\n    <topnavbar></topnavbar>\r\n    <div  *ngIf=\"showHomeDiv\" class=\"col-lg-3 margin-top-20\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-title\">\r\n          <h5>Survey Details</h5>\r\n          <div (click)=\"updateChart()\" id=\"divRefresh\">\r\n               <i class=\"fas fa-sync-alt pull-right\"></i>\r\n          </div>\r\n        </div>\r\n        <div class=\"ibox-content\">\r\n          <div *ngIf=\"showInfo\" class=\"feed-activity-list\">\r\n            <div *ngFor=\"let info of surveyDetails\">\r\n               <div class=\"feed-element margin-top-5\">\r\n                <button type=\"submit\" *ngIf=\"info.survey_is_active\"  value=\"{{info.survey_id}}\" (click)=\"openModal($event.target.value)\" class=\"label label-primary pull-right\">Active</button>\r\n                <button type=\"submit\" *ngIf=\"! info.survey_is_active\" value=\"{{info.survey_id}}\" (click)=\"openModal($event.target.value)\" class=\"label label-warning pull-right\">Inactive</button>\r\n                <strong>{{info.survey_name}}</strong>\r\n                <div class=\"margin-top-5\">\r\n                  <div> Date Created: <small class=\"text-muted pull-right\">{{info.date_created}}</small></div>\r\n                  <div> Submissions: <small class=\"text-muted pull-right\">{{info.response_count}}</small></div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"col-lg-9 margin-top-20\">\r\n      <div class=\"ibox-content\">\r\n        <canvas id=\"graphCanvas\" width=\"1000\" height=\"670\"></canvas>\r\n      </div >\r\n    </div>\r\n    <div id=\"success\" class=\"modal\">\r\n\r\n        <!-- Modal content -->\r\n        <div class=\"modal-content\">\r\n          <p class=\"checker\">Are you sure you want to change the activity status of this survey?</p>\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-5\">\r\n              <span (click)=\"updateActiveSurvey()\" class=\"close\">Yes</span>\r\n            </div>\r\n            <div class=\"col-lg-2\">\r\n              <span (click)=\"closeModal()\" class=\"close\">No</span>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 

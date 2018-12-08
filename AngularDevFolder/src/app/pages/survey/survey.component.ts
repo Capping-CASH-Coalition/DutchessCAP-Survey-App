@@ -97,7 +97,8 @@ export class SurveyComponent implements OnInit, DoCheck {
           "question_id": response.body[i].question_id,
           "question_text": response.body[i].question_text,
           "question_type": response.body[i].question_type,
-          "question_is_active": response.body[i].question_is_active
+          "question_is_active": response.body[i].question_is_active,
+          "options": []
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
       }
@@ -116,6 +117,7 @@ export class SurveyComponent implements OnInit, DoCheck {
             };
             // If the question IDs match, push the option into the questions[j].options array
             if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
+               console.log(this.surveys[this.selectedSurveyIndex].questions[j]);
               this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
             }
           }

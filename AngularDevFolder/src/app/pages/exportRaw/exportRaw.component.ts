@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
 import { SurveyService } from 'app/services/survey.service';
-import { SurveyInfo } from '../../models/surveyInfo.model';
+import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
-import { Responses } from '../../models/responseExport.model';
+import { ResponseExport } from '../../models/responseExport.model';
 
 @Component({
    selector: 'app-exportRaw',
@@ -36,7 +36,7 @@ export class ExportRawComponent implements OnInit {
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
-               let survey: SurveyInfo = {
+               let survey: Survey = {
                      "survey_id": response.body[i].survey_id,
                      "survey_name": response.body[i].survey_name,
                      "date_created": response.body[i].date_created.split(" ")[0],
@@ -88,7 +88,7 @@ export class ExportRawComponent implements OnInit {
                         for (let k = 0; k < this.surveys[i].questions.length; k++) {
                            this.surveys[i].questions[k].responses = [];
                               for (let l = 0; l < response.body.length; l++) {
-                                    let response1: Responses = {
+                                    let response1: ResponseExport = {
                                           "response_id": response.body[l].response_id,
                                           "survey_id": response.body[l].survey_id,
                                           "question_id": response.body[l].question_id,

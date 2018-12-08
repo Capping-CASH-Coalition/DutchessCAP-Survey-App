@@ -5,7 +5,6 @@ import { Question } from 'app/models/question.model';
 import { Option } from 'app/models/option.model';
 import { Survey } from 'app/models/survey.model';
 import { Response } from 'app/models/response.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey',
@@ -98,8 +97,7 @@ export class SurveyComponent implements OnInit, DoCheck {
           "question_id": response.body[i].question_id,
           "question_text": response.body[i].question_text,
           "question_type": response.body[i].question_type,
-          "question_is_active": response.body[i].question_is_active,
-          options: []
+          "question_is_active": response.body[i].question_is_active
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
       }

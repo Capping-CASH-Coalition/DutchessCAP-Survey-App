@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { SurveyService } from 'app/services/survey.service';
-import { SurveyInfo } from '../../models/surveyInfo.model';
+import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
 
@@ -45,7 +45,7 @@ export class EditComponent implements OnInit {
       this.surveyService.getAllSurveys().subscribe(response => {
             // Get 1 survey at a time and push into surveys array
             for (let i = 0; i < response.body.length; i++) {
-                  let survey: SurveyInfo = {
+                  let survey: Survey = {
                         "survey_id": response.body[i].survey_id,
                         "survey_name": response.body[i].survey_name,
                         "date_created": response.body[i].date_created,

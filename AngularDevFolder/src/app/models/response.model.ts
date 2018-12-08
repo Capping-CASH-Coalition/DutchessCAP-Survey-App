@@ -1,3 +1,4 @@
+// Defines a response
 export class Response {
 
     question_id: number;

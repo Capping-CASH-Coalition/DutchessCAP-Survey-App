@@ -164,7 +164,7 @@ export class GraphsComponent implements OnInit {
    }
 
    // init chart form
-   initChartForm() {
+   initChartForm(): void {
       this.chartForm = this.fb.group({
          chartType: new FormControl('pie'),
          surveyId: new FormControl('1'),
@@ -174,7 +174,7 @@ export class GraphsComponent implements OnInit {
    }
 
    // init the options with the subquestion id appropiately 
-   initOptionsForm() {
+   initOptionsForm(): void {
       const controls = this.getSubQuestionOptions().map(o => new FormControl(false));
       this.optionsForm = this.fb.group({
          options: new FormArray(controls)
@@ -246,7 +246,7 @@ export class GraphsComponent implements OnInit {
    }
 
    // update the selected options to only be the checked ones
-   updateSelectedOptions() {
+   updateSelectedOptions(): void {
       const options = this.getSubQuestionOptions()
       this.selectedOptions = this.optionsForm.value.options
          .map((v, i) => v ? options[i].option_text : null)
@@ -343,7 +343,7 @@ export class GraphsComponent implements OnInit {
    }
 
    // use graph service to download the chart given an event
-   download(event) {
+   download(event): void {
       this.graphService.downloadChart(event, 'canvas');
    }
 
@@ -357,7 +357,7 @@ export class GraphsComponent implements OnInit {
    }
 
    // update the dataset switch to single or multiple
-   updateMultipleDataSetForm(val) {
+   updateMultipleDataSetForm(val): void {
       // if multiple datasets, set default to bar
       if (val == 'multiple') {
          this.chartForm.controls.chartType.setValue('bar');
@@ -367,6 +367,4 @@ export class GraphsComponent implements OnInit {
       // update chart accordingly to filters
       this.updateChart();
    }
-
-
 }

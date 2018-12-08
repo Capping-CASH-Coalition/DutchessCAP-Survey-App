@@ -38,7 +38,7 @@ export class InputComponent implements OnInit {
 
     // Unique user hash
     currentUser: string;
-
+    // modal id holder
     modal;
 
 
@@ -67,21 +67,12 @@ export class InputComponent implements OnInit {
         }, (error) => {
             console.log('error is ', error)
         })
-
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
-
-
-
-        
-
     }
 
-    ngAfterViewInit(){
-        setTimeout(() => {this.surveySelect(this.surveys[0].survey_id)}, 1000);
-
-        
-       
+    ngAfterViewInit(): void {
+        setTimeout(() => {this.surveySelect(this.surveys[0].survey_id)}, 1000);  
     }
 
     // This continuously checks if the user is authenticated
@@ -93,7 +84,7 @@ export class InputComponent implements OnInit {
     }
 
     //when a user clicks an option from the dropdown menu
-    surveySelect(value) {
+    surveySelect(value): void {
 
         this.selectedSurveyId = value;
         for (let i = 0; i < this.surveys.length; i++) {
@@ -152,7 +143,7 @@ export class InputComponent implements OnInit {
     }
 
     // Deals with Radio/Text/Select and grabs correct values for DB
-    valueChanges(survey_id, question_id, option_id, option_text) {
+    valueChanges(survey_id, question_id, option_id, option_text): void {
         //Checks for multiple options, runs for SELECT type
         if (typeof option_id == 'object') {
             // option is an array, filter the correct option id to get correlating option_text
@@ -176,7 +167,7 @@ export class InputComponent implements OnInit {
     }
 
     //Updates response array based on checked box
-    updateCheckbox(currentQuestion, content, isChecked, option_id, survey_id, ) {
+    updateCheckbox(currentQuestion, content, isChecked, option_id, survey_id, ): void {
         //Checks to see if current question has response, if not make a response array for that Q  
         if (!currentQuestion.response) {
             currentQuestion.response = [];
@@ -205,7 +196,7 @@ export class InputComponent implements OnInit {
 
 
     //Submit Button Functionality
-    save() {
+    save(): void {
         //Takes the responsemodel from each question and pushes it to the surveyData object
         // console.log(this.surveys[this.selectedSurveyId - 1]);
         this.surveys[this.selectedSurveyIndex].questions.forEach(element => {
@@ -230,6 +221,7 @@ export class InputComponent implements OnInit {
         //window.location.reload();
     }
 
+    // generates a survey hash for each individual survey
     generateUUID(): string {
         var d = new Date().getTime();
         if (typeof performance !== 'undefined' && typeof performance.now === 'function') {

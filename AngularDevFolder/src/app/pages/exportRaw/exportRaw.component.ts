@@ -26,13 +26,14 @@ export class ExportRawComponent implements OnInit {
    surveys: Array<any> = [];
    // used to determine if the survey name is readonly or not
    nameReadOnly: boolean;
+   // hold off on displaying div until this is true after data loaded
    showExportDiv: boolean = false;
 
    constructor (public surveyService: SurveyService,
                private changeref: ChangeDetectorRef) { }
 
-
-   ngOnInit() {
+   // On component initialization, get the survey ids, names, and date created
+   ngOnInit(): void {
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
@@ -110,11 +111,10 @@ export class ExportRawComponent implements OnInit {
                            this.currSurvey = this.surveys[0];
                             // update the date value select to be the date created of the survey
                            this.updateDate(this.currSurvey.date_created);
-                           // update the upper date limit with the latest response on the current survey
-                           this.updateDateUpper(this.currSurvey.questions[0].responses[this.currSurvey.questions[0].responses.length - 1].date_taken);
+                           // update the upper date limit with the current date
+                           this.updateDateUpper(this.getDateToday());
                            // set the data feed to -1 which is all questions
                            this.updateDataFeed(-1);
-
                      }, (error) => {
                            console.log('error is ', error)
                      }) 
@@ -139,17 +139,17 @@ export class ExportRawComponent implements OnInit {
 
 
    // set the date filter global from the survey
-   updateDate(date) {
+   updateDate(date): void {
       this.dateFilterStart = date;
    }
 
    // set the upper date filter global from the survey
-   updateDateUpper(date) {
+   updateDateUpper(date): void {
       this.dateFilterEnd = date;
    }
 
    // set the current survey from the given id 
-   updateSurvey(id) {
+   updateSurvey(id): void {
       this.currSurvey = this.surveys[id - 1];
       // get questions from the current survey
       this.getQuestions();
@@ -165,7 +165,7 @@ export class ExportRawComponent implements OnInit {
    }
 
    // updates the datafeed from a given question
-   updateDataFeed(question_id: number) {
+   updateDataFeed(question_id: number): void {
       // clear the datafeed.
       this.dataFeed = [];
       // if the question = -1 then get all questions from the survey
@@ -201,7 +201,7 @@ export class ExportRawComponent implements OnInit {
    }
 
    // download the feed table as a CSV
-   downloadCSV(csv) {
+   downloadCSV(csv): void {
       let csvFile;
       let downloadLink;
       // CSV file
@@ -221,10 +221,9 @@ export class ExportRawComponent implements OnInit {
    }
 
    // export the table to format for download
-   exportTableToCSV() {
+   exportTableToCSV(): void {
       let csv = [];
       let rows = document.querySelectorAll("table tr");
-
       for (let i = 0; i < rows.length; i++) {
          let row = [], cols = rows[i].querySelectorAll("td, th");
          for (let j = 0; j < cols.length; j++)
@@ -235,4 +234,30 @@ export class ExportRawComponent implements OnInit {
       this.downloadCSV(csv.join("\n"));
       console.log("This is the csv: " + csv.join("\n"))
    }
+
+    // Get date for today formatted in yyyy-mm-dd
+   private getDateToday(): any {
+      let today = new Date();
+      let d = today.getDate();
+      let m = today.getMonth() + 1;
+      let yyyy = today.getFullYear();
+      let mm: string;
+      let dd: string;
+      if(d < 10) {
+         dd = '0' + d;
+      }
+      else{
+         dd = '' + d;
+      }
+      if(m < 10) {
+         mm = '0' + m;
+      }
+      else{
+         mm = '' + m;
+      }
+      // puts the date from a today into date format
+      let currentdate = (yyyy + '-' + mm + '-' + dd);
+      // returns the date to check against the date.taken of each submission
+      return currentdate;
+   }  
 }

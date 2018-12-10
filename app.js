@@ -1,6 +1,6 @@
+// Required packages are initialized
 const express = require('express');
 const path = require('path');
-//const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -12,6 +12,7 @@ const hostname = '10.1.1.52';
 // Swap between these 2 for testing
 const http = require('http');
 const https = require('https');
+// Initialize the express application
 var app = express();
 // Swap http/https as needed for testing
 var server = http.createServer(app);
@@ -39,15 +40,10 @@ var server = http.createServer(app);
 // Add hostname to server.listen on server
 server.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
-// Require the index route
+// Require the index routes for API calls
 const routes = require('./server/routes/index');
 
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'html');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// Include the necessary packages into the express app
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -56,6 +52,7 @@ app.use(helmet());
 app.use(hsts({
   maxAge: 15552000
 }))
+// Let the app know where the views are located
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
 // Use the routes that were declared
@@ -70,8 +67,7 @@ app.use((req, res, next) => {
 
 // error handlers
 
-// development error handler
-// will print stacktrace
+// development error handler will print stacktrace
 if (app.get('env') === 'development') {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
@@ -82,8 +78,7 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
+// production error handler no stacktraces leaked to user
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.json({

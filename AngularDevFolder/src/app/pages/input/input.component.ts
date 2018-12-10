@@ -5,7 +5,8 @@ import { SurveyService } from '../../services/survey.service';
 import { Question } from 'app/models/question.model';
 import { Option } from 'app/models/option.model';
 import { Survey } from 'app/models/survey.model';
-import { Response } from 'app/models/response.model'
+import { Router } from '@angular/router';
+import { Response } from 'app/models/response.model';
 
 @Component({
     selector: 'app-input',
@@ -34,13 +35,15 @@ export class InputComponent implements OnInit {
     // modal id holder
     modal;
 
-    constructor(public surveyService: SurveyService,
+    constructor(  public router: Router,
+                public surveyService: SurveyService,
                 private changeref: ChangeDetectorRef,
                 public auth: AuthenticationService) { }
 
-
     // On component initialization, get the survey ids, names, and date created
     ngOnInit(): void {
+        //Check if the user has authentication to use this page
+        this.hasAuthentication();
         // Get the modal
         this.modal = document.getElementById('success');
         this.surveyService.getActiveSurveys().subscribe(response => {
@@ -72,6 +75,15 @@ export class InputComponent implements OnInit {
         // If authenticated, redirect to the home dashboard
         if (!this.auth.isAuthenticated) {
             //this.router.navigate(['home']);
+        }
+    }
+
+    hasAuthentication(): boolean {
+        if (localStorage.getItem('login') == 'success') {
+            return true;
+        } else {
+            this.router.navigate['/survey'];
+            return false;
         }
     }
 

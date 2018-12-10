@@ -39,7 +39,6 @@ export class AuthenticationService {
         
             localStorage.setItem('token', authResult.idToken);
             localStorage.setItem('profile', JSON.stringify(profile));
-            this.router.navigate(['/']);
         });
     });
   }

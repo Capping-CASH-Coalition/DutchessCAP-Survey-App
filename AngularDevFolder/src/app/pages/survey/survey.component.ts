@@ -5,6 +5,8 @@ import { Question } from 'app/models/question.model';
 import { Option } from 'app/models/option.model';
 import { Survey } from 'app/models/survey.model';
 import { Response } from 'app/models/response.model';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-survey',
@@ -36,14 +38,33 @@ export class SurveyComponent implements OnInit, DoCheck {
   // Disables the save button once they press it so user can't save multiple times
   disabledSave: boolean = false;
 
-  constructor(public surveyService: SurveyService,
+  //Creates the modal for login
+  modal;
+  // FormGroup used in login modal
+  loginFormGroup: FormGroup;
+
+  // If login is incorrect display login incorrect statement in red text
+  loginStatus: boolean;
+
+  //Set whether to show Login Window or not
+  showLoginModal: boolean;
+
+  constructor(public router: Router,
+              private _fb: FormBuilder,
+              public surveyService: SurveyService,
               private changeref: ChangeDetectorRef,
               public auth: AuthenticationService) { }
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
+    
+
+
     //Generates UUID on initialization and sets it to currentUser
     this.currentUser = this.generateUUID();
+
+    //Generates Default Login Form Group -- Used for testing whether the user is initially authenticated to display login button
+    this.createLoginFormGroup();
 
     // Gets all active surveys
     this.surveyService.getActiveSurveys().subscribe(response => {
@@ -67,9 +88,55 @@ export class SurveyComponent implements OnInit, DoCheck {
   // This continuously checks if the user is authenticated
   ngDoCheck(): void {
     // If authenticated, redirect to the home dashboard
-    if (!this.auth.isAuthenticated) {
-      //this.router.navigate(['home']);
+    this.openLoginModal();
+    this.isAuthenticated();
+    this.incorrectLogin();
+  }
+
+  //Login modal FormGroup
+  createLoginFormGroup() {
+    this.loginFormGroup = this._fb.group({
+      username: new FormControl(''),
+      password: new FormControl('')
+    });
+  }
+
+  isAuthenticated(): boolean {
+    if (localStorage.getItem('login') == 'success') {
+      return true;
     }
+    else {
+      return false;
+    }
+  }
+
+  setLoginModal(): void {
+    this.showLoginModal = true;
+  }
+  openLoginModal(): boolean {
+    return this.showLoginModal;
+  }
+
+  testAuthentication(formValues) {
+
+    this.surveyService.getUserPassword(formValues.username).subscribe( password => {
+      if (password.body[0].user_password == formValues.password) {
+        this.showLoginModal = false;
+        this.loginStatus = false;
+        localStorage.removeItem('sucess');
+        this.router.navigate(['/home']);
+      }
+      else {
+        this.loginStatus = true;
+      }
+
+    }, (error) => {
+      console.log('error is ', error)
+    })
+  }
+
+  incorrectLogin() {
+    return this.loginStatus;
   }
 
   // When a user clicks a survey name option from the dropdown menu, save the selectedSurveyId and selectedSurveyIndex

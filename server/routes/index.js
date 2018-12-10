@@ -11,10 +11,10 @@ const path = require('path');
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:battle@localhost:5444/CashCoalition';
 
 // Brians
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:ident@localhost:5432/CashCoalition';
 
 // Garys
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:Ca$hCo@localhost:5432/CashCoalition';
 
 //Christians
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:lina1968@localhost:5432/CashCoalition';
@@ -276,7 +276,33 @@ router.get('/', (req, res, next) => {
              return res.json(results);
          });
      });
- });
+});
+
+router.get('/api/userPassword/:user_name', (req, res, next) => {
+    //Array to hold results from query
+    const results = [];
+    var username = req.params.user_name;
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+        // Handle connection errors
+        if (err) {
+            done();
+            console.log(err);
+            return res.status(500).json({ success: false, data: err });
+        }
+        // Created query that gets all active surveys
+        const query = client.query('SELECT user_password FROM users WHERE user_name = ($1)', [username]);
+        // Stream results back one row at a time
+        query.on('row', (row) => {
+            results.push(row);
+        });
+        // After all data is returned, close connection and return results
+        query.on('end', () => {
+            done();
+            return res.json(results);
+        });
+    });
+});
  
  /* 
      Post functions

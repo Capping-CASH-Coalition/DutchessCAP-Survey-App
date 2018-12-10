@@ -5,7 +5,8 @@ import { Response } from '../../models/response.model';
 import { SurveyService } from '../../services/survey.service';
 import { QuestionResponses } from '../../models/questionResponses.model';
 import { Option } from '../../models/option.model';
-import { Survey } from '../../models/survey.model'
+import { Survey } from '../../models/survey.model';
+import { Router } from '@angular/router';
 
 @Component({
    selector: 'app-graphs',
@@ -36,12 +37,15 @@ export class GraphsComponent implements OnInit {
    // sub question options global
    subQuestionOptions: any[] = [];
 
-   constructor (public graphService: GraphService,
+  constructor(  public router: Router,
+                public graphService: GraphService,
                 private changeref: ChangeDetectorRef,
                 public surveyService: SurveyService,
                 private fb: FormBuilder) { };
 
-   ngOnInit(): void {
+  ngOnInit(): void {
+      //Check if the user has authentication to use this page
+      this.hasAuthentication();
       // init the chart form
       this.initChartForm();
       // get the surveys and populated inner fields with inner get calls
@@ -160,7 +164,13 @@ export class GraphsComponent implements OnInit {
          console.log('error is ', error)
       })
 
-   }
+  }
+
+   hasAuthentication(): void {
+      if (localStorage.getItem('login') != 'success') {
+        this.router.navigate(['/survey']);
+      }
+    }
 
    // init chart form
    initChartForm(): void {

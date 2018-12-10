@@ -66,6 +66,11 @@ export class SurveyService {
     return this.http.get<any>('http://localhost:8888/api/surveyResponses/' + survey_id, { observe: 'response'});
   }
 
+  // Function that will get the password of a user given the username
+  getUserPassword(username): Observable<HttpResponse<any>> {
+    return this.http.get<any>('http://localhost:8888/api/userPassword/' + username, { observe: 'response' });
+  }
+
   /* 
     Post functions
   */

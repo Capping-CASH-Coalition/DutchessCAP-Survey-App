@@ -267,8 +267,9 @@ GraphService = __decorate([
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(77);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_router__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EditComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -283,8 +284,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var EditComponent = (function () {
-    function EditComponent(router, _fb, surveyService) {
+    function EditComponent(auth, router, _fb, surveyService) {
+        this.auth = auth;
         this.router = router;
         this._fb = _fb;
         this.surveyService = surveyService;
@@ -299,7 +302,7 @@ var EditComponent = (function () {
     EditComponent.prototype.ngOnInit = function () {
         var _this = this;
         //Check if the user has authentication to use this page
-        this.hasAuthentication();
+        this.auth.hasAuthentication();
         // Get the modal
         this.modal = document.getElementById('success');
         this.newSurveyForm();
@@ -360,11 +363,6 @@ var EditComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
-    };
-    EditComponent.prototype.hasAuthentication = function () {
-        if (localStorage.getItem('login') != 'success') {
-            this.router.navigate(['/survey']);
-        }
     };
     // sets the survey name to readonly based on the edit global
     EditComponent.prototype.setReadOnly = function () {
@@ -673,10 +671,10 @@ EditComponent = __decorate([
         styles: [__webpack_require__(588)],
         providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _d || Object])
 ], EditComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=edit.component.js.map
 
 /***/ }),
@@ -686,8 +684,9 @@ var _a, _b, _c;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExportRawComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -701,8 +700,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var ExportRawComponent = (function () {
-    function ExportRawComponent(router, surveyService, changeref) {
+    function ExportRawComponent(auth, router, surveyService, changeref) {
+        this.auth = auth;
         this.router = router;
         this.surveyService = surveyService;
         this.changeref = changeref;
@@ -715,7 +716,7 @@ var ExportRawComponent = (function () {
     ExportRawComponent.prototype.ngOnInit = function () {
         var _this = this;
         //Checks for authentication, if no authentication routes back to survey page
-        this.hasAuthentication();
+        this.auth.hasAuthentication();
         this.surveyService.getAllSurveys().subscribe(function (response) {
             var _loop_1 = function (i) {
                 var survey = {
@@ -811,11 +812,6 @@ var ExportRawComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
-    };
-    ExportRawComponent.prototype.hasAuthentication = function () {
-        if (localStorage.getItem('login') != 'success') {
-            this.router.navigate(['/survey']);
-        }
     };
     // sets the survey name to readonly based on the edit global
     ExportRawComponent.prototype.setReadOnly = function () {
@@ -945,10 +941,10 @@ ExportRawComponent = __decorate([
         template: __webpack_require__(633),
         providers: [__WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_app_services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _d || Object])
 ], ExportRawComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=exportRaw.component.js.map
 
 /***/ }),
@@ -960,8 +956,9 @@ var _a, _b, _c;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_graph_service__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GraphsComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -977,13 +974,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var GraphsComponent = (function () {
-    function GraphsComponent(router, graphService, changeref, surveyService, fb) {
+    function GraphsComponent(router, graphService, changeref, surveyService, fb, auth) {
         this.router = router;
         this.graphService = graphService;
         this.changeref = changeref;
         this.surveyService = surveyService;
         this.fb = fb;
+        this.auth = auth;
         // global to track which switch for the dataset
         this.currentDatasetType = 'single';
         // chart object
@@ -999,7 +998,7 @@ var GraphsComponent = (function () {
     GraphsComponent.prototype.ngOnInit = function () {
         var _this = this;
         //Check if the user has authentication to use this page
-        this.hasAuthentication();
+        this.auth.hasAuthentication();
         // init the chart form
         this.initChartForm();
         // get the surveys and populated inner fields with inner get calls
@@ -1112,11 +1111,6 @@ var GraphsComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
-    };
-    GraphsComponent.prototype.hasAuthentication = function () {
-        if (localStorage.getItem('login') != 'success') {
-            this.router.navigate(['/survey']);
-        }
     };
     // init chart form
     GraphsComponent.prototype.initChartForm = function () {
@@ -1316,10 +1310,10 @@ GraphsComponent = __decorate([
         template: __webpack_require__(634),
         styles: [__webpack_require__(590)]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */]) === "function" && _e || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_graph_service__["a" /* GraphService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_survey_service__["a" /* SurveyService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_forms__["d" /* FormBuilder */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _f || Object])
 ], GraphsComponent);
 
-var _a, _b, _c, _d, _e;
+var _a, _b, _c, _d, _e, _f;
 //# sourceMappingURL=graphs.component.js.map
 
 /***/ }),
@@ -1330,8 +1324,9 @@ var _a, _b, _c, _d, _e;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_graph_service__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_router__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1346,8 +1341,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HomeComponent = (function () {
-    function HomeComponent(router, graphService, surveyService, changeref) {
+    function HomeComponent(auth, router, graphService, surveyService, changeref) {
+        this.auth = auth;
         this.router = router;
         this.graphService = graphService;
         this.surveyService = surveyService;
@@ -1368,8 +1365,8 @@ var HomeComponent = (function () {
     // On initialization, gets the surveys, question for each survey, and responses for each question
     HomeComponent.prototype.ngOnInit = function () {
         var _this = this;
-        //Check if the user has authentication to use this page
-        this.hasAuthentication();
+        //Check if the user has authentication to use this page 
+        this.auth.hasAuthentication();
         // Get the modal
         this.modal = document.getElementById('success');
         // get the canvas
@@ -1446,11 +1443,6 @@ var HomeComponent = (function () {
         }, function (error) {
             console.log('error is ', error);
         });
-    };
-    HomeComponent.prototype.hasAuthentication = function () {
-        if (localStorage.getItem('login') != 'success') {
-            this.router.navigate(['/survey']);
-        }
     };
     // after component initialization, update chart
     HomeComponent.prototype.ngAfterViewInit = function () {
@@ -1626,10 +1618,10 @@ HomeComponent = __decorate([
         styles: [__webpack_require__(591)],
         providers: [__WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _d || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_graph_service__["a" /* GraphService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_survey_service__["a" /* SurveyService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _e || Object])
 ], HomeComponent);
 
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 //# sourceMappingURL=home.component.js.map
 
 /***/ }),
@@ -1639,8 +1631,8 @@ var _a, _b, _c, _d;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_router__ = __webpack_require__(31);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InputComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1675,7 +1667,7 @@ var InputComponent = (function () {
     InputComponent.prototype.ngOnInit = function () {
         var _this = this;
         //Check if the user has authentication to use this page
-        this.hasAuthentication();
+        this.auth.hasAuthentication();
         // Get the modal
         this.modal = document.getElementById('success');
         this.surveyService.getActiveSurveys().subscribe(function (response) {
@@ -1705,15 +1697,6 @@ var InputComponent = (function () {
         // If authenticated, redirect to the home dashboard
         if (!this.auth.isAuthenticated) {
             //this.router.navigate(['home']);
-        }
-    };
-    InputComponent.prototype.hasAuthentication = function () {
-        if (localStorage.getItem('login') == 'success') {
-            return true;
-        }
-        else {
-            this.router.navigate['/survey'];
-            return false;
         }
     };
     //when a user clicks an option from the dropdown menu
@@ -1916,8 +1899,8 @@ NotFoundComponent = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authentication_service__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_router__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_forms__ = __webpack_require__(77);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SurveyComponent; });
@@ -1958,7 +1941,7 @@ var SurveyComponent = (function () {
     // On component initialization, get the survey ids, names, and date created
     SurveyComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.isAuthenticated();
+        this.modal = document.getElementById('Login');
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
         //Generates Default Login Form Group -- Used for testing whether the user is initially authenticated to display login button
@@ -1983,10 +1966,6 @@ var SurveyComponent = (function () {
     };
     // This continuously checks if the user is authenticated
     SurveyComponent.prototype.ngDoCheck = function () {
-        // If authenticated, redirect to the home dashboard
-        this.openLoginModal();
-        this.isAuthenticated();
-        this.incorrectLogin();
     };
     //Login modal FormGroup
     SurveyComponent.prototype.createLoginFormGroup = function () {
@@ -2009,24 +1988,29 @@ var SurveyComponent = (function () {
     SurveyComponent.prototype.openLoginModal = function () {
         return this.showLoginModal;
     };
+    SurveyComponent.prototype.wait = function () {
+        this.surveyService.wait(1000);
+        return true;
+    };
     SurveyComponent.prototype.testAuthentication = function (formValues) {
         var _this = this;
         this.surveyService.getUserPassword(formValues.username).subscribe(function (password) {
-            if (password.body[0].user_password == formValues.password) {
-                _this.showLoginModal = false;
-                _this.loginStatus = false;
-                localStorage.removeItem('sucess');
+            if (password.body[0] == formValues.password) {
                 _this.router.navigate(['/home']);
+                _this.showLoginModal = false;
+                _this.showIncorrectLogin = false;
+                localStorage.setItem('login', 'success');
             }
             else {
-                _this.loginStatus = true;
             }
-        }, function (error) {
-            console.log('error is ', error);
         });
+        this.setLoginIncorrect();
     };
-    SurveyComponent.prototype.incorrectLogin = function () {
-        return this.loginStatus;
+    SurveyComponent.prototype.setLoginIncorrect = function () {
+        this.showIncorrectLogin = true;
+    };
+    SurveyComponent.prototype.closeModal = function () {
+        this.showLoginModal = false;
     };
     // When a user clicks a survey name option from the dropdown menu, save the selectedSurveyId and selectedSurveyIndex
     SurveyComponent.prototype.surveySelect = function (surveyId) {
@@ -2252,6 +2236,97 @@ ThankyouComponent = __decorate([
 
 /***/ }),
 
+/***/ 36:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_lock__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(417);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthenticationService; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+window.global = window;
+var AuthenticationService = (function () {
+    function AuthenticationService(router) {
+        var _this = this;
+        this.router = router;
+        // https://dutchesscapp.auth0.com/
+        this.auth0Options = {
+            theme: {
+                primaryColor: '#DFA612'
+            },
+            auth: {
+                redirectUrl: 'http://localhost:8888/#/home',
+                responseType: 'token id_token',
+                audience: "https://dutchesscap.auth0.com/userinfo",
+                params: {
+                    scope: 'openid profile email'
+                }
+            },
+            autoclose: true,
+            oidcConformant: true,
+        };
+        this.lock = new __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a('Om122xNAJ4dyh43gPnuJpLfgQMZhpNFp', 'dutchesscap.auth0.com', this.auth0Options);
+        this.lock.on('authenticated', function (authResult) {
+            _this.lock.getUserInfo(authResult.accessToken, function (error, profile) {
+                if (error) {
+                    throw new Error(error);
+                }
+                localStorage.setItem('token', authResult.idToken);
+                localStorage.setItem('profile', JSON.stringify(profile));
+            });
+        });
+    }
+    // When called, produce the lock modal that allows authentication
+    AuthenticationService.prototype.login = function () {
+        this.lock.show();
+    };
+    // Checks if a user has authentication, if they don't sends them to survey page
+    AuthenticationService.prototype.hasAuthentication = function () {
+        if (localStorage.getItem('login') != 'success') {
+            this.router.navigate(['/survey']);
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    // Remove the localStorage token navigate to the survey page
+    AuthenticationService.prototype.logout = function () {
+        localStorage.removeItem('login');
+        this.router.navigate(['/survey']);
+    };
+    // Checks if the token has expired / if it exists
+    AuthenticationService.prototype.isAuthenticated = function () {
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__["tokenNotExpired"])();
+    };
+    return AuthenticationService;
+}());
+AuthenticationService = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object])
+], AuthenticationService);
+
+var _a;
+//# sourceMappingURL=authentication.service.js.map
+
+/***/ }),
+
 /***/ 389:
 /***/ (function(module, exports) {
 
@@ -2397,12 +2472,12 @@ function smoothlyMenu() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(167);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_common__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_forms__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ngx_pagination__ = __webpack_require__(619);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__(400);
@@ -2416,9 +2491,9 @@ function smoothlyMenu() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_exportRaw_exportRaw_component__ = __webpack_require__(170);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_not_found_not_found_component__ = __webpack_require__(174);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_thankyou_thankyou_component__ = __webpack_require__(176);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_survey_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__services_survey_service__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_graph_service__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_authentication_service__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__services_authentication_service__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__services_auth_guard_service__ = __webpack_require__(415);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__pipes_keys_pipe__ = __webpack_require__(414);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__pipes_filterQuestionId_pipe__ = __webpack_require__(411);
@@ -2646,7 +2721,7 @@ var _a;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_helpers__ = __webpack_require__(401);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TopnavbarComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3003,7 +3078,7 @@ KeysPipe = __decorate([
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__authentication_service__ = __webpack_require__(36);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuardService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3053,7 +3128,7 @@ var environment = {
 
 /***/ }),
 
-/***/ 47:
+/***/ 48:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3255,7 +3330,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "#btnQuestionAdd {\r\n    color: green;\r\n }\r\n \r\n a:hover { \r\n    background-color: yellow;\r\n }\r\n \r\n .btnBar{\r\n    padding-left: 15px;\r\n    padding-right: 15px;\r\n    padding-top: 15px;\r\n }\r\n \r\n #surveySelect{\r\n    width: 300px;\r\n }\r\n \r\n #ctr {\r\n    margin-left: 13%;\r\n }\r\n\r\n  /* The Modal (background) */\r\n.modal {\r\n    display: none; /* Hidden by default */\r\n    position: fixed; /* Stay in place */\r\n    z-index: 1; /* Sit on top */\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%; /* Full width */\r\n    height: 100%; /* Full height */\r\n    overflow: auto; /* Enable scroll if needed */\r\n    background-color: rgb(0,0,0); /* Fallback color */\r\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n   background-color: #fefefe;\r\n   margin: 15% auto; /* 15% from the top and centered */\r\n   padding: 30px;\r\n   border: 1px solid #888;\r\n   width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n.saved {\r\n   font-size: 28px;\r\n   text-align: center;\r\n}\r\n\r\n.questionActiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n.questionInactiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n\r\n#questionHeader {\r\n   margin-right: 30px;\r\n}\r\n\r\n.hide{\r\n   display: \"none\";\r\n}\r\n\r\n#questionPromptDiv {\r\n    margin-top: 10px;\r\n}\r\n\r\n#optionh3 {\r\n    font-weight: lighter;\r\n}\r\n\r\n#surveyNameh2 {\r\n    font-weight: bold;\r\n}\r\n\r\n#questionDiv {\r\n    margin-bottom: 10px;\r\n}", ""]);
+exports.push([module.i, "#btnQuestionAdd {\r\n    color: green;\r\n }\r\n \r\n a:hover { \r\n    background-color: yellow;\r\n }\r\n \r\n .btnBar{\r\n    padding-left: 15px;\r\n    padding-right: 15px;\r\n    padding-top: 15px;\r\n }\r\n \r\n #surveySelect{\r\n    width: 300px;\r\n }\r\n \r\n #ctr {\r\n    margin-left: 13%;\r\n }\r\n\r\n  /* The Modal (background) */\r\n.modal {\r\n    display: none; /* Hidden by default */\r\n    position: fixed; /* Stay in place */\r\n    z-index: 1; /* Sit on top */\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%; /* Full width */\r\n    height: 100%; /* Full height */\r\n    overflow: auto; /* Enable scroll if needed */\r\n    background-color: rgb(0,0,0); /* Fallback color */\r\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n   background-color: #fefefe;\r\n   margin: 15% auto; /* 15% from the top and centered */\r\n   padding: 30px;\r\n   border: 1px solid #888;\r\n   width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n.saved {\r\n   font-size: 28px;\r\n   text-align: center;\r\n}\r\n\r\n.questionActiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n.questionInactiveLabel {\r\n   margin-left: 15px;\r\n   margin-top: 3px;\r\n}\r\n\r\n#questionHeader {\r\n   margin-right: 30px;\r\n}\r\n\r\n.hide{\r\n   display: \"none\";\r\n}\r\n\r\n#questionPromptDiv {\r\n    margin-top: 10px;\r\n}\r\n\r\n#optionh3 {\r\n    font-weight: lighter;\r\n}\r\n\r\n#surveyNameh2 {\r\n    font-weight: bold;\r\n}\r\n\r\n#questionDiv {\r\n    margin-bottom: 10px;\r\n}\r\n", ""]);
 
 // exports
 
@@ -3363,7 +3438,7 @@ exports = module.exports = __webpack_require__(22)();
 
 
 // module
-exports.push([module.i, "#btnLogin {\r\n   margin: 5px;\r\n}\r\n\r\n.center {\r\n   display: block;\r\n   margin-left: auto;\r\n   margin-right: auto;\r\n   width: 50%;\r\n}\r\n\r\n#imgLogo {\r\n   height: 60%;\r\n   width: 60%;\r\n}\r\n\r\n.margin-top-5pct {\r\n   margin-top: 5%;\r\n}\r\n\r\n#btnStart {\r\n   margin-top: 10%;\r\n}\r\n\r\n.mt-3 {\r\n   margin-top: 3%;\r\n }\r\n\r\n .questionHeader {\r\n    margin-bottom: 20px;\r\n }\r\n \r\n #imgHeart {\r\n    height: 50px;\r\n    float:left; \r\n    margin-right: 10px;\r\n }\r\n\r\n.spanOption {\r\n  font-weight: 400;\r\n}\r\n\r\n.spanQuestionText {\r\n  margin-left: 5px\r\n}\r\n\r\n.spanQuestion {\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.btnBar {\r\n  padding-left: 15px;\r\n  padding-right: 15px;\r\n  padding-top: 15px;\r\n}\r\n\r\n#selectBox{\r\n  -ms-flex-line-pack: center;\r\n      align-content: center;\r\n}\r\n\r\n.row-centered {\r\n  text-align: center;\r\n}\r\n\r\n.center {\r\n  margin: 0 auto;\r\n  width: 80%;\r\n}\r\n\r\n.col-centered {\r\n  display: inline-block;\r\n  float: none;\r\n  /* reset the text-align */\r\n  text-align: left;\r\n  /* inline-block space fix */\r\n  margin-right: -4px;\r\n  text-align: center;\r\n  background-color: #ccc;\r\n  border: 1px solid #ddd;\r\n}\r\n\r\n#surveySelect {\r\n  width: 300px;\r\n  -ms-flex-item-align: center;\r\n      -ms-grid-row-align: center;\r\n      align-self: center;\r\n}\r\n\r\n#ctr {\r\n  margin-left: 7%;\r\n}\r\n\r\nbody {\r\n  height: 100vh;\r\n}\r\n\r\n#bottomSpacing {\r\n  margin-bottom: 8%;\r\n}\r\n\r\n.saved {\r\n  font-size: 28px;\r\n  text-align: center;\r\n}\r\n\r\n#questionText {\r\n  font-weight: bold;\r\n}\r\n\r\n#dcapLogo {\r\n  float:left; \r\n  margin-right: 10px;\r\n}\r\n\r\n#landingRow {\r\n  margin-top: 3%;\r\n}\r\n\r\n/* Aligns multi-line checkbox or radio text */\r\n#indentAlign label > input {\r\n  float:left;\r\n  margin-right:10px;\r\n}\r\n\r\n#indentAlign label > span {\r\n  display:table;\r\n}\r\n\r\n/* The Modal (background) */\r\n.modal {\r\n  display: block; /* Hidden by default */\r\n  position: fixed; /* Stay in place */\r\n  z-index: 1; /* Sit on top */\r\n  left: 0;\r\n  top: 0;\r\n  width: 100%; /* Full width */\r\n  height: 100%; /* Full height */\r\n  overflow: auto; /* Enable scroll if needed */\r\n  background-color: rgb(0,0,0); /* Fallback color */\r\n  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n  background-color: #fefefe;\r\n  margin: 15% auto; /* 15% from the top and centered */\r\n  padding: 30px;\r\n  border: 1px solid #888;\r\n  width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n", ""]);
+exports.push([module.i, "#btnLogin {\r\n   margin: 5px;\r\n}\r\n\r\n.center {\r\n   display: block;\r\n   margin-left: auto;\r\n   margin-right: auto;\r\n   width: 50%;\r\n}\r\n\r\n#imgLogo {\r\n   height: 60%;\r\n   width: 60%;\r\n}\r\n\r\n.margin-top-5pct {\r\n   margin-top: 5%;\r\n}\r\n\r\n#btnStart {\r\n   margin-top: 10%;\r\n}\r\n\r\n.mt-3 {\r\n   margin-top: 3%;\r\n }\r\n\r\n .questionHeader {\r\n    margin-bottom: 20px;\r\n }\r\n \r\n #imgHeart {\r\n    height: 50px;\r\n    float:left; \r\n    margin-right: 10px;\r\n }\r\n\r\n.spanOption {\r\n  font-weight: 400;\r\n}\r\n\r\n.spanQuestionText {\r\n  margin-left: 5px\r\n}\r\n\r\n.spanQuestion {\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.btnBar {\r\n  padding-left: 15px;\r\n  padding-right: 15px;\r\n  padding-top: 15px;\r\n}\r\n\r\n#selectBox{\r\n  -ms-flex-line-pack: center;\r\n      align-content: center;\r\n}\r\n\r\n.row-centered {\r\n  text-align: center;\r\n}\r\n\r\n.center {\r\n  margin: 0 auto;\r\n  width: 80%;\r\n}\r\n\r\n.col-centered {\r\n  display: inline-block;\r\n  float: none;\r\n  /* reset the text-align */\r\n  text-align: left;\r\n  /* inline-block space fix */\r\n  margin-right: -4px;\r\n  text-align: center;\r\n  background-color: #ccc;\r\n  border: 1px solid #ddd;\r\n}\r\n\r\n#surveySelect {\r\n  width: 300px;\r\n  -ms-flex-item-align: center;\r\n      -ms-grid-row-align: center;\r\n      align-self: center;\r\n}\r\n\r\n#ctr {\r\n  margin-left: 7%;\r\n}\r\n\r\nbody {\r\n  height: 100vh;\r\n}\r\n\r\n#bottomSpacing {\r\n  margin-bottom: 8%;\r\n}\r\n\r\n.saved {\r\n  font-size: 28px;\r\n  text-align: center;\r\n}\r\n\r\n#questionText {\r\n  font-weight: bold;\r\n}\r\n\r\n#dcapLogo {\r\n  float:left; \r\n  margin-right: 10px;\r\n}\r\n\r\n#landingRow {\r\n  margin-top: 3%;\r\n}\r\n\r\n/* Aligns multi-line checkbox or radio text */\r\n#indentAlign label > input {\r\n  float:left;\r\n  margin-right:10px;\r\n}\r\n\r\n#indentAlign label > span {\r\n  display:table;\r\n}\r\n\r\n/* The Modal (background) */\r\n.modal {\r\n  display: block; /* Hidden by default */\r\n  position: fixed; /* Stay in place */\r\n  z-index: 1; /* Sit on top */\r\n  left: 0;\r\n  top: 0;\r\n  width: 100%;/* Full width */\r\n  height: 100%; /* Full height */\r\n  overflow: auto; /* Enable scroll if needed */\r\n  background-color: rgb(0,0,0); /* Fallback color */\r\n  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n\r\n/* Modal Content/Box */\r\n.modal-content {\r\n  background-color: #fefefe;\r\n  margin: 15% auto; /* 15% from the top and centered */\r\n  padding: 30px;\r\n  border: 1px solid #888;\r\n  width: 18%; /* Could be more or less, depending on screen size */\r\n}\r\n", ""]);
 
 // exports
 
@@ -3678,7 +3753,7 @@ module.exports = "<nav class=\"navbar-default navbar-static-side\" role=\"naviga
 /***/ 631:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" id=\"navbar\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.isAuthenticated()\"\n                    (click)=\"auth.logout()\" id=\"fontsize12\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n                <li>\n                    <a (click)=\"helpGuide()\">\n                        <i class=\"fas info-circle\"></i>\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n<div id=\"helpGuide\" class=\"modal\">\n    <!-- Modal content -->\n    <div class=\"modal-content\">\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\n      <p>Saved Successfully!</p>\n    </div>\n</div>"
+module.exports = "<div class=\"row border-bottom\">\n    <div id=\"topNavBar\">\n        <nav class=\"navbar navbar-static-top white-bg\" role=\"navigation\" id=\"navbar\">\n            <ul class=\"nav navbar-top-links navbar-right\">\n                <li>\n                    <a *ngIf=\"auth.hasAuthentication()\"\n                    (click)=\"auth.logout()\" id=\"fontsize12\">\n                        <i class=\"fas fa-globe-americas\"></i> Return To Survey / Logout\n                    </a>\n                </li>\n                <li>\n                    <a (click)=\"helpGuide()\">\n                        <i class=\"fas info-circle\"></i>\n                    </a>\n                </li>\n            </ul>\n        </nav>\n    </div>\n</div>\n<div id=\"helpGuide\" class=\"modal\">\n    <!-- Modal content -->\n    <div class=\"modal-content\">\n      <span (click)=\"closeModal()\" class=\"close\">&times;</span>\n      <p>Saved Successfully!</p>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -3727,7 +3802,7 @@ module.exports = "<div id=\"notfound\">\r\n\t<div class=\"notfound\">\r\n\t\t<di
 /***/ 638:
 /***/ (function(module, exports) {
 
-module.exports = "<body>\r\n  <!-- Survey Landing/Home page -->\r\n  <div class=\"row white-bg h-100\" *ngIf=\"!showSurveyDiv\">\r\n    <div class=\"col-lg-9 align-items-center h-100\">\r\n      <img src=\"../../../assets/img/dutchess-cap-heart.png\" id=\"imgHeart\">\r\n      <h1>Dutchess County Community Action Survey Portal</h1>\r\n    </div>\r\n    <div class=\"col-lg-3 align-items-center h-100\">\r\n      <button class=\"btn btn-default pull-right\" id=\"btnLogin\" *ngIf=\"!isAuthenticated()\" (click)=\"setLoginModal();\">\r\n        <i class=\"fas fa-sign-in-alt\"></i>\r\n        Admin Login\r\n      </button>\r\n    </div>\r\n    <div id=\"login\" class=\"modal\" *ngIf=\"openLoginModal()\">\r\n      <div class=\"modal-content\">\r\n        <form [formGroup]=\"loginFormGroup\" (ngSubmit)=\"testAuthentication(loginFormGroup.value); surveyService.wait(50)\">\r\n          <div class=\"container\">\r\n            <div class=\"row\">\r\n              <div class=\"col-lg-8\">\r\n\r\n                <h1 style=\"font-size:20px\"><strong> Login </strong> </h1>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\" *ngIf=\"incorrectLogin()\">\r\n              <div class=\"col-lg-8\">\r\n\r\n                <p style=\" color:red\"> Username/Password incorrect! </p>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-lg-8 pull-left\">\r\n                <label>\r\n                  Username:\r\n                  <input type=\"text\" formControlName=\"username\" class=\"form-control form-control-sm\" required>\r\n                </label>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-lg-8 pull-left\">\r\n                <label>\r\n                  Password:\r\n                  <input type=\"password\" formControlName=\"password\" class=\"form-control form-control-sm\" required>\r\n                </label>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-lg-3 pull-left\">\r\n                <button type=\"submit\" class=\"btn btn-success btn-lg btn-block\">\r\n                  Login\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </form>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <div class=\"row\" id=\"landingRow\">\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"!showSurveyDiv\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <img class=\"center\" id=\"imgLogo\" src=\"../../../assets/img/dutchess-cap-color.png\">\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-3\"></div>\r\n            <div class=\"col-lg-6\">\r\n              <p class=\"text-center black\">Please select a survey to take:</p>\r\n              <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event.target.value)\">\r\n                <option disabled selected>-Please Select a Survey-</option>\r\n                <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\r\n              </select>\r\n            </div>\r\n            <div class=\"col-lg-3\"></div>\r\n          </div>\r\n\r\n          <div class=\"row\">\r\n            <div class=\"form-group\">\r\n              <div class=\"col-lg-12 text-center \">\r\n                <button type=\"button\" id=\"btnStart\" class=\"btn btn-success btn-lg btn-block\" (click)=\"onStart()\">\r\n                  Start Survey!\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"showSurveyDiv\">\r\n\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <form>\r\n            <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n              <div *ngFor=\"let question of survey.questions; let k = index\">\r\n                <div class=\"row\">\r\n                  <div [hidden]=\"hideQuestion(k)\" id=\"topSpacing\">\r\n                    <div class=\"row\">\r\n                      <div class=\"col-lg-12 questionHeader row-centered\">\r\n                        <h2 id=\"questionText\">{{ question.question_text }}</h2>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                    <div class=\"col-lg-8\">\r\n                      <div [ngSwitch]=\"question.question_type\" id=\"bottomSpacing\">\r\n                        <div *ngSwitchCase=\"'select'\">\r\n                          <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                                  class=\"form-control\">\r\n                            <option disabled selected>-Please Select a Response-</option>\r\n                            <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                              {{ option.option_text }}\r\n                            </option>\r\n                          </select>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'checkbox'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                            <label id=\"checkLabel\" class=\"form-check-label\">\r\n                              <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                     type=\"checkbox\" [value]=\"option.option_text\">\r\n                              <span id=\"indent\" class=\"spanOption\">{{ option.option_text }}</span>\r\n\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'text'\">\r\n                          <div *ngFor=\"let option of question.options\">\r\n                            <label class=\"form-check-label\"></label>\r\n                            <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                                      [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'radio'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                            <label class=\"check-label\">\r\n                              <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                              <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                     [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                     [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                              <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n\r\n                <div class=\"row\" [hidden]=\"hideQuestion(k)\">\r\n                  <div class=\"col-lg-4\">\r\n                    <button [disabled]=\"isFirstPage()\" type=\"button\" class=\"btn btn-primary pull-left\" (click)='onPrevious()'>\r\n                      <i class=\"fas fa-arrow-circle-left\"></i>\r\n                      Previous Question\r\n                    </button>\r\n                  </div>\r\n                  <div class=\"col-lg-4 row-centered\">\r\n                    <div class=\"row\">\r\n                      <b>Question {{k + 1}} of {{survey.questions.length }}</b>\r\n                    </div>\r\n                    <div class=\"row\">\r\n                      {{survey.survey_name}}\r\n                    </div>\r\n                  </div>\r\n                  <div class=\"col-lg-4\">\r\n                    <button type=\"button\" *ngIf=\"!isLastPage()\" class=\"btn btn-primary pull-right\" (click)='onNext()'>\r\n                      Next Question\r\n                      <i class=\"fas fa-arrow-circle-right\"></i>\r\n                    </button>\r\n                    <button type=\"button\" [disabled]='disabledSave' *ngIf=\"isLastPage()\" class=\"btn btn-warning pull-right\" (click)='save();'>\r\n                      Submit Response!\r\n                      <i class=\"fas fa-database\"></i>\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n</body>\r\n"
+module.exports = "<body>\r\n  <!-- Survey Landing/Home page -->\r\n  <div class=\"row white-bg h-100\" *ngIf=\"!showSurveyDiv\">\r\n    <div class=\"col-lg-9 align-items-center h-100\">\r\n      <img src=\"../../../assets/img/dutchess-cap-heart.png\" id=\"imgHeart\">\r\n      <h1>Dutchess County Community Action Survey Portal</h1>\r\n    </div>\r\n    <div class=\"col-lg-3 align-items-center h-100\">\r\n      <button class=\"btn btn-default pull-right\" id=\"btnLogin\" *ngIf=\"!isAuthenticated()\" (click)=\"setLoginModal();\">\r\n        <i class=\"fas fa-sign-in-alt\"></i>\r\n        Admin Login\r\n      </button>\r\n    </div>\r\n    <div id=\"login\" class=\"modal\" *ngIf=\"openLoginModal()\">\r\n      <div class=\"modal-content\">\r\n        <form [formGroup]=\"loginFormGroup\" >\r\n          <div class=\"container\">\r\n            <div class=\"row\">\r\n              <div class=\"col-sm-3\">\r\n                <button type=\"button\" class=\"pull-right\" (click)=\"closeModal()\">X</button>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-sm-8\">\r\n\r\n                <h1 style=\"font-size:20px\" class=\"text-align center\"><strong> Login </strong> </h1>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\" *ngIf=\"showIncorrectLogin\">\r\n              <div class=\"col-sm-8\">\r\n\r\n                <p style=\" color:red\"> Username/Password incorrect! </p>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-sm-8 pull-left\">\r\n                <label>\r\n                  Username:\r\n                  <input type=\"text\" formControlName=\"username\" class=\"form-control form-control-sm\" required>\r\n                </label>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-sm-8 pull-left\">\r\n                <label>\r\n                  Password:\r\n                  <input type=\"password\" formControlName=\"password\" class=\"form-control form-control-sm\" required>\r\n                </label>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-sm-3 pull-left\">\r\n                <button type=\"submit\" class=\"btn btn-success btn-sm btn-block\" (click)=\"testAuthentication(loginFormGroup.value)\">\r\n                  Login\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </form>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <div class=\"row\" id=\"landingRow\">\r\n\r\n    <div class=\"col-lg-3\">\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"!showSurveyDiv\">\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <img class=\"center\" id=\"imgLogo\" src=\"../../../assets/img/dutchess-cap-color.png\">\r\n          <div class=\"row\">\r\n            <div class=\"col-lg-3\"></div>\r\n            <div class=\"col-lg-6\">\r\n              <p class=\"text-center black\">Please select a survey to take:</p>\r\n              <select class=\"form-control\" id=\"select\" (change)=\"surveySelect($event.target.value)\">\r\n                <option disabled selected>-Please Select a Survey-</option>\r\n                <option *ngFor=\"let surveyActive of surveys\" value=\"{{surveyActive.survey_id}}\">{{surveyActive.survey_name}}</option>\r\n              </select>\r\n            </div>\r\n            <div class=\"col-lg-3\"></div>\r\n          </div>\r\n\r\n          <div class=\"row\">\r\n            <div class=\"form-group\">\r\n              <div class=\"col-lg-12 text-center \">\r\n                <button type=\"button\" id=\"btnStart\" class=\"btn btn-success btn-lg btn-block\" (click)=\"onStart()\">\r\n                  Start Survey!\r\n                </button>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"col-lg-6\" *ngIf=\"showSurveyDiv\">\r\n\r\n      <div class=\"ibox float-e-margins\">\r\n        <div class=\"ibox-content\">\r\n          <form>\r\n            <div *ngFor=\"let survey of surveys | filterBySurveyID: selectedSurveyId\">\r\n              <div *ngFor=\"let question of survey.questions; let k = index\">\r\n                <div class=\"row\">\r\n                  <div [hidden]=\"hideQuestion(k)\" id=\"topSpacing\">\r\n                    <div class=\"row\">\r\n                      <div class=\"col-lg-12 questionHeader row-centered\">\r\n                        <h2 id=\"questionText\">{{ question.question_text }}</h2>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                    <div class=\"col-lg-8\">\r\n                      <div [ngSwitch]=\"question.question_type\" id=\"bottomSpacing\">\r\n                        <div *ngSwitchCase=\"'select'\">\r\n                          <select [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" (change)='valueChanges(survey.survey_id,question.question_id,question.options, question.response )'\r\n                                  class=\"form-control\">\r\n                            <option disabled selected>-Please Select a Response-</option>\r\n                            <option *ngFor=\"let option of question.options\" [value]=\"option.option_id\">\r\n                              {{ option.option_text }}\r\n                            </option>\r\n                          </select>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'checkbox'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options; let j = index\">\r\n                            <label id=\"checkLabel\" class=\"form-check-label\">\r\n                              <input class=\"form-check-input\" (change)=\"updateCheckbox(question, option.option_text, $event.target.checked, option.option_id, survey.survey_id)\"\r\n                                     type=\"checkbox\" [value]=\"option.option_text\">\r\n                              <span id=\"indent\" class=\"spanOption\">{{ option.option_text }}</span>\r\n\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'text'\">\r\n                          <div *ngFor=\"let option of question.options\">\r\n                            <label class=\"form-check-label\"></label>\r\n                            <textarea class=\"form-control\" (change)='valueChanges(survey.survey_id, question.question_id, option.option_id, question.response)'\r\n                                      [(ngModel)]='question.response' [ngModelOptions]='{standalone: true}' rows=\"3\"></textarea>\r\n                          </div>\r\n                        </div>\r\n                        <div *ngSwitchCase=\"'radio'\">\r\n                          <div id=\"indentAlign\" *ngFor=\"let option of question.options\">\r\n                            <label class=\"check-label\">\r\n                              <!--  [(ngModel)]=\"surveys.responses[k]\"-->\r\n                              <input type=\"radio\" (change)='valueChanges(survey.survey_id, question.question_id,option.option_id, option.option_text)'\r\n                                     [(ngModel)]=\"question.response\" [ngModelOptions]=\"{standalone: true}\" class=\"form-check-input\"\r\n                                     [name]=\"'radio'+question.question_id\" [value]=\"option.option_text\">\r\n                              <span class=\"spanOption\">{{ option.option_text }}</span>\r\n                            </label>\r\n                          </div>\r\n                        </div>\r\n                      </div>\r\n                    </div>\r\n                    <div class=\"col-lg-2\">\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n\r\n                <div class=\"row\" [hidden]=\"hideQuestion(k)\">\r\n                  <div class=\"col-lg-4\">\r\n                    <button [disabled]=\"isFirstPage()\" type=\"button\" class=\"btn btn-primary pull-left\" (click)='onPrevious()'>\r\n                      <i class=\"fas fa-arrow-circle-left\"></i>\r\n                      Previous Question\r\n                    </button>\r\n                  </div>\r\n                  <div class=\"col-lg-4 row-centered\">\r\n                    <div class=\"row\">\r\n                      <b>Question {{k + 1}} of {{survey.questions.length }}</b>\r\n                    </div>\r\n                    <div class=\"row\">\r\n                      {{survey.survey_name}}\r\n                    </div>\r\n                  </div>\r\n                  <div class=\"col-lg-4\">\r\n                    <button type=\"button\" *ngIf=\"!isLastPage()\" class=\"btn btn-primary pull-right\" (click)='onNext()'>\r\n                      Next Question\r\n                      <i class=\"fas fa-arrow-circle-right\"></i>\r\n                    </button>\r\n                    <button type=\"button\" [disabled]='disabledSave' *ngIf=\"isLastPage()\" class=\"btn btn-warning pull-right\" (click)='save();'>\r\n                      Submit Response!\r\n                      <i class=\"fas fa-database\"></i>\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n</body>\r\n"
 
 /***/ }),
 
@@ -3735,88 +3810,6 @@ module.exports = "<body>\r\n  <!-- Survey Landing/Home page -->\r\n  <div class=
 /***/ (function(module, exports) {
 
 module.exports = "<body>\n\n  <div class=\"row\">\n\n    <div class=\"col-lg-3\">\n    </div>\n\n    <div class=\"col-lg-6\">\n      <div class=\"ibox float-e-margins\">\n        <div class=\"ibox-title\" id=\"divRowHeader\">\n          <h2 class=\"center-text\">Thank you for taking our survey!</h2>\n        </div>\n        <div class=\"ibox-content\">\n           <div class=\"row\" id=\"divRowComment\">\n               <p class=\"center-text\">If you would like to leave a comment or question, <a href=\"http://dutchesscaporg-proof.presencehost.net/contact.html\"> click here!</a>\n            </div>\n            <div class=\"row\" id=\"divRowBtn\">\n            <button class=\"btn btn-default btn-block\" (click)=\"location.href = 'http://www.dutchesscap.org/'\">\n              <i class=\"fas fa-sign-in-alt\"></i>\n              Return to http://www.dutchesscap.org\n            </button>\n         </div>\n        </div>\n      </div>\n\n    </div>\n\n    <div class=\"col-lg-3\">\n    </div>\n\n  </div>\n</body>"
-
-/***/ }),
-
-/***/ 65:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock__ = __webpack_require__(185);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_auth0_lock__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt__ = __webpack_require__(417);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_jwt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthenticationService; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-window.global = window;
-var AuthenticationService = (function () {
-    function AuthenticationService(router) {
-        var _this = this;
-        this.router = router;
-        // https://dutchesscapp.auth0.com/
-        this.auth0Options = {
-            theme: {
-                primaryColor: '#DFA612'
-            },
-            auth: {
-                redirectUrl: 'http://localhost:8888/#/home',
-                responseType: 'token id_token',
-                audience: "https://dutchesscap.auth0.com/userinfo",
-                params: {
-                    scope: 'openid profile email'
-                }
-            },
-            autoclose: true,
-            oidcConformant: true,
-        };
-        this.lock = new __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a('Om122xNAJ4dyh43gPnuJpLfgQMZhpNFp', 'dutchesscap.auth0.com', this.auth0Options);
-        this.lock.on('authenticated', function (authResult) {
-            _this.lock.getUserInfo(authResult.accessToken, function (error, profile) {
-                if (error) {
-                    throw new Error(error);
-                }
-                localStorage.setItem('token', authResult.idToken);
-                localStorage.setItem('profile', JSON.stringify(profile));
-            });
-        });
-    }
-    // When called, produce the lock modal that allows authentication
-    AuthenticationService.prototype.login = function () {
-        this.lock.show();
-    };
-    // Remove the localStorage tokens and navigate to the survey page
-    AuthenticationService.prototype.logout = function () {
-        localStorage.removeItem('profile');
-        localStorage.removeItem('token');
-        this.router.navigate(['survey']);
-    };
-    // Checks if the token has expired / if it exists
-    AuthenticationService.prototype.isAuthenticated = function () {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__["tokenNotExpired"])();
-    };
-    return AuthenticationService;
-}());
-AuthenticationService = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object])
-], AuthenticationService);
-
-var _a;
-//# sourceMappingURL=authentication.service.js.map
 
 /***/ }),
 

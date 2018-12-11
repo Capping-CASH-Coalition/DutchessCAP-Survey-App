@@ -287,14 +287,14 @@ router.get('/api/userPassword/:user_name', (req, res, next) => {
         // Handle connection errors
         if (err) {
             done();
-            console.log(err);
-            return res.status(500).json({ success: false, data: err });
+            results.push('-1');
+            return results;
         }
         // Created query that gets all active surveys
         const query = client.query('SELECT user_password FROM users WHERE user_name = ($1)', [username]);
         // Stream results back one row at a time
         query.on('row', (row) => {
-            results.push(row);
+            results.push(row.user_password);
         });
         // After all data is returned, close connection and return results
         query.on('end', () => {

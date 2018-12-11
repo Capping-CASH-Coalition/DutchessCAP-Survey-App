@@ -51,7 +51,7 @@ export class InputComponent implements OnInit {
     // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
         //Check if the user has authentication to use this page
-        this.hasAuthentication();
+        this.auth.hasAuthentication();
         // Get the modal
         this.modal = document.getElementById('success');
         this.surveyService.getActiveSurveys().subscribe(response => {
@@ -83,17 +83,6 @@ export class InputComponent implements OnInit {
         if (!this.auth.isAuthenticated) {
             //this.router.navigate(['home']);
         }
-  }
-
-  hasAuthentication(): boolean {
-    if (localStorage.getItem('login') == 'success') {
-      return true;
-    }
-    else {
-      this.router.navigate['/survey'];
-      return false;
-    }
-
   }
 
     //when a user clicks an option from the dropdown menu

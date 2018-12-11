@@ -5,6 +5,7 @@ import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { ResponseExport } from '../../models/responseExport.model';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
 @Component({
    selector: 'home',
    templateUrl: './home.component.html',
@@ -33,15 +34,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
    // modal id holder
    modal;
 
-  constructor( public router: Router,
+  constructor( public auth: AuthenticationService,
+               public router: Router,
                public graphService: GraphService,
                public surveyService: SurveyService,
                private changeref: ChangeDetectorRef) { }
 
    // On initialization, gets the surveys, question for each survey, and responses for each question
   ngOnInit(): void {
-      //Check if the user has authentication to use this page
-      this.hasAuthentication(); 
+      //Check if the user has authentication to use this page 
+      this.auth.hasAuthentication(); 
       // Get the modal
       this.modal = document.getElementById('success');
       // get the canvas
@@ -117,12 +119,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             console.log('error is ', error)
       })
   }
-
-  hasAuthentication(): void {
-    if (localStorage.getItem('login') != 'success') {
-       this.router.navigate(['/survey']);
-      }
-   }
 
    // after component initialization, update chart
    ngAfterViewInit(): void {

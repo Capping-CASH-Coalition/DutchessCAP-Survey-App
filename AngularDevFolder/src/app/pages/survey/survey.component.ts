@@ -44,7 +44,7 @@ export class SurveyComponent implements OnInit, DoCheck {
   loginFormGroup: FormGroup;
 
   // If login is incorrect display login incorrect statement in red text
-  loginStatus: boolean;
+  showIncorrectLogin: boolean;
 
   //Set whether to show Login Window or not
   showLoginModal: boolean;
@@ -57,9 +57,7 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
-    
-
-
+    this.modal = document.getElementById('Login');
     //Generates UUID on initialization and sets it to currentUser
     this.currentUser = this.generateUUID();
 
@@ -87,10 +85,7 @@ export class SurveyComponent implements OnInit, DoCheck {
 
   // This continuously checks if the user is authenticated
   ngDoCheck(): void {
-    // If authenticated, redirect to the home dashboard
-    this.openLoginModal();
-    this.isAuthenticated();
-    this.incorrectLogin();
+
   }
 
   //Login modal FormGroup
@@ -117,26 +112,32 @@ export class SurveyComponent implements OnInit, DoCheck {
     return this.showLoginModal;
   }
 
-  testAuthentication(formValues) {
+  wait(): boolean {
+    this.surveyService.wait(1000);
+    return true;
+  }
+  testAuthentication(formValues): void {
 
-    this.surveyService.getUserPassword(formValues.username).subscribe( password => {
-      if (password.body[0].user_password == formValues.password) {
-        this.showLoginModal = false;
-        this.loginStatus = false;
-        localStorage.removeItem('sucess');
+    this.surveyService.getUserPassword(formValues.username).subscribe(password => {
+      if (password.body[0] == formValues.password) {
         this.router.navigate(['/home']);
+        this.showLoginModal = false;
+        this.showIncorrectLogin = false;
+        localStorage.setItem('login', 'success');
+        
       }
       else {
-        this.loginStatus = true;
       }
-
-    }, (error) => {
-      console.log('error is ', error)
     })
+    this.setLoginIncorrect();
   }
 
-  incorrectLogin() {
-    return this.loginStatus;
+  setLoginIncorrect(): void {
+    this.showIncorrectLogin = true;
+  }
+
+  closeModal(): void {
+    this.showLoginModal = false;
   }
 
   // When a user clicks a survey name option from the dropdown menu, save the selectedSurveyId and selectedSurveyIndex

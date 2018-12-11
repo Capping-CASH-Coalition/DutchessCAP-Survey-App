@@ -5,6 +5,7 @@ import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
 import { ResponseExport } from '../../models/responseExport.model';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
    selector: 'app-exportRaw',
@@ -30,14 +31,15 @@ export class ExportRawComponent implements OnInit {
    // hold off on displaying div until this is true after data loaded
    showExportDiv: boolean = false;
 
-  constructor( public router: Router,
+  constructor( public auth: AuthenticationService,
+               public router: Router,
                public surveyService: SurveyService,
                private changeref: ChangeDetectorRef) { }
 
    // On component initialization, get the survey ids, names, and date created
   ngOnInit(): void {
       //Checks for authentication, if no authentication routes back to survey page
-      this.hasAuthentication();
+      this.auth.hasAuthentication();
       this.surveyService.getAllSurveys().subscribe((response) => {
          // Get 1 survey at a time and push into surveys array
          for (let i = 0; i < response.body.length; i++) {
@@ -136,13 +138,6 @@ export class ExportRawComponent implements OnInit {
        console.log('error is ', error)
    })      
   }
-
-  hasAuthentication(): void {
-    if (localStorage.getItem('login') != 'success') {
-      this.router.navigate(['/survey']);
-    }
-  }
-
 
    // sets the survey name to readonly based on the edit global
    setReadOnly(): boolean {

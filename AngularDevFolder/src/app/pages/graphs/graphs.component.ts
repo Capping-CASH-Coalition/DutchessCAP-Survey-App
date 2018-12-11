@@ -7,6 +7,7 @@ import { QuestionResponses } from '../../models/questionResponses.model';
 import { Option } from '../../models/option.model';
 import { Survey } from '../../models/survey.model';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
    selector: 'app-graphs',
@@ -41,11 +42,12 @@ export class GraphsComponent implements OnInit {
                 public graphService: GraphService,
                 private changeref: ChangeDetectorRef,
                 public surveyService: SurveyService,
-                private fb: FormBuilder) { };
+                private fb: FormBuilder,
+                public auth: AuthenticationService ) { };
 
   ngOnInit(): void {
       //Check if the user has authentication to use this page
-      this.hasAuthentication();
+      this.auth.hasAuthentication();
       // init the chart form
       this.initChartForm();
       // get the surveys and populated inner fields with inner get calls
@@ -165,12 +167,6 @@ export class GraphsComponent implements OnInit {
       })
 
   }
-
-   hasAuthentication(): void {
-      if (localStorage.getItem('login') != 'success') {
-        this.router.navigate(['/survey']);
-      }
-    }
 
    // init chart form
    initChartForm(): void {

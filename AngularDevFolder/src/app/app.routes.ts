@@ -6,7 +6,6 @@ import { EditComponent } from './pages/edit/edit.component';
 import { ExportRawComponent } from './pages/exportRaw/exportRaw.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ThankyouComponent } from './pages/thankyou/thankyou.component';
-import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
 
 // path refers to the end of the url after .org such as www.dutchesscap.org/
 export const appRoutes=[

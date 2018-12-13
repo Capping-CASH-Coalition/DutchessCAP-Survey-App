@@ -64,7 +64,6 @@ export class ExportRawComponent implements OnInit {
                                  "question_is_active": response.body[j].question_is_active,
                                  "options": [],
                                  "responses": []
-
                            };
                            this.surveys[i].questions.push(question);
                      }
@@ -89,7 +88,7 @@ export class ExportRawComponent implements OnInit {
                         // Manually detect changes as the page will load faster than the async call
                         this.changeref.detectChanges();
                      }, (error) => {
-                           console.log('error is ', error)
+                           //console.log('error is ', error)
                      })
                      // Get the survey responses based on the selectedSurveyID
                      this.surveyService.getSurveyResponses(this.surveys[i].survey_id).subscribe((response) => {
@@ -124,15 +123,15 @@ export class ExportRawComponent implements OnInit {
                            // set the data feed to -1 which is all questions
                            this.updateDataFeed(-1);
                      }, (error) => {
-                           console.log('error is ', error)
+                           //console.log('error is ', error)
                      }) 
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
                },(error) => {
-                     console.log('error is ', error)
+                     //console.log('error is ', error)
                })
-               // Manually detect changes as the page will load faster than the async call
-               this.changeref.detectChanges();
+            // Manually detect changes as the page will load faster than the async call
+            this.changeref.detectChanges();
          } 
    }, (error) => {
        console.log('error is ', error)
@@ -239,7 +238,6 @@ export class ExportRawComponent implements OnInit {
       }
       // Download CSV file
       this.downloadCSV(csv.join("\n"));
-      console.log("This is the csv: " + csv.join("\n"))
    }
 
     // Get date for today formatted in yyyy-mm-dd

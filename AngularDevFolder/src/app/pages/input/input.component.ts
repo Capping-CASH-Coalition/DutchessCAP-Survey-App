@@ -20,36 +20,28 @@ export class InputComponent implements OnInit {
 
     // Array that holds all survey structuring data
     surveys: Array<any> = [];
-
     // Survey variables set by surveySelect()
     selectedSurveyId: number;
     selectedSurveyIndex: number;
     selectedSurveyName: string = "";
-
     // Option_id that is set by optionSelect()
     selectedOption: number;
-
     // Fills when multiple choices are selected by updateResponses()
     checkboxChoices: Array<any> = [];
-
     // Pushes/pops when user selects next or previous
     surveyData: Array<any> = [];
-
     // Unique user hash
     currentUser: string;
     // modal id holder
     modal;
 
-
-
-  constructor(  public router: Router,
+    constructor(  public router: Router,
                 public surveyService: SurveyService,
                 private changeref: ChangeDetectorRef,
                 public auth: AuthenticationService) { }
 
-
     // On component initialization, get the survey ids, names, and date created
-  ngOnInit(): void {
+    ngOnInit(): void {
         //Check if the user has authentication to use this page
         this.auth.hasAuthentication();
         // Get the modal
@@ -67,12 +59,13 @@ export class InputComponent implements OnInit {
             }
             this.changeref.detectChanges();
         }, (error) => {
-            console.log('error is ', error)
+            //console.log('error is ', error)
         })
         //Generates UUID on initialization and sets it to currentUser
         this.currentUser = this.generateUUID();
     }
 
+    // After HTML initializes, select the survey
     ngAfterViewInit(): void {
         setTimeout(() => {this.surveySelect(this.surveys[0].survey_id)}, 1000);  
     }
@@ -83,7 +76,8 @@ export class InputComponent implements OnInit {
         if (!this.auth.isAuthenticated) {
             //this.router.navigate(['home']);
         }
-  }
+
+    }
 
     //when a user clicks an option from the dropdown menu
     surveySelect(value): void {
@@ -114,7 +108,6 @@ export class InputComponent implements OnInit {
                 };
                 this.surveys[this.selectedSurveyIndex].questions.push(question);
             }
-            //  console.log(this.surveys[this.selectedSurveyIndex]);
             this.changeref.detectChanges();
 
             // Get the survey options based on the selectedSurveyId
@@ -130,16 +123,15 @@ export class InputComponent implements OnInit {
                         // If the question IDs match, push the option into the questions[j].options array
                         if (this.surveys[this.selectedSurveyIndex].questions[j].question_id == response.body[k].question_id) {
                             this.surveys[this.selectedSurveyIndex].questions[j].options.push(option);
-                            // console.log(this.surveys[this.selectedSurveyIndex].questions[j].options[k]);
                         }
                     }
                 }
                 this.changeref.detectChanges();
             }, (error) => {
-                console.log('error is ', error)
+                //console.log('error is ', error)
             })
         }, (error) => {
-            console.log('error is ', error)
+            //console.log('error is ', error)
         })
 
     }
@@ -165,11 +157,10 @@ export class InputComponent implements OnInit {
         let question_index = this.surveys[this.selectedSurveyIndex].questions.findIndex(i => i.question_id === question_id);
         //sets the current question response model based off values passed through
         this.surveys[this.selectedSurveyIndex].questions[question_index].responseModel = [response];
-
     }
 
     //Updates response array based on checked box
-    updateCheckbox(currentQuestion, content, isChecked, option_id, survey_id, ): void {
+    updateCheckbox(currentQuestion, content, isChecked, option_id, survey_id): void {
         //Checks to see if current question has response, if not make a response array for that Q  
         if (!currentQuestion.response) {
             currentQuestion.response = [];
@@ -187,7 +178,6 @@ export class InputComponent implements OnInit {
             }
 
             currentQuestion.responseModel.push(response);
-
         } else {
             let index = currentQuestion.response.findIndex((o) => o === content);
             let temp = currentQuestion.responseModel.filter(item => item.option_id != option_id);
@@ -196,31 +186,20 @@ export class InputComponent implements OnInit {
         }
     }
 
-
-    //Submit Button Functionality
+    // Submit Button Functionality
     save(): void {
-        //Takes the responsemodel from each question and pushes it to the surveyData object
-        // console.log(this.surveys[this.selectedSurveyId - 1]);
+        // Takes the responsemodel from each question and pushes it to the surveyData object
         this.surveys[this.selectedSurveyIndex].questions.forEach(element => {
             this.surveyData = this.surveyData.concat(element.responseModel)
         });
-
-        // Uncleaned surveyData Array
-        console.log(this.surveyData);
 
         // Takes surveyData array and cleans it of undefined values in array
         this.surveyData = this.surveyData.filter(function( element ) {
             return element !== undefined;
          });
 
-        // Cleaned surveyData Array
-        console.log(this.surveyData);
-
         // Post the surveyData array to the API
         this.surveyService.postSurveyResponse(this.surveyData).subscribe();
-
-        // Function to reload the page once submitted, this makes it so they can't submit it multiple times
-        //window.location.reload();
     }
 
     // generates a survey hash for each individual survey

@@ -79,7 +79,7 @@ export class SurveyComponent implements OnInit, DoCheck {
       // Manually refresh the HTML component
       this.changeref.detectChanges();
     }, (error) => {
-      console.log('error is ', error)
+      //console.log('error is ', error)
     })
   }
 
@@ -170,7 +170,6 @@ export class SurveyComponent implements OnInit, DoCheck {
         };
         this.surveys[this.selectedSurveyIndex].questions.push(question);
       }
-      //  console.log(this.surveys[this.selectedSurveyIndex]);
       this.changeref.detectChanges();
 
       // Get the survey options based on the selectedSurveyId
@@ -191,10 +190,10 @@ export class SurveyComponent implements OnInit, DoCheck {
         }
         this.changeref.detectChanges();
       }, (error) => {
-        console.log('error is ', error)
+        //console.log('error is ', error)
       })
     }, (error) => {
-      console.log('error is ', error)
+      //console.log('error is ', error)
     })
   }
   
@@ -294,25 +293,18 @@ export class SurveyComponent implements OnInit, DoCheck {
   save(): void {
     this.disabledSave = true;
     //Takes the responsemodel from each question and pushes it to the surveyData object
-    // console.log(this.surveys[this.selectedSurveyId - 1]);
     this.surveys[this.selectedSurveyIndex].questions.forEach(element => {
       this.surveyData = this.surveyData.concat(element.responseModel)
     });
 
-    // Uncleaned surveyData Array
-    console.log(this.surveyData);
 
     // Takes surveyData array and cleans it of undefined values in array
     this.surveyData = this.surveyData.filter(function (element) {
       return element !== undefined;
     });
 
-    // Cleaned surveyData Array
-    console.log(this.surveyData);
-
     // Post the surveyData array to the API
     this.surveyService.postSurveyResponse(this.surveyData).subscribe();
-
     // Function to reload the page once submitted, this makes it so they can't submit it multiple times
     setTimeout(() => {this.sendThankYou()}, 1000);
   }

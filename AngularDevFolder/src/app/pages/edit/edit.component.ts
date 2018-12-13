@@ -100,14 +100,14 @@ export class EditComponent implements OnInit {
                                     }
                               }
                         }, (error) => {
-                              console.log('error is ', error)
+                              //console.log('error is ', error)
                         }) 
                   },(error) => {
-                        console.log('error is ', error)
+                        //console.log('error is ', error)
                   })
-            } 
+            }
       }, (error) => {
-          console.log('error is ', error)
+          //console.log('error is ', error)
       })
   }
 
@@ -395,13 +395,12 @@ export class EditComponent implements OnInit {
    // Returns the surveyIndex that matches the formData.survey_id
    getSurveyIndex(formData): any {
       let index;
-      console.log("formData.survey_id" + formData.survey_id);
       if (formData.survey_id) {
             index = formData.survey_id - 1;
       } else {
             index = -1;
       }
-      console.log("index" + index);
+
       return index;
    }
 

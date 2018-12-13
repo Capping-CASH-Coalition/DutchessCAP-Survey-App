@@ -142,19 +142,19 @@ export class GraphsComponent implements OnInit {
                    //  }
 
                   }, (error) => {
-                     console.log('error is ', error)
+                     //console.log('error is ', error)
                   })
                   // Manually detect changes as the page will load faster than the async call
                   this.changeref.detectChanges();
 
                }, (error) => {
-                  console.log('error is ', error)
+                  //console.log('error is ', error)
                })
                // Manually detect changes as the page will load faster than the async call
                this.changeref.detectChanges();
 
             }, (error) => {
-               console.log('error is ', error)
+               //console.log('error is ', error)
             })
             // Manually detect changes as the page will load faster than the async call
             this.changeref.detectChanges();
@@ -163,7 +163,7 @@ export class GraphsComponent implements OnInit {
          this.changeref.detectChanges();
 
       }, (error) => {
-         console.log('error is ', error)
+         //console.log('error is ', error)
       })
 
   }

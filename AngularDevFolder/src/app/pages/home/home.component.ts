@@ -105,18 +105,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
                               this.showInfo = true;
                            }
                      }, (error) => {
-                           console.log('error is ', error)
+                           //console.log('error is ', error)
                      })
                      // Manually detect changes as the page will load faster than the async call
                      this.changeref.detectChanges();
                },(error) => {
-                     console.log('error is ', error)
+                     //console.log('error is ', error)
                })
                // Manually detect changes as the page will load faster than the async call
                this.changeref.detectChanges();
             } 
          }, (error) => {
-            console.log('error is ', error)
+            //console.log('error is ', error)
       })
   }
 
@@ -250,7 +250,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             });
          }
          // Increments the index if current question was a checkbox or inactive
-         else{
+         else {
             questionIndex++;
          }
       });
@@ -266,16 +266,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
       let yyyy = today.getFullYear() - 1;
       let mm: string;
       let dd: string;
-      if(d < 10) {
+      if (d < 10) {
          dd = '0' + d;
       }
-      else{
+      else {
          dd = '' + d;
       }
-      if(m < 10) {
+      if (m < 10) {
          mm = '0' + m;
       }
-      else{
+      else {
          mm = '' + m;
       }
       // puts the date from a year ago into date format

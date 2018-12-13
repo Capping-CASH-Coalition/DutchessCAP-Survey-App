@@ -5,6 +5,7 @@ import { Survey } from '../../models/survey.model';
 import { Question } from '../../models/question.model';
 import { Option } from '../../models/option.model';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
 import { AnonymousSubscription } from 'rxjs/Subscription';
 
 @Component({
@@ -38,14 +39,15 @@ export class EditComponent implements OnInit {
    // modal id holder
    modal;
 
-  constructor( public router: Router,
+  constructor( public auth: AuthenticationService,
+               public router: Router,
                private _fb: FormBuilder,
                public surveyService: SurveyService) { }
 
    // initilaize a new blank survey form
   ngOnInit(): void {
       //Check if the user has authentication to use this page
-      this.hasAuthentication();
+      this.auth.hasAuthentication();
       // Get the modal
       this.modal = document.getElementById('success');
       this.newSurveyForm();
@@ -109,11 +111,7 @@ export class EditComponent implements OnInit {
       })
   }
 
-  hasAuthentication(): void {
-    if (localStorage.getItem('login') != 'success') {
-      this.router.navigate(['/survey']);
-  }
-}
+  
    
    // sets the survey name to readonly based on the edit global
    setReadOnly(): boolean {

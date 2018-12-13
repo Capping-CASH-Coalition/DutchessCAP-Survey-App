@@ -47,12 +47,21 @@ export class AuthenticationService {
   login() {
     this.lock.show();
   }
+  // Checks if a user has authentication, if they don't sends them to survey page
+    hasAuthentication(): boolean {
+    if (localStorage.getItem('login') != 'success') {
+      this.router.navigate(['/survey']);
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
 
-  // Remove the localStorage tokens and navigate to the survey page
-  logout() {
-    localStorage.removeItem('profile');
-    localStorage.removeItem('token');
-    this.router.navigate(['survey']);
+  // Remove the localStorage token navigate to the survey page
+  logout(): void {
+    localStorage.removeItem('login');
+    this.router.navigate(['/survey']);
   }
 
   // Checks if the token has expired / if it exists

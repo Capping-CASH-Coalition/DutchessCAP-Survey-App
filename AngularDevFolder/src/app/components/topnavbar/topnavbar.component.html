@@ -3,7 +3,7 @@
         <nav class="navbar navbar-static-top white-bg" role="navigation" id="navbar">
             <ul class="nav navbar-top-links navbar-right">
                 <li>
-                    <a *ngIf="auth.isAuthenticated()"
+                    <a *ngIf="auth.hasAuthentication()"
                     (click)="auth.logout()" id="fontsize12">
                         <i class="fas fa-globe-americas"></i> Return To Survey / Logout
                     </a>
